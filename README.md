@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/rcjsuen/dockerfile-language-service.svg?branch=master)](https://travis-ci.org/rcjsuen/dockerfile-language-service) [![Coverage Status](https://coveralls.io/repos/github/rcjsuen/dockerfile-language-service/badge.svg?branch=master)](https://coveralls.io/github/rcjsuen/dockerfile-language-service?branch=master) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This is a language service for Dockerfiles written in TypeScript.
-If you are looking for an actual Dockerfile language server that can be used with editors that implement the [language server protocol](http://microsoft.github.com/language-server-protocol), please visit the [rcjsuen/dockerfile-language-server-nodejs repository](https://travis-ci.org/rcjsuen/dockerfile-language-server-nodejs).
+If you are looking for an actual Dockerfile language server that can be used with editors that implement the [language server protocol](http://microsoft.github.com/language-server-protocol), please visit the [rcjsuen/dockerfile-language-server-nodejs repository](https://github.com/rcjsuen/dockerfile-language-server-nodejs).
 
 The purpose of this project is to provide an API for creating a feature-rich Dockerfile editor.
 While this language service implements requests from the language server protocol, they are exposed as regular JavaScript functions so you can use them in the browser if you wish.
