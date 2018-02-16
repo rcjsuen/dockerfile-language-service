@@ -36,3 +36,6 @@ script:
 after_success:
   - npm run coverage
   - npm pack
+  - cd example
+  - npm install
+  - npm run build
