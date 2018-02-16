@@ -1,0 +1,46 @@
+{
+    "name": "dockerfile-language-service",
+    "description": "A language service for Dockerfiles to enable the creation of feature-rich Dockerfile editors.",
+    "keywords": [
+      "language",
+      "editor",
+      "docker",
+      "dockerfile",
+      "moby"
+    ],
+    "version": "0.0.1",
+    "author": "Remy Suen",
+    "license": "MIT",
+    "bugs": "https://github.com/rcjsuen/dockerfile-language-service/",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/rcjsuen/dockerfile-language-service.git"
+    },
+    "engines": {
+      "node": "*"
+    },
+    "dependencies": {
+      "dockerfile-ast": "0.0.3",
+      "dockerfile-utils": "0.0.6",
+      "vscode-languageserver-types": "^3.5.0"
+    },
+    "main": "./lib/main.js",
+    "types": "./lib/main.d.ts",
+    "devDependencies": {
+      "@types/mocha": "^2.2.33",
+      "@types/node": "^6.0.52",
+      "mocha": "^3.2.0",
+      "typescript": "^2.1.5",
+      "nyc": "^11.0.2"
+    },
+    "scripts": {
+      "build": "tsc -p .",
+      "prepublish": "tsc -p ./src",
+      "watch": "tsc --watch -p .",
+      "test": "mocha out/test",
+      "nyc": "nyc mocha out/test",
+      "nyc-ci": "nyc --cache false mocha out/test",
+      "coverage": "nyc report --reporter=text-lcov | coveralls"
+    }
+  }
+  

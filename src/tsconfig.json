@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "umd",
+        "moduleResolution": "node",
+        "sourceMap": false,
+        "outDir": "../lib",
+        "declaration": true,
+        "lib": [
+            "es5",
+            "es2015.promise"
+        ]
+    }
+}
