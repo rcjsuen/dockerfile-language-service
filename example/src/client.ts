@@ -2,7 +2,7 @@
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { DockerfileLanguageService } from 'dockerfile-language-service';
+import { DockerfileLanguageServiceFactory } from 'dockerfile-language-service';
 import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient';
 
 const LANGUAGE_ID = 'dockerfile';
@@ -30,7 +30,7 @@ const editor = monaco.editor.create(document.getElementById("container")!, {
 });
 
 const monacoModel = monaco.editor.getModel(MONACO_URI);
-const service = DockerfileLanguageService.createLanguageService();
+const service = DockerfileLanguageServiceFactory.createLanguageService();
 const m2p = new MonacoToProtocolConverter();
 const p2m = new ProtocolToMonacoConverter();
 
