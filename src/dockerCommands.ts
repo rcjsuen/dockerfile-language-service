@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { TextDocument, Command, Diagnostic, Range, WorkspaceEdit, TextEdit } from 'vscode-languageserver-types';
+import { TextDocument, Command, Diagnostic, Range, TextEdit } from 'vscode-languageserver-types';
 import { ValidationCode } from 'dockerfile-utils';
 import { CommandIds } from './main';
 
@@ -119,156 +119,66 @@ export class DockerCommands {
         return commands;
     }
 
-    public createWorkspaceEdit(content: string, command: string, args: any[]): WorkspaceEdit | null {
+    public computeCommandEdits(content: string, command: string, args: any[]): TextEdit[] {
         let document = TextDocument.create("", "", 0, content);
-        let uri: string = args[0];
         let range: Range = args[1];
         switch (command) {
             case CommandIds.LOWERCASE:
                 const directive = document.getText().substring(document.offsetAt(range.start), document.offsetAt(range.end));
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, directive.toLowerCase())
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, directive.toLowerCase())
+                ]
+                    ;
             case CommandIds.UPPERCASE:
                 let instruction = document.getText().substring(document.offsetAt(range.start), document.offsetAt(range.end));
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, instruction.toUpperCase())
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, instruction.toUpperCase())
+                ]
+                    ;
             case CommandIds.EXTRA_ARGUMENT:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.del(range)
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.del(range)
+                ];
             case CommandIds.DIRECTIVE_TO_BACKSLASH:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, '\\')
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, '\\')
+                ];
             case CommandIds.DIRECTIVE_TO_BACKTICK:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, '`')
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, '`')
+                ];
             case CommandIds.CONVERT_TO_AS:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, "AS")
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, "AS")
+                ];
             case CommandIds.FLAG_TO_CHOWN:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, "--chown")
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, "--chown")
+                ];
             case CommandIds.FLAG_TO_HEALTHCHECK_INTERVAL:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, "--interval")
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, "--interval")
+                ];
             case CommandIds.FLAG_TO_HEALTHCHECK_RETRIES:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, "--retries")
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, "--retries")
+                ];
             case CommandIds.FLAG_TO_HEALTHCHECK_START_PERIOD:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, "--start-period")
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, "--start-period")
+                ];
             case CommandIds.FLAG_TO_HEALTHCHECK_TIMEOUT:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, "--timeout")
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, "--timeout")
+                ];
             case CommandIds.FLAG_TO_COPY_FROM:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.replace(range, "--from")
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.replace(range, "--from")
+                ];
             case CommandIds.REMOVE_EMPTY_CONTINUATION_LINE:
-                return {
-                    changes: {
-                        [
-                            uri
-                        ]:
-                            [
-                                TextEdit.del(range)
-                            ]
-                    }
-                };
+                return [
+                    TextEdit.del(range)
+                ];
         }
         return null;
     }

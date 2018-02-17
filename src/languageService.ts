@@ -40,9 +40,9 @@ export class LanguageService implements DockerfileLanguageService {
         return dockerLinks.getLinks(content);
     }
 
-    public createWorkspaceEdit(content: string, command: string, args: any[]): WorkspaceEdit | null {
+    public computeCommandEdits(content: string, command: string, args: any[]): TextEdit[] {
         let dockerCommands = new DockerCommands();
-        return dockerCommands.createWorkspaceEdit(content, command, args);
+        return dockerCommands.computeCommandEdits(content, command, args);
     }
 
     public computeCompletionItems(content: string, position: Position, snippetSupport: boolean): CompletionItem[] | PromiseLike<CompletionItem[]> {

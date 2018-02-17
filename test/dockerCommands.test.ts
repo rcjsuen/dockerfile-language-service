@@ -221,15 +221,13 @@ describe("Dockerfile code actions", function () {
 
 describe("Dockerfile execute commands", function () {
     it("unknown command", function () {
-        let edit = service.createWorkspaceEdit("FROM node", "unknown", []);
-        assert.equal(edit, null);
+        let edits = service.computeCommandEdits("FROM node", "unknown", []);
+        assert.equal(edits, null);
     });
 
     function directiveTo(commandId: string, suggestion: string) {
         let range = Range.create(Position.create(0, 8), Position.create(0, 9));
-        let edit = service.createWorkspaceEdit("#escape=a", commandId, [uri, range]);
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
+        let edits = service.computeCommandEdits("#escape=a", commandId, [uri, range]);
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, suggestion);
         assert.equal(edits[0].range, range);
@@ -245,11 +243,9 @@ describe("Dockerfile execute commands", function () {
 
     it("extra argument", function () {
         let range = Range.create(Position.create(0, 10), Position.create(0, 14));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "FROM node node", CommandIds.EXTRA_ARGUMENT, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "");
         assert.equal(edits[0].range, range);
@@ -257,11 +253,9 @@ describe("Dockerfile execute commands", function () {
 
     it("convert to uppercase", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "from node", CommandIds.UPPERCASE, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "FROM");
         assert.equal(edits[0].range, range);
@@ -269,11 +263,9 @@ describe("Dockerfile execute commands", function () {
 
     it("convert to lowercase", function () {
         let range = Range.create(Position.create(0, 1), Position.create(0, 7));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "#ESCAPE=`", CommandIds.LOWERCASE, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "escape");
         assert.equal(edits[0].range, range);
@@ -281,11 +273,9 @@ describe("Dockerfile execute commands", function () {
 
     it("convert to AS", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "FROM node as setup", CommandIds.CONVERT_TO_AS, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "AS");
         assert.equal(edits[0].range, range);
@@ -293,11 +283,9 @@ describe("Dockerfile execute commands", function () {
 
     it("HEALTHCHECK flag to --interval", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "", CommandIds.FLAG_TO_HEALTHCHECK_INTERVAL, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "--interval");
         assert.equal(edits[0].range, range);
@@ -305,11 +293,9 @@ describe("Dockerfile execute commands", function () {
 
     it("HEALTHCHECK flag to --retries", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "", CommandIds.FLAG_TO_HEALTHCHECK_RETRIES, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "--retries");
         assert.equal(edits[0].range, range);
@@ -317,11 +303,9 @@ describe("Dockerfile execute commands", function () {
 
     it("HEALTHCHECK flag to --start-period", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "", CommandIds.FLAG_TO_HEALTHCHECK_START_PERIOD, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "--start-period");
         assert.equal(edits[0].range, range);
@@ -329,11 +313,9 @@ describe("Dockerfile execute commands", function () {
 
     it("HEALTHCHECK flag to --timeout", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "", CommandIds.FLAG_TO_HEALTHCHECK_TIMEOUT, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "--timeout");
         assert.equal(edits[0].range, range);
@@ -341,11 +323,9 @@ describe("Dockerfile execute commands", function () {
 
     it("COPY flag to --from", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "", CommandIds.FLAG_TO_COPY_FROM, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "--from");
         assert.equal(edits[0].range, range);
@@ -353,11 +333,9 @@ describe("Dockerfile execute commands", function () {
 
     it("flag to --chown", function () {
         let range = Range.create(Position.create(0, 0), Position.create(0, 4));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "", CommandIds.FLAG_TO_CHOWN, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "--chown");
         assert.equal(edits[0].range, range);
@@ -365,11 +343,9 @@ describe("Dockerfile execute commands", function () {
 
     it("remove empty continuation line", function () {
         let range = Range.create(Position.create(0, 0), Position.create(3, 0));
-        let edit = service.createWorkspaceEdit(
+        let edits = service.computeCommandEdits(
             "", CommandIds.REMOVE_EMPTY_CONTINUATION_LINE, [uri, range]
         );
-        assert.equal(edit.documentChanges, undefined);
-        let edits = edit.changes[uri];
         assert.equal(edits.length, 1);
         assert.equal(edits[0].newText, "");
         assert.equal(edits[0].range, range);

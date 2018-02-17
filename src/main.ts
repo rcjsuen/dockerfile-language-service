@@ -42,7 +42,7 @@ export interface DockerfileLanguageService {
 
     computeCodeActions(textDocument: TextDocumentIdentifier, range: Range, context: CodeActionContext): Command[];
 
-    createWorkspaceEdit(content: string, command: string, args: any[]): WorkspaceEdit | null;
+    computeCommandEdits(content: string, command: string, args: any[]): TextEdit[];
 
     computeCompletionItems(content: string, position: Position, snippetSupport: boolean): CompletionItem[] | PromiseLike<CompletionItem[]>;
 
