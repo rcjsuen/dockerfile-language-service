@@ -17,7 +17,8 @@ var editor = monaco.editor.create(document.getElementById("container"), {
     language: LANGUAGE_ID,
     model: monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI),
     glyphMargin: true,
-    formatOnType: true
+    formatOnType: true,
+    theme: "vs-dark"
 });
 var monacoModel = monaco.editor.getModel(MONACO_URI);
 var service = dockerfile_language_service_1.DockerfileLanguageServiceFactory.createLanguageService();

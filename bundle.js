@@ -17844,7 +17844,8 @@ var editor = monaco.editor.create(document.getElementById("container"), {
     language: LANGUAGE_ID,
     model: monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI),
     glyphMargin: true,
-    formatOnType: true
+    formatOnType: true,
+    theme: "vs-dark"
 });
 var monacoModel = monaco.editor.getModel(MONACO_URI);
 var service = dockerfile_language_service_1.DockerfileLanguageServiceFactory.createLanguageService();
@@ -18010,8 +18011,6 @@ for (var i = 0, len = code.length; i < len; ++i) {
   revLookup[code.charCodeAt(i)] = i
 }
 
-// Support decoding URL-safe base64 strings, as Node.js does.
-// See: https://en.wikipedia.org/wiki/Base64#URL_applications
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
@@ -18073,7 +18072,7 @@ function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
+    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
