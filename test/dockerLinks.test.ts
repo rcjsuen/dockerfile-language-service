@@ -19,7 +19,7 @@ function assertLink(documentLink: DocumentLink, target: string, startLine: numbe
 
 describe("Dockerfile links", function () {
     it("FROM", function () {
-        let links = service.computeLinks("FROM node");
+        let links = service.computeLinks("FROM");
         assert.equal(links.length, 0);
     });
 
