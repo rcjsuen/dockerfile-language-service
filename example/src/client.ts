@@ -26,7 +26,8 @@ const editor = monaco.editor.create(document.getElementById("container")!, {
     language: LANGUAGE_ID,
     model: monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI),
     glyphMargin: true,
-    formatOnType: true
+    formatOnType: true,
+    theme: "vs-dark"
 });
 
 const monacoModel = monaco.editor.getModel(MONACO_URI);

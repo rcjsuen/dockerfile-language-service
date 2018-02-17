@@ -15,6 +15,15 @@
         margin: 0;
     }
 
+    p {
+        margin: 0;
+        font-family: 'Segoe UI', 'Calibri', 'Arial', 'sans-serif';
+    }
+
+    #combo {
+        font-family: 'Segoe UI', 'Calibri', 'Arial', 'sans-serif';
+    }
+
     #container {
         margin: 0;
         border: 0;
@@ -24,7 +33,19 @@
 </style>
 
 <body>
+    <p>
+        Theme change:
+        <select id="combo" onchange="changeTheme(value);">
+            <option value="vs">light</option>
+            <option selected="selected" value="vs-dark">dark</option>
+        </select>
+    </p>
     <div id="container"></div>
 </body>
+<script>
+    function changeTheme(value) {
+        monaco.editor.setTheme(value);
+    }
+</script>
 
 </html>
