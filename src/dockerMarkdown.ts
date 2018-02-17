@@ -10,7 +10,7 @@ export class MarkdownDocumentation {
 
     private dockerMessages = {
         "hoverAdd": "Copy files, folders, or remote URLs from `source` to the `dest` path in the image's filesystem.\n\n",
-        "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\n",
+        "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\nSince Docker 1.9\n\n",
         "hoverCmd": "Provide defaults for an executing container. If an executable is not specified, then `ENTRYPOINT` must be specified as well. There can only be one `CMD` instruction in a `Dockerfile`.\n\n",
         "hoverCopy": "Copy files or folders from `source` to the `dest` path in the image's filesystem.\n\n",
         "hoverEntrypoint": "Configures the container to be run as an executable.\n\n",
