@@ -278,6 +278,21 @@ describe("Dockerfile formatter", function () {
                 assert.equal(edits[1].range.start.character, 0);
                 assert.equal(edits[1].range.end.line, 1);
                 assert.equal(edits[1].range.end.character, 2);
+
+                content = "  \r\n  ";
+                range = Range.create(Position.create(0, 1), Position.create(1, 1));
+                edits = formatRange(content, range);
+                assert.equal(edits.length, 2);
+                assert.equal(edits[0].newText, "");
+                assert.equal(edits[0].range.start.line, 0);
+                assert.equal(edits[0].range.start.character, 0);
+                assert.equal(edits[0].range.end.line, 0);
+                assert.equal(edits[0].range.end.character, 2);
+                assert.equal(edits[1].newText, "");
+                assert.equal(edits[1].range.start.line, 1);
+                assert.equal(edits[1].range.start.character, 0);
+                assert.equal(edits[1].range.end.line, 1);
+                assert.equal(edits[1].range.end.character, 2);
             });
 
 			/**
