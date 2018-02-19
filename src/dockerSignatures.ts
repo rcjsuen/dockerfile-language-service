@@ -1012,6 +1012,12 @@ export class DockerSignatures {
                     documentation: this.documentation.getDocumentation("signatureFrom_Signature3_Param0")
                 },
                 {
+                    // placeholder parameter to get the activeParameter to line
+                    // up with all three signature types of FROM
+                    // see rcjsuen/dockerfile-language-service#8
+                    label: ""
+                },
+                {
                     label: "AS",
                 },
                 {
@@ -1103,22 +1109,20 @@ export class DockerSignatures {
         const inDigest = digest && Util.isInsideRange(position, from.getImageDigestRange());
         if (args.length === 1) {
             if (args[0].isBefore(position)) {
-                return tag || digest ? 2 : 1;
+                return 2;
             }
-            return inTag || inDigest ? 1 : 0;
         } else if (args.length === 2) {
             if (args[1].isBefore(position)) {
-                return tag || digest ? 3 : 2;
+                return 3;
             } else if (Util.isInsideRange(position, args[1].getRange()) || args[0].isBefore(position)) {
-                return tag || digest ? 2 : 1;
+                return 2;
             }
-            return inTag || inDigest ? 1 : 0;
-        }
-
-        if (Util.isInsideRange(position, args[2].getRange()) || args[1].isBefore(position)) {
-            return tag || digest ? 3 : 2;
-        } else if (Util.isInsideRange(position, args[1].getRange()) || args[0].isBefore(position)) {
-            return tag || digest ? 2 : 1;
+        } else {
+            if (Util.isInsideRange(position, args[2].getRange()) || args[1].isBefore(position)) {
+                return 3;
+            } else if (Util.isInsideRange(position, args[1].getRange()) || args[0].isBefore(position)) {
+                return 2;
+            }
         }
         return inTag || inDigest ? 1 : 0;
     }

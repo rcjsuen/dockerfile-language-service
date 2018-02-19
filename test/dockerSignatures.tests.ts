@@ -568,15 +568,17 @@ function assertFrom_Image_BuildStage(signature: SignatureInformation) {
     assert.equal(signature.label, "FROM baseImage AS stage");
     assert.notEqual(signature.documentation, null);
     assert.equal(signature.documentation, docs.getDocumentation("signatureFrom_Signature3"));
-    assert.equal(signature.parameters.length, 3);
+    assert.equal(signature.parameters.length, 4);
     assert.equal(signature.parameters[0].label, "baseImage");
     assert.notEqual(signature.parameters[0].documentation, null);
     assert.equal(signature.parameters[0].documentation, docs.getDocumentation("signatureFrom_Signature3_Param0"));
-    assert.equal(signature.parameters[1].label, "AS");
+    assert.equal(signature.parameters[1].label, "");
     assert.equal(signature.parameters[1].documentation, null);
-    assert.equal(signature.parameters[2].label, "stage");
-    assert.notEqual(signature.parameters[2].documentation, null);
-    assert.equal(signature.parameters[2].documentation, docs.getDocumentation("signatureFrom_Signature3_Param2"));
+    assert.equal(signature.parameters[2].label, "AS");
+    assert.equal(signature.parameters[2].documentation, null);
+    assert.equal(signature.parameters[3].label, "stage");
+    assert.notEqual(signature.parameters[3].documentation, null);
+    assert.equal(signature.parameters[3].documentation, docs.getDocumentation("signatureFrom_Signature3_Param2"));
 }
 
 function assertFrom_ImageTag_BuildStage(signature: SignatureInformation) {
@@ -1562,26 +1564,26 @@ describe("Dockerfile Signature Tests", function () {
         });
 
         it("stages", function () {
-            assertFrom_BuildStages(compute("FROM node ", 0, 10), 1);
+            assertFrom_BuildStages(compute("FROM node ", 0, 10), 2);
 
             assertFrom_BuildStages(compute("FROM node AS", 0, 5), 0);
             assertFrom_BuildStages(compute("FROM node AS", 0, 7), 0);
             assertFrom_BuildStages(compute("FROM node AS", 0, 9), 0);
-            assertFrom_BuildStages(compute("FROM node AS", 0, 10), 1);
-            assertFrom_BuildStages(compute("FROM node AS", 0, 11), 1);
-            assertFrom_BuildStages(compute("FROM node AS", 0, 12), 1);
+            assertFrom_BuildStages(compute("FROM node AS", 0, 10), 2);
+            assertFrom_BuildStages(compute("FROM node AS", 0, 11), 2);
+            assertFrom_BuildStages(compute("FROM node AS", 0, 12), 2);
 
-            assertFrom_BuildStages(compute("FROM node AS ", 0, 13), 2);
+            assertFrom_BuildStages(compute("FROM node AS ", 0, 13), 3);
 
             assertFrom_BuildStages(compute("FROM node AS js", 0, 5), 0);
             assertFrom_BuildStages(compute("FROM node AS js", 0, 7), 0);
             assertFrom_BuildStages(compute("FROM node AS js", 0, 9), 0);
-            assertFrom_BuildStages(compute("FROM node AS js", 0, 10), 1);
-            assertFrom_BuildStages(compute("FROM node AS js", 0, 11), 1);
-            assertFrom_BuildStages(compute("FROM node AS js", 0, 12), 1);
-            assertFrom_BuildStages(compute("FROM node AS js", 0, 13), 2);
-            assertFrom_BuildStages(compute("FROM node AS js", 0, 14), 2);
-            assertFrom_BuildStages(compute("FROM node AS js", 0, 15), 2);
+            assertFrom_BuildStages(compute("FROM node AS js", 0, 10), 2);
+            assertFrom_BuildStages(compute("FROM node AS js", 0, 11), 2);
+            assertFrom_BuildStages(compute("FROM node AS js", 0, 12), 2);
+            assertFrom_BuildStages(compute("FROM node AS js", 0, 13), 3);
+            assertFrom_BuildStages(compute("FROM node AS js", 0, 14), 3);
+            assertFrom_BuildStages(compute("FROM node AS js", 0, 15), 3);
         });
 
         it("tags and stages", function () {
