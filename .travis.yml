@@ -30,7 +30,7 @@ install:
   - cd example
   - npm install
   - npm run build
-  - cd..
+  - cd ..
   - npm pack
 
 script:
