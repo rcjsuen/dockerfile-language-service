@@ -26,16 +26,12 @@ git:
 install:
   - npm install
   - npm install coveralls --save-dev
-
-before_script:
-  - npm run build;
-
-script:
-  - npm run nyc-ci
-
-after_success:
-  - npm run coverage
-  - npm pack
+  - npm run build
   - cd example
   - npm install
   - npm run build
+  - npm pack
+
+script:
+  - npm run nyc-ci
+  - npm run coverage
