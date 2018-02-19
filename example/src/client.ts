@@ -48,9 +48,10 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
             (editor as any)._commandService.addCommand(command.command, {
                 handler: () => {
                     const args = command.arguments as any[];
-                    const edits = service.createWorkspaceEdit(monacoModel.getValue(), command.command, args);
+                    const edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
                     if (edits) {
-                        const mEdits: monaco.languages.WorkspaceEdit = p2m.asWorkspaceEdit(edits);
+                        const workspaceEdit = { changes: { [ MODEL_URI ] : edits }};
+                        const mEdits: monaco.languages.WorkspaceEdit = p2m.asWorkspaceEdit(workspaceEdit);
                         const rEdits = mEdits.edits.map((edit) => {
                             return {
                                 identifier: { major: 1, minor: 0 },
