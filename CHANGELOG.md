@@ -49,4 +49,4 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-server-nodejs/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.1...HEAD
