@@ -98,7 +98,7 @@ monaco.languages.registerDefinitionProvider(LANGUAGE_ID, {
 
 monaco.languages.registerDocumentHighlightProvider(LANGUAGE_ID, {
     provideDocumentHighlights(model, position, token): monaco.languages.DocumentHighlight[] {
-        const highlightRanges = service.computeHighlightRanges(LSP_URI, model.getValue(), m2p.asPosition(position.lineNumber, position.column));
+        const highlightRanges = service.computeHighlightRanges(model.getValue(), m2p.asPosition(position.lineNumber, position.column));
         return p2m.asDocumentHighlights(highlightRanges);
     }
 });
