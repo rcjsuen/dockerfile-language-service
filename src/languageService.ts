@@ -64,9 +64,9 @@ export class LanguageService implements DockerfileLanguageService {
         return dockerDefinition.computeDefinition(textDocument, content, position);
     }
 
-    public computeHighlightRanges(textDocument: TextDocumentIdentifier, content: string, position: Position): DocumentHighlight[] {
+    public computeHighlightRanges(content: string, position: Position): DocumentHighlight[] {
         let dockerHighlight = new DockerHighlight();
-        return dockerHighlight.computeHighlightRanges(textDocument, content, position);
+        return dockerHighlight.computeHighlightRanges(content, position);
     }
 
     public computeHover(content: string, position: Position): Hover | null {

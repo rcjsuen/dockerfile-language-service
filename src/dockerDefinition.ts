@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { Position, Location, TextDocumentIdentifier } from 'vscode-languageserver-types';
+import { Position, Range, Location, TextDocumentIdentifier } from 'vscode-languageserver-types';
 import { Util } from './docker';
 import {
     DockerfileParser, Dockerfile, ImageTemplate,
@@ -13,7 +13,7 @@ import {
 
 export class DockerDefinition {
 
-    private computeBuildStageDefinition(uri: string, dockerfile: Dockerfile, position: Position): Location | null {
+    private computeBuildStageDefinition(dockerfile: Dockerfile, position: Position): Range | null {
         let source = undefined;
         for (let instruction of dockerfile.getCOPYs()) {
             let flag = instruction.getFromFlag();
@@ -30,7 +30,7 @@ export class DockerDefinition {
             let range = instruction.getBuildStageRange();
             if (range &&
                 ((range.start.line === position.line && range.start.character <= position.character && position.character <= range.end.character) || (instruction.getBuildStage() === source))) {
-                return Location.create(uri, range);
+                return range;
             }
         }
         return null;
@@ -111,20 +111,26 @@ export class DockerDefinition {
         return DockerDefinition.computeVariableDefinition(image, position);
     }
 
-    private computeVariableDefinition(uri: string, dockerfile: Dockerfile, position: Position): Location | null {
+    private computeVariableDefinition(dockerfile: Dockerfile, position: Position): Range | null {
         const property = DockerDefinition.findDefinition(dockerfile, position);
-        return property ? Location.create(uri, property.getNameRange()) : null;
+        return property ? property.getNameRange() : null;
+    }
+
+    public computeDefinitionRange(content: string, position: Position): Range | null {
+        let dockerfile = DockerfileParser.parse(content);
+        let range = this.computeBuildStageDefinition(dockerfile, position);
+        return range ? range : this.computeVariableDefinition(dockerfile, position);
     }
 
     public computeDefinition(textDocument: TextDocumentIdentifier, content: string, position: Position): Location | null {
         let dockerfile = DockerfileParser.parse(content);
-        let definition = this.computeBuildStageDefinition(textDocument.uri, dockerfile, position);
-        if (definition !== null) {
-            return definition;
+        let range = this.computeBuildStageDefinition(dockerfile, position);
+        if (range !== null) {
+            return Location.create(textDocument.uri, range);
         }
-        definition = this.computeVariableDefinition(textDocument.uri, dockerfile, position);
-        if (definition !== null) {
-            return definition;
+        range = this.computeVariableDefinition(dockerfile, position);
+        if (range !== null) {
+            return Location.create(textDocument.uri, range);
         }
 
         return null;

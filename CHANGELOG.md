@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 - new computeCommandEdits function to DockerfileLanguageService ([#4](https://github.com/rcjsuen/dockerfile-language-service/issues/4))
 - update documentation to state that ARG was introduced in Docker 1.9 ([#7](https://github.com/rcjsuen/dockerfile-language-service/issues/7))
 
+### Changed
+- change the signature of DockerfileLanguageService's computeHighlightRanges function by removing its first URI string parameter ([#15](https://github.com/rcjsuen/dockerfile-language-service/issues/15))
+```TypeScript
+import { Position } from 'vscode-languageserver-types';
+// removed
+let ranges = service.computeHighlightRanges(uri, content, Position.create(3, 1));
+// replace the above with the following
+let ranges = service.computeHighlightRanges(content, Position.create(3, 1));
+```
+
 ### Fixed
 - change documentation to state that STOPSIGNAL was added in Docker 1.9 instead of Docker 1.12 ([#6](https://github.com/rcjsuen/dockerfile-language-service/issues/6))
 - align active parameter amongst all displayed signatures for a FROM with a build stage name ([#8](https://github.com/rcjsuen/dockerfile-language-service/issues/8))

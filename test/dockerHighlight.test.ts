@@ -10,7 +10,7 @@ import { DockerfileLanguageServiceFactory } from '../src/main';
 let service = DockerfileLanguageServiceFactory.createLanguageService();
 
 function computeHighlightRanges(content: string, line: number, character: number): DocumentHighlight[] {
-    return service.computeHighlightRanges(TextDocumentIdentifier.create(""), content, Position.create(line, character));
+    return service.computeHighlightRanges(content, Position.create(line, character));
 }
 
 function assertHighlight(highlight: DocumentHighlight, kind: DocumentHighlightKind, startLine: number, startCharacter: number, endLine: number, endCharacter: number) {

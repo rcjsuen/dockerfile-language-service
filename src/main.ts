@@ -50,7 +50,7 @@ export interface DockerfileLanguageService {
 
     computeDefinition(textDocument: TextDocumentIdentifier, content: string, position: Position): Location;
 
-    computeHighlightRanges(textDocument: TextDocumentIdentifier, content: string, position: Position): DocumentHighlight[];
+    computeHighlightRanges(content: string, position: Position): DocumentHighlight[];
 
     computeHover(content: string, position: Position): Hover | null;
 
