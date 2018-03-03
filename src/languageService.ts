@@ -90,7 +90,7 @@ export class LanguageService implements DockerfileLanguageService {
     }
 
     public validate(content: string, settings?: DockerfileUtils.ValidatorSettings): Diagnostic[] {
-        return DockerfileUtils.validate(content);
+        return DockerfileUtils.validate(content, settings);
     }
 
     public format(content: string, options: FormattingOptions): TextEdit[] {
