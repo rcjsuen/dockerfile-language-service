@@ -28,7 +28,7 @@ let ranges = service.computeHighlightRanges(content, Position.create(3, 1));
 - replaced DockerfileLanguageService's createWorkspaceEdit with a computeCommandEdits function ([#4](https://github.com/rcjsuen/dockerfile-language-service/issues/4))
 ```TypeScript
 // removed
-let workspaceEdit = service.computeCommandEdits(dockerfileContent, commandId, args);
+let workspaceEdit = service.createWorkspaceEdit(dockerfileContent, commandId, args);
 // replace the above with the following
 let uri = ...; // the URI of the opened Dockerfile
 let edits = service.computeCommandEdits(dockerfileContent, commandId, args);
