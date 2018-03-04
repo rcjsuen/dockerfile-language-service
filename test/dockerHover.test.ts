@@ -145,7 +145,7 @@ describe("Dockerfile hover", function () {
             assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
             assert.equal(hover.range, undefined);
 
-            hover = onHover(content, 1, 1);
+            hover = onHover(content, 1, 0);
             assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
             assert.equal(hover.range, undefined);
 
