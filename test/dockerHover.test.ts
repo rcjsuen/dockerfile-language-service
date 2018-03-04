@@ -166,11 +166,6 @@ describe("Dockerfile hover", function () {
             assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
             assert.equal(hover.range, undefined);
 
-            content = "FROM node\rEXPOSE 8081";
-            hover = onHover(content, 1, 4);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
-
             content = "FROM node\r\nEXPOSE 8081";
             hover = onHover(content, 1, 4);
             assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
