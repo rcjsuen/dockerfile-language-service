@@ -38,8 +38,14 @@ describe("Dockerfile hover", function () {
 
     describe("comments", function () {
         it("# FROM node", function () {
-            let content = "3";
+            let content = "# FROM node";
             let hover = onHover(content, 0, 0);
+            assert.equal(hover, null);
+            hover = onHover(content, 0, 2);
+            assert.equal(hover, null);
+            hover = onHover(content, 0, 4);
+            assert.equal(hover, null);
+            hover = onHover(content, 0, 6);
             assert.equal(hover, null);
         });
     });
@@ -178,6 +184,22 @@ describe("Dockerfile hover", function () {
             assert.equal(hover, null);
 
             hover = onHover(content, 0, 3);
+            assert.equal(hover, null);
+        });
+
+        it("unknown", function () {
+            let content = "3";
+            let hover = onHover(content, 0, 0);
+            assert.equal(hover, null);
+            hover = onHover(content, 0, 1);
+            assert.equal(hover, null);
+
+            content = "UNKNOWN arg";
+            hover = onHover(content, 0, 0);
+            assert.equal(hover, null);
+            hover = onHover(content, 0, 4);
+            assert.equal(hover, null);
+            hover = onHover(content, 0, 7);
             assert.equal(hover, null);
         });
 
