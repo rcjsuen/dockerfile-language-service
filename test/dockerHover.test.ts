@@ -1553,6 +1553,7 @@ describe("Dockerfile hover", function () {
                     hover = onHover(content, 0, 16);
                     assert.equal(hover.contents, "value2");
                     hover = onHover(content, 1, 20);
+                    assert.equal(hover.contents, "value2");
 
                     content = "ENV var=value \\\nvar2=value2 \\\nvar3=value3\nRUN echo ${var} ${var2} ${var3}";
                     hover = onHover(content, 0, 6);
@@ -1578,6 +1579,7 @@ describe("Dockerfile hover", function () {
                     hover = onHover(content, 0, 16);
                     assert.equal(hover.contents, "value2");
                     hover = onHover(content, 1, 17);
+                    assert.equal(hover.contents, "value2");
 
                     content = "ENV var=value \\\nvar2=value2 \\\nvar3=value3\nRUN echo $var $var2 $var3";
                     hover = onHover(content, 0, 6);
