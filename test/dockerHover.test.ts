@@ -97,10 +97,6 @@ describe("Dockerfile hover", function () {
             hover = onHover(content, 1, 4);
             assert.equal(hover, null);
 
-            content = "\r#escape";
-            hover = onHover(content, 1, 4);
-            assert.equal(hover, null);
-
             content = "\r\n#escape";
             hover = onHover(content, 1, 4);
             assert.equal(hover, null);
