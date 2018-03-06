@@ -1571,7 +1571,7 @@ describe("Dockerfile hover", function () {
                 });
 
                 it("$var", function () {
-                    let content = "ENV var=value var2=value2\nRUN echo ${var} ${var2}";
+                    let content = "ENV var=value var2=value2\nRUN echo $var $var2";
                     let hover = onHover(content, 0, 6);
                     assert.equal(hover.contents, "value");
                     hover = onHover(content, 1, 11);
