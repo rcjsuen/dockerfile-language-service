@@ -20,7 +20,8 @@ function compute(content: string, offset: number, snippetSupport?: boolean): Com
     }
     let document = createDocument(content);
     let service = DockerfileLanguageServiceFactory.createLanguageService();
-    let items = service.computeCompletionItems(content, document.positionAt(offset), snippetSupport);
+    service.setCapabilities({ completion: { completionItem: { snippetSupport: snippetSupport } }});
+    let items = service.computeCompletionItems(content, document.positionAt(offset));
     return items as CompletionItem[];
 }
 
@@ -29,7 +30,8 @@ function computePosition(content: string, line: number, character: number, snipp
         snippetSupport = true;
     }
     let service = DockerfileLanguageServiceFactory.createLanguageService();
-    let items = service.computeCompletionItems(content, Position.create(line, character), snippetSupport);
+    service.setCapabilities({ completion: { completionItem: { snippetSupport: snippetSupport } }});
+    let items = service.computeCompletionItems(content, Position.create(line, character));
     return items as CompletionItem[];
 }
 

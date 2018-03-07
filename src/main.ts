@@ -40,6 +40,21 @@ export namespace DockerfileLanguageServiceFactory {
 
 export interface Capabilities {
     /**
+     * Capabilities related to completion requests.
+     */
+    completion?: {
+        /**
+         * Capabilities related to completion items.
+         */
+        completionItem?: {
+            /**
+             * Indicates whether the snippet syntax should be used in
+             * returned completion items.
+             */
+            snippetSupport?: boolean;
+        }
+    };
+    /**
      * Capabilities related to hover requests.
      */
     hover?: {
@@ -58,7 +73,7 @@ export interface DockerfileLanguageService {
 
     computeCommandEdits(content: string, command: string, args: any[]): TextEdit[];
 
-    computeCompletionItems(content: string, position: Position, snippetSupport: boolean): CompletionItem[] | PromiseLike<CompletionItem[]>;
+    computeCompletionItems(content: string, position: Position): CompletionItem[] | PromiseLike<CompletionItem[]>;
 
     resolveCompletionItem(item: CompletionItem): CompletionItem;
 

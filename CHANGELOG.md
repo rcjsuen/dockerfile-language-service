@@ -7,6 +7,21 @@ All notable changes to this project will be documented in this file.
 ```TypeScript
 interface Capabilities {
     /**
+     * Capabilities related to completion requests.
+     */
+    completion?: {
+        /**
+         * Capabilities related to completion items.
+         */
+        completionItem?: {
+            /**
+             * Indicates whether the snippet syntax should be used in
+             * returned completion items.
+             */
+            snippetSupport?: boolean;
+        }
+    };
+    /**
      * Capabilities related to hover requests.
      */
     hover?: {
@@ -29,6 +44,15 @@ import { Position } from 'vscode-languageserver-types';
 let ranges = service.computeHighlightRanges(uri, content, Position.create(3, 1));
 // replace the above with the following
 let ranges = service.computeHighlightRanges(content, Position.create(3, 1));
+```
+- change the signature of DockerfileLanguageService's computeCompletionItems function by removing its final boolean parameter ([#23](https://github.com/rcjsuen/dockerfile-language-service/issues/23))
+```TypeScript
+import { Position } from 'vscode-languageserver-types';
+// removed
+let ranges = service.computeCompletionItems(content, Position.create(3, 1), true);
+// replace the above with the following
+service.setCapabilities({ completion: { completionItem: { snippetSupport: true } }});
+let ranges = service.computeCompletionItems(content, Position.create(3, 1));
 ```
 
 ### Fixed

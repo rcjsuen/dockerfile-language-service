@@ -14,7 +14,7 @@ let dockerRegistryClient = new DockerRegistryClient(null);
 
 function computePromise(content: string, line: number, character: number): PromiseLike<CompletionItem[]> {
     let service = DockerfileLanguageServiceFactory.createLanguageService();
-    let items = service.computeCompletionItems(content, Position.create(line, character), false);
+    let items = service.computeCompletionItems(content, Position.create(line, character));
     return items as PromiseLike<CompletionItem[]>;
 }
 

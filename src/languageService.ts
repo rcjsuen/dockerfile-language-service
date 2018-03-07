@@ -28,6 +28,7 @@ export class LanguageService implements DockerfileLanguageService {
     private logger: ILogger;
 
     private markupKind: MarkupKind[];
+    private snippetSupport: boolean = false;
 
     public setLogger(logger: ILogger): void {
         this.logger = logger;
@@ -35,6 +36,7 @@ export class LanguageService implements DockerfileLanguageService {
 
     public setCapabilities(capabilities: Capabilities) {
         this.markupKind = capabilities && capabilities.hover && capabilities.hover.contentFormat;
+        this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
     }
 
     public computeCodeActions(textDocument: TextDocumentIdentifier, range: Range, context: CodeActionContext): Command[] {
@@ -52,9 +54,9 @@ export class LanguageService implements DockerfileLanguageService {
         return dockerCommands.computeCommandEdits(content, command, args);
     }
 
-    public computeCompletionItems(content: string, position: Position, snippetSupport: boolean): CompletionItem[] | PromiseLike<CompletionItem[]> {
+    public computeCompletionItems(content: string, position: Position): CompletionItem[] | PromiseLike<CompletionItem[]> {
         const document = TextDocument.create("", "", 0, content);
-        const dockerAssist = new DockerAssist(document, snippetSupport, new DockerRegistryClient(this.logger));
+        const dockerAssist = new DockerAssist(document, this.snippetSupport, new DockerRegistryClient(this.logger));
         return dockerAssist.computeProposals(position);
     }
 
