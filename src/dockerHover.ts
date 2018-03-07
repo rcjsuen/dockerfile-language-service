@@ -24,6 +24,11 @@ export class DockerHover {
     public onHover(content: string, position: Position, markupKind: MarkupKind[]): Hover | null {
         let dockerfile = DockerfileParser.parse(content);
         let image = dockerfile.getContainingImage(position);
+        if (!image) {
+            // position is invalid, not inside the Dockerfile
+            return null;
+        }
+
         let key = this.computeHoverKey(dockerfile, position);
         if (key) {
             // if it's not a raw value, apply markup if necessary

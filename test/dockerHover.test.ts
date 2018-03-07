@@ -107,6 +107,11 @@ describe("Dockerfile hover", function () {
             let content = "\t\t\t\t";
             assertNullHover(content, 0, 2);
         });
+
+        it("invalid range", function() {
+            let content = "    ";
+            assertNullHover(content, 1, 2);
+        });
     });
 
     describe("comments", function () {
