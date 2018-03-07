@@ -32,6 +32,7 @@ const editor = monaco.editor.create(document.getElementById("container")!, {
 
 const monacoModel = monaco.editor.getModel(MONACO_URI);
 const service = DockerfileLanguageServiceFactory.createLanguageService();
+service.setCapabilities({ completion: { completionItem: { snippetSupport: true }}});
 const m2p = new MonacoToProtocolConverter();
 const p2m = new ProtocolToMonacoConverter();
 
@@ -74,7 +75,7 @@ monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
 
     provideCompletionItems(model, position, token): monaco.languages.CompletionItem[] | Thenable<monaco.languages.CompletionItem[]> | monaco.languages.CompletionList | Thenable<monaco.languages.CompletionList> {
         const lspPosition = m2p.asPosition(position.lineNumber, position.column);
-        const items = service.computeCompletionItems(model.getValue(), lspPosition, true);
+        const items = service.computeCompletionItems(model.getValue(), lspPosition);
         if ((items as any).then) {
             return (items as any).then((result: any) => {
                 return p2m.asCompletionResult(result);
