@@ -3,8 +3,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- new Capabilities interface for defining what features the language service should support and enable
+```TypeScript
+interface Capabilities {
+    /**
+     * Capabilities related to hover requests.
+     */
+    hover?: {
+        /**
+         * Describes the content type that should be returned for hovers.
+         */
+        contentFormat?: MarkupKind[];
+    }
+}
+```
 - new computeCommandEdits function to DockerfileLanguageService ([#4](https://github.com/rcjsuen/dockerfile-language-service/issues/4))
 - update documentation to state that ARG was introduced in Docker 1.9 ([#7](https://github.com/rcjsuen/dockerfile-language-service/issues/7))
+- allow hover information to be returned in Markdown or plain text ([#14](https://github.com/rcjsuen/dockerfile-language-service/issues/14))
 
 ### Changed
 - change the signature of DockerfileLanguageService's computeHighlightRanges function by removing its first URI string parameter ([#15](https://github.com/rcjsuen/dockerfile-language-service/issues/15))

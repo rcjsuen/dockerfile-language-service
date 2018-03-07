@@ -4,29 +4,76 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { TextDocument, Hover, Position } from 'vscode-languageserver-types';
-import { DockerfileParser, Arg, Env, Instruction, ModifiableInstruction, Onbuild, Directive } from 'dockerfile-ast';
+import { TextDocument, Hover, Position, MarkupKind, MarkupContent } from 'vscode-languageserver-types';
+import { DockerfileParser, Dockerfile, Arg, Env, Instruction, ModifiableInstruction, Onbuild, Directive } from 'dockerfile-ast';
 import { Util } from './docker';
 import { MarkdownDocumentation } from './dockerMarkdown';
 import { DockerDefinition } from './dockerDefinition';
+import { PlainTextDocumentation } from './dockerPlainText';
 
 export class DockerHover {
 
     private markdown: MarkdownDocumentation;
+    private plainText: PlainTextDocumentation;
 
-    constructor(markdown: MarkdownDocumentation) {
+    constructor(markdown: MarkdownDocumentation, plainText: PlainTextDocumentation) {
         this.markdown = markdown;
+        this.plainText = plainText;
     }
 
-    onHover(content: string, position: Position): Hover | null {
+    public onHover(content: string, position: Position, markupKind: MarkupKind[]): Hover | null {
         let dockerfile = DockerfileParser.parse(content);
-        let directive = dockerfile.getDirective();
         let image = dockerfile.getContainingImage(position);
+        let key = this.computeHoverKey(dockerfile, position);
+        if (key) {
+            // if it's not a raw value, apply markup if necessary
+            if (markupKind && markupKind.length > 0) {
+                switch (markupKind[0]) {
+                    case MarkupKind.Markdown:
+                        let markdownDocumentation = this.markdown.getMarkdown(key);
+                        if (markdownDocumentation) {
+                            return {
+                                contents: {
+                                    kind: MarkupKind.Markdown,
+                                    value: markdownDocumentation.contents as string
+                                }
+                            };
+                        }
+                        return null;
+                    case MarkupKind.PlainText:
+                        let plainTextDocumentation = this.plainText.getDocumentation(key);
+                        if (plainTextDocumentation) {
+                            return {
+                                contents: {
+                                    kind: MarkupKind.PlainText,
+                                    value: plainTextDocumentation
+                                }
+                            };
+                        }
+                }
+                return null;
+            }
+            return this.markdown.getMarkdown(key);
+        }
 
-        if (position.line === 0 && directive !== null && directive.getDirective() === Directive.escape) {
-            let range = directive.getNameRange();
-            if (Util.isInsideRange(position, range)) {
-                return this.markdown.getMarkdown(Directive.escape);
+        for (let instruction of image.getInstructions()) {
+            if (instruction instanceof Arg) {
+                // hovering over an argument defined by ARG
+                let property = instruction.getProperty();
+                if (property && Util.isInsideRange(position, property.getNameRange()) && property.getValue() !== null) {
+                    return { contents: property.getValue() };
+                }
+            }
+
+            if (instruction instanceof Env) {
+                // hovering over an argument defined by ENV
+                for (let property of instruction.getProperties()) {
+                    if (Util.isInsideRange(position, property.getNameRange()) && property.getValue() !== null) {
+                        return {
+                            contents: property.getValue()
+                        };
+                    }
+                }
             }
         }
 
@@ -44,47 +91,6 @@ export class DockerHover {
             }
         }
 
-        for (let instruction of image.getInstructions()) {
-            let instructionRange = instruction.getInstructionRange();
-            if (Util.isInsideRange(position, instructionRange)) {
-                return this.markdown.getMarkdown(instruction.getKeyword());
-            }
-
-            if (instruction instanceof Onbuild) {
-                // hovering over a trigger instruction of an ONBUILD
-                let range = instruction.getTriggerRange();
-                if (Util.isInsideRange(position, range)) {
-                    return this.markdown.getMarkdown(instruction.getTrigger());
-                }
-            }
-
-            if (instruction instanceof Arg) {
-                // hovering over an argument defined by ARG
-                let property = instruction.getProperty();
-                if (property && Util.isInsideRange(position, property.getNameRange()) && property.getValue() !== null) {
-                    return {
-                        contents: property.getValue()
-                    };
-                }
-            }
-
-            if (instruction instanceof Env) {
-                // hovering over an argument defined by ENV
-                for (let property of instruction.getProperties()) {
-                    if (Util.isInsideRange(position, property.getNameRange()) && property.getValue() !== null) {
-                        return {
-                            contents: property.getValue()
-                        };
-                    }
-                }
-            }
-
-            let hover = this.getFlagsHover(position, instruction);
-            if (hover !== undefined) {
-                return hover;
-            }
-        }
-
         let property = DockerDefinition.findDefinition(dockerfile, position);
         if (property && property.getValue() !== null) {
             return { contents: property.getValue() };
@@ -93,7 +99,48 @@ export class DockerHover {
         return null;
     }
 
-    private getFlagsHover(position: Position, instruction: Instruction): Hover {
+    /**
+     * Analyzes the Dockerfile at the given position to determine if the user
+     * is hovering over a keyword, a flag, or a directive.
+     * 
+     * @param dockerfile the Dockerfile to check
+     * @param position the place that the user is hovering over
+     * @return the string key value for the keyword, flag, or directive that's
+     *         being hovered over, or null if the user isn't hovering over
+     *         such a word
+     */
+    private computeHoverKey(dockerfile: Dockerfile, position: Position): string | null {
+        let directive = dockerfile.getDirective();
+        let image = dockerfile.getContainingImage(position);
+        if (position.line === 0 && directive !== null && directive.getDirective() === Directive.escape) {
+            let range = directive.getNameRange();
+            if (Util.isInsideRange(position, range)) {
+                return Directive.escape;
+            }
+        }
+
+        for (let instruction of image.getInstructions()) {
+            let instructionRange = instruction.getInstructionRange();
+            if (Util.isInsideRange(position, instructionRange)) {
+                return instruction.getKeyword();
+            }
+
+            if (instruction instanceof Onbuild) {
+                // hovering over a trigger instruction of an ONBUILD
+                let range = instruction.getTriggerRange();
+                if (Util.isInsideRange(position, range)) {
+                    return instruction.getTrigger();
+                }
+            }
+
+            let hover = this.getFlagsHover(position, instruction);
+            if (hover !== null) {
+                return hover;
+            }
+        }
+    }
+
+    private getFlagsHover(position: Position, instruction: Instruction): string | null {
         switch (instruction.getKeyword()) {
             case "ADD":
                 let addFlags = (instruction as ModifiableInstruction).getFlags();
@@ -101,7 +148,7 @@ export class DockerHover {
                     if (Util.isInsideRange(position, flag.getNameRange())) {
                         switch (flag.getName()) {
                             case "chown":
-                                return this.markdown.getMarkdown("ADD_FlagChown");
+                                return "ADD_FlagChown";
                         }
                     }
                 }
@@ -112,9 +159,9 @@ export class DockerHover {
                     if (Util.isInsideRange(position, flag.getNameRange())) {
                         switch (flag.getName()) {
                             case "chown":
-                                return this.markdown.getMarkdown("COPY_FlagChown");
+                                return "COPY_FlagChown";
                             case "from":
-                                return this.markdown.getMarkdown("COPY_FlagFrom");
+                                return "COPY_FlagFrom";
                         }
                     }
                 }
@@ -125,13 +172,13 @@ export class DockerHover {
                     if (Util.isInsideRange(position, flag.getNameRange())) {
                         switch (flag.getName()) {
                             case "interval":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagInterval");
+                                return "HEALTHCHECK_FlagInterval";
                             case "retries":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagRetries");
+                                return "HEALTHCHECK_FlagRetries";
                             case "start-period":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagStartPeriod");
+                                return "HEALTHCHECK_FlagStartPeriod";
                             case "timeout":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagTimeout");
+                                return "HEALTHCHECK_FlagTimeout";
                         }
                         return null;
                     }
@@ -144,6 +191,6 @@ export class DockerHover {
                 }
                 break;
         }
-        return undefined;
+        return null;
     }
 }

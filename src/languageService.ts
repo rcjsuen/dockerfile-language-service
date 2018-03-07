@@ -2,9 +2,9 @@
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { DockerfileLanguageService, ILogger } from "./main";
+import { DockerfileLanguageService, ILogger, Capabilities } from "./main";
 import {
-    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic
+    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind
 } from "vscode-languageserver-types";
 import * as DockerfileUtils from 'dockerfile-utils';
 import { DockerAssist } from "./dockerAssist";
@@ -24,10 +24,17 @@ import { DockerFormatter } from "./dockerFormatter";
 export class LanguageService implements DockerfileLanguageService {
 
     private markdownDocumentation = new MarkdownDocumentation();
+    private plainTextDocumentation = new PlainTextDocumentation();
     private logger: ILogger;
+
+    private markupKind: MarkupKind[];
 
     public setLogger(logger: ILogger): void {
         this.logger = logger;
+    }
+
+    public setCapabilities(capabilities: Capabilities) {
+        this.markupKind = capabilities && capabilities.hover && capabilities.hover.contentFormat;
     }
 
     public computeCodeActions(textDocument: TextDocumentIdentifier, range: Range, context: CodeActionContext): Command[] {
@@ -70,8 +77,8 @@ export class LanguageService implements DockerfileLanguageService {
     }
 
     public computeHover(content: string, position: Position): Hover | null {
-        let dockerHover = new DockerHover(this.markdownDocumentation);
-        return dockerHover.onHover(content, position);
+        let dockerHover = new DockerHover(this.markdownDocumentation, this.plainTextDocumentation);
+        return dockerHover.onHover(content, position, this.markupKind);
     }
 
     public computeSymbols(textDocument: TextDocumentIdentifier, content: string): SymbolInformation[] {

@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import {
-    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, TextEdit, DocumentLink, Hover, FormattingOptions, Diagnostic
+    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, TextEdit, DocumentLink, Hover, FormattingOptions, Diagnostic, MarkupKind
 } from 'vscode-languageserver-types';
 import { ValidatorSettings } from 'dockerfile-utils';
 import { LanguageService } from './languageService';
@@ -38,7 +38,21 @@ export namespace DockerfileLanguageServiceFactory {
     }
 }
 
+export interface Capabilities {
+    /**
+     * Capabilities related to hover requests.
+     */
+    hover?: {
+        /**
+         * Describes the content type that should be returned for hovers.
+         */
+        contentFormat?: MarkupKind[];
+    }
+}
+
 export interface DockerfileLanguageService {
+
+    setCapabilities(capabilities: Capabilities);
 
     computeCodeActions(textDocument: TextDocumentIdentifier, range: Range, context: CodeActionContext): Command[];
 

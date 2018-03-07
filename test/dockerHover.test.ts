@@ -4,199 +4,215 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
-import { TextDocument, Hover, Position } from 'vscode-languageserver-types';
+import { TextDocument, Hover, Position, MarkupKind, MarkupContent } from 'vscode-languageserver-types';
 import { MarkdownDocumentation } from '../src/dockerMarkdown';
 import { DockerfileLanguageServiceFactory } from '../src/main';
+import { PlainTextDocumentation } from "../src/dockerPlainText";
 
 const markdownDocumentation = new MarkdownDocumentation();
+const plainTextDocumentation = new PlainTextDocumentation();
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 
-function onHover(content: string, line: number, character: number): Hover | null {
+function onHover(content: string, line: number, character: number, contentFormat?: MarkupKind[]): Hover | null {
+    service.setCapabilities({
+        hover: {
+            contentFormat: contentFormat
+        }
+    });
     return service.computeHover(content, Position.create(line, character));
+}
+
+function assertHover(content: string, line: number, character: number, key: string) {
+    let hover = onHover(content, line, character);
+    assert.equal(hover.contents, markdownDocumentation.getMarkdown(key).contents);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, []);
+    assert.equal(hover.contents, markdownDocumentation.getMarkdown(key).contents);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.Markdown]);
+    let markupContent = hover.contents as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(key).contents);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.Markdown, MarkupKind.PlainText]);
+    markupContent = hover.contents as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(key).contents);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.PlainText]);
+    markupContent = hover.contents as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(key));
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.PlainText, MarkupKind.Markdown]);
+    markupContent = hover.contents as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(key));
+    assert.equal(hover.range, undefined);
+}
+
+function assertRawHover(content: string, line: number, character: number, value: string) {
+    let hover = onHover(content, line, character);
+    assert.equal(hover.contents, value);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, []);
+    assert.equal(hover.contents, value);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.Markdown]);
+    assert.equal(hover.contents, value);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.Markdown, MarkupKind.PlainText]);
+    assert.equal(hover.contents, value);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.PlainText]);
+    assert.equal(hover.contents, value);
+    assert.equal(hover.range, undefined);
+
+    hover = onHover(content, line, character, [MarkupKind.PlainText, MarkupKind.Markdown]);
+    assert.equal(hover.contents, value);
+    assert.equal(hover.range, undefined);
+}
+
+function assertNullHover(content: string, line: number, character: number) {
+    assert.equal(onHover(content, line, character), null);
+    assert.equal(onHover(content, line, character, []), null);
+    assert.equal(onHover(content, line, character, [MarkupKind.Markdown]), null);
+    assert.equal(onHover(content, line, character, [MarkupKind.Markdown, MarkupKind.PlainText]), null);
+    assert.equal(onHover(content, line, character, [MarkupKind.PlainText]), null);
+    assert.equal(onHover(content, line, character, [MarkupKind.PlainText, MarkupKind.Markdown]), null);
 }
 
 describe("Dockerfile hover", function () {
     describe("whitespace", function () {
         it("empty file", function () {
             let content = "";
-            let hover = onHover(content, 0, 0);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 0);
         });
 
         it("spaces", function () {
             let content = "    ";
-            let hover = onHover(content, 0, 2);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 2);
         });
 
         it("tabs", function () {
             let content = "\t\t\t\t";
-            let hover = onHover(content, 0, 2);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 2);
         });
     });
 
     describe("comments", function () {
         it("# FROM node", function () {
             let content = "# FROM node";
-            let hover = onHover(content, 0, 0);
-            assert.equal(hover, null);
-            hover = onHover(content, 0, 2);
-            assert.equal(hover, null);
-            hover = onHover(content, 0, 4);
-            assert.equal(hover, null);
-            hover = onHover(content, 0, 6);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 0);
+            assertNullHover(content, 0, 2);
+            assertNullHover(content, 0, 4);
+            assertNullHover(content, 0, 6);
         });
     });
 
     describe("directives", function () {
         it("escape", function () {
             let content = "#escape=`";
-            let hover = onHover(content, 0, 4);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("escape").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 4, "escape");
 
             content = "# escape=`";
-            hover = onHover(content, 0, 1);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 1);
         });
 
         it("invalid directive definition", function () {
             let content = "#eskape=`";
-            let hover = onHover(content, 0, 4);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 4);
 
             content = "#escape ";
-            hover = onHover(content, 0, 4);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 4);
 
             content = "#escape=";
-            hover = onHover(content, 0, 4);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("escape").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 4, "escape");
 
             content = "#escape=ab";
-            hover = onHover(content, 0, 4);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("escape").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 4, "escape");
 
             content = "#escape\t";
-            hover = onHover(content, 0, 4);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 4);
 
             content = "#escape\r\n";
-            hover = onHover(content, 0, 4);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 4);
 
             content = "#escape\n";
-            hover = onHover(content, 0, 4);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 4);
 
             content = "\n#escape";
-            hover = onHover(content, 1, 4);
-            assert.equal(hover, null);
+            assertNullHover(content, 1, 4);
 
             content = "\r\n#escape";
-            hover = onHover(content, 1, 4);
-            assert.equal(hover, null);
+            assertNullHover(content, 1, 4);
         });
     });
 
     describe("keywords", function () {
         it("FROM", function () {
             let content = "FROM node";
-            let hover = onHover(content, 0, 2);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 2, "FROM");
         });
 
         it("froM", function () {
             let content = "froM node";
-            let hover = onHover(content, 0, 2);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 2, "FROM");
         });
 
         it("fr\\\\noM", function () {
             let content = "fr\\\noM node";
-            let hover = onHover(content, 0, 0);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
-
-            hover = onHover(content, 0, 1);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
-
-            hover = onHover(content, 1, 1);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
-
-            hover = onHover(content, 1, 1);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 0, "FROM");
+            assertHover(content, 0, 1, "FROM");
+            assertHover(content, 1, 0, "FROM");
+            assertHover(content, 1, 1, "FROM");
         });
 
         it("fr\\\\r\\noM", function () {
             let content = "fr\\\r\noM node";
-            let hover = onHover(content, 0, 0);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
-
-            hover = onHover(content, 0, 1);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
-
-            hover = onHover(content, 1, 0);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
-
-            hover = onHover(content, 1, 1);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("FROM").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 0, "FROM");
+            assertHover(content, 0, 1, "FROM");
+            assertHover(content, 1, 0, "FROM");
+            assertHover(content, 1, 1, "FROM");
         });
 
         it("HEALTHCHECK NONE", function () {
             let content = "HEALTHCHECK NONE";
-            let hover = onHover(content, 0, 14);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 14);
         });
 
         it("newlines", function () {
             let content = "FROM node\nEXPOSE 8081";
-            let hover = onHover(content, 1, 4);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 1, 4, "EXPOSE");
 
             content = "FROM node\r\nEXPOSE 8081";
-            hover = onHover(content, 1, 4);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 1, 4, "EXPOSE");
         });
 
         it("invalid escape", function () {
             let content = "FR\\OM node";
-            let hover = onHover(content, 0, 1);
-            assert.equal(hover, null);
-
-            hover = onHover(content, 0, 3);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 1);
+            assertNullHover(content, 0, 3);
         });
 
         it("unknown", function () {
             let content = "3";
-            let hover = onHover(content, 0, 0);
-            assert.equal(hover, null);
-            hover = onHover(content, 0, 1);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 0);
+            assertNullHover(content, 0, 1);
 
             content = "UNKNOWN arg";
-            hover = onHover(content, 0, 0);
-            assert.equal(hover, null);
-            hover = onHover(content, 0, 4);
-            assert.equal(hover, null);
-            hover = onHover(content, 0, 7);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 0);
+            assertNullHover(content, 0, 4);
+            assertNullHover(content, 0, 7);
         });
 
         function createAddTest(trigger: boolean) {
@@ -206,48 +222,35 @@ describe("Dockerfile hover", function () {
             describe("ADD", function () {
                 it("--chown", function () {
                     let content = onbuild + "ADD --chown";
-                    let hover = onHover(content, 0, triggerOffset + 9);
-                    assert.notEqual(hover, null);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("ADD_FlagChown").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 9, "ADD_FlagChown");
                 });
 
                 it("--chown=\\$user", function () {
                     let content = onbuild + "ADD --chown=\\$user";
-                    let hover = onHover(content, 0, triggerOffset + 9);
-                    assert.notEqual(hover, null);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("ADD_FlagChown").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 9, "ADD_FlagChown");
                 });
 
                 it("--chown=\\root", function () {
                     let content = onbuild + "ADD --chown=\\root";
-                    let hover = onHover(content, 0, triggerOffset + 9);
-                    assert.notEqual(hover, null);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("ADD_FlagChown").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 9, "ADD_FlagChown");
                 });
 
                 it("--CHOWN", function () {
                     let content = onbuild + "ADD --FROM";
-                    let hover = onHover(content, 0, triggerOffset + 9);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, triggerOffset + 9);
                 });
 
                 it("whitespace", function () {
                     let content = onbuild + "ADD  --from";
-                    let hover = onHover(content, 0, triggerOffset + 5);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, triggerOffset + 5);
                 });
 
                 it("flag after", function () {
                     let content = onbuild + "ADD app --chown=root app";
-                    let hover = onHover(content, 0, triggerOffset + 13);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, triggerOffset + 13);
 
                     content = onbuild + "ADD app app --chown=root";
-                    hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, triggerOffset + 17);
                 });
             });
         }
@@ -261,804 +264,663 @@ describe("Dockerfile hover", function () {
                 it("variable name", function () {
                     let content = instruction + " z" + delimiter + "y";
                     let hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "y");
 
                     content = instruction + " z" + delimiter + "#";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "#");
+                    assertRawHover(content, 0, 5, "#");
 
                     content = instruction + " e" + delimiter + "'f g=h'";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "f g=h");
+                    assertRawHover(content, 0, 5, "f g=h");
 
                     content = instruction + " x" + delimiter + "\"v v=w\"";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "v v=w");
+                    assertRawHover(content, 0, 5, "v v=w");
                 });
 
                 it("variable value", function () {
                     let content = instruction + " z" + delimiter + "y";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, 6);
                 });
 
                 it("no variable value", function () {
                     let content = instruction + " z";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, 5);
                 });
 
                 it("empty variable value", function () {
                     let content = instruction + " z" + delimiter + "";
-                    let hover = onHover(content, 0, 5);
                     if (delimiter === " ") {
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, 5);
                     } else {
-                        assert.equal(hover.contents, "");
+                        assertRawHover(content, 0, 5, "");
                     }
                 });
 
                 it("whitespace variable value", function () {
                     let content = instruction + " z" + delimiter + "   \t\t   ";
-                    let hover = onHover(content, 0, 5);
                     if (delimiter === " ") {
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, 5);
                     } else {
-                        assert.equal(hover.contents, "");
+                        assertRawHover(content, 0, 5, "");
                     }
                 });
 
                 it("escaped", function () {
                     let content = instruction + " \\ \t\nz" + delimiter + "y";
-                    let hover = onHover(content, 1, 0);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 1, 0, "y");
 
                     content = instruction + " \\ \t\r\nz" + delimiter + "y";
-                    hover = onHover(content, 1, 0);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 1, 0, "y");
 
                     content = instruction + " z" + delimiter + "y \\ \t\n \t";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "y");
 
                     content = instruction + " z" + delimiter + "y \\ \t\r \t";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "y");
 
                     content = instruction + " z" + delimiter + "y \\ \t\r\n \t";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "y");
 
                     content = instruction + " z" + delimiter + "\\\ny";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "y");
 
                     content = instruction + " z" + delimiter + "\\\n'y'";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "y");
 
                     content = instruction + " z" + delimiter + "\\\n\"y\"";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "y");
 
-                    hover = onHover(instruction + " a" + delimiter + "\\", 0, 5);
+                    content = instruction + " a" + delimiter + "\\";
                     if (delimiter === " ") {
                         // just the escape character at EOF, so considered to be the empty string
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, 5);
                     } else {
-                        assert.equal(hover.contents, "");
+                        assertRawHover(content, 0, 5, "");
                     }
 
-                    hover = onHover(instruction + " a" + delimiter + "a\\ x", 0, 5);
-                    assert.equal(hover.contents, "a x");
+                    content = instruction + " a" + delimiter + "a\\ x";
+                    assertRawHover(content, 0, 5, "a x");
 
-                    hover = onHover(instruction + " a" + delimiter + "a\\\nx", 0, 5);
-                    assert.equal(hover.contents, "ax");
+                    content = instruction + " a" + delimiter + "a\\\nx";
+                    assertRawHover(content, 0, 5, "ax");
 
-                    hover = onHover(instruction + " a" + delimiter + "a\\\r\nx", 0, 5);
-                    assert.equal(hover.contents, "ax");
+                    content = instruction + " a" + delimiter + "a\\\r\nx";
+                    assertRawHover(content, 0, 5, "ax");
 
-                    hover = onHover(instruction + " a" + delimiter + "a\\  \nx", 0, 5);
-                    assert.equal(hover.contents, "ax");
+                    content = instruction + " a" + delimiter + "a\\  \nx";
+                    assertRawHover(content, 0, 5, "ax");
 
-                    hover = onHover(instruction + " a" + delimiter + "a\\  \t\t\r\nx", 0, 5);
-                    assert.equal(hover.contents, "ax");
+                    content = instruction + " a" + delimiter + "a\\  \t\t\r\nx";
+                    assertRawHover(content, 0, 5, "ax");
 
-                    hover = onHover(instruction + " a" + delimiter + "\\b", 0, 5);
-                    assert.equal(hover.contents, "b");
+                    content = instruction + " a" + delimiter + "\\b";
+                    assertRawHover(content, 0, 5, "b");
 
-                    hover = onHover(instruction + " a" + delimiter + "\\\\b", 0, 5);
-                    assert.equal(hover.contents, "\\b");
+                    content = instruction + " a" + delimiter + "\\\\b";
+                    assertRawHover(content, 0, 5, "\\b");
 
-                    hover = onHover(instruction + " a" + delimiter + "\\\\\\\\\\b", 0, 5);
-                    assert.equal(hover.contents, "\\\\b");
+                    content = instruction + " a" + delimiter + "\\\\\\\\\\b";
+                    assertRawHover(content, 0, 5, "\\\\b");
 
-                    hover = onHover(instruction + " var" + delimiter + "a\\\n# comment\nbc", 0, 6);
-                    assert.equal(hover.contents, "abc");
+                    content = instruction + " var" + delimiter + "a\\\n# comment\nbc";
+                    assertRawHover(content, 0, 6, "abc");
 
-                    hover = onHover(instruction + " var" + delimiter + "a\\\r\n# comment\r\nbc", 0, 6);
-                    assert.equal(hover.contents, "abc");
+                    content = instruction + " var" + delimiter + "a\\\r\n# comment\r\nbc";
+                    assertRawHover(content, 0, 6, "abc");
 
-                    hover = onHover(instruction + " var" + delimiter + "\\\n# comment\nabc", 0, 6);
-                    assert.equal(hover.contents, "abc");
+                    content = instruction + " var" + delimiter + "\\\n# comment\nabc";
+                    assertRawHover(content, 0, 6, "abc");
 
-                    hover = onHover(instruction + " var" + delimiter + "\\\r\n# comment\r\nabc", 0, 6);
-                    assert.equal(hover.contents, "abc");
+                    content = instruction + " var" + delimiter + "\\\r\n# comment\r\nabc";
+                    assertRawHover(content, 0, 6, "abc");
                 });
 
                 it("escape in literals", function () {
-                    let hover = onHover(instruction + " a" + delimiter + "\"a\\ x\"", 0, 5);
-                    assert.equal(hover.contents, "a\\ x");
+                    let content = instruction + " a" + delimiter + "\"a\\ x\"";
+                    assertRawHover(content, 0, 5, "a\\ x");
 
-                    hover = onHover(instruction + " a" + delimiter + "'a\\ x'", 0, 5);
-                    assert.equal(hover.contents, "a\\ x");
+                    content = instruction + " a" + delimiter + "'a\\ x'";
+                    assertRawHover(content, 0, 5, "a\\ x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"a \\x\"", 0, 5);
-                    assert.equal(hover.contents, "a \\x");
+                    content = instruction + " a" + delimiter + "\"a \\x\"";
+                    assertRawHover(content, 0, 5, "a \\x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"a \\\\x\"", 0, 5);
-                    assert.equal(hover.contents, "a \\x");
+                    content = instruction + " a" + delimiter + "\"a \\\\x\"";
+                    assertRawHover(content, 0, 5, "a \\x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"a \\\\ x\"", 0, 5);
-                    assert.equal(hover.contents, "a \\ x");
+                    content = instruction + " a" + delimiter + "\"a \\\\ x\"";
+                    assertRawHover(content, 0, 5, "a \\ x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"a \\\\\\x\"", 0, 5);
-                    assert.equal(hover.contents, "a \\\\x");
+                    content = instruction + " a" + delimiter + "\"a \\\\\\x\"";
+                    assertRawHover(content, 0, 5, "a \\\\x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"a \\\\\\ x\"", 0, 5);
-                    assert.equal(hover.contents, "a \\\\ x");
+                    content = instruction + " a" + delimiter + "\"a \\\\\\ x\"";
+                    assertRawHover(content, 0, 5, "a \\\\ x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"a \\\nx\"", 0, 5);
-                    assert.equal(hover.contents, "a x");
+                    content = instruction + " a" + delimiter + "\"a \\\nx\"";
+                    assertRawHover(content, 0, 5, "a x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"\\\\\\\\x\"", 0, 5);
-                    assert.equal(hover.contents, "\\\\x");
+                    content = instruction + " a" + delimiter + "\"\\\\\\\\x\"";
+                    assertRawHover(content, 0, 5, "\\\\x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"\\\\\\\\\\x\"", 0, 5);
-                    assert.equal(hover.contents, "\\\\\\x");
+                    content = instruction + " a" + delimiter + "\"\\\\\\\\\\x\"";
+                    assertRawHover(content, 0, 5, "\\\\\\x");
 
-                    hover = onHover(instruction + " a" + delimiter + "\"\\\\\\\\\\\\x\"", 0, 5);
-                    assert.equal(hover.contents, "\\\\\\x");
+                    content = instruction + " a" + delimiter + "\"\\\\\\\\\\\\x\"";
+                    assertRawHover(content, 0, 5, "\\\\\\x");
 
-                    hover = onHover(instruction + " a" + delimiter + "'a \\\nx'", 0, 5);
-                    assert.equal(hover.contents, "a x");
+                    content = instruction + " a" + delimiter + "'a \\\nx'";
+                    assertRawHover(content, 0, 5, "a x");
 
-                    hover = onHover(instruction + " var" + delimiter + "\"abc\\ #def\"", 0, 6);
-                    assert.equal(hover.contents, "abc\\ #def");
+                    content = instruction + " var" + delimiter + "\"abc\\ #def\"";
+                    assertRawHover(content, 0, 6, "abc\\ #def");
 
-                    hover = onHover(instruction + " var" + delimiter + "\"value \\\n# comment\nvalue2\"", 0, 6);
-                    assert.equal(hover.contents, "value value2");
+                    content = instruction + " var" + delimiter + "\"value \\\n# comment\nvalue2\"";
+                    assertRawHover(content, 0, 6, "value value2");
 
-                    hover = onHover(instruction + " var" + delimiter + "\"value \\ \t\n# comment\nvalue2\"", 0, 6);
-                    assert.equal(hover.contents, "value value2");
+                    content = instruction + " var" + delimiter + "\"value \\ \t\n# comment\nvalue2\"";
+                    assertRawHover(content, 0, 6, "value value2");
 
-                    hover = onHover(instruction + " var" + delimiter + "\"abc\\\n #comment\n #comment\ndef\"", 0, 6);
-                    assert.equal(hover.contents, "abcdef");
+                    content = instruction + " var" + delimiter + "\"abc\\\n #comment\n #comment\ndef\"";
+                    assertRawHover(content, 0, 6, "abcdef");
 
-                    hover = onHover(instruction + " var" + delimiter + "\"abc\\\r\n #comment\r\n #comment\r\ndef\"", 0, 6);
-                    assert.equal(hover.contents, "abcdef");
+                    content = instruction + " var" + delimiter + "\"abc\\\r\n #comment\r\n #comment\r\ndef\"";
+                    assertRawHover(content, 0, 6, "abcdef");
 
-                    hover = onHover(instruction + " var" + delimiter + "'abc\\\n #comment\n #comment\ndef'", 0, 6);
-                    assert.equal(hover.contents, "abcdef");
+                    content = instruction + " var" + delimiter + "'abc\\\n #comment\n #comment\ndef'";
+                    assertRawHover(content, 0, 6, "abcdef");
 
-                    hover = onHover(instruction + " var" + delimiter + "'abc\\\r\n #comment\r\n #comment\r\ndef'", 0, 6);
-                    assert.equal(hover.contents, "abcdef");
+                    content = instruction + " var" + delimiter + "'abc\\\r\n #comment\r\n #comment\r\ndef'";
+                    assertRawHover(content, 0, 6, "abcdef");
                 });
 
                 it("no variable", function () {
                     let content = instruction + "    ";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, 5);
                 });
 
                 it("referenced variable ${var}", function () {
                     let content = instruction + " var" + delimiter + "value\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}";
-                    let hover = onHover(content, 1, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 2, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 11);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 13, "value");
+                    assertRawHover(content, 2, 7, "value");
+                    assertRawHover(content, 3, 11, "value");
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}\n" +
                         "FROM alpine\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}"
                         ;
-                    hover = onHover(content, 2, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(hover.contents, "value");
-                    assert.equal(onHover(content, 6, 13), null);
-                    assert.equal(onHover(content, 7, 7), null);
-                    assert.equal(onHover(content, 8, 11), null);
+                    assertRawHover(content, 2, 13, "value");
+                    assertRawHover(content, 3, 7, "value");
+                    assertRawHover(content, 4, 11, "value");
+                    assertNullHover(content, 6, 13);
+                    assertNullHover(content, 7, 7);
+                    assertNullHover(content, 8, 11);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}\n" +
                         "FROM alpine\n" + instruction + " var" + delimiter + "value2\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}"
                         ;
-                    hover = onHover(content, 2, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 7, 13);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 8, 7);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 9, 11);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 2, 13, "value");
+                    assertRawHover(content, 3, 7, "value");
+                    assertRawHover(content, 4, 11, "value");
+                    assertRawHover(content, 7, 13, "value2");
+                    assertRawHover(content, 8, 7, "value2");
+                    assertRawHover(content, 9, 11, "value2");
 
                     content = instruction + " var" + delimiter + "value\nARG var2=value2\nSTOPSIGNAL ${var}${var2}\nUSER ${var}${var2}\nWORKDIR ${var}${var2}";
-                    hover = onHover(content, 2, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 2, 20);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 14);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 18);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 2, 13, "value");
+                    assertRawHover(content, 2, 20, "value2");
+                    assertRawHover(content, 3, 7, "value");
+                    assertRawHover(content, 3, 14, "value2");
+                    assertRawHover(content, 4, 11, "value");
+                    assertRawHover(content, 4, 18, "value2");
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nARG var2=value2\nSTOPSIGNAL ${var}${var2}\nUSER ${var}${var2}\nWORKDIR ${var}${var2}\n" +
                         "FROM alpine\nSTOPSIGNAL ${var}${var2}\nUSER ${var}${var2}\nWORKDIR ${var}${var2}"
                         ;
-                    hover = onHover(content, 3, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 20);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 4, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 14);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 5, 18);
-                    assert.equal(hover.contents, "value2");
-                    assert.equal(onHover(content, 7, 13), null);
-                    assert.equal(onHover(content, 7, 20), null);
-                    assert.equal(onHover(content, 8, 7), null);
-                    assert.equal(onHover(content, 8, 14), null);
-                    assert.equal(onHover(content, 9, 11), null);
-                    assert.equal(onHover(content, 9, 18), null);
+                    assertRawHover(content, 3, 13, "value");
+                    assertRawHover(content, 3, 20, "value2");
+                    assertRawHover(content, 4, 7, "value");
+                    assertRawHover(content, 4, 14, "value2");
+                    assertRawHover(content, 5, 11, "value");
+                    assertRawHover(content, 5, 18, "value2");
+                    assertNullHover(content, 7, 13);
+                    assertNullHover(content, 7, 20);
+                    assertNullHover(content, 8, 7);
+                    assertNullHover(content, 8, 14);
+                    assertNullHover(content, 9, 11);
+                    assertNullHover(content, 9, 18);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nARG var2=value2\nSTOPSIGNAL ${var}${var2}\nUSER ${var}${var2}\nWORKDIR ${var}${var2}\n" +
                         "FROM alpine\n" + instruction + " var" + delimiter + "value3\nARG var2=value4\nSTOPSIGNAL ${var}${var2}\nUSER ${var}${var2}\nWORKDIR ${var}${var2}"
                         ;
-                    hover = onHover(content, 3, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 20);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 4, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 14);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 5, 18);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 9, 13);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 9, 20);
-                    assert.equal(hover.contents, "value4");
-                    hover = onHover(content, 10, 7);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 10, 14);
-                    assert.equal(hover.contents, "value4");
-                    hover = onHover(content, 11, 11);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 11, 18);
-                    assert.equal(hover.contents, "value4");
+                    assertRawHover(content, 3, 13, "value");
+                    assertRawHover(content, 3, 20, "value2");
+                    assertRawHover(content, 4, 7, "value");
+                    assertRawHover(content, 4, 14, "value2");
+                    assertRawHover(content, 5, 11, "value");
+                    assertRawHover(content, 5, 18, "value2");
+                    assertRawHover(content, 9, 13, "value3");
+                    assertRawHover(content, 9, 20, "value4");
+                    assertRawHover(content, 10, 7, "value3");
+                    assertRawHover(content, 10, 14, "value4");
+                    assertRawHover(content, 11, 11, "value3");
+                    assertRawHover(content, 11, 18, "value4");
                 });
 
                 it("referenced variable ${var} no value", function () {
                     let content = instruction + " var\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}";
-                    let hover = onHover(content, 1, 13);
-                    assert.equal(hover, null);
-                    hover = onHover(content, 2, 7);
-                    assert.equal(hover, null);
-                    hover = onHover(content, 3, 11);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 1, 13);
+                    assertNullHover(content, 2, 7);
+                    assertNullHover(content, 3, 11);
                 });
 
                 it("referenced variable ${var} empty value", function () {
                     let content = instruction + " var" + delimiter + "\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}";
-                    let hover = onHover(content, 1, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 2, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
+                    if (space) {
+                        assertNullHover(content, 1, 13);
+                        assertNullHover(content, 2, 7);
+                        assertNullHover(content, 3, 11);
+                    } else {
+                        assertRawHover(content, 1, 13, "");
+                        assertRawHover(content, 2, 7, "");
+                        assertRawHover(content, 3, 11, "");
+                    }
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}\n" +
                         "FROM alpine\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}"
                         ;
-                    hover = onHover(content, 2, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    assert.equal(onHover(content, 6, 13), null);
-                    assert.equal(onHover(content, 7, 7), null);
-                    assert.equal(onHover(content, 8, 11), null);
+                    if (space) {
+                        assertNullHover(content, 2, 13);
+                        assertNullHover(content, 3, 7);
+                        assertNullHover(content, 4, 11);
+                    } else {
+                        assertRawHover(content, 2, 13, "");
+                        assertRawHover(content, 3, 7, "");
+                        assertRawHover(content, 4, 11, "");
+                    }
+                    assertNullHover(content, 6, 13);
+                    assertNullHover(content, 7, 7);
+                    assertNullHover(content, 8, 11);
                 });
 
                 it("referenced variable ${var} whitespace", function () {
                     let content = instruction + " var" + delimiter + "   \t\t   \nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}";
-                    let hover = onHover(content, 1, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 2, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
+                    if (space) {
+                        assertNullHover(content, 1, 13);
+                        assertNullHover(content, 2, 7);
+                        assertNullHover(content, 3, 11);
+                    } else {
+                        assertRawHover(content, 1, 13, "");
+                        assertRawHover(content, 2, 7, "");
+                        assertRawHover(content, 3, 11, "");
+                    }
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "   \t\t   \nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}\n" +
                         "FROM alpine\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}"
                         ;
-                    hover = onHover(content, 2, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    assert.equal(onHover(content, 6, 13), null);
-                    assert.equal(onHover(content, 7, 7), null);
-                    assert.equal(onHover(content, 8, 11), null);
+                    if (space) {
+                        assertNullHover(content, 2, 13);
+                        assertNullHover(content, 3, 7);
+                        assertNullHover(content, 4, 11);
+                    } else {
+                        assertRawHover(content, 2, 13, "");
+                        assertRawHover(content, 3, 7, "");
+                        assertRawHover(content, 4, 11, "");
+                    }
+                    assertNullHover(content, 6, 13);
+                    assertNullHover(content, 7, 7);
+                    assertNullHover(content, 8, 11);
                 });
 
                 it("referenced variable ${var", function () {
                     let content = instruction + " var" + delimiter + "value\nSTOPSIGNAL ${var\nUSER ${var\nWORKDIR ${var";
-                    assert.equal(onHover(content, 1, 14), null);
-                    assert.equal(onHover(content, 2, 8), null);
-                    assert.equal(onHover(content, 3, 11), null);
+                    assertNullHover(content, 1, 14);
+                    assertNullHover(content, 2, 8);
+                    assertNullHover(content, 3, 11);
 
                     content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nSTOPSIGNAL ${var\nUSER ${var\nWORKDIR ${var";
-                    assert.equal(onHover(content, 2, 14), null);
-                    assert.equal(onHover(content, 3, 8), null);
-                    assert.equal(onHover(content, 4, 11), null);
+                    assertNullHover(content, 2, 14);
+                    assertNullHover(content, 3, 8);
+                    assertNullHover(content, 4, 11);
                 });
 
                 it("referenced variable $var", function () {
                     let content = instruction + " var" + delimiter + "value\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
-                    let hover = onHover(content, 1, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 2, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 11);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 13, "value");
+                    assertRawHover(content, 2, 7, "value");
+                    assertRawHover(content, 3, 11, "value");
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var\n" +
                         "FROM alpine\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var"
                         ;
-                    hover = onHover(content, 2, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(hover.contents, "value");
-                    assert.equal(onHover(content, 6, 13), null);
-                    assert.equal(onHover(content, 7, 7), null);
-                    assert.equal(onHover(content, 8, 11), null);
+                    assertRawHover(content, 2, 13, "value");
+                    assertRawHover(content, 3, 7, "value");
+                    assertRawHover(content, 4, 11, "value");
+                    assertNullHover(content, 6, 13);
+                    assertNullHover(content, 7, 7);
+                    assertNullHover(content, 8, 11);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var\n" +
                         "FROM alpine\n" + instruction + " var" + delimiter + "value2\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var"
                         ;
-                    hover = onHover(content, 2, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 7, 13);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 8, 7);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 9, 11);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 2, 13, "value");
+                    assertRawHover(content, 3, 7, "value");
+                    assertRawHover(content, 4, 11, "value");
+                    assertRawHover(content, 7, 13, "value2");
+                    assertRawHover(content, 8, 7, "value2");
+                    assertRawHover(content, 9, 11, "value2");
 
                     content = instruction + " var" + delimiter + "value\nARG var2=value2\nSTOPSIGNAL $var$var2\nUSER $var$var2\nWORKDIR $var$var2";
-                    hover = onHover(content, 2, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 2, 17);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 12);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 15);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 2, 13, "value");
+                    assertRawHover(content, 2, 17, "value2");
+                    assertRawHover(content, 3, 7, "value");
+                    assertRawHover(content, 3, 12, "value2");
+                    assertRawHover(content, 4, 11, "value");
+                    assertRawHover(content, 4, 15, "value2");
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nARG var2=value2\nSTOPSIGNAL $var$var2\nUSER $var$var2\nWORKDIR $var$var2\n" +
                         "FROM alpine\nSTOPSIGNAL $var$var2\nUSER $var$var2\nWORKDIR $var$var2"
                         ;
-                    hover = onHover(content, 3, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 17);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 4, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 12);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 5, 15);
-                    assert.equal(hover.contents, "value2");
-                    assert.equal(onHover(content, 7, 13), null);
-                    assert.equal(onHover(content, 7, 17), null);
-                    assert.equal(onHover(content, 8, 7), null);
-                    assert.equal(onHover(content, 8, 12), null);
-                    assert.equal(onHover(content, 9, 11), null);
-                    assert.equal(onHover(content, 9, 15), null);
+                    assertRawHover(content, 3, 13, "value");
+                    assertRawHover(content, 3, 17, "value2");
+                    assertRawHover(content, 4, 7, "value");
+                    assertRawHover(content, 4, 12, "value2");
+                    assertRawHover(content, 5, 11, "value");
+                    assertRawHover(content, 5, 15, "value2");
+                    assertNullHover(content, 7, 13);
+                    assertNullHover(content, 7, 17);
+                    assertNullHover(content, 8, 7);
+                    assertNullHover(content, 8, 12);
+                    assertNullHover(content, 9, 11);
+                    assertNullHover(content, 9, 15);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nARG var2=value2\nSTOPSIGNAL $var$var2\nUSER $var$var2\nWORKDIR $var$var2\n" +
                         "FROM alpine\n" + instruction + " var" + delimiter + "value3\nARG var2=value4\nSTOPSIGNAL $var$var2\nUSER $var$var2\nWORKDIR $var$var2"
                         ;
-                    hover = onHover(content, 3, 13);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 17);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 4, 7);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 12);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 5, 15);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 9, 13);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 9, 17);
-                    assert.equal(hover.contents, "value4");
-                    hover = onHover(content, 10, 7);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 10, 12);
-                    assert.equal(hover.contents, "value4");
-                    hover = onHover(content, 11, 11);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 11, 15);
-                    assert.equal(hover.contents, "value4");
+                    assertRawHover(content, 3, 13, "value");
+                    assertRawHover(content, 3, 17, "value2");
+                    assertRawHover(content, 4, 7, "value");
+                    assertRawHover(content, 4, 12, "value2");
+                    assertRawHover(content, 5, 11, "value");
+                    assertRawHover(content, 5, 15, "value2");
+                    assertRawHover(content, 9, 13, "value3");
+                    assertRawHover(content, 9, 17, "value4");
+                    assertRawHover(content, 10, 7, "value3");
+                    assertRawHover(content, 10, 12, "value4");
+                    assertRawHover(content, 11, 11, "value3");
+                    assertRawHover(content, 11, 15, "value4");
                 });
 
                 it("referenced variable $var no value", function () {
                     let content = instruction + " var\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
-                    assert.equal(onHover(content, 1, 13), null);
-                    assert.equal(onHover(content, 2, 7), null);
-                    assert.equal(onHover(content, 3, 11), null);
+                    assertNullHover(content, 1, 13);
+                    assertNullHover(content, 2, 7);
+                    assertNullHover(content, 3, 11);
 
                     content = "FROM alpine\n" + instruction + " var\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
-                    assert.equal(onHover(content, 2, 13), null);
-                    assert.equal(onHover(content, 3, 7), null);
-                    assert.equal(onHover(content, 4, 11), null);
+                    assertNullHover(content, 2, 13);
+                    assertNullHover(content, 3, 7);
+                    assertNullHover(content, 4, 11);
                 });
 
                 it("referenced variable $var empty value", function () {
                     let content = instruction + " var" + delimiter + "\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
-                    let hover = onHover(content, 1, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 2, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
+                    if (space) {
+                        assertNullHover(content, 1, 13);
+                        assertNullHover(content, 2, 7);
+                        assertNullHover(content, 3, 11);
+                    } else {
+                        assertRawHover(content, 1, 13, "");
+                        assertRawHover(content, 2, 7, "");
+                        assertRawHover(content, 3, 11, "");
+                    }
 
                     content = "FROM alpine\n" + instruction + " var" + delimiter + "\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
-                    hover = onHover(content, 2, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
+                    if (space) {
+                        assertNullHover(content, 2, 13);
+                        assertNullHover(content, 3, 7);
+                        assertNullHover(content, 4, 11);
+                    } else {
+                        assertRawHover(content, 2, 13, "");
+                        assertRawHover(content, 3, 7, "");
+                        assertRawHover(content, 4, 11, "");
+                    }
                 });
 
                 it("referenced variable $var whitespace", function () {
                     let content = instruction + " var" + delimiter + "   \t\t   \nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
-                    let hover = onHover(content, 1, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 2, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
+                    if (space) {
+                        assertNullHover(content, 1, 13);
+                        assertNullHover(content, 2, 7);
+                        assertNullHover(content, 3, 11);
+                    } else {
+                        assertRawHover(content, 1, 13, "");
+                        assertRawHover(content, 2, 7, "");
+                        assertRawHover(content, 3, 11, "");
+                    }
 
                     content = "FROM alpine\n" + instruction + " var" + delimiter + "   \t\t   \nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
-                    hover = onHover(content, 2, 13);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 3, 7);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
-                    hover = onHover(content, 4, 11);
-                    assert.equal(space ? hover : hover.contents, space ? null : "");
+                    if (space) {
+                        assertNullHover(content, 2, 13);
+                        assertNullHover(content, 3, 7);
+                        assertNullHover(content, 4, 11);
+                    } else {
+                        assertRawHover(content, 2, 13, "");
+                        assertRawHover(content, 3, 7, "");
+                        assertRawHover(content, 4, 11, "");
+                    }
                 });
 
                 it("referenced variable '$var'", function () {
                     let content = instruction + " var" + delimiter + "value\nRUN echo '$var'";
-                    let hover = onHover(content, 1, 12);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 12, "value");
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN echo '$var'\n" +
                         "FROM alpine\nRUN echo '$var'"
                         ;
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 12);
-                    assert.equal(hover, null);
+                    assertRawHover(content, 2, 12, "value");
+                    assertNullHover(content, 4, 12);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN echo '$var'\n" +
                         "FROM alpine\n" + instruction + " var" + delimiter + "value2\nRUN echo '$var'"
                         ;
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 5, 12);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 2, 12, "value");
+                    assertRawHover(content, 5, 12, "value2");
                 });
 
                 it("referenced variable \"$var\"", function () {
                     let content = instruction + " var" + delimiter + "value\nRUN echo \"$var\"";
-                    let hover = onHover(content, 1, 12);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 12, "value");
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN echo \"$var\"\n" +
                         "FROM alpine\nRUN echo \"$var\""
                         ;
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 12);
-                    assert.equal(hover, null);
+                    assertRawHover(content, 2, 12, "value");
+                    assertNullHover(content, 4, 12);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN echo \"$var\"\n" +
                         "FROM alpine\n" + instruction + " var" + delimiter + "value2\nRUN echo \"$var\""
                         ;
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 5, 12);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 2, 12, "value");
+                    assertRawHover(content, 5, 12, "value2");
                 });
 
                 it("referenced variable \\${var}", function () {
                     let content = instruction + " var" + delimiter + "value\nSTOPSIGNAL \\${var}\nUSER \\${var}\nWORKDIR \\${var}";
-                    assert.equal(onHover(content, 1, 15), null);
-                    assert.equal(onHover(content, 2, 10), null);
-                    assert.equal(onHover(content, 3, 12), null);
+                    assertNullHover(content, 1, 15);
+                    assertNullHover(content, 2, 10);
+                    assertNullHover(content, 3, 12);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nSTOPSIGNAL \\${var}\nUSER \\${var}\nWORKDIR \\${var}"
                         ;
-                    assert.equal(onHover(content, 2, 15), null);
-                    assert.equal(onHover(content, 3, 10), null);
-                    assert.equal(onHover(content, 4, 12), null);
+                    assertNullHover(content, 2, 15);
+                    assertNullHover(content, 3, 10);
+                    assertNullHover(content, 4, 12);
                 });
 
                 it("referenced variable \\$var", function () {
                     let content = instruction + " var" + delimiter + "value\nSTOPSIGNAL \\$var\nUSER \\$var\nWORKDIR \\$var";
-                    assert.equal(onHover(content, 1, 14), null);
-                    assert.equal(onHover(content, 2, 9), null);
-                    assert.equal(onHover(content, 3, 11), null);
+                    assertNullHover(content, 1, 14);
+                    assertNullHover(content, 2, 9);
+                    assertNullHover(content, 3, 11);
 
                     content =
                         "FROM alpine\n" + instruction + " var" + delimiter + "value\nSTOPSIGNAL \\$var\nUSER \\$var\nWORKDIR \\$var"
                         ;
-                    assert.equal(onHover(content, 2, 14), null);
-                    assert.equal(onHover(content, 3, 9), null);
-                    assert.equal(onHover(content, 4, 11), null);
+                    assertNullHover(content, 2, 14);
+                    assertNullHover(content, 3, 9);
+                    assertNullHover(content, 4, 11);
                 });
 
                 it("$var in LABEL value with single quotes", function () {
                     let content = instruction + " var" + delimiter + "value\nLABEL label='$var'";
-                    assert.equal(onHover(content, 1, 15), null);
+                    assertNullHover(content, 1, 15);
                 });
 
                 it("$var in LABEL value with double quotes", function () {
                     let content = instruction + " var" + delimiter + "value\nLABEL label=\"$var\"";
-                    let hover = onHover(content, 1, 15);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 15, "value");
                 });
 
                 it("${var} in LABEL value with single quotes", function () {
                     let content = instruction + " var" + delimiter + "value\nLABEL label='${var}'";
-                    assert.equal(onHover(content, 1, 17), null);
+                    assertNullHover(content, 1, 17);
                 });
 
                 it("${var} in LABEL value with double quotes", function () {
                     let content = instruction + " var" + delimiter + "value\nLABEL label=\"${var}\"";
-                    let hover = onHover(content, 1, 17);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 17, "value");
                 });
 
                 it("multiline reference \\n", function () {
                     let content = instruction + " port=8080\nEXPOSE ${po\\\nrt}";
-                    let hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\nEXPOSE ${po`\nrt}";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\nEXPOSE $po\\\nrt";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\nEXPOSE $po`\nrt";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\nLABEL key=\"$po\\\nrt\"";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
                 });
 
                 it("multiline reference \\r\\n", function () {
                     let content = instruction + " port=8080\rnEXPOSE ${po\\\r\nrt}";
-                    let hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\r\nEXPOSE ${po`\r\nrt}";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\r\nEXPOSE $po\\\r\nrt";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\r\nEXPOSE $po`\r\nrt";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\r\nLABEL key=\"$po\\\r\nrt\"";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
                 });
 
                 it("multiline reference \\n spaced", function () {
                     let content = instruction + " port=8080\nEXPOSE ${po\\ \t\nrt}";
-                    let hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\nEXPOSE ${po` \t\nrt}";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\nEXPOSE $po\\ \t\nrt";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\nEXPOSE $po` \t\nrt";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\nLABEL key=\"$po\\ \t\nrt\"";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
                 });
 
                 it("multiline reference \\r\\n spaced", function () {
                     let content = instruction + " port=8080\r\nEXPOSE ${po\\ \t\r\nrt}";
-                    let hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\r\nEXPOSE ${po` \t\r\nrt}";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\nEXPOSE $po\\ \t\r\nrt";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
 
                     content = "#escape=`\n" + instruction + " port=8080\nEXPOSE $po` \t\r\nrt";
-                    hover = onHover(content, 3, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 3, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 3, 0, "8080");
+                    assertRawHover(content, 3, 1, "8080");
+                    assertRawHover(content, 3, 2, "8080");
 
                     content = instruction + " port=8080\nLABEL key=\"$po\\ \t\r\nrt\"";
-                    hover = onHover(content, 2, 0);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 1);
-                    assert.equal(hover.contents, "8080");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "8080");
+                    assertRawHover(content, 2, 0, "8080");
+                    assertRawHover(content, 2, 1, "8080");
+                    assertRawHover(content, 2, 2, "8080");
                 });
 
                 it("$var followed by space", function () {
                     let content = instruction + " var" + delimiter + "value\nLABEL key=\"$var \"";
-                    let hover = onHover(content, 1, 14);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 14, "value");
                 });
 
                 it("$var followed by tab", function () {
                     let content = instruction + " var" + delimiter + "value\nLABEL key=\"$var\t\"";
-                    let hover = onHover(content, 1, 14);
-                    assert.equal(hover.contents, "value");
+                    assertRawHover(content, 1, 14, "value");
                 });
             });
         }
@@ -1073,96 +935,70 @@ describe("Dockerfile hover", function () {
                 describe("--from flag", function () {
                     it("--from", function () {
                         let content = onbuild + "COPY --from";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.notEqual(hover, null);
-                        assert.equal(hover.contents, markdownDocumentation.getMarkdown("COPY_FlagFrom").contents);
-                        assert.equal(hover.range, undefined);
+                        assertHover(content, 0, triggerOffset + 9, "COPY_FlagFrom");
                     });
 
                     it("--from=\\$x", function () {
                         let content = onbuild + "COPY --from=\\$x";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.notEqual(hover, null);
-                        assert.equal(hover.contents, markdownDocumentation.getMarkdown("COPY_FlagFrom").contents);
-                        assert.equal(hover.range, undefined);
+                        assertHover(content, 0, triggerOffset + 9, "COPY_FlagFrom");
                     });
 
                     it("--from=\\a", function () {
                         let content = onbuild + "COPY --from=\\a";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.notEqual(hover, null);
-                        assert.equal(hover.contents, markdownDocumentation.getMarkdown("COPY_FlagFrom").contents);
-                        assert.equal(hover.range, undefined);
+                        assertHover(content, 0, triggerOffset + 9, "COPY_FlagFrom");
                     });
 
                     it("--FROM", function () {
                         let content = onbuild + "COPY --FROM";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 9);
                     });
 
                     it("flag after", function () {
                         let content = onbuild + "COPY app --from=alpine app";
-                        let hover = onHover(content, 0, triggerOffset + 13);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 13);
 
                         content = onbuild + "COPY app app --from=alpine";
-                        hover = onHover(content, 0, triggerOffset + 18);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 18);
                     });
 
                     it("whitespace", function () {
                         let content = onbuild + "COPY  --from";
-                        let hover = onHover(content, 0, triggerOffset + 5);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 5);
                     });
                 });
 
                 describe("--chown flag", function () {
                     it("--chown", function () {
                         let content = onbuild + "COPY --chown";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.notEqual(hover, null);
-                        assert.equal(hover.contents, markdownDocumentation.getMarkdown("COPY_FlagChown").contents);
-                        assert.equal(hover.range, undefined);
+                        assertHover(content, 0, triggerOffset + 9, "COPY_FlagChown");
                     });
 
                     it("--chown=\\$user", function () {
                         let content = onbuild + "COPY --chown=\\$x";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.notEqual(hover, null);
-                        assert.equal(hover.contents, markdownDocumentation.getMarkdown("COPY_FlagChown").contents);
-                        assert.equal(hover.range, undefined);
+                        assertHover(content, 0, triggerOffset + 9, "COPY_FlagChown");
                     });
 
                     it("--chown=\\root", function () {
                         let content = onbuild + "COPY --chown=\\a";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.notEqual(hover, null);
-                        assert.equal(hover.contents, markdownDocumentation.getMarkdown("COPY_FlagChown").contents);
-                        assert.equal(hover.range, undefined);
+                        assertHover(content, 0, triggerOffset + 9, "COPY_FlagChown");
                     });
 
                     it("--CHOWN", function () {
                         let content = onbuild + "COPY --CHOWN";
-                        let hover = onHover(content, 0, triggerOffset + 9);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 9);
                     });
 
                     it("flag after", function () {
                         let content = onbuild + "COPY app --chown=alpine app";
-                        let hover = onHover(content, 0, triggerOffset + 13);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 13);
 
                         content = onbuild + "COPY app app --chown=alpine";
-                        hover = onHover(content, 0, triggerOffset + 18);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 18);
                     });
 
                     it("whitespace", function () {
                         let content = onbuild + "COPY  --chown";
-                        let hover = onHover(content, 0, triggerOffset + 5);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 0, triggerOffset + 5);
                     });
                 });
             });
@@ -1177,262 +1013,198 @@ describe("Dockerfile hover", function () {
             describe("single variable delimited by space", function () {
                 it("${var}", function () {
                     let content = "ENV aa bb cc dd\nRUN echo ${aa} ${cc}";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "bb cc dd");
-                    hover = onHover(content, 1, 12);
-                    assert.equal(hover.contents, "bb cc dd");
-                    assert.equal(onHover(content, 0, 11), null);
-                    assert.equal(onHover(content, 1, 18), null);
+                    assertRawHover(content, 0, 5, "bb cc dd");
+                    assertRawHover(content, 1, 12, "bb cc dd");
+                    assertNullHover(content, 0, 11);
+                    assertNullHover(content, 1, 18);
 
                     content =
                         "FROM alpine\nENV aa bb cc dd\nRUN echo ${aa} ${cc}\n" +
                         "FROM alpine\nRUN echo ${aa} ${cc}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "bb cc dd");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "bb cc dd");
-                    assert.equal(onHover(content, 1, 11), null);
-                    assert.equal(onHover(content, 2, 18), null);
-                    assert.equal(onHover(content, 4, 12), null);
-                    assert.equal(onHover(content, 4, 18), null);
+                    assertRawHover(content, 1, 5, "bb cc dd");
+                    assertRawHover(content, 2, 12, "bb cc dd");
+                    assertNullHover(content, 1, 11);
+                    assertNullHover(content, 2, 18);
+                    assertNullHover(content, 4, 12);
+                    assertNullHover(content, 4, 18);
 
                     content =
                         "FROM alpine\nENV aa bb cc dd\nRUN echo ${aa} ${cc}\n" +
                         "FROM alpine\nENV aa bb cc ee\nRUN echo ${aa} ${cc}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "bb cc dd");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "bb cc dd");
-                    assert.equal(onHover(content, 1, 11), null);
-                    assert.equal(onHover(content, 2, 18), null);
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "bb cc ee");
-                    hover = onHover(content, 5, 12);
-                    assert.equal(hover.contents, "bb cc ee");
-                    assert.equal(onHover(content, 4, 11), null);
-                    assert.equal(onHover(content, 5, 18), null);
+                    assertRawHover(content, 1, 5, "bb cc dd");
+                    assertRawHover(content, 2, 12, "bb cc dd");
+                    assertNullHover(content, 1, 11);
+                    assertNullHover(content, 2, 18);
+                    assertRawHover(content, 4, 5, "bb cc ee");
+                    assertRawHover(content, 5, 12, "bb cc ee");
+                    assertNullHover(content, 4, 11);
+                    assertNullHover(content, 5, 18);
 
                     content = "ENV aa a  b\nRUN echo ${aa}";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 1, 12);
-                    assert.equal(hover.contents, "a  b");
+                    assertRawHover(content, 0, 5, "a  b");
+                    assertRawHover(content, 1, 12, "a  b");
 
                     content =
                         "FROM alpine\nENV aa a  b\nRUN echo ${aa}\n" +
                         "FROM alpine\nRUN echo ${aa}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "a  b");
-                    assert.equal(onHover(content, 4, 12), null);
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 12, "a  b");
+                    assertNullHover(content, 4, 12);
 
                     content =
                         "FROM alpine\nENV aa a  b\nRUN echo ${aa}\n" +
                         "FROM alpine\nENV aa a  c\nRUN echo ${aa}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "a  c");
-                    hover = onHover(content, 5, 12);
-                    assert.equal(hover.contents, "a  c");
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 12, "a  b");
+                    assertRawHover(content, 4, 5, "a  c");
+                    assertRawHover(content, 5, 12, "a  c");
                 });
 
                 it("$var", function () {
                     let content = "ENV aa bb cc dd\nRUN echo $aa $cc";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "bb cc dd");
-                    hover = onHover(content, 1, 11);
-                    assert.equal(hover.contents, "bb cc dd");
-                    assert.equal(onHover(content, 0, 11), null);
-                    assert.equal(onHover(content, 1, 15), null);
+                    assertRawHover(content, 0, 5, "bb cc dd");
+                    assertRawHover(content, 1, 11, "bb cc dd");
+                    assertNullHover(content, 0, 11);
+                    assertNullHover(content, 1, 15);
 
                     content =
                         "FROM alpine\nENV aa bb cc dd\nRUN echo $aa $cc\n" +
                         "FROM alpine\nRUN echo $aa $cc"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "bb cc dd");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "bb cc dd");
-                    assert.equal(onHover(content, 1, 11), null);
-                    assert.equal(onHover(content, 2, 15), null);
-                    assert.equal(onHover(content, 4, 11), null);
-                    assert.equal(onHover(content, 4, 15), null);
+                    assertRawHover(content, 1, 5, "bb cc dd");
+                    assertRawHover(content, 2, 11, "bb cc dd");
+                    assertNullHover(content, 1, 11);
+                    assertNullHover(content, 2, 15);
+                    assertNullHover(content, 4, 11);
+                    assertNullHover(content, 4, 15);
 
                     content =
                         "FROM alpine\nENV aa bb cc dd\nRUN echo $aa $cc\n" +
                         "FROM alpine\nENV aa bb cc ee\nRUN echo $aa $cc"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "bb cc dd");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "bb cc dd");
-                    assert.equal(onHover(content, 1, 11), null);
-                    assert.equal(onHover(content, 2, 15), null);
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "bb cc ee");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "bb cc ee");
-                    assert.equal(onHover(content, 4, 11), null);
-                    assert.equal(onHover(content, 5, 15), null);
+                    assertRawHover(content, 1, 5, "bb cc dd");
+                    assertRawHover(content, 2, 11, "bb cc dd");
+                    assertNullHover(content, 1, 11);
+                    assertNullHover(content, 2, 15);
+                    assertRawHover(content, 4, 5, "bb cc ee");
+                    assertRawHover(content, 5, 11, "bb cc ee");
+                    assertNullHover(content, 4, 11);
+                    assertNullHover(content, 5, 15);
 
                     content = "ENV aa a  b\nRUN echo $aa";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 1, 11);
-                    assert.equal(hover.contents, "a  b");
+                    assertRawHover(content, 0, 5, "a  b");
+                    assertRawHover(content, 1, 11, "a  b");
 
                     content =
                         "FROM alpine\nENV aa a  b\nRUN echo $aa\n" +
                         "FROM alpine\nRUN echo $aa"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "a  b");
-                    assert.equal(onHover(content, 4, 11), null);
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 11, "a  b");
+                    assertNullHover(content, 4, 11);
 
                     content =
                         "FROM alpine\nENV aa a  b\nRUN echo $aa\n" +
                         "FROM alpine\nENV aa a  c\nRUN echo $aa"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "a  c");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "a  c");
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 11, "a  b");
+                    assertRawHover(content, 4, 5, "a  c");
+                    assertRawHover(content, 5, 11, "a  c");
                 });
             });
 
             describe("single variable delimited by escaped space", function () {
                 it("${var}", function () {
                     let content = "ENV xx a\\ b\nRUN echo ${xx}";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 1, 12);
-                    assert.equal(hover.contents, "a b");
+                    assertRawHover(content, 0, 5, "a b");
+                    assertRawHover(content, 1, 12, "a b");
 
                     content =
                         "FROM alpine\nENV xx a\\ b\nRUN echo ${xx}\n" +
                         "FROM alpine\nRUN echo ${xx}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "a b");
-                    assert.equal(onHover(content, 4, 12), null);
+                    assertRawHover(content, 1, 5, "a b");
+                    assertRawHover(content, 2, 12, "a b");
+                    assertNullHover(content, 4, 12);
 
                     content =
                         "FROM alpine\nENV xx a\\ b\nRUN echo ${xx}\n" +
                         "FROM alpine\nENV xx a\\ c\nRUN echo ${xx}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "a c");
-                    hover = onHover(content, 5, 12);
-                    assert.equal(hover.contents, "a c");
+                    assertRawHover(content, 1, 5, "a b");
+                    assertRawHover(content, 2, 12, "a b");
+                    assertRawHover(content, 4, 5, "a c");
+                    assertRawHover(content, 5, 12, "a c");
 
                     content = "ENV xx a\\ \\ b\nRUN echo ${xx}";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 1, 12);
-                    assert.equal(hover.contents, "a  b");
+                    assertRawHover(content, 0, 5, "a  b");
+                    assertRawHover(content, 1, 12, "a  b");
 
                     content =
                         "FROM alpine\nENV xx a\\ \\ b\nRUN echo ${xx}\n" +
                         "FROM alpine\nRUN echo ${xx}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "a  b");
-                    assert.equal(onHover(content, 4, 12), null);
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 12, "a  b");
+                    assertNullHover(content, 4, 12);
 
                     content =
                         "FROM alpine\nENV xx a\\ \\ b\nRUN echo ${xx}\n" +
                         "FROM alpine\nENV xx a\\ \\ c\nRUN echo ${xx}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 12);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "a  c");
-                    hover = onHover(content, 5, 12);
-                    assert.equal(hover.contents, "a  c");
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 12, "a  b");
+                    assertRawHover(content, 4, 5, "a  c");
+                    assertRawHover(content, 5, 12, "a  c");
                 });
 
                 it("$var", function () {
                     let content = "ENV xx a\\ b\nRUN echo $xx";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 1, 11);
-                    assert.equal(hover.contents, "a b");
+                    assertRawHover(content, 0, 5, "a b");
+                    assertRawHover(content, 1, 11, "a b");
 
                     content =
                         "FROM alpine\nENV xx a\\ b\nRUN echo $xx\n" +
                         "FROM alpine\nRUN echo $xx"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "a b");
-                    assert.equal(onHover(content, 4, 11), null);
+                    assertRawHover(content, 1, 5, "a b");
+                    assertRawHover(content, 2, 11, "a b");
+                    assertNullHover(content, 4, 11);
 
                     content =
                         "FROM alpine\nENV xx a\\ b\nRUN echo $xx\n" +
                         "FROM alpine\nENV xx a\\ c\nRUN echo $xx"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "a b");
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "a c");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "a c");
+                    assertRawHover(content, 1, 5, "a b");
+                    assertRawHover(content, 2, 11, "a b");
+                    assertRawHover(content, 4, 5, "a c");
+                    assertRawHover(content, 5, 11, "a c");
 
                     content = "ENV xx a\\ \\ b\nRUN echo $xx";
-                    hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 1, 11);
-                    assert.equal(hover.contents, "a  b");
+                    assertRawHover(content, 0, 5, "a  b");
+                    assertRawHover(content, 1, 11, "a  b");
 
                     content =
                         "FROM alpine\nENV xx a\\ \\ b\nRUN echo $xx\n" +
                         "FROM alpine\nRUN echo $xx"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "a  b");
-                    assert.equal(onHover(content, 4, 11), null);
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 11, "a  b");
+                    assertNullHover(content, 4, 11);
 
                     content =
                         "FROM alpine\nENV xx a\\ \\ b\nRUN echo $xx\n" +
                         "FROM alpine\nENV xx a\\ \\ c\nRUN echo $xx"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 2, 11);
-                    assert.equal(hover.contents, "a  b");
-                    hover = onHover(content, 4, 5);
-                    assert.equal(hover.contents, "a  c");
-                    hover = onHover(content, 5, 11);
-                    assert.equal(hover.contents, "a  c");
+                    assertRawHover(content, 1, 5, "a  b");
+                    assertRawHover(content, 2, 11, "a  b");
+                    assertRawHover(content, 4, 5, "a  c");
+                    assertRawHover(content, 5, 11, "a  c");
                 });
             });
 
@@ -1445,49 +1217,33 @@ describe("Dockerfile hover", function () {
 				 */
                 it("${var}", function () {
                     let content = "ENV aa=x\nENV aa=y bb=${aa}\nENV cc=${aa}";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 1, 15);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 2, 10);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "x");
+                    assertRawHover(content, 1, 5, "y");
+                    assertRawHover(content, 1, 15, "x");
+                    assertRawHover(content, 2, 10, "y");
 
                     content =
                         "FROM alpine\nENV aa=x\nENV aa=y bb=${aa}\nENV cc=${aa}\n" +
                         "FROM alpine\nENV cc=${aa}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 2, 5);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 2, 15);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 3, 10);
-                    assert.equal(hover.contents, "y");
-                    assert.equal(onHover(content, 5, 10), null);
+                    assertRawHover(content, 1, 5, "x");
+                    assertRawHover(content, 2, 5, "y");
+                    assertRawHover(content, 2, 15, "x");
+                    assertRawHover(content, 3, 10, "y");
+                    assertNullHover(content, 5, 10);
 
                     content =
                         "FROM alpine\nENV aa=x\nENV aa=y bb=${aa}\nENV cc=${aa}\n" +
                         "FROM alpine\nENV aa=a\nENV aa=b bb=${aa}\nENV cc=${aa}"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 2, 5);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 2, 15);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 3, 10);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 5, 5);
-                    assert.equal(hover.contents, "a");
-                    hover = onHover(content, 6, 5);
-                    assert.equal(hover.contents, "b");
-                    hover = onHover(content, 6, 15);
-                    assert.equal(hover.contents, "a");
-                    hover = onHover(content, 7, 10);
-                    assert.equal(hover.contents, "b");
+                    assertRawHover(content, 1, 5, "x");
+                    assertRawHover(content, 2, 5, "y");
+                    assertRawHover(content, 2, 15, "x");
+                    assertRawHover(content, 3, 10, "y");
+                    assertRawHover(content, 5, 5, "a");
+                    assertRawHover(content, 6, 5, "b");
+                    assertRawHover(content, 6, 15, "a");
+                    assertRawHover(content, 7, 10, "b");
                 });
 
 				/**
@@ -1497,277 +1253,200 @@ describe("Dockerfile hover", function () {
 				 */
                 it("$var", function () {
                     let content = "ENV aa=x\nENV aa=y bb=$aa\nENV cc=$aa";
-                    let hover = onHover(content, 0, 5);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 1, 14);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 2, 9);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 5, "x");
+                    assertRawHover(content, 1, 5, "y");
+                    assertRawHover(content, 1, 14, "x");
+                    assertRawHover(content, 2, 9, "y");
 
                     content =
                         "FROM alpine\nENV aa=x\nENV aa=y bb=$aa\nENV cc=$aa\n" +
                         "FROM alpine\nENV cc=$aa"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 2, 5);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 2, 14);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 3, 9);
-                    assert.equal(hover.contents, "y");
-                    assert.equal(onHover(content, 5, 9), null);
+                    assertRawHover(content, 1, 5, "x");
+                    assertRawHover(content, 2, 5, "y");
+                    assertRawHover(content, 2, 14, "x");
+                    assertRawHover(content, 3, 9, "y");
+                    assertNullHover(content, 5, 9);
 
                     content =
                         "FROM alpine\nENV aa=x\nENV aa=y bb=$aa\nENV cc=$aa\n" +
                         "FROM alpine\nENV aa=a\nENV aa=b bb=$aa\nENV cc=$aa"
                         ;
-                    hover = onHover(content, 1, 5);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 2, 5);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 2, 14);
-                    assert.equal(hover.contents, "x");
-                    hover = onHover(content, 3, 10);
-                    assert.equal(hover.contents, "y");
-                    hover = onHover(content, 5, 5);
-                    assert.equal(hover.contents, "a");
-                    hover = onHover(content, 6, 5);
-                    assert.equal(hover.contents, "b");
-                    hover = onHover(content, 6, 14);
-                    assert.equal(hover.contents, "a");
-                    hover = onHover(content, 7, 10);
-                    assert.equal(hover.contents, "b");
+                    assertRawHover(content, 1, 5, "x");
+                    assertRawHover(content, 2, 5, "y");
+                    assertRawHover(content, 2, 14, "x");
+                    assertRawHover(content, 3, 10, "y");
+                    assertRawHover(content, 5, 5, "a");
+                    assertRawHover(content, 6, 5, "b");
+                    assertRawHover(content, 6, 14, "a");
+                    assertRawHover(content, 7, 10, "b");
                 });
             });
 
             describe("multiple variables", function () {
                 it("${var}", function () {
                     let content = "ENV var=value var2=value2\nRUN echo ${var} ${var2}";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 1, 12);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 0, 16);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 1, 20);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 0, 6, "value");
+                    assertRawHover(content, 1, 12, "value");
+                    assertRawHover(content, 0, 16, "value2");
+                    assertRawHover(content, 1, 20, "value2");
 
                     content = "ENV var=value \\\nvar2=value2 \\\nvar3=value3\nRUN echo ${var} ${var2} ${var3}";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 12);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 1, 2);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 3, 20);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 3, 28);
-                    assert.equal(hover.contents, "value3");
+                    assertRawHover(content, 0, 6, "value");
+                    assertRawHover(content, 3, 12, "value");
+                    assertRawHover(content, 1, 2, "value2");
+                    assertRawHover(content, 3, 20, "value2");
+                    assertRawHover(content, 2, 2, "value3");
+                    assertRawHover(content, 3, 28, "value3");
                 });
 
                 it("$var", function () {
                     let content = "ENV var=value var2=value2\nRUN echo $var $var2";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 1, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 0, 16);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 1, 17);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 0, 6, "value");
+                    assertRawHover(content, 1, 11, "value");
+                    assertRawHover(content, 0, 16, "value2");
+                    assertRawHover(content, 1, 17, "value2");
 
                     content = "ENV var=value \\\nvar2=value2 \\\nvar3=value3\nRUN echo $var $var2 $var3";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 3, 11);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 1, 2);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 3, 16);
-                    assert.equal(hover.contents, "value2");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 3, 22);
-                    assert.equal(hover.contents, "value3");
+                    assertRawHover(content, 0, 6, "value");
+                    assertRawHover(content, 3, 11, "value");
+                    assertRawHover(content, 1, 2, "value2");
+                    assertRawHover(content, 3, 16, "value2");
+                    assertRawHover(content, 2, 2, "value3");
+                    assertRawHover(content, 3, 22, "value3");
                 });
             });
 
             describe("escaped whitespace value", function () {
                 it("ENV var=\\", function () {
                     let content = "ENV var=\\";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, "");
 
                     content = "ENV var=\\ ";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, "");
 
                     content = "ENV var=\\  ";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, "");
                 });
 
                 it("ENV var=\\  var2=\\", function () {
                     let content = "ENV var=\\  var2=\\";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, " ");
-                    hover = onHover(content, 0, 13);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, " ");
+                    assertRawHover(content, 0, 13, "");
 
                     content = "ENV var=\\  var2=\\ ";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, " ");
-                    hover = onHover(content, 0, 13);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, " ");
+                    assertRawHover(content, 0, 13, "");
 
                     content = "ENV var=\\  var2=\\  ";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, " ");
-                    hover = onHover(content, 0, 13);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, " ");
+                    assertRawHover(content, 0, 13, "");
                 });
 
                 it("ENV var=\\   var2=\\", function () {
                     let content = "ENV var=\\   var2=\\";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, " ");
-                    hover = onHover(content, 0, 14);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, " ");
+                    assertRawHover(content, 0, 14, "");
 
                     content = "ENV var=\\   var2=\\ ";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, " ");
-                    hover = onHover(content, 0, 14);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, " ");
+                    assertRawHover(content, 0, 14, "");
 
                     content = "ENV var=\\   var2=\\  ";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, " ");
-                    hover = onHover(content, 0, 14);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, " ");
+                    assertRawHover(content, 0, 14, "");
                 });
 
                 it("ENV var=\\ \\  var2=\\", function () {
                     let content = "ENV var=\\ \\  var2=\\";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "  ");
-                    hover = onHover(content, 0, 13);
-                    assert.equal(hover.contents, "");
+                    assertRawHover(content, 0, 6, "  ");
+                    assertRawHover(content, 0, 13, "");
                 });
 
                 it("ENV var=y\\  ", function () {
                     let content = "ENV var=y\\  ";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "y");
+                    assertRawHover(content, 0, 6, "y");
                 });
             });
 
             describe("escaped single quote", function () {
                 it("ENV var='\\'", function () {
                     let content = "ENV var='\\'";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "\\");
+                    assertRawHover(content, 0, 6, "\\");
                 });
 
                 it("ENV var='\\\\'", function () {
                     let content = "ENV var='\\\\'";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "\\\\");
+                    assertRawHover(content, 0, 6, "\\\\");
                 });
 
                 it("ENV var='a\\\\nb'", function () {
                     let content = "ENV var='a\\\nb'";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "ab");
+                    assertRawHover(content, 0, 6, "ab");
                 });
 
                 it("ENV var='a\\ \\nb'", function () {
                     let content = "ENV var='a\\ \nb'";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "ab");
+                    assertRawHover(content, 0, 6, "ab");
                 });
 
                 it("ENV var='a\\  \\r\\nb'", function () {
                     let content = "ENV var='a\\  \r\nb'";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "ab");
+                    assertRawHover(content, 0, 6, "ab");
                 });
             });
 
             describe("escaped double quotes", function () {
                 it("ENV var=\"\\\"x\\\"\"", function () {
                     let content = "ENV var=\"\\\"x\\\"\"";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "\"x\"");
+                    assertRawHover(content, 0, 6, "\"x\"");
                 });
 
                 it("ENV var='\"\\\"'", function () {
                     let content = "ENV var='\"\\\"'";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "\"\\\"");
+                    assertRawHover(content, 0, 6, "\"\\\"");
                 });
 
                 it("ENV var=\"a\\\\nb\"", function () {
                     let content = "ENV var=\"a\\\nb\"";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "ab");
+                    assertRawHover(content, 0, 6, "ab");
                 });
 
                 it("ENV var=\"a\\ \\nb\"", function () {
                     let content = "ENV var=\"a\\ \nb\"";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "ab");
+                    assertRawHover(content, 0, 6, "ab");
                 });
 
                 it("ENV var=\"a\\  \\r\\nb\"", function () {
                     let content = "ENV var=\"a\\  \r\nb\"";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "ab");
+                    assertRawHover(content, 0, 6, "ab");
                 });
             });
 
             describe("comments", function () {
                 it("embedded in escaped line", function () {
                     let content = "ENV var=value \\\n# comment\nvar2=value2";
-                    let hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 0, 6, "value");
+                    assertRawHover(content, 2, 2, "value2");
 
                     content = "ENV var=value \\\nvar2=\"#\" var3=value3\n";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 1, 2);
-                    assert.equal(hover.contents, "#");
-                    hover = onHover(content, 1, 11);
-                    assert.equal(hover.contents, "value3");
+                    assertRawHover(content, 0, 6, "value");
+                    assertRawHover(content, 1, 2, "#");
+                    assertRawHover(content, 1, 11, "value3");
 
                     content = "ENV var=value \\\nvar2=# var3=value3 \\\nvar4=value4";
-                    hover = onHover(content, 0, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 1, 2);
-                    assert.equal(hover.contents, "#");
-                    hover = onHover(content, 1, 10);
-                    assert.equal(hover.contents, "value3");
-                    hover = onHover(content, 2, 2);
-                    assert.equal(hover.contents, "value4");
+                    assertRawHover(content, 0, 6, "value");
+                    assertRawHover(content, 1, 2, "#");
+                    assertRawHover(content, 1, 10, "value3");
+                    assertRawHover(content, 2, 2, "value4");
 
                     content = "FROM node\nENV var=value \\\n# comment\n# comment\nvar2=value2";
-                    hover = onHover(content, 1, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 4, 2);
-                    assert.equal(hover.contents, "value2");
+                    assertRawHover(content, 1, 6, "value");
+                    assertRawHover(content, 4, 2, "value2");
 
                     content = "FROM node\nENV var=value \\\n# var2=value2";
-                    hover = onHover(content, 1, 6);
-                    assert.equal(hover.contents, "value");
-                    hover = onHover(content, 2, 4);
-                    assert.equal(hover, null);
+                    assertRawHover(content, 1, 6, "value");
+                    assertNullHover(content, 2, 4);
                 });
             });
         });
@@ -1779,69 +1458,51 @@ describe("Dockerfile hover", function () {
             describe("HEALTHCHECK", function () {
                 it("--interval", function () {
                     let content = onbuild + "HEALTHCHECK --interval";
-                    let hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("HEALTHCHECK_FlagInterval").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagInterval");
                 });
 
                 it("--interval=\\$x", function () {
                     let content = onbuild + "HEALTHCHECK --interval=\\$x";
-                    let hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("HEALTHCHECK_FlagInterval").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagInterval");
                 });
 
                 it("--interval=\\a", function () {
                     let content = onbuild + "HEALTHCHECK --interval=\\a";
-                    let hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("HEALTHCHECK_FlagInterval").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagInterval");
                 });
 
                 it("--retries", function () {
                     let content = onbuild + "HEALTHCHECK --retries";
-                    let hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("HEALTHCHECK_FlagRetries").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagRetries");
                 });
 
                 it("--start-period", function () {
                     let content = onbuild + "HEALTHCHECK --start-period";
-                    let hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("HEALTHCHECK_FlagStartPeriod").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagStartPeriod");
                 });
 
                 it("--timeout", function () {
                     let content = onbuild + "HEALTHCHECK --timeout";
-                    let hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover.contents, markdownDocumentation.getMarkdown("HEALTHCHECK_FlagTimeout").contents);
-                    assert.equal(hover.range, undefined);
+                    assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagTimeout");
                 });
 
                 it("--TIMEOUT", function () {
                     let content = onbuild + "HEALTHCHECK --TIMEOUT";
-                    let hover = onHover(content, 0, triggerOffset + 17);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, triggerOffset + 17);
                 });
 
                 it("whitespace", function () {
                     let content = onbuild + "HEALTHCHECK  --timeout";
-                    let hover = onHover(content, 0, triggerOffset + 12);
-                    assert.equal(hover, null);
+                    assertNullHover(content, 0, triggerOffset + 12);
                 });
 
                 function createFlagsAfterTest(subcommand: string) {
                     it("flags after " + subcommand, function () {
                         let content = onbuild + "HEALTHCHECK " + subcommand + " \\\n--interval=30s\\\n--retries=3\\\n--start-period=30s\\\n--timeout=30s";
-                        let hover = onHover(content, 1, 4);
-                        assert.equal(hover, null);
-                        hover = onHover(content, 2, 4);
-                        assert.equal(hover, null);
-                        hover = onHover(content, 3, 4);
-                        assert.equal(hover, null);
-                        hover = onHover(content, 4, 4);
-                        assert.equal(hover, null);
+                        assertNullHover(content, 1, 4);
+                        assertNullHover(content, 2, 4);
+                        assertNullHover(content, 3, 4);
+                        assertNullHover(content, 4, 4);
                     });
                 }
 
@@ -1870,25 +1531,21 @@ describe("Dockerfile hover", function () {
 			 */
             it("${var}", function () {
                 let content = "ARG aa=b\nENV aa=c\nARG aa=d\nRUN echo ${aa}";
-                let hover = onHover(content, 3, 11);
-                assert.equal(hover.contents, "c");
+                assertRawHover(content, 3, 11, "c");
 
                 content =
                     "FROM alpine\nARG aa=b\nENV aa=c\nARG aa=d\nRUN echo ${aa}\n" +
                     "FROM alpine\nRUN echo ${aa}"
                     ;
-                hover = onHover(content, 4, 11);
-                assert.equal(hover.contents, "c");
-                assert.equal(onHover(content, 6, 11), null);
+                assertRawHover(content, 4, 11, "c");
+                assertNullHover(content, 6, 11);
 
                 content =
                     "FROM alpine\nARG aa=b\nENV aa=c\nARG aa=d\nRUN echo ${aa}\n" +
                     "FROM alpine\nARG aa=e\nENV aa=f\nARG aa=g\nRUN echo ${aa}"
                     ;
-                hover = onHover(content, 4, 11);
-                assert.equal(hover.contents, "c");
-                hover = onHover(content, 9, 11);
-                assert.equal(hover.contents, "f");
+                assertRawHover(content, 4, 11, "c");
+                assertRawHover(content, 9, 11, "f");
             });
 
 			/**
@@ -1899,25 +1556,21 @@ describe("Dockerfile hover", function () {
 			 */
             it("${var}", function () {
                 let content = "ARG aa=b\nENV aa=c\nARG aa=d\nRUN echo $aa";
-                let hover = onHover(content, 3, 10);
-                assert.equal(hover.contents, "c");
+                assertRawHover(content, 3, 10, "c");
 
                 content =
                     "FROM alpine\nARG aa=b\nENV aa=c\nARG aa=d\nRUN echo $aa\n" +
                     "FROM alpine\nRUN echo ${aa}"
                     ;
-                hover = onHover(content, 4, 10);
-                assert.equal(hover.contents, "c");
-                assert.equal(onHover(content, 6, 10), null);
+                assertRawHover(content, 4, 10, "c");
+                assertNullHover(content, 6, 10);
 
                 content =
                     "FROM alpine\nARG aa=b\nENV aa=c\nARG aa=d\nRUN echo $aa\n" +
                     "FROM alpine\nARG aa=e\nENV aa=f\nARG aa=g\nRUN echo $aa"
                     ;
-                hover = onHover(content, 4, 10);
-                assert.equal(hover.contents, "c");
-                hover = onHover(content, 9, 10);
-                assert.equal(hover.contents, "f");
+                assertRawHover(content, 4, 10, "c");
+                assertRawHover(content, 9, 10, "f");
             });
         });
     });
@@ -1926,128 +1579,100 @@ describe("Dockerfile hover", function () {
         describe("ARG", function () {
             it("FROM lookup", function () {
                 let content = "ARG image=alpine\nFROM $image";
-                let hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 1, 8);
-                assert.equal(hover.contents, "alpine");
+                assertRawHover(content, 0, 6, "alpine");
+                assertRawHover(content, 1, 8, "alpine");
 
                 content = "ARG image=alpine\nFROM $image\nFROM $image";
-                hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 1, 8);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 2, 8);
-                assert.equal(hover.contents, "alpine");
+                assertRawHover(content, 0, 6, "alpine");
+                assertRawHover(content, 1, 8, "alpine");
+                assertRawHover(content, 2, 6, "alpine");
             });
 
             it("reused variable name", function () {
                 let content = "ARG image=alpine\nFROM $image\nARG image=alpine2";
-                let hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 1, 8);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 2, 6);
-                assert.equal(hover.contents, "alpine2");
+                assertRawHover(content, 0, 6, "alpine");
+                assertRawHover(content, 1, 8, "alpine");
+                assertRawHover(content, 2, 6, "alpine2");
 
                 content = "ARG image=alpine\nFROM $image\nARG image=alpine2\nFROM $image";
-                hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 1, 8);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 2, 6);
-                assert.equal(hover.contents, "alpine2");
-                hover = onHover(content, 3, 8);
-                assert.equal(hover.contents, "alpine");
+                assertRawHover(content, 0, 6, "alpine");
+                assertRawHover(content, 1, 8, "alpine");
+                assertRawHover(content, 2, 6, "alpine2");
+                assertRawHover(content, 3, 8, "alpine");
 
                 content = "ARG image=alpine\nFROM $image\nFROM $image\nARG image=alpine2";
-                hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 1, 8);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 2, 6);
-                assert.equal(hover.contents, "alpine");
-                hover = onHover(content, 3, 8);
-                assert.equal(hover.contents, "alpine2");
+                assertRawHover(content, 0, 6, "alpine");
+                assertRawHover(content, 1, 8, "alpine");
+                assertRawHover(content, 2, 6, "alpine");
+                assertRawHover(content, 3, 8, "alpine2");
             });
 
             it("scoped", function () {
                 let content = "ARG image=alpine\nFROM alpine\nRUN echo $image";
-                assert.equal(onHover(content, 2, 12), null);
+                assertNullHover(content, 2, 12);
             });
 
             it("non-existent variable", function () {
                 let content = "FROM $image\nARG image";
-                assert.equal(onHover(content, 0, 8), null);
+                assertNullHover(content, 0, 8);
 
                 content = "ARG\nFROM $image";
-                assert.equal(onHover(content, 1, 8), null);
+                assertNullHover(content, 1, 8);
 
                 content = "ARG image=alpine\nFROM $image2\nARG image2=alpine2";
-                let hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                assert.equal(onHover(content, 1, 8), null);
-                hover = onHover(content, 2, 6);
-                assert.equal(hover.contents, "alpine2");
+                assertRawHover(content, 0, 6, "alpine");
+                assertNullHover(content, 1, 8);
+                assertRawHover(content, 2, 6, "alpine2");
             });
         });
 
         describe("ENV", function () {
             it("FROM lookup", function () {
                 let content = "ENV image=alpine\nFROM $image";
-                let hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                assert.equal(onHover(content, 1, 8), null);
+                assertRawHover(content, 0, 6, "alpine");
+                assertNullHover(content, 1, 8);
 
                 content = "ENV image=alpine\nFROM $image\nFROM $image";
-                hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                assert.equal(onHover(content, 1, 8), null);
-                assert.equal(onHover(content, 2, 8), null);
+                assertRawHover(content, 0, 6, "alpine");
+                assertNullHover(content, 1, 8);
+                assertNullHover(content, 2, 8);
             });
 
             it("reused variable name", function () {
                 let content = "ENV image=alpine\nFROM $image\nENV image=alpine2";
-                let hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                assert.equal(onHover(content, 1, 8), null);
-                hover = onHover(content, 2, 6);
-                assert.equal(hover.contents, "alpine2");
+                assertRawHover(content, 0, 6, "alpine");
+                assertNullHover(content, 1, 8);
+                assertRawHover(content, 2, 6, "alpine2");
 
                 content = "ENV image=alpine\nFROM $image\nENV image=alpine2\nFROM $image";
-                hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                assert.equal(onHover(content, 1, 8), null);
-                hover = onHover(content, 2, 6);
-                assert.equal(hover.contents, "alpine2");
-                assert.equal(onHover(content, 3, 8), null);
+                assertRawHover(content, 0, 6, "alpine");
+                assertNullHover(content, 1, 8);
+                assertRawHover(content, 2, 6, "alpine2");
+                assertNullHover(content, 3, 8);
 
                 content = "ENV image=alpine\nFROM $image\nFROM $image\nENV image=alpine2";
-                hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                assert.equal(onHover(content, 1, 8), null);
-                assert.equal(onHover(content, 2, 8), null);
-                hover = onHover(content, 3, 6);
-                assert.equal(hover.contents, "alpine2");
+                assertRawHover(content, 0, 6, "alpine");
+                assertNullHover(content, 1, 8);
+                assertNullHover(content, 2, 8);
+                assertRawHover(content, 3, 6, "alpine2");
             });
 
             it("scoped", function () {
                 let content = "ENV image=alpine\nFROM alpine\nRUN echo $image";
-                assert.equal(onHover(content, 2, 12), null);
+                assertNullHover(content, 2, 12);
             });
 
             it("non-existent variable", function () {
                 let content = "FROM $image\nENV image";
-                assert.equal(onHover(content, 0, 8), null);
+                assertNullHover(content, 0, 8);
 
                 content = "ENV\nFROM $image";
-                assert.equal(onHover(content, 1, 8), null);
+                assertNullHover(content, 1, 8);
 
                 content = "ENV image=alpine\nFROM $image2\nENV image2=alpine2";
-                let hover = onHover(content, 0, 6);
-                assert.equal(hover.contents, "alpine");
-                assert.equal(onHover(content, 1, 8), null);
-                hover = onHover(content, 2, 6);
-                assert.equal(hover.contents, "alpine2");
+                assertRawHover(content, 0, 6, "alpine");
+                assertNullHover(content, 1, 8);
+                assertRawHover(content, 2, 6, "alpine2");
             });
         });
     });
@@ -2055,103 +1680,73 @@ describe("Dockerfile hover", function () {
     describe("keyword nesting", function () {
         it("ONBUILD EXPOSE", function () {
             let content = "ONBUILD EXPOSE 8080";
-            let hover = onHover(content, 0, 11);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 11, "EXPOSE");
 
             content = "ONBUILD expose 8080";
-            hover = onHover(content, 0, 11);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 11, "EXPOSE");
 
             content = "ONBUILD ExposE 8080";
-            hover = onHover(content, 0, 11);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 11, "EXPOSE");
         });
 
         it("ONBUILD EXPOSE escaped on newline", function () {
             let content = "ONBUILD \\\nEXPOSE 8080";
-            let hover = onHover(content, 1, 3);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 1, 3, "EXPOSE");
 
             content = "ONBUILD \\\r\nEXPOSE 8080";
-            hover = onHover(content, 1, 3);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 1, 3, "EXPOSE");
 
             content = "#escape=`\nONBUILD \\\nEXPOSE 8080";
-            hover = onHover(content, 2, 3);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 2, 3, "EXPOSE");
         });
 
         it("ONBUILD EXPOSE escaped on newline with space", function () {
             let content = "ONBUILD \\\n EXPOSE 8080";
-            let hover = onHover(content, 1, 4);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 1, 4, "EXPOSE");
         });
 
         it("ONBUILD EXPOSE incomplete", function () {
             let content = "ONBUILD EXPOSE";
-            let hover = onHover(content, 0, 9);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 9, "EXPOSE");
 
             content = "ONBUILD EXPOSE\n";
-            hover = onHover(content, 0, 9);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 9, "EXPOSE");
 
             content = "ONBUILD EXPOSE\r";
-            hover = onHover(content, 0, 9);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 9, "EXPOSE");
 
             content = "ONBUILD EXPOSE\r\n";
-            hover = onHover(content, 0, 9);
-            assert.equal(hover.contents, markdownDocumentation.getMarkdown("EXPOSE").contents);
-            assert.equal(hover.range, undefined);
+            assertHover(content, 0, 9, "EXPOSE");
         });
 
         it("ONBUILD EXP\\OSE", function () {
             let content = "ONBUILD EXPOS\\E";
-            let hover = onHover(content, 0, 9);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 9);
         });
 
         it("ONBUILD with no trigger", function () {
             let content = "ONBUILD   \r\n";
-            let hover = onHover(content, 0, 9);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 9);
         });
 
         it("invalid nesting", function () {
             let content = "RUN EXPOSE 8080";
-            let hover = onHover(content, 0, 7);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 7);
 
             content = " RUN EXPOSE 8080";
-            hover = onHover(content, 0, 8);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 8);
 
             content = "\tRUN EXPOSE 8080";
-            hover = onHover(content, 0, 8);
-            assert.equal(hover, null);
+            assertNullHover(content, 0, 8);
 
             content = "\r\nRUN EXPOSE 8080";
-            hover = onHover(content, 1, 7);
-            assert.equal(hover, null);
+            assertNullHover(content, 1, 7);
 
             content = "\rRUN EXPOSE 8080";
-            hover = onHover(content, 1, 7);
-            assert.equal(hover, null);
+            assertNullHover(content, 1, 7);
 
             content = "\nRUN EXPOSE 8080";
-            hover = onHover(content, 1, 7);
-            assert.equal(hover, null);
+            assertNullHover(content, 1, 7);
         });
     });
 });
