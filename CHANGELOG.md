@@ -51,7 +51,7 @@ import { Position } from 'vscode-languageserver-types';
 // removed
 let ranges = service.computeCompletionItems(content, Position.create(3, 1), true);
 // replace the above with the following
-service.setCapabilities({ completion: { completionItem: { snippetSupport: true } }});
+service.setCapabilities({ completion: { completionItem: { snippetSupport: true } } });
 let ranges = service.computeCompletionItems(content, Position.create(3, 1));
 ```
 
