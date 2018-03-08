@@ -22,7 +22,6 @@ var editor = monaco.editor.create(document.getElementById("container"), {
 });
 var monacoModel = monaco.editor.getModel(MONACO_URI);
 var service = dockerfile_language_service_1.DockerfileLanguageServiceFactory.createLanguageService();
-service.setCapabilities({ completion: { completionItem: { snippetSupport: true } } });
 var m2p = new monaco_languageclient_1.MonacoToProtocolConverter();
 var p2m = new monaco_languageclient_1.ProtocolToMonacoConverter();
 monacoModel.onDidChangeContent(function (event) {
@@ -37,10 +36,9 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
             editor._commandService.addCommand(command.command, {
                 handler: function () {
                     var args = command.arguments;
-                    var edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
+                    var edits = service.createWorkspaceEdit(monacoModel.getValue(), command.command, args);
                     if (edits) {
-                        var workspaceEdit = { changes: (_a = {}, _a[MODEL_URI] = edits, _a) };
-                        var mEdits = p2m.asWorkspaceEdit(workspaceEdit);
+                        var mEdits = p2m.asWorkspaceEdit(edits);
                         var rEdits = mEdits.edits.map(function (edit) {
                             return {
                                 identifier: { major: 1, minor: 0 },
@@ -51,7 +49,6 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
                         });
                         monacoModel.pushEditOperations([], rEdits, function () { return []; });
                     }
-                    var _a;
                 }
             });
         };
@@ -66,7 +63,7 @@ monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
     triggerCharacters: ['=', ' ', '$', '-'],
     provideCompletionItems: function (model, position, token) {
         var lspPosition = m2p.asPosition(position.lineNumber, position.column);
-        var items = service.computeCompletionItems(model.getValue(), lspPosition);
+        var items = service.computeCompletionItems(model.getValue(), lspPosition, true);
         if (items.then) {
             return items.then(function (result) {
                 return p2m.asCompletionResult(result);
@@ -87,7 +84,7 @@ monaco.languages.registerDefinitionProvider(LANGUAGE_ID, {
 });
 monaco.languages.registerDocumentHighlightProvider(LANGUAGE_ID, {
     provideDocumentHighlights: function (model, position, token) {
-        var highlightRanges = service.computeHighlightRanges(model.getValue(), m2p.asPosition(position.lineNumber, position.column));
+        var highlightRanges = service.computeHighlightRanges(LSP_URI, model.getValue(), m2p.asPosition(position.lineNumber, position.column));
         return p2m.asDocumentHighlights(highlightRanges);
     }
 });
