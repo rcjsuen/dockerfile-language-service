@@ -5,7 +5,7 @@
   "dependencies": {
     "monaco-editor": "0.10.1",
     "monaco-languageclient": "0.4.0",
-    "dockerfile-language-service": "file:.."
+    "dockerfile-language-service": "file:dockerfile-language-service-0.0.2.tgz"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^4.0.1",
@@ -14,6 +14,7 @@
     "webpack": "^2.3.3"
   },
   "scripts": {
+    "preinstall": "npm pack ..",
     "compile": "tsc",
     "watch": "tsc -w",
     "copy": "cp src/index.html lib/index.html",
