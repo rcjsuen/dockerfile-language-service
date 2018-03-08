@@ -63,11 +63,952 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 103);
+/******/ 	return __webpack_require__(__webpack_require__.s = 104);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * The Position namespace provides helper functions to work with
+ * [Position](#Position) literals.
+ */
+var Position;
+(function (Position) {
+    /**
+     * Creates a new Position literal from the given line and character.
+     * @param line The position's line.
+     * @param character The position's character.
+     */
+    function create(line, character) {
+        return { line: line, character: character };
+    }
+    Position.create = create;
+    /**
+     * Checks whether the given liternal conforms to the [Position](#Position) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.number(candidate.line) && Is.number(candidate.character);
+    }
+    Position.is = is;
+})(Position = exports.Position || (exports.Position = {}));
+/**
+ * The Range namespace provides helper functions to work with
+ * [Range](#Range) literals.
+ */
+var Range;
+(function (Range) {
+    function create(one, two, three, four) {
+        if (Is.number(one) && Is.number(two) && Is.number(three) && Is.number(four)) {
+            return { start: Position.create(one, two), end: Position.create(three, four) };
+        }
+        else if (Position.is(one) && Position.is(two)) {
+            return { start: one, end: two };
+        }
+        else {
+            throw new Error("Range#create called with invalid arguments[" + one + ", " + two + ", " + three + ", " + four + "]");
+        }
+    }
+    Range.create = create;
+    /**
+     * Checks whether the given literal conforms to the [Range](#Range) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Position.is(candidate.start) && Position.is(candidate.end);
+    }
+    Range.is = is;
+})(Range = exports.Range || (exports.Range = {}));
+/**
+ * The Location namespace provides helper functions to work with
+ * [Location](#Location) literals.
+ */
+var Location;
+(function (Location) {
+    /**
+     * Creates a Location literal.
+     * @param uri The location's uri.
+     * @param range The location's range.
+     */
+    function create(uri, range) {
+        return { uri: uri, range: range };
+    }
+    Location.create = create;
+    /**
+     * Checks whether the given literal conforms to the [Location](#Location) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Range.is(candidate.range) && (Is.string(candidate.uri) || Is.undefined(candidate.uri));
+    }
+    Location.is = is;
+})(Location = exports.Location || (exports.Location = {}));
+/**
+ * The diagnostic's serverity.
+ */
+var DiagnosticSeverity;
+(function (DiagnosticSeverity) {
+    /**
+     * Reports an error.
+     */
+    DiagnosticSeverity.Error = 1;
+    /**
+     * Reports a warning.
+     */
+    DiagnosticSeverity.Warning = 2;
+    /**
+     * Reports an information.
+     */
+    DiagnosticSeverity.Information = 3;
+    /**
+     * Reports a hint.
+     */
+    DiagnosticSeverity.Hint = 4;
+})(DiagnosticSeverity = exports.DiagnosticSeverity || (exports.DiagnosticSeverity = {}));
+/**
+ * The Diagnostic namespace provides helper functions to work with
+ * [Diagnostic](#Diagnostic) literals.
+ */
+var Diagnostic;
+(function (Diagnostic) {
+    /**
+     * Creates a new Diagnostic literal.
+     */
+    function create(range, message, severity, code, source) {
+        var result = { range: range, message: message };
+        if (Is.defined(severity)) {
+            result.severity = severity;
+        }
+        if (Is.defined(code)) {
+            result.code = code;
+        }
+        if (Is.defined(source)) {
+            result.source = source;
+        }
+        return result;
+    }
+    Diagnostic.create = create;
+    /**
+     * Checks whether the given literal conforms to the [Diagnostic](#Diagnostic) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate)
+            && Range.is(candidate.range)
+            && Is.string(candidate.message)
+            && (Is.number(candidate.severity) || Is.undefined(candidate.severity))
+            && (Is.number(candidate.code) || Is.string(candidate.code) || Is.undefined(candidate.code))
+            && (Is.string(candidate.source) || Is.undefined(candidate.source));
+    }
+    Diagnostic.is = is;
+})(Diagnostic = exports.Diagnostic || (exports.Diagnostic = {}));
+/**
+ * The Command namespace provides helper functions to work with
+ * [Command](#Command) literals.
+ */
+var Command;
+(function (Command) {
+    /**
+     * Creates a new Command literal.
+     */
+    function create(title, command) {
+        var args = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            args[_i - 2] = arguments[_i];
+        }
+        var result = { title: title, command: command };
+        if (Is.defined(args) && args.length > 0) {
+            result.arguments = args;
+        }
+        return result;
+    }
+    Command.create = create;
+    /**
+     * Checks whether the given literal conforms to the [Command](#Command) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.string(candidate.title) && Is.string(candidate.title);
+    }
+    Command.is = is;
+})(Command = exports.Command || (exports.Command = {}));
+/**
+ * The TextEdit namespace provides helper function to create replace,
+ * insert and delete edits more easily.
+ */
+var TextEdit;
+(function (TextEdit) {
+    /**
+     * Creates a replace text edit.
+     * @param range The range of text to be replaced.
+     * @param newText The new text.
+     */
+    function replace(range, newText) {
+        return { range: range, newText: newText };
+    }
+    TextEdit.replace = replace;
+    /**
+     * Creates a insert text edit.
+     * @param position The position to insert the text at.
+     * @param newText The text to be inserted.
+     */
+    function insert(position, newText) {
+        return { range: { start: position, end: position }, newText: newText };
+    }
+    TextEdit.insert = insert;
+    /**
+     * Creates a delete text edit.
+     * @param range The range of text to be deleted.
+     */
+    function del(range) {
+        return { range: range, newText: '' };
+    }
+    TextEdit.del = del;
+})(TextEdit = exports.TextEdit || (exports.TextEdit = {}));
+/**
+ * The TextDocumentEdit namespace provides helper function to create
+ * an edit that manipulates a text document.
+ */
+var TextDocumentEdit;
+(function (TextDocumentEdit) {
+    /**
+     * Creates a new `TextDocumentEdit`
+     */
+    function create(textDocument, edits) {
+        return { textDocument: textDocument, edits: edits };
+    }
+    TextDocumentEdit.create = create;
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate)
+            && VersionedTextDocumentIdentifier.is(candidate.textDocument)
+            && Array.isArray(candidate.edits);
+    }
+    TextDocumentEdit.is = is;
+})(TextDocumentEdit = exports.TextDocumentEdit || (exports.TextDocumentEdit = {}));
+var TextEditChangeImpl = /** @class */ (function () {
+    function TextEditChangeImpl(edits) {
+        this.edits = edits;
+    }
+    TextEditChangeImpl.prototype.insert = function (position, newText) {
+        this.edits.push(TextEdit.insert(position, newText));
+    };
+    TextEditChangeImpl.prototype.replace = function (range, newText) {
+        this.edits.push(TextEdit.replace(range, newText));
+    };
+    TextEditChangeImpl.prototype.delete = function (range) {
+        this.edits.push(TextEdit.del(range));
+    };
+    TextEditChangeImpl.prototype.add = function (edit) {
+        this.edits.push(edit);
+    };
+    TextEditChangeImpl.prototype.all = function () {
+        return this.edits;
+    };
+    TextEditChangeImpl.prototype.clear = function () {
+        this.edits.splice(0, this.edits.length);
+    };
+    return TextEditChangeImpl;
+}());
+/**
+ * A workspace change helps constructing changes to a workspace.
+ */
+var WorkspaceChange = /** @class */ (function () {
+    function WorkspaceChange(workspaceEdit) {
+        var _this = this;
+        this._textEditChanges = Object.create(null);
+        if (workspaceEdit) {
+            this._workspaceEdit = workspaceEdit;
+            if (workspaceEdit.documentChanges) {
+                workspaceEdit.documentChanges.forEach(function (textDocumentEdit) {
+                    var textEditChange = new TextEditChangeImpl(textDocumentEdit.edits);
+                    _this._textEditChanges[textDocumentEdit.textDocument.uri] = textEditChange;
+                });
+            }
+            else if (workspaceEdit.changes) {
+                Object.keys(workspaceEdit.changes).forEach(function (key) {
+                    var textEditChange = new TextEditChangeImpl(workspaceEdit.changes[key]);
+                    _this._textEditChanges[key] = textEditChange;
+                });
+            }
+        }
+    }
+    Object.defineProperty(WorkspaceChange.prototype, "edit", {
+        /**
+         * Returns the underlying [WorkspaceEdit](#WorkspaceEdit) literal
+         * use to be returned from a workspace edit operation like rename.
+         */
+        get: function () {
+            return this._workspaceEdit;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    WorkspaceChange.prototype.getTextEditChange = function (key) {
+        if (VersionedTextDocumentIdentifier.is(key)) {
+            if (!this._workspaceEdit) {
+                this._workspaceEdit = {
+                    documentChanges: []
+                };
+            }
+            if (!this._workspaceEdit.documentChanges) {
+                throw new Error('Workspace edit is not configured for versioned document changes.');
+            }
+            var textDocument = key;
+            var result = this._textEditChanges[textDocument.uri];
+            if (!result) {
+                var edits = [];
+                var textDocumentEdit = {
+                    textDocument: textDocument,
+                    edits: edits
+                };
+                this._workspaceEdit.documentChanges.push(textDocumentEdit);
+                result = new TextEditChangeImpl(edits);
+                this._textEditChanges[textDocument.uri] = result;
+            }
+            return result;
+        }
+        else {
+            if (!this._workspaceEdit) {
+                this._workspaceEdit = {
+                    changes: Object.create(null)
+                };
+            }
+            if (!this._workspaceEdit.changes) {
+                throw new Error('Workspace edit is not configured for normal text edit changes.');
+            }
+            var result = this._textEditChanges[key];
+            if (!result) {
+                var edits = [];
+                this._workspaceEdit.changes[key] = edits;
+                result = new TextEditChangeImpl(edits);
+                this._textEditChanges[key] = result;
+            }
+            return result;
+        }
+    };
+    return WorkspaceChange;
+}());
+exports.WorkspaceChange = WorkspaceChange;
+/**
+ * The TextDocumentIdentifier namespace provides helper functions to work with
+ * [TextDocumentIdentifier](#TextDocumentIdentifier) literals.
+ */
+var TextDocumentIdentifier;
+(function (TextDocumentIdentifier) {
+    /**
+     * Creates a new TextDocumentIdentifier literal.
+     * @param uri The document's uri.
+     */
+    function create(uri) {
+        return { uri: uri };
+    }
+    TextDocumentIdentifier.create = create;
+    /**
+     * Checks whether the given literal conforms to the [TextDocumentIdentifier](#TextDocumentIdentifier) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.string(candidate.uri);
+    }
+    TextDocumentIdentifier.is = is;
+})(TextDocumentIdentifier = exports.TextDocumentIdentifier || (exports.TextDocumentIdentifier = {}));
+/**
+ * The VersionedTextDocumentIdentifier namespace provides helper functions to work with
+ * [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) literals.
+ */
+var VersionedTextDocumentIdentifier;
+(function (VersionedTextDocumentIdentifier) {
+    /**
+     * Creates a new VersionedTextDocumentIdentifier literal.
+     * @param uri The document's uri.
+     * @param uri The document's text.
+     */
+    function create(uri, version) {
+        return { uri: uri, version: version };
+    }
+    VersionedTextDocumentIdentifier.create = create;
+    /**
+     * Checks whether the given literal conforms to the [VersionedTextDocumentIdentifier](#VersionedTextDocumentIdentifier) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.string(candidate.uri) && Is.number(candidate.version);
+    }
+    VersionedTextDocumentIdentifier.is = is;
+})(VersionedTextDocumentIdentifier = exports.VersionedTextDocumentIdentifier || (exports.VersionedTextDocumentIdentifier = {}));
+/**
+ * The TextDocumentItem namespace provides helper functions to work with
+ * [TextDocumentItem](#TextDocumentItem) literals.
+ */
+var TextDocumentItem;
+(function (TextDocumentItem) {
+    /**
+     * Creates a new TextDocumentItem literal.
+     * @param uri The document's uri.
+     * @param languageId The document's language identifier.
+     * @param version The document's version number.
+     * @param text The document's text.
+     */
+    function create(uri, languageId, version, text) {
+        return { uri: uri, languageId: languageId, version: version, text: text };
+    }
+    TextDocumentItem.create = create;
+    /**
+     * Checks whether the given literal conforms to the [TextDocumentItem](#TextDocumentItem) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.string(candidate.uri) && Is.string(candidate.languageId) && Is.number(candidate.version) && Is.string(candidate.text);
+    }
+    TextDocumentItem.is = is;
+})(TextDocumentItem = exports.TextDocumentItem || (exports.TextDocumentItem = {}));
+/**
+ * Describes the content type that a client supports in various
+ * result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
+ *
+ * Please note that `MarkupKinds` must not start with a `$`. This kinds
+ * are reserved for internal usage.
+ */
+var MarkupKind;
+(function (MarkupKind) {
+    /**
+     * Plain text is supported as a content format
+     */
+    MarkupKind.PlainText = 'plaintext';
+    /**
+     * Markdown is supported as a content format
+     */
+    MarkupKind.Markdown = 'markdown';
+})(MarkupKind = exports.MarkupKind || (exports.MarkupKind = {}));
+/**
+ * The kind of a completion entry.
+ */
+var CompletionItemKind;
+(function (CompletionItemKind) {
+    CompletionItemKind.Text = 1;
+    CompletionItemKind.Method = 2;
+    CompletionItemKind.Function = 3;
+    CompletionItemKind.Constructor = 4;
+    CompletionItemKind.Field = 5;
+    CompletionItemKind.Variable = 6;
+    CompletionItemKind.Class = 7;
+    CompletionItemKind.Interface = 8;
+    CompletionItemKind.Module = 9;
+    CompletionItemKind.Property = 10;
+    CompletionItemKind.Unit = 11;
+    CompletionItemKind.Value = 12;
+    CompletionItemKind.Enum = 13;
+    CompletionItemKind.Keyword = 14;
+    CompletionItemKind.Snippet = 15;
+    CompletionItemKind.Color = 16;
+    CompletionItemKind.File = 17;
+    CompletionItemKind.Reference = 18;
+    CompletionItemKind.Folder = 19;
+    CompletionItemKind.EnumMember = 20;
+    CompletionItemKind.Constant = 21;
+    CompletionItemKind.Struct = 22;
+    CompletionItemKind.Event = 23;
+    CompletionItemKind.Operator = 24;
+    CompletionItemKind.TypeParameter = 25;
+})(CompletionItemKind = exports.CompletionItemKind || (exports.CompletionItemKind = {}));
+/**
+ * Defines whether the insert text in a completion item should be interpreted as
+ * plain text or a snippet.
+ */
+var InsertTextFormat;
+(function (InsertTextFormat) {
+    /**
+     * The primary text to be inserted is treated as a plain string.
+     */
+    InsertTextFormat.PlainText = 1;
+    /**
+     * The primary text to be inserted is treated as a snippet.
+     *
+     * A snippet can define tab stops and placeholders with `$1`, `$2`
+     * and `${3:foo}`. `$0` defines the final tab stop, it defaults to
+     * the end of the snippet. Placeholders with equal identifiers are linked,
+     * that is typing in one will update others too.
+     *
+     * See also: https://github.com/Microsoft/vscode/blob/master/src/vs/editor/contrib/snippet/common/snippet.md
+     */
+    InsertTextFormat.Snippet = 2;
+})(InsertTextFormat = exports.InsertTextFormat || (exports.InsertTextFormat = {}));
+/**
+ * The CompletionItem namespace provides functions to deal with
+ * completion items.
+ */
+var CompletionItem;
+(function (CompletionItem) {
+    /**
+     * Create a completion item and seed it with a label.
+     * @param label The completion item's label
+     */
+    function create(label) {
+        return { label: label };
+    }
+    CompletionItem.create = create;
+})(CompletionItem = exports.CompletionItem || (exports.CompletionItem = {}));
+/**
+ * The CompletionList namespace provides functions to deal with
+ * completion lists.
+ */
+var CompletionList;
+(function (CompletionList) {
+    /**
+     * Creates a new completion list.
+     *
+     * @param items The completion items.
+     * @param isIncomplete The list is not complete.
+     */
+    function create(items, isIncomplete) {
+        return { items: items ? items : [], isIncomplete: !!isIncomplete };
+    }
+    CompletionList.create = create;
+})(CompletionList = exports.CompletionList || (exports.CompletionList = {}));
+var MarkedString;
+(function (MarkedString) {
+    /**
+     * Creates a marked string from plain text.
+     *
+     * @param plainText The plain text.
+     */
+    function fromPlainText(plainText) {
+        return plainText.replace(/[\\`*_{}[\]()#+\-.!]/g, "\\$&"); // escape markdown syntax tokens: http://daringfireball.net/projects/markdown/syntax#backslash
+    }
+    MarkedString.fromPlainText = fromPlainText;
+})(MarkedString = exports.MarkedString || (exports.MarkedString = {}));
+/**
+ * The ParameterInformation namespace provides helper functions to work with
+ * [ParameterInformation](#ParameterInformation) literals.
+ */
+var ParameterInformation;
+(function (ParameterInformation) {
+    /**
+     * Creates a new parameter information literal.
+     *
+     * @param label A label string.
+     * @param documentation A doc string.
+     */
+    function create(label, documentation) {
+        return documentation ? { label: label, documentation: documentation } : { label: label };
+    }
+    ParameterInformation.create = create;
+    ;
+})(ParameterInformation = exports.ParameterInformation || (exports.ParameterInformation = {}));
+/**
+ * The SignatureInformation namespace provides helper functions to work with
+ * [SignatureInformation](#SignatureInformation) literals.
+ */
+var SignatureInformation;
+(function (SignatureInformation) {
+    function create(label, documentation) {
+        var parameters = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            parameters[_i - 2] = arguments[_i];
+        }
+        var result = { label: label };
+        if (Is.defined(documentation)) {
+            result.documentation = documentation;
+        }
+        if (Is.defined(parameters)) {
+            result.parameters = parameters;
+        }
+        else {
+            result.parameters = [];
+        }
+        return result;
+    }
+    SignatureInformation.create = create;
+})(SignatureInformation = exports.SignatureInformation || (exports.SignatureInformation = {}));
+/**
+ * A document highlight kind.
+ */
+var DocumentHighlightKind;
+(function (DocumentHighlightKind) {
+    /**
+     * A textual occurrance.
+     */
+    DocumentHighlightKind.Text = 1;
+    /**
+     * Read-access of a symbol, like reading a variable.
+     */
+    DocumentHighlightKind.Read = 2;
+    /**
+     * Write-access of a symbol, like writing to a variable.
+     */
+    DocumentHighlightKind.Write = 3;
+})(DocumentHighlightKind = exports.DocumentHighlightKind || (exports.DocumentHighlightKind = {}));
+/**
+ * DocumentHighlight namespace to provide helper functions to work with
+ * [DocumentHighlight](#DocumentHighlight) literals.
+ */
+var DocumentHighlight;
+(function (DocumentHighlight) {
+    /**
+     * Create a DocumentHighlight object.
+     * @param range The range the highlight applies to.
+     */
+    function create(range, kind) {
+        var result = { range: range };
+        if (Is.number(kind)) {
+            result.kind = kind;
+        }
+        return result;
+    }
+    DocumentHighlight.create = create;
+})(DocumentHighlight = exports.DocumentHighlight || (exports.DocumentHighlight = {}));
+/**
+ * A symbol kind.
+ */
+var SymbolKind;
+(function (SymbolKind) {
+    SymbolKind.File = 1;
+    SymbolKind.Module = 2;
+    SymbolKind.Namespace = 3;
+    SymbolKind.Package = 4;
+    SymbolKind.Class = 5;
+    SymbolKind.Method = 6;
+    SymbolKind.Property = 7;
+    SymbolKind.Field = 8;
+    SymbolKind.Constructor = 9;
+    SymbolKind.Enum = 10;
+    SymbolKind.Interface = 11;
+    SymbolKind.Function = 12;
+    SymbolKind.Variable = 13;
+    SymbolKind.Constant = 14;
+    SymbolKind.String = 15;
+    SymbolKind.Number = 16;
+    SymbolKind.Boolean = 17;
+    SymbolKind.Array = 18;
+    SymbolKind.Object = 19;
+    SymbolKind.Key = 20;
+    SymbolKind.Null = 21;
+    SymbolKind.EnumMember = 22;
+    SymbolKind.Struct = 23;
+    SymbolKind.Event = 24;
+    SymbolKind.Operator = 25;
+    SymbolKind.TypeParameter = 26;
+})(SymbolKind = exports.SymbolKind || (exports.SymbolKind = {}));
+var SymbolInformation;
+(function (SymbolInformation) {
+    /**
+     * Creates a new symbol information literal.
+     *
+     * @param name The name of the symbol.
+     * @param kind The kind of the symbol.
+     * @param range The range of the location of the symbol.
+     * @param uri The resource of the location of symbol, defaults to the current document.
+     * @param containerName The name of the symbol containg the symbol.
+     */
+    function create(name, kind, range, uri, containerName) {
+        var result = {
+            name: name,
+            kind: kind,
+            location: { uri: uri, range: range }
+        };
+        if (containerName) {
+            result.containerName = containerName;
+        }
+        return result;
+    }
+    SymbolInformation.create = create;
+})(SymbolInformation = exports.SymbolInformation || (exports.SymbolInformation = {}));
+/**
+ * The CodeActionContext namespace provides helper functions to work with
+ * [CodeActionContext](#CodeActionContext) literals.
+ */
+var CodeActionContext;
+(function (CodeActionContext) {
+    /**
+     * Creates a new CodeActionContext literal.
+     */
+    function create(diagnostics) {
+        return { diagnostics: diagnostics };
+    }
+    CodeActionContext.create = create;
+    /**
+     * Checks whether the given literal conforms to the [CodeActionContext](#CodeActionContext) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.typedArray(candidate.diagnostics, Diagnostic.is);
+    }
+    CodeActionContext.is = is;
+})(CodeActionContext = exports.CodeActionContext || (exports.CodeActionContext = {}));
+/**
+ * The CodeLens namespace provides helper functions to work with
+ * [CodeLens](#CodeLens) literals.
+ */
+var CodeLens;
+(function (CodeLens) {
+    /**
+     * Creates a new CodeLens literal.
+     */
+    function create(range, data) {
+        var result = { range: range };
+        if (Is.defined(data))
+            result.data = data;
+        return result;
+    }
+    CodeLens.create = create;
+    /**
+     * Checks whether the given literal conforms to the [CodeLens](#CodeLens) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.command) || Command.is(candidate.command));
+    }
+    CodeLens.is = is;
+})(CodeLens = exports.CodeLens || (exports.CodeLens = {}));
+/**
+ * The FormattingOptions namespace provides helper functions to work with
+ * [FormattingOptions](#FormattingOptions) literals.
+ */
+var FormattingOptions;
+(function (FormattingOptions) {
+    /**
+     * Creates a new FormattingOptions literal.
+     */
+    function create(tabSize, insertSpaces) {
+        return { tabSize: tabSize, insertSpaces: insertSpaces };
+    }
+    FormattingOptions.create = create;
+    /**
+     * Checks whether the given literal conforms to the [FormattingOptions](#FormattingOptions) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.number(candidate.tabSize) && Is.boolean(candidate.insertSpaces);
+    }
+    FormattingOptions.is = is;
+})(FormattingOptions = exports.FormattingOptions || (exports.FormattingOptions = {}));
+/**
+ * A document link is a range in a text document that links to an internal or external resource, like another
+ * text document or a web site.
+ */
+var DocumentLink = /** @class */ (function () {
+    function DocumentLink() {
+    }
+    return DocumentLink;
+}());
+exports.DocumentLink = DocumentLink;
+/**
+ * The DocumentLink namespace provides helper functions to work with
+ * [DocumentLink](#DocumentLink) literals.
+ */
+(function (DocumentLink) {
+    /**
+     * Creates a new DocumentLink literal.
+     */
+    function create(range, target) {
+        return { range: range, target: target };
+    }
+    DocumentLink.create = create;
+    /**
+     * Checks whether the given literal conforms to the [DocumentLink](#DocumentLink) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Range.is(candidate.range) && (Is.undefined(candidate.target) || Is.string(candidate.target));
+    }
+    DocumentLink.is = is;
+})(DocumentLink = exports.DocumentLink || (exports.DocumentLink = {}));
+exports.DocumentLink = DocumentLink;
+exports.EOL = ['\n', '\r\n', '\r'];
+var TextDocument;
+(function (TextDocument) {
+    /**
+     * Creates a new ITextDocument literal from the given uri and content.
+     * @param uri The document's uri.
+     * @param languageId  The document's language Id.
+     * @param content The document's content.
+     */
+    function create(uri, languageId, version, content) {
+        return new FullTextDocument(uri, languageId, version, content);
+    }
+    TextDocument.create = create;
+    /**
+     * Checks whether the given literal conforms to the [ITextDocument](#ITextDocument) interface.
+     */
+    function is(value) {
+        var candidate = value;
+        return Is.defined(candidate) && Is.string(candidate.uri) && (Is.undefined(candidate.languageId) || Is.string(candidate.languageId)) && Is.number(candidate.lineCount)
+            && Is.func(candidate.getText) && Is.func(candidate.positionAt) && Is.func(candidate.offsetAt) ? true : false;
+    }
+    TextDocument.is = is;
+})(TextDocument = exports.TextDocument || (exports.TextDocument = {}));
+/**
+ * Represents reasons why a text document is saved.
+ */
+var TextDocumentSaveReason;
+(function (TextDocumentSaveReason) {
+    /**
+     * Manually triggered, e.g. by the user pressing save, by starting debugging,
+     * or by an API call.
+     */
+    TextDocumentSaveReason.Manual = 1;
+    /**
+     * Automatic after a delay.
+     */
+    TextDocumentSaveReason.AfterDelay = 2;
+    /**
+     * When the editor lost focus.
+     */
+    TextDocumentSaveReason.FocusOut = 3;
+})(TextDocumentSaveReason = exports.TextDocumentSaveReason || (exports.TextDocumentSaveReason = {}));
+var FullTextDocument = /** @class */ (function () {
+    function FullTextDocument(uri, languageId, version, content) {
+        this._uri = uri;
+        this._languageId = languageId;
+        this._version = version;
+        this._content = content;
+        this._lineOffsets = null;
+    }
+    Object.defineProperty(FullTextDocument.prototype, "uri", {
+        get: function () {
+            return this._uri;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "languageId", {
+        get: function () {
+            return this._languageId;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(FullTextDocument.prototype, "version", {
+        get: function () {
+            return this._version;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    FullTextDocument.prototype.getText = function (range) {
+        if (range) {
+            var start = this.offsetAt(range.start);
+            var end = this.offsetAt(range.end);
+            return this._content.substring(start, end);
+        }
+        return this._content;
+    };
+    FullTextDocument.prototype.update = function (event, version) {
+        this._content = event.text;
+        this._version = version;
+        this._lineOffsets = null;
+    };
+    FullTextDocument.prototype.getLineOffsets = function () {
+        if (this._lineOffsets === null) {
+            var lineOffsets = [];
+            var text = this._content;
+            var isLineStart = true;
+            for (var i = 0; i < text.length; i++) {
+                if (isLineStart) {
+                    lineOffsets.push(i);
+                    isLineStart = false;
+                }
+                var ch = text.charAt(i);
+                isLineStart = (ch === '\r' || ch === '\n');
+                if (ch === '\r' && i + 1 < text.length && text.charAt(i + 1) === '\n') {
+                    i++;
+                }
+            }
+            if (isLineStart && text.length > 0) {
+                lineOffsets.push(text.length);
+            }
+            this._lineOffsets = lineOffsets;
+        }
+        return this._lineOffsets;
+    };
+    FullTextDocument.prototype.positionAt = function (offset) {
+        offset = Math.max(Math.min(offset, this._content.length), 0);
+        var lineOffsets = this.getLineOffsets();
+        var low = 0, high = lineOffsets.length;
+        if (high === 0) {
+            return Position.create(0, offset);
+        }
+        while (low < high) {
+            var mid = Math.floor((low + high) / 2);
+            if (lineOffsets[mid] > offset) {
+                high = mid;
+            }
+            else {
+                low = mid + 1;
+            }
+        }
+        // low is the least x for which the line offset is larger than the current offset
+        // or array.length if no line offset is larger than the current offset
+        var line = low - 1;
+        return Position.create(line, offset - lineOffsets[line]);
+    };
+    FullTextDocument.prototype.offsetAt = function (position) {
+        var lineOffsets = this.getLineOffsets();
+        if (position.line >= lineOffsets.length) {
+            return this._content.length;
+        }
+        else if (position.line < 0) {
+            return 0;
+        }
+        var lineOffset = lineOffsets[position.line];
+        var nextLineOffset = (position.line + 1 < lineOffsets.length) ? lineOffsets[position.line + 1] : this._content.length;
+        return Math.max(Math.min(lineOffset + position.character, nextLineOffset), lineOffset);
+    };
+    Object.defineProperty(FullTextDocument.prototype, "lineCount", {
+        get: function () {
+            return this.getLineOffsets().length;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return FullTextDocument;
+}());
+var Is;
+(function (Is) {
+    var toString = Object.prototype.toString;
+    function defined(value) {
+        return typeof value !== 'undefined';
+    }
+    Is.defined = defined;
+    function undefined(value) {
+        return typeof value === 'undefined';
+    }
+    Is.undefined = undefined;
+    function boolean(value) {
+        return value === true || value === false;
+    }
+    Is.boolean = boolean;
+    function string(value) {
+        return toString.call(value) === '[object String]';
+    }
+    Is.string = string;
+    function number(value) {
+        return toString.call(value) === '[object Number]';
+    }
+    Is.number = number;
+    function func(value) {
+        return toString.call(value) === '[object Function]';
+    }
+    Is.func = func;
+    function typedArray(value, check) {
+        return Array.isArray(value) && value.every(check);
+    }
+    Is.typedArray = typedArray;
+})(Is || (Is = {}));
+
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -970,64 +1911,64 @@ var Is;
 
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var argument_1 = __webpack_require__(18);
+var argument_1 = __webpack_require__(19);
 exports.Argument = argument_1.Argument;
-const comment_1 = __webpack_require__(56);
+const comment_1 = __webpack_require__(57);
 exports.Comment = comment_1.Comment;
-const parser_1 = __webpack_require__(65);
-var flag_1 = __webpack_require__(57);
+const parser_1 = __webpack_require__(66);
+var flag_1 = __webpack_require__(58);
 exports.Flag = flag_1.Flag;
-const instruction_1 = __webpack_require__(3);
+const instruction_1 = __webpack_require__(4);
 exports.Instruction = instruction_1.Instruction;
-var line_1 = __webpack_require__(20);
+var line_1 = __webpack_require__(21);
 exports.Line = line_1.Line;
-const parserDirective_1 = __webpack_require__(66);
+const parserDirective_1 = __webpack_require__(67);
 exports.ParserDirective = parserDirective_1.ParserDirective;
-var property_1 = __webpack_require__(37);
+var property_1 = __webpack_require__(38);
 exports.Property = property_1.Property;
-var variable_1 = __webpack_require__(67);
+var variable_1 = __webpack_require__(68);
 exports.Variable = variable_1.Variable;
-var add_1 = __webpack_require__(58);
+var add_1 = __webpack_require__(59);
 exports.Add = add_1.Add;
-const arg_1 = __webpack_require__(29);
+const arg_1 = __webpack_require__(30);
 exports.Arg = arg_1.Arg;
-const cmd_1 = __webpack_require__(30);
+const cmd_1 = __webpack_require__(31);
 exports.Cmd = cmd_1.Cmd;
-const copy_1 = __webpack_require__(31);
+const copy_1 = __webpack_require__(32);
 exports.Copy = copy_1.Copy;
-const entrypoint_1 = __webpack_require__(32);
+const entrypoint_1 = __webpack_require__(33);
 exports.Entrypoint = entrypoint_1.Entrypoint;
-const env_1 = __webpack_require__(33);
+const env_1 = __webpack_require__(34);
 exports.Env = env_1.Env;
-const from_1 = __webpack_require__(19);
+const from_1 = __webpack_require__(20);
 exports.From = from_1.From;
-const healthcheck_1 = __webpack_require__(34);
+const healthcheck_1 = __webpack_require__(35);
 exports.Healthcheck = healthcheck_1.Healthcheck;
-var jsonInstruction_1 = __webpack_require__(6);
+var jsonInstruction_1 = __webpack_require__(7);
 exports.JSONInstruction = jsonInstruction_1.JSONInstruction;
-var label_1 = __webpack_require__(59);
+var label_1 = __webpack_require__(60);
 exports.Label = label_1.Label;
-var modifiableInstruction_1 = __webpack_require__(36);
+var modifiableInstruction_1 = __webpack_require__(37);
 exports.ModifiableInstruction = modifiableInstruction_1.ModifiableInstruction;
-var onbuild_1 = __webpack_require__(35);
+var onbuild_1 = __webpack_require__(36);
 exports.Onbuild = onbuild_1.Onbuild;
-var propertyInstruction_1 = __webpack_require__(21);
+var propertyInstruction_1 = __webpack_require__(22);
 exports.PropertyInstruction = propertyInstruction_1.PropertyInstruction;
-var shell_1 = __webpack_require__(60);
+var shell_1 = __webpack_require__(61);
 exports.Shell = shell_1.Shell;
-var stopsignal_1 = __webpack_require__(61);
+var stopsignal_1 = __webpack_require__(62);
 exports.Stopsignal = stopsignal_1.Stopsignal;
-var user_1 = __webpack_require__(62);
+var user_1 = __webpack_require__(63);
 exports.User = user_1.User;
-var volume_1 = __webpack_require__(63);
+var volume_1 = __webpack_require__(64);
 exports.Volume = volume_1.Volume;
-var workdir_1 = __webpack_require__(64);
+var workdir_1 = __webpack_require__(65);
 exports.Workdir = workdir_1.Workdir;
 var Keyword;
 (function (Keyword) {
@@ -1071,7 +2012,7 @@ var DockerfileParser;
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
 var g;
@@ -1098,7 +2039,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1109,10 +2050,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const util_1 = __webpack_require__(9);
-const line_1 = __webpack_require__(20);
-const argument_1 = __webpack_require__(18);
-const variable_1 = __webpack_require__(67);
+const util_1 = __webpack_require__(10);
+const line_1 = __webpack_require__(21);
+const argument_1 = __webpack_require__(19);
+const variable_1 = __webpack_require__(68);
 class Instruction extends line_1.Line {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range);
@@ -1534,7 +2475,7 @@ exports.Instruction = Instruction;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1544,11 +2485,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const util_1 = __webpack_require__(10);
-const line_1 = __webpack_require__(23);
-const argument_1 = __webpack_require__(22);
-const variable_1 = __webpack_require__(79);
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const util_1 = __webpack_require__(11);
+const line_1 = __webpack_require__(24);
+const argument_1 = __webpack_require__(23);
+const variable_1 = __webpack_require__(80);
 class Instruction extends line_1.Line {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range);
@@ -1962,7 +2903,7 @@ exports.Instruction = Instruction;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -2152,187 +3093,6 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const argument_1 = __webpack_require__(18);
-const modifiableInstruction_1 = __webpack_require__(36);
-class JSONInstruction extends modifiableInstruction_1.ModifiableInstruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-        this.jsonStrings = [];
-        const argsContent = this.getRawArgumentsContent();
-        if (argsContent === null) {
-            return;
-        }
-        const args = this.getArguments();
-        if (args.length === 1 && args[0].getValue() === "[]") {
-            let argRange = args[0].getRange();
-            this.openingBracket = new argument_1.Argument("[", vscode_languageserver_types_1.Range.create(argRange.start.line, argRange.start.character, argRange.start.line, argRange.start.character + 1));
-            this.closingBracket = new argument_1.Argument("]", vscode_languageserver_types_1.Range.create(argRange.start.line, argRange.start.character + 1, argRange.end.line, argRange.end.character));
-            return;
-        }
-        else if (args.length === 2 && args[0].getValue() === '[' && args[1].getValue() === ']') {
-            this.openingBracket = args[0];
-            this.closingBracket = args[1];
-            return;
-        }
-        const argsOffset = document.offsetAt(this.getArgumentsRange().start);
-        let start = -1;
-        let last = "";
-        let quoted = false;
-        let escapedArg = "";
-        argsCheck: for (let i = 0; i < argsContent.length; i++) {
-            let char = argsContent.charAt(i);
-            switch (char) {
-                case '[':
-                    if (last === "") {
-                        this.openingBracket = new argument_1.Argument("[", vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + i), document.positionAt(argsOffset + i + 1)));
-                        last = '[';
-                    }
-                    else if (quoted) {
-                        escapedArg = escapedArg + char;
-                    }
-                    else {
-                        break argsCheck;
-                    }
-                    break;
-                case '"':
-                    if (last === '[' || last === ',') {
-                        start = i;
-                        quoted = true;
-                        last = '"';
-                        escapedArg = escapedArg + char;
-                        continue;
-                    }
-                    else if (last === '"') {
-                        if (quoted) {
-                            escapedArg = escapedArg + char;
-                            // quoted string done
-                            quoted = false;
-                            this.jsonStrings.push(new argument_1.Argument(escapedArg, vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + start), document.positionAt(argsOffset + i + 1))));
-                            escapedArg = "";
-                        }
-                        else {
-                            // should be a , or a ]
-                            break argsCheck;
-                        }
-                    }
-                    else {
-                        break argsCheck;
-                    }
-                    break;
-                case ',':
-                    if (quoted) {
-                        escapedArg = escapedArg + char;
-                    }
-                    else {
-                        if (last === '"') {
-                            last = ',';
-                        }
-                        else {
-                            break argsCheck;
-                        }
-                    }
-                    break;
-                case ']':
-                    if (quoted) {
-                        escapedArg = escapedArg + char;
-                    }
-                    else if (last !== "") {
-                        this.closingBracket = new argument_1.Argument("]", vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + i), document.positionAt(argsOffset + i + 1)));
-                        break argsCheck;
-                    }
-                    break;
-                case ' ':
-                case '\t':
-                    break;
-                case '\\':
-                    if (quoted) {
-                        switch (argsContent.charAt(i + 1)) {
-                            case '"':
-                            case '\\':
-                                escapedArg = escapedArg + argsContent.charAt(i + 1);
-                                i++;
-                                continue;
-                            case ' ':
-                            case '\t':
-                                escapeCheck: for (let j = i + 2; j < argsContent.length; j++) {
-                                    switch (argsContent.charAt(j)) {
-                                        case '\r':
-                                            // offset one more for \r\n
-                                            j++;
-                                        case '\n':
-                                            i = j;
-                                            continue argsCheck;
-                                        case ' ':
-                                        case '\t':
-                                            break;
-                                        default:
-                                            break escapeCheck;
-                                    }
-                                }
-                                break;
-                            case '\r':
-                                // offset one more for \r\n
-                                i++;
-                            default:
-                                i++;
-                                continue;
-                        }
-                    }
-                    else {
-                        escapeCheck: for (let j = i + 1; j < argsContent.length; j++) {
-                            switch (argsContent.charAt(j)) {
-                                case '\r':
-                                    // offset one more for \r\n
-                                    j++;
-                                case '\n':
-                                    i = j;
-                                    continue argsCheck;
-                                case ' ':
-                                case '\t':
-                                    break;
-                                default:
-                                    break escapeCheck;
-                            }
-                        }
-                    }
-                    break argsCheck;
-                default:
-                    if (!quoted) {
-                        break argsCheck;
-                    }
-                    escapedArg = escapedArg + char;
-                    break;
-            }
-        }
-    }
-    stopSearchingForFlags(_value) {
-        return true;
-    }
-    getOpeningBracket() {
-        return this.openingBracket;
-    }
-    getJSONStrings() {
-        return this.jsonStrings;
-    }
-    getClosingBracket() {
-        return this.closingBracket;
-    }
-}
-exports.JSONInstruction = JSONInstruction;
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2344,8 +3104,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const argument_1 = __webpack_require__(22);
-const modifiableInstruction_1 = __webpack_require__(47);
+const argument_1 = __webpack_require__(19);
+const modifiableInstruction_1 = __webpack_require__(37);
 class JSONInstruction extends modifiableInstruction_1.ModifiableInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -2518,6 +3278,187 @@ exports.JSONInstruction = JSONInstruction;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const argument_1 = __webpack_require__(23);
+const modifiableInstruction_1 = __webpack_require__(48);
+class JSONInstruction extends modifiableInstruction_1.ModifiableInstruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+        this.jsonStrings = [];
+        const argsContent = this.getRawArgumentsContent();
+        if (argsContent === null) {
+            return;
+        }
+        const args = this.getArguments();
+        if (args.length === 1 && args[0].getValue() === "[]") {
+            let argRange = args[0].getRange();
+            this.openingBracket = new argument_1.Argument("[", vscode_languageserver_types_1.Range.create(argRange.start.line, argRange.start.character, argRange.start.line, argRange.start.character + 1));
+            this.closingBracket = new argument_1.Argument("]", vscode_languageserver_types_1.Range.create(argRange.start.line, argRange.start.character + 1, argRange.end.line, argRange.end.character));
+            return;
+        }
+        else if (args.length === 2 && args[0].getValue() === '[' && args[1].getValue() === ']') {
+            this.openingBracket = args[0];
+            this.closingBracket = args[1];
+            return;
+        }
+        const argsOffset = document.offsetAt(this.getArgumentsRange().start);
+        let start = -1;
+        let last = "";
+        let quoted = false;
+        let escapedArg = "";
+        argsCheck: for (let i = 0; i < argsContent.length; i++) {
+            let char = argsContent.charAt(i);
+            switch (char) {
+                case '[':
+                    if (last === "") {
+                        this.openingBracket = new argument_1.Argument("[", vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + i), document.positionAt(argsOffset + i + 1)));
+                        last = '[';
+                    }
+                    else if (quoted) {
+                        escapedArg = escapedArg + char;
+                    }
+                    else {
+                        break argsCheck;
+                    }
+                    break;
+                case '"':
+                    if (last === '[' || last === ',') {
+                        start = i;
+                        quoted = true;
+                        last = '"';
+                        escapedArg = escapedArg + char;
+                        continue;
+                    }
+                    else if (last === '"') {
+                        if (quoted) {
+                            escapedArg = escapedArg + char;
+                            // quoted string done
+                            quoted = false;
+                            this.jsonStrings.push(new argument_1.Argument(escapedArg, vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + start), document.positionAt(argsOffset + i + 1))));
+                            escapedArg = "";
+                        }
+                        else {
+                            // should be a , or a ]
+                            break argsCheck;
+                        }
+                    }
+                    else {
+                        break argsCheck;
+                    }
+                    break;
+                case ',':
+                    if (quoted) {
+                        escapedArg = escapedArg + char;
+                    }
+                    else {
+                        if (last === '"') {
+                            last = ',';
+                        }
+                        else {
+                            break argsCheck;
+                        }
+                    }
+                    break;
+                case ']':
+                    if (quoted) {
+                        escapedArg = escapedArg + char;
+                    }
+                    else if (last !== "") {
+                        this.closingBracket = new argument_1.Argument("]", vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + i), document.positionAt(argsOffset + i + 1)));
+                        break argsCheck;
+                    }
+                    break;
+                case ' ':
+                case '\t':
+                    break;
+                case '\\':
+                    if (quoted) {
+                        switch (argsContent.charAt(i + 1)) {
+                            case '"':
+                            case '\\':
+                                escapedArg = escapedArg + argsContent.charAt(i + 1);
+                                i++;
+                                continue;
+                            case ' ':
+                            case '\t':
+                                escapeCheck: for (let j = i + 2; j < argsContent.length; j++) {
+                                    switch (argsContent.charAt(j)) {
+                                        case '\r':
+                                            // offset one more for \r\n
+                                            j++;
+                                        case '\n':
+                                            i = j;
+                                            continue argsCheck;
+                                        case ' ':
+                                        case '\t':
+                                            break;
+                                        default:
+                                            break escapeCheck;
+                                    }
+                                }
+                                break;
+                            case '\r':
+                                // offset one more for \r\n
+                                i++;
+                            default:
+                                i++;
+                                continue;
+                        }
+                    }
+                    else {
+                        escapeCheck: for (let j = i + 1; j < argsContent.length; j++) {
+                            switch (argsContent.charAt(j)) {
+                                case '\r':
+                                    // offset one more for \r\n
+                                    j++;
+                                case '\n':
+                                    i = j;
+                                    continue argsCheck;
+                                case ' ':
+                                case '\t':
+                                    break;
+                                default:
+                                    break escapeCheck;
+                            }
+                        }
+                    }
+                    break argsCheck;
+                default:
+                    if (!quoted) {
+                        break argsCheck;
+                    }
+                    escapedArg = escapedArg + char;
+                    break;
+            }
+        }
+    }
+    stopSearchingForFlags(_value) {
+        return true;
+    }
+    getOpeningBracket() {
+        return this.openingBracket;
+    }
+    getJSONStrings() {
+        return this.jsonStrings;
+    }
+    getClosingBracket() {
+        return this.closingBracket;
+    }
+}
+exports.JSONInstruction = JSONInstruction;
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/*!
  * The buffer module from node.js, for the browser.
  *
@@ -2528,9 +3469,9 @@ exports.JSONInstruction = JSONInstruction;
 
 
 
-var base64 = __webpack_require__(104)
-var ieee754 = __webpack_require__(114)
-var isArray = __webpack_require__(81)
+var base64 = __webpack_require__(105)
+var ieee754 = __webpack_require__(115)
+var isArray = __webpack_require__(82)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -4308,80 +5249,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Util {
-    static isWhitespace(char) {
-        return char === ' ' || char === '\t' || Util.isNewline(char);
-    }
-    static isNewline(char) {
-        return char === '\r' || char === '\n';
-    }
-    static findLeadingNonWhitespace(content, escapeChar) {
-        whitespaceCheck: for (let i = 0; i < content.length; i++) {
-            switch (content.charAt(i)) {
-                case ' ':
-                case '\t':
-                    continue;
-                case escapeChar:
-                    escapeCheck: for (let j = i + 1; j < content.length; j++) {
-                        switch (content.charAt(j)) {
-                            case ' ':
-                            case '\t':
-                                continue;
-                            case '\r':
-                                // offset one more for \r\n
-                                i = j + 1;
-                                continue whitespaceCheck;
-                            case '\n':
-                                i = j;
-                                continue whitespaceCheck;
-                            default:
-                                break escapeCheck;
-                        }
-                    }
-                    return i;
-                default:
-                    return i;
-            }
-        }
-        // only possible if the content is the empty string
-        return -1;
-    }
-    /**
-     * Determines if the given position is contained within the given range.
-     *
-     * @param position the position to check
-     * @param range the range to see if the position is inside of
-     */
-    static isInsideRange(position, range) {
-        if (range.start.line === range.end.line) {
-            return range.start.line === position.line
-                && range.start.character <= position.character
-                && position.character <= range.end.character;
-        }
-        else if (range.start.line === position.line) {
-            return range.start.character <= position.character;
-        }
-        else if (range.end.line === position.line) {
-            return position.character <= range.end.character;
-        }
-        return range.start.line < position.line && position.line < range.end.line;
-    }
-}
-exports.Util = Util;
-
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
 /* 10 */
@@ -4458,6 +5326,79 @@ exports.Util = Util;
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Util {
+    static isWhitespace(char) {
+        return char === ' ' || char === '\t' || Util.isNewline(char);
+    }
+    static isNewline(char) {
+        return char === '\r' || char === '\n';
+    }
+    static findLeadingNonWhitespace(content, escapeChar) {
+        whitespaceCheck: for (let i = 0; i < content.length; i++) {
+            switch (content.charAt(i)) {
+                case ' ':
+                case '\t':
+                    continue;
+                case escapeChar:
+                    escapeCheck: for (let j = i + 1; j < content.length; j++) {
+                        switch (content.charAt(j)) {
+                            case ' ':
+                            case '\t':
+                                continue;
+                            case '\r':
+                                // offset one more for \r\n
+                                i = j + 1;
+                                continue whitespaceCheck;
+                            case '\n':
+                                i = j;
+                                continue whitespaceCheck;
+                            default:
+                                break escapeCheck;
+                        }
+                    }
+                    return i;
+                default:
+                    return i;
+            }
+        }
+        // only possible if the content is the empty string
+        return -1;
+    }
+    /**
+     * Determines if the given position is contained within the given range.
+     *
+     * @param position the position to check
+     * @param range the range to see if the position is inside of
+     */
+    static isInsideRange(position, range) {
+        if (range.start.line === range.end.line) {
+            return range.start.line === position.line
+                && range.start.character <= position.character
+                && position.character <= range.end.character;
+        }
+        else if (range.start.line === position.line) {
+            return range.start.character <= position.character;
+        }
+        else if (range.end.line === position.line) {
+            return position.character <= range.end.character;
+        }
+        return range.start.line < position.line && position.line < range.end.line;
+    }
+}
+exports.Util = Util;
+
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -4486,7 +5427,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4520,7 +5461,7 @@ if (typeof Object.create === 'function') {
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(25).nextTick;
+var pna = __webpack_require__(26);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -4535,12 +5476,12 @@ var objectKeys = Object.keys || function (obj) {
 module.exports = Duplex;
 
 /*<replacement>*/
-var util = __webpack_require__(13);
-util.inherits = __webpack_require__(11);
+var util = __webpack_require__(14);
+util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
-var Readable = __webpack_require__(87);
-var Writable = __webpack_require__(89);
+var Readable = __webpack_require__(88);
+var Writable = __webpack_require__(90);
 
 util.inherits(Duplex, Readable);
 
@@ -4574,7 +5515,7 @@ function onend() {
 
   // no more data can be written.
   // But allow more writes to happen in this tick.
-  processNextTick(onEndNT, this);
+  pna.nextTick(onEndNT, this);
 }
 
 function onEndNT(self) {
@@ -4606,7 +5547,7 @@ Duplex.prototype._destroy = function (err, cb) {
   this.push(null);
   this.end();
 
-  processNextTick(cb, err);
+  pna.nextTick(cb, err);
 };
 
 function forEach(xs, f) {
@@ -4616,7 +5557,7 @@ function forEach(xs, f) {
 }
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer) {// Copyright Joyent, Inc. and other Node contributors.
@@ -4727,67 +5668,67 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var argument_1 = __webpack_require__(22);
+var argument_1 = __webpack_require__(23);
 exports.Argument = argument_1.Argument;
-const comment_1 = __webpack_require__(68);
+const comment_1 = __webpack_require__(69);
 exports.Comment = comment_1.Comment;
-const parser_1 = __webpack_require__(77);
-var flag_1 = __webpack_require__(69);
+const parser_1 = __webpack_require__(78);
+var flag_1 = __webpack_require__(70);
 exports.Flag = flag_1.Flag;
-const instruction_1 = __webpack_require__(4);
+const instruction_1 = __webpack_require__(5);
 exports.Instruction = instruction_1.Instruction;
-var line_1 = __webpack_require__(23);
+var line_1 = __webpack_require__(24);
 exports.Line = line_1.Line;
-const parserDirective_1 = __webpack_require__(78);
+const parserDirective_1 = __webpack_require__(79);
 exports.ParserDirective = parserDirective_1.ParserDirective;
-var property_1 = __webpack_require__(48);
+var property_1 = __webpack_require__(49);
 exports.Property = property_1.Property;
-var variable_1 = __webpack_require__(79);
+var variable_1 = __webpack_require__(80);
 exports.Variable = variable_1.Variable;
-var add_1 = __webpack_require__(70);
+var add_1 = __webpack_require__(71);
 exports.Add = add_1.Add;
-const arg_1 = __webpack_require__(39);
+const arg_1 = __webpack_require__(40);
 exports.Arg = arg_1.Arg;
-const cmd_1 = __webpack_require__(40);
+const cmd_1 = __webpack_require__(41);
 exports.Cmd = cmd_1.Cmd;
-const copy_1 = __webpack_require__(41);
+const copy_1 = __webpack_require__(42);
 exports.Copy = copy_1.Copy;
-const entrypoint_1 = __webpack_require__(42);
+const entrypoint_1 = __webpack_require__(43);
 exports.Entrypoint = entrypoint_1.Entrypoint;
-const env_1 = __webpack_require__(43);
+const env_1 = __webpack_require__(44);
 exports.Env = env_1.Env;
-const from_1 = __webpack_require__(44);
+const from_1 = __webpack_require__(45);
 exports.From = from_1.From;
-const healthcheck_1 = __webpack_require__(45);
+const healthcheck_1 = __webpack_require__(46);
 exports.Healthcheck = healthcheck_1.Healthcheck;
-var jsonInstruction_1 = __webpack_require__(7);
+var jsonInstruction_1 = __webpack_require__(8);
 exports.JSONInstruction = jsonInstruction_1.JSONInstruction;
-var label_1 = __webpack_require__(71);
+var label_1 = __webpack_require__(72);
 exports.Label = label_1.Label;
-var modifiableInstruction_1 = __webpack_require__(47);
+var modifiableInstruction_1 = __webpack_require__(48);
 exports.ModifiableInstruction = modifiableInstruction_1.ModifiableInstruction;
-var onbuild_1 = __webpack_require__(46);
+var onbuild_1 = __webpack_require__(47);
 exports.Onbuild = onbuild_1.Onbuild;
-var propertyInstruction_1 = __webpack_require__(24);
+var propertyInstruction_1 = __webpack_require__(25);
 exports.PropertyInstruction = propertyInstruction_1.PropertyInstruction;
-var shell_1 = __webpack_require__(72);
+var shell_1 = __webpack_require__(73);
 exports.Shell = shell_1.Shell;
-var stopsignal_1 = __webpack_require__(73);
+var stopsignal_1 = __webpack_require__(74);
 exports.Stopsignal = stopsignal_1.Stopsignal;
-var user_1 = __webpack_require__(74);
+var user_1 = __webpack_require__(75);
 exports.User = user_1.User;
-var volume_1 = __webpack_require__(75);
+var volume_1 = __webpack_require__(76);
 exports.Volume = volume_1.Volume;
-var workdir_1 = __webpack_require__(76);
+var workdir_1 = __webpack_require__(77);
 exports.Workdir = workdir_1.Workdir;
 var Keyword;
 (function (Keyword) {
@@ -4831,7 +5772,7 @@ var DockerfileParser;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4914,7 +5855,7 @@ exports.Util = Util;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4924,8 +5865,8 @@ exports.Util = Util;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Is = __webpack_require__(27);
-const vscode_jsonrpc_1 = __webpack_require__(53);
+const Is = __webpack_require__(28);
+const vscode_jsonrpc_1 = __webpack_require__(54);
 var DocumentFilter;
 (function (DocumentFilter) {
     function is(value) {
@@ -5353,7 +6294,7 @@ var ApplyWorkspaceEditRequest;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5395,7 +6336,7 @@ exports.stringArray = stringArray;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5432,7 +6373,7 @@ exports.Argument = Argument;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5443,7 +6384,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const instruction_1 = __webpack_require__(3);
+const instruction_1 = __webpack_require__(4);
 class From extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -5548,353 +6489,12 @@ exports.From = From;
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Line {
-    constructor(document, range) {
-        this.document = document;
-        this.range = range;
-    }
-    getRange() {
-        return this.range;
-    }
-    getTextContent() {
-        return this.document.getText().substring(this.document.offsetAt(this.range.start), this.document.offsetAt(this.range.end));
-    }
-    isAfter(line) {
-        return this.range.start.line > line.range.start.line;
-    }
-    isBefore(line) {
-        return this.range.start.line < line;
-    }
-}
-exports.Line = Line;
-
-
-/***/ }),
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const instruction_1 = __webpack_require__(3);
-const property_1 = __webpack_require__(37);
-const argument_1 = __webpack_require__(18);
-const util_1 = __webpack_require__(9);
-class PropertyInstruction extends instruction_1.Instruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-        this.properties = undefined;
-    }
-    getProperties() {
-        if (this.properties === undefined) {
-            let args = this.getArguments();
-            if (args.length === 0) {
-                this.properties = [];
-            }
-            else if (args.length === 1) {
-                this.properties = [new property_1.Property(this.document, this.escapeChar, args[0])];
-            }
-            else if (args.length === 2) {
-                if (args[0].getValue().indexOf('=') === -1) {
-                    this.properties = [new property_1.Property(this.document, this.escapeChar, args[0], args[1])];
-                }
-                else {
-                    this.properties = [
-                        new property_1.Property(this.document, this.escapeChar, args[0]),
-                        new property_1.Property(this.document, this.escapeChar, args[1])
-                    ];
-                }
-            }
-            else if (args[0].getValue().indexOf('=') === -1) {
-                let text = this.document.getText();
-                let start = args[1].getRange().start;
-                let end = args[args.length - 1].getRange().end;
-                text = text.substring(this.document.offsetAt(start), this.document.offsetAt(end));
-                this.properties = [new property_1.Property(this.document, this.escapeChar, args[0], new argument_1.Argument(text, vscode_languageserver_types_1.Range.create(args[1].getRange().start, args[args.length - 1].getRange().end)))];
-            }
-            else {
-                this.properties = [];
-                for (let i = 0; i < args.length; i++) {
-                    this.properties.push(new property_1.Property(this.document, this.escapeChar, args[i]));
-                }
-            }
-        }
-        return this.properties;
-    }
-    /**
-     * Goes from the back of the string and returns the first
-     * non-whitespace character that is found. If an escape character
-     * is found with newline characters, the escape character will
-     * not be considered a non-whitespace character and its index in
-     * the string will not be returned.
-     *
-     * @param content the string to search through
-     * @return the index in the string for the first non-whitespace
-     *         character when searching from the end of the string
-     */
-    findTrailingNonWhitespace(content) {
-        // loop back to find the first non-whitespace character
-        let index = content.length;
-        whitespaceCheck: for (let i = content.length - 1; i >= 0; i--) {
-            switch (content.charAt(i)) {
-                case ' ':
-                case '\t':
-                    continue;
-                case '\n':
-                    if (content.charAt(i - 1) === '\r') {
-                        i = i - 1;
-                    }
-                case '\r':
-                    newlineCheck: for (let j = i - 1; j >= 0; j--) {
-                        switch (content.charAt(j)) {
-                            case ' ':
-                            case '\t':
-                            case '\r':
-                            case '\n':
-                            case this.escapeChar:
-                                continue;
-                            default:
-                                index = j;
-                                break newlineCheck;
-                        }
-                    }
-                    break whitespaceCheck;
-                default:
-                    index = i;
-                    break whitespaceCheck;
-            }
-        }
-        return index;
-    }
-    getArguments() {
-        const args = [];
-        let range = this.getInstructionRange();
-        let instructionNameEndOffset = this.document.offsetAt(range.end);
-        let extra = instructionNameEndOffset - this.document.offsetAt(range.start);
-        let content = this.getTextContent();
-        let fullArgs = content.substring(extra);
-        let start = util_1.Util.findLeadingNonWhitespace(fullArgs, this.escapeChar);
-        if (start === -1) {
-            // only whitespace found, no arguments
-            return [];
-        }
-        // records whether the parser has just processed an escaped newline or not
-        let escaped = false;
-        // flag to track if the last character was an escape character
-        let endingEscape = false;
-        // position before the first escape character was hit
-        let mark = -1;
-        let end = this.findTrailingNonWhitespace(fullArgs);
-        content = fullArgs.substring(start, end + 1);
-        let argStart = 0;
-        let spaced = false;
-        argumentLoop: for (let i = 0; i < content.length; i++) {
-            let char = content.charAt(i);
-            switch (char) {
-                case this.escapeChar:
-                    if (i + 1 === content.length) {
-                        endingEscape = true;
-                        break argumentLoop;
-                    }
-                    if (!escaped) {
-                        mark = i;
-                    }
-                    switch (content.charAt(i + 1)) {
-                        case ' ':
-                        case '\t':
-                            if (!util_1.Util.isWhitespace(content.charAt(i + 2))) {
-                                // space was escaped, continue as normal
-                                i = i + 1;
-                                continue argumentLoop;
-                            }
-                            // whitespace encountered, need to figure out if it extends to EOL
-                            whitespaceCheck: for (let j = i + 2; j < content.length; j++) {
-                                switch (content.charAt(j)) {
-                                    case '\r':
-                                        // offset one more for \r\n
-                                        j++;
-                                    case '\n':
-                                        // whitespace only, safe to skip
-                                        escaped = true;
-                                        i = j;
-                                        continue argumentLoop;
-                                    case ' ':
-                                    case '\t':
-                                        // ignore whitespace
-                                        break;
-                                    default:
-                                        // whitespace doesn't extend to EOL, create an argument
-                                        args.push(new argument_1.Argument(content.substring(argStart, i), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + i + 2))));
-                                        argStart = j;
-                                        break whitespaceCheck;
-                                }
-                            }
-                            // go back and start processing the encountered non-whitespace character
-                            i = argStart - 1;
-                            continue argumentLoop;
-                        case '\r':
-                            // offset one more for \r\n
-                            i++;
-                        case '\n':
-                            // immediately followed by a newline, skip the newline
-                            escaped = true;
-                            i = i + 1;
-                            continue argumentLoop;
-                        case this.escapeChar:
-                            // double escape found, skip it and move on
-                            if (argStart === -1) {
-                                argStart = i;
-                            }
-                            i = i + 1;
-                            continue argumentLoop;
-                        default:
-                            if (argStart === -1) {
-                                argStart = i;
-                            }
-                            // non-whitespace encountered, skip the escape and process the
-                            // character normally
-                            continue argumentLoop;
-                    }
-                case '\'':
-                case '"':
-                    if (argStart === -1) {
-                        argStart = i;
-                    }
-                    for (let j = i + 1; j < content.length; j++) {
-                        switch (content.charAt(j)) {
-                            case char:
-                                args.push(new argument_1.Argument(content.substring(argStart, j + 1), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + j + 1))));
-                                i = j;
-                                argStart = -1;
-                                continue argumentLoop;
-                            case this.escapeChar:
-                                j++;
-                                break;
-                        }
-                    }
-                    break argumentLoop;
-                case ' ':
-                case '\t':
-                    if (escaped) {
-                        spaced = true;
-                    }
-                    else if (argStart !== -1) {
-                        args.push(new argument_1.Argument(content.substring(argStart, i), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + i))));
-                        argStart = -1;
-                    }
-                    break;
-                case '\r':
-                    // offset one more for \r\n
-                    i++;
-                case '\n':
-                    spaced = false;
-                    break;
-                case '#':
-                    if (escaped) {
-                        // a newline was escaped and now there's a comment
-                        for (let j = i + 1; j < content.length; j++) {
-                            switch (content.charAt(j)) {
-                                case '\r':
-                                    j++;
-                                case '\n':
-                                    i = j;
-                                    spaced = false;
-                                    continue argumentLoop;
-                            }
-                        }
-                        // went to the end without finding a newline,
-                        // the comment was the last line in the instruction,
-                        // just stop parsing
-                        let value = content.substring(argStart, mark);
-                        args.push(new argument_1.Argument(value, vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + mark))));
-                        argStart = -1;
-                        break argumentLoop;
-                    }
-                    else if (argStart === -1) {
-                        argStart = i;
-                    }
-                    break;
-                default:
-                    if (spaced) {
-                        if (argStart !== -1) {
-                            args.push(new argument_1.Argument(content.substring(argStart, mark), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + mark))));
-                            argStart = -1;
-                        }
-                        spaced = false;
-                    }
-                    escaped = false;
-                    if (argStart === -1) {
-                        argStart = i;
-                    }
-                    break;
-            }
-        }
-        if (argStart !== -1 && argStart !== content.length) {
-            let end = endingEscape ? content.length - 1 : content.length;
-            let value = content.substring(argStart, end);
-            args.push(new argument_1.Argument(value, vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + end))));
-        }
-        return args;
-    }
-}
-exports.PropertyInstruction = PropertyInstruction;
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Argument {
-    constructor(value, range) {
-        this.value = value;
-        this.range = range;
-    }
-    toString() {
-        return this.value;
-    }
-    getRange() {
-        return this.range;
-    }
-    getValue() {
-        return this.value;
-    }
-    isAfter(position) {
-        if (this.range.end.line < position.line) {
-            return false;
-        }
-        return this.range.start.line > position.line ? true : this.range.start.character > position.character;
-    }
-    isBefore(position) {
-        if (this.range.start.line < position.line) {
-            return true;
-        }
-        return this.range.end.line > position.line ? false : this.range.end.character < position.character;
-    }
-}
-exports.Argument = Argument;
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 class Line {
     constructor(document, range) {
         this.document = document;
@@ -5917,7 +6517,7 @@ exports.Line = Line;
 
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5929,8 +6529,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
 const instruction_1 = __webpack_require__(4);
-const property_1 = __webpack_require__(48);
-const argument_1 = __webpack_require__(22);
+const property_1 = __webpack_require__(38);
+const argument_1 = __webpack_require__(19);
 const util_1 = __webpack_require__(10);
 class PropertyInstruction extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -6193,7 +6793,348 @@ exports.PropertyInstruction = PropertyInstruction;
 
 
 /***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Argument {
+    constructor(value, range) {
+        this.value = value;
+        this.range = range;
+    }
+    toString() {
+        return this.value;
+    }
+    getRange() {
+        return this.range;
+    }
+    getValue() {
+        return this.value;
+    }
+    isAfter(position) {
+        if (this.range.end.line < position.line) {
+            return false;
+        }
+        return this.range.start.line > position.line ? true : this.range.start.character > position.character;
+    }
+    isBefore(position) {
+        if (this.range.start.line < position.line) {
+            return true;
+        }
+        return this.range.end.line > position.line ? false : this.range.end.character < position.character;
+    }
+}
+exports.Argument = Argument;
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class Line {
+    constructor(document, range) {
+        this.document = document;
+        this.range = range;
+    }
+    getRange() {
+        return this.range;
+    }
+    getTextContent() {
+        return this.document.getText().substring(this.document.offsetAt(this.range.start), this.document.offsetAt(this.range.end));
+    }
+    isAfter(line) {
+        return this.range.start.line > line.range.start.line;
+    }
+    isBefore(line) {
+        return this.range.start.line < line;
+    }
+}
+exports.Line = Line;
+
+
+/***/ }),
 /* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const instruction_1 = __webpack_require__(5);
+const property_1 = __webpack_require__(49);
+const argument_1 = __webpack_require__(23);
+const util_1 = __webpack_require__(11);
+class PropertyInstruction extends instruction_1.Instruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+        this.properties = undefined;
+    }
+    getProperties() {
+        if (this.properties === undefined) {
+            let args = this.getArguments();
+            if (args.length === 0) {
+                this.properties = [];
+            }
+            else if (args.length === 1) {
+                this.properties = [new property_1.Property(this.document, this.escapeChar, args[0])];
+            }
+            else if (args.length === 2) {
+                if (args[0].getValue().indexOf('=') === -1) {
+                    this.properties = [new property_1.Property(this.document, this.escapeChar, args[0], args[1])];
+                }
+                else {
+                    this.properties = [
+                        new property_1.Property(this.document, this.escapeChar, args[0]),
+                        new property_1.Property(this.document, this.escapeChar, args[1])
+                    ];
+                }
+            }
+            else if (args[0].getValue().indexOf('=') === -1) {
+                let text = this.document.getText();
+                let start = args[1].getRange().start;
+                let end = args[args.length - 1].getRange().end;
+                text = text.substring(this.document.offsetAt(start), this.document.offsetAt(end));
+                this.properties = [new property_1.Property(this.document, this.escapeChar, args[0], new argument_1.Argument(text, vscode_languageserver_types_1.Range.create(args[1].getRange().start, args[args.length - 1].getRange().end)))];
+            }
+            else {
+                this.properties = [];
+                for (let i = 0; i < args.length; i++) {
+                    this.properties.push(new property_1.Property(this.document, this.escapeChar, args[i]));
+                }
+            }
+        }
+        return this.properties;
+    }
+    /**
+     * Goes from the back of the string and returns the first
+     * non-whitespace character that is found. If an escape character
+     * is found with newline characters, the escape character will
+     * not be considered a non-whitespace character and its index in
+     * the string will not be returned.
+     *
+     * @param content the string to search through
+     * @return the index in the string for the first non-whitespace
+     *         character when searching from the end of the string
+     */
+    findTrailingNonWhitespace(content) {
+        // loop back to find the first non-whitespace character
+        let index = content.length;
+        whitespaceCheck: for (let i = content.length - 1; i >= 0; i--) {
+            switch (content.charAt(i)) {
+                case ' ':
+                case '\t':
+                    continue;
+                case '\n':
+                    if (content.charAt(i - 1) === '\r') {
+                        i = i - 1;
+                    }
+                case '\r':
+                    newlineCheck: for (let j = i - 1; j >= 0; j--) {
+                        switch (content.charAt(j)) {
+                            case ' ':
+                            case '\t':
+                            case '\r':
+                            case '\n':
+                            case this.escapeChar:
+                                continue;
+                            default:
+                                index = j;
+                                break newlineCheck;
+                        }
+                    }
+                    break whitespaceCheck;
+                default:
+                    index = i;
+                    break whitespaceCheck;
+            }
+        }
+        return index;
+    }
+    getArguments() {
+        const args = [];
+        let range = this.getInstructionRange();
+        let instructionNameEndOffset = this.document.offsetAt(range.end);
+        let extra = instructionNameEndOffset - this.document.offsetAt(range.start);
+        let content = this.getTextContent();
+        let fullArgs = content.substring(extra);
+        let start = util_1.Util.findLeadingNonWhitespace(fullArgs, this.escapeChar);
+        if (start === -1) {
+            // only whitespace found, no arguments
+            return [];
+        }
+        // records whether the parser has just processed an escaped newline or not
+        let escaped = false;
+        // flag to track if the last character was an escape character
+        let endingEscape = false;
+        // position before the first escape character was hit
+        let mark = -1;
+        let end = this.findTrailingNonWhitespace(fullArgs);
+        content = fullArgs.substring(start, end + 1);
+        let argStart = 0;
+        let spaced = false;
+        argumentLoop: for (let i = 0; i < content.length; i++) {
+            let char = content.charAt(i);
+            switch (char) {
+                case this.escapeChar:
+                    if (i + 1 === content.length) {
+                        endingEscape = true;
+                        break argumentLoop;
+                    }
+                    if (!escaped) {
+                        mark = i;
+                    }
+                    switch (content.charAt(i + 1)) {
+                        case ' ':
+                        case '\t':
+                            if (!util_1.Util.isWhitespace(content.charAt(i + 2))) {
+                                // space was escaped, continue as normal
+                                i = i + 1;
+                                continue argumentLoop;
+                            }
+                            // whitespace encountered, need to figure out if it extends to EOL
+                            whitespaceCheck: for (let j = i + 2; j < content.length; j++) {
+                                switch (content.charAt(j)) {
+                                    case '\r':
+                                        // offset one more for \r\n
+                                        j++;
+                                    case '\n':
+                                        // whitespace only, safe to skip
+                                        escaped = true;
+                                        i = j;
+                                        continue argumentLoop;
+                                    case ' ':
+                                    case '\t':
+                                        // ignore whitespace
+                                        break;
+                                    default:
+                                        // whitespace doesn't extend to EOL, create an argument
+                                        args.push(new argument_1.Argument(content.substring(argStart, i), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + i + 2))));
+                                        argStart = j;
+                                        break whitespaceCheck;
+                                }
+                            }
+                            // go back and start processing the encountered non-whitespace character
+                            i = argStart - 1;
+                            continue argumentLoop;
+                        case '\r':
+                            // offset one more for \r\n
+                            i++;
+                        case '\n':
+                            // immediately followed by a newline, skip the newline
+                            escaped = true;
+                            i = i + 1;
+                            continue argumentLoop;
+                        case this.escapeChar:
+                            // double escape found, skip it and move on
+                            if (argStart === -1) {
+                                argStart = i;
+                            }
+                            i = i + 1;
+                            continue argumentLoop;
+                        default:
+                            if (argStart === -1) {
+                                argStart = i;
+                            }
+                            // non-whitespace encountered, skip the escape and process the
+                            // character normally
+                            continue argumentLoop;
+                    }
+                case '\'':
+                case '"':
+                    if (argStart === -1) {
+                        argStart = i;
+                    }
+                    for (let j = i + 1; j < content.length; j++) {
+                        switch (content.charAt(j)) {
+                            case char:
+                                args.push(new argument_1.Argument(content.substring(argStart, j + 1), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + j + 1))));
+                                i = j;
+                                argStart = -1;
+                                continue argumentLoop;
+                            case this.escapeChar:
+                                j++;
+                                break;
+                        }
+                    }
+                    break argumentLoop;
+                case ' ':
+                case '\t':
+                    if (escaped) {
+                        spaced = true;
+                    }
+                    else if (argStart !== -1) {
+                        args.push(new argument_1.Argument(content.substring(argStart, i), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + i))));
+                        argStart = -1;
+                    }
+                    break;
+                case '\r':
+                    // offset one more for \r\n
+                    i++;
+                case '\n':
+                    spaced = false;
+                    break;
+                case '#':
+                    if (escaped) {
+                        // a newline was escaped and now there's a comment
+                        for (let j = i + 1; j < content.length; j++) {
+                            switch (content.charAt(j)) {
+                                case '\r':
+                                    j++;
+                                case '\n':
+                                    i = j;
+                                    spaced = false;
+                                    continue argumentLoop;
+                            }
+                        }
+                        // went to the end without finding a newline,
+                        // the comment was the last line in the instruction,
+                        // just stop parsing
+                        let value = content.substring(argStart, mark);
+                        args.push(new argument_1.Argument(value, vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + mark))));
+                        argStart = -1;
+                        break argumentLoop;
+                    }
+                    else if (argStart === -1) {
+                        argStart = i;
+                    }
+                    break;
+                default:
+                    if (spaced) {
+                        if (argStart !== -1) {
+                            args.push(new argument_1.Argument(content.substring(argStart, mark), vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + mark))));
+                            argStart = -1;
+                        }
+                        spaced = false;
+                    }
+                    escaped = false;
+                    if (argStart === -1) {
+                        argStart = i;
+                    }
+                    break;
+            }
+        }
+        if (argStart !== -1 && argStart !== content.length) {
+            let end = endingEscape ? content.length - 1 : content.length;
+            let value = content.substring(argStart, end);
+            args.push(new argument_1.Argument(value, vscode_languageserver_types_1.Range.create(this.document.positionAt(instructionNameEndOffset + start + argStart), this.document.positionAt(instructionNameEndOffset + start + end))));
+        }
+        return args;
+    }
+}
+exports.PropertyInstruction = PropertyInstruction;
+
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6242,14 +7183,14 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable node/no-deprecated-api */
-var buffer = __webpack_require__(8)
+var buffer = __webpack_require__(9)
 var Buffer = buffer.Buffer
 
 // alternative to using Object.keys for old browsers
@@ -6313,7 +7254,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6363,7 +7304,7 @@ exports.thenable = thenable;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6517,14 +7458,14 @@ exports.Emitter = Emitter;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const property_1 = __webpack_require__(37);
-const propertyInstruction_1 = __webpack_require__(21);
+const property_1 = __webpack_require__(38);
+const propertyInstruction_1 = __webpack_require__(22);
 class Arg extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -6550,13 +7491,13 @@ exports.Arg = Arg;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(6);
+const jsonInstruction_1 = __webpack_require__(7);
 class Cmd extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -6566,13 +7507,13 @@ exports.Cmd = Cmd;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(6);
+const jsonInstruction_1 = __webpack_require__(7);
 class Copy extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -6589,13 +7530,13 @@ exports.Copy = Copy;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(6);
+const jsonInstruction_1 = __webpack_require__(7);
 class Entrypoint extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -6605,13 +7546,13 @@ exports.Entrypoint = Entrypoint;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(21);
+const propertyInstruction_1 = __webpack_require__(22);
 class Env extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -6624,13 +7565,13 @@ exports.Env = Env;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const modifiableInstruction_1 = __webpack_require__(36);
+const modifiableInstruction_1 = __webpack_require__(37);
 class Healthcheck extends modifiableInstruction_1.ModifiableInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -6645,47 +7586,6 @@ class Healthcheck extends modifiableInstruction_1.ModifiableInstruction {
     }
 }
 exports.Healthcheck = Healthcheck;
-
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const parser_1 = __webpack_require__(65);
-const instruction_1 = __webpack_require__(3);
-class Onbuild extends instruction_1.Instruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-    getTrigger() {
-        let trigger = this.getTriggerWord();
-        return trigger === null ? null : trigger.toUpperCase();
-    }
-    getTriggerWord() {
-        return this.getRangeContent(this.getTriggerRange());
-    }
-    getTriggerRange() {
-        let args = this.getArguments();
-        return args.length > 0 ? args[0].getRange() : null;
-    }
-    getTriggerInstruction() {
-        let triggerRange = this.getTriggerRange();
-        if (triggerRange === null) {
-            return null;
-        }
-        let args = this.getArguments();
-        return parser_1.Parser.createInstruction(this.document, this.dockerfile, this.escapeChar, vscode_languageserver_types_1.Range.create(args[0].getRange().start, this.getRange().end), this.getTriggerWord(), triggerRange);
-    }
-}
-exports.Onbuild = Onbuild;
 
 
 /***/ }),
@@ -6700,773 +7600,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const flag_1 = __webpack_require__(57);
-const instruction_1 = __webpack_require__(3);
-class ModifiableInstruction extends instruction_1.Instruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-    getFlags() {
-        if (!this.flags) {
-            this.flags = [];
-            for (let arg of this.getArguments()) {
-                let value = arg.getValue();
-                if (this.stopSearchingForFlags(value)) {
-                    return this.flags;
-                }
-                else if (value.indexOf("--") === 0) {
-                    let range = arg.getRange();
-                    let rawValue = this.document.getText().substring(this.document.offsetAt(range.start), this.document.offsetAt(range.end));
-                    let nameIndex = value.indexOf('=');
-                    let index = rawValue.indexOf('=');
-                    let firstMatch = false;
-                    let secondMatch = false;
-                    let startIndex = -1;
-                    nameSearchLoop: for (let i = 0; i < rawValue.length; i++) {
-                        switch (rawValue.charAt(i)) {
-                            case '\\':
-                            case ' ':
-                            case '\t':
-                            case '\r':
-                            case '\n':
-                                break;
-                            case '-':
-                                if (secondMatch) {
-                                    startIndex = i;
-                                    break nameSearchLoop;
-                                }
-                                else if (firstMatch) {
-                                    secondMatch = true;
-                                }
-                                else {
-                                    firstMatch = true;
-                                }
-                                break;
-                            default:
-                                startIndex = i;
-                                break nameSearchLoop;
-                        }
-                    }
-                    let nameStart = this.document.positionAt(this.document.offsetAt(range.start) + startIndex);
-                    if (index === -1) {
-                        this.flags.push(new flag_1.Flag(range, value.substring(2), vscode_languageserver_types_1.Range.create(nameStart, range.end), null, null));
-                    }
-                    else if (index === value.length - 1) {
-                        let nameEnd = this.document.positionAt(this.document.offsetAt(range.start) + index);
-                        this.flags.push(new flag_1.Flag(range, value.substring(2, index), vscode_languageserver_types_1.Range.create(nameStart, nameEnd), "", vscode_languageserver_types_1.Range.create(range.end, range.end)));
-                    }
-                    else {
-                        let nameEnd = this.document.positionAt(this.document.offsetAt(range.start) + index);
-                        this.flags.push(new flag_1.Flag(range, value.substring(2, nameIndex), vscode_languageserver_types_1.Range.create(nameStart, nameEnd), value.substring(nameIndex + 1), vscode_languageserver_types_1.Range.create(this.document.positionAt(this.document.offsetAt(range.start) + index + 1), range.end)));
-                    }
-                }
-            }
-        }
-        return this.flags;
-    }
-    getArguments() {
-        const args = super.getArguments();
-        const flags = this.getFlags();
-        if (flags.length === 0) {
-            return args;
-        }
-        for (let i = 0; i < flags.length; i++) {
-            args.shift();
-        }
-        return args;
-    }
-}
-exports.ModifiableInstruction = ModifiableInstruction;
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const util_1 = __webpack_require__(9);
-class Property {
-    constructor(document, escapeChar, arg, arg2) {
-        this.name = null;
-        this.value = null;
-        this.document = document;
-        this.escapeChar = escapeChar;
-        if (arg2) {
-            this.nameRange = arg.getRange();
-            this.name = document.getText().substring(document.offsetAt(this.nameRange.start), document.offsetAt(this.nameRange.end));
-            this.valueRange = arg2.getRange();
-            let value = document.getText().substring(document.offsetAt(this.valueRange.start), document.offsetAt(this.valueRange.end));
-            this.value = Property.getValue(value, escapeChar);
-            this.range = vscode_languageserver_types_1.Range.create(this.nameRange.start, this.valueRange.end);
-        }
-        else {
-            this.nameRange = Property.getNameRange(document, arg);
-            this.name = document.getText().substring(document.offsetAt(this.nameRange.start), document.offsetAt(this.nameRange.end));
-            this.valueRange = Property.getValueRange(document, arg);
-            if (this.valueRange) {
-                let value = document.getText().substring(document.offsetAt(this.valueRange.start), document.offsetAt(this.valueRange.end));
-                this.value = Property.getValue(value, escapeChar);
-            }
-            this.range = arg.getRange();
-        }
-    }
-    getRange() {
-        return this.range;
-    }
-    getName() {
-        return this.name;
-    }
-    getNameRange() {
-        return this.nameRange;
-    }
-    getValue() {
-        return this.value;
-    }
-    getValueRange() {
-        return this.valueRange;
-    }
-    getRawValue() {
-        if (this.valueRange === null) {
-            return null;
-        }
-        let escaped = false;
-        let rawValue = "";
-        let value = this.document.getText().substring(this.document.offsetAt(this.valueRange.start), this.document.offsetAt(this.valueRange.end));
-        rawLoop: for (let i = 0; i < value.length; i++) {
-            let char = value.charAt(i);
-            switch (char) {
-                case this.escapeChar:
-                    for (let j = i + 1; j < value.length; j++) {
-                        switch (value.charAt(j)) {
-                            case '\r':
-                                j++;
-                            case '\n':
-                                escaped = true;
-                                i = j;
-                                continue rawLoop;
-                            case ' ':
-                            case '\t':
-                                break;
-                            default:
-                                rawValue = rawValue + char;
-                                continue rawLoop;
-                        }
-                    }
-                    // this happens if there's only whitespace after the escape character
-                    rawValue = rawValue + char;
-                    break;
-                case '\r':
-                case '\n':
-                    break;
-                case ' ':
-                case '\t':
-                    if (!escaped) {
-                        rawValue = rawValue + char;
-                    }
-                    break;
-                case '#':
-                    if (escaped) {
-                        for (let j = i + 1; j < value.length; j++) {
-                            switch (value.charAt(j)) {
-                                case '\r':
-                                    j++;
-                                case '\n':
-                                    i = j;
-                                    continue rawLoop;
-                            }
-                        }
-                    }
-                    else {
-                        rawValue = rawValue + char;
-                    }
-                    break;
-                default:
-                    rawValue = rawValue + char;
-                    escaped = false;
-                    break;
-            }
-        }
-        return rawValue;
-    }
-    static getNameRange(document, arg) {
-        let index = arg.getValue().indexOf('=');
-        if (index !== -1) {
-            return vscode_languageserver_types_1.Range.create(arg.getRange().start, document.positionAt(document.offsetAt(arg.getRange().start) + index));
-        }
-        // no '=' found, just defined the ARG's name
-        return arg.getRange();
-    }
-    static getValueRange(document, arg) {
-        let argValue = arg.getValue();
-        let index = argValue.indexOf('=');
-        if (index === -1) {
-            // no value declared if no '=' found
-            return null;
-        }
-        return vscode_languageserver_types_1.Range.create(document.positionAt(document.offsetAt(arg.getRange().start) + index + 1), document.positionAt(document.offsetAt(arg.getRange().end)));
-    }
-    /**
-     * Returns the actual value of this instruction's declared
-     * variable. The value will have its escape characters removed if
-     * applicable. If the value spans multiple lines and there are
-     * comments nested within the lines, they too will be removed.
-     *
-     * @return the value that this ARG instruction's declared
-     *         variable will resolve to, may be null if no value is
-     *         defined, may be the empty string if the value only
-     *         consists of whitespace
-     */
-    static getValue(value, escapeChar) {
-        let escaped = false;
-        const skip = util_1.Util.findLeadingNonWhitespace(value, escapeChar);
-        if (skip !== 0 && value.charAt(skip) === '#') {
-            // need to skip over comments
-            escaped = true;
-        }
-        value = value.substring(skip);
-        let first = value.charAt(0);
-        let last = value.charAt(value.length - 1);
-        let literal = first === '\'' || first === '"';
-        let inSingle = (first === '\'' && last === '\'');
-        let inDouble = false;
-        if (first === '"') {
-            for (let i = 1; i < value.length; i++) {
-                if (value.charAt(i) === escapeChar) {
-                    i++;
-                }
-                else if (value.charAt(i) === '"' && i === value.length - 1) {
-                    inDouble = true;
-                }
-            }
-        }
-        if (inSingle || inDouble) {
-            value = value.substring(1, value.length - 1);
-        }
-        let commentCheck = -1;
-        let escapedValue = "";
-        let start = 0;
-        parseValue: for (let i = 0; i < value.length; i++) {
-            let char = value.charAt(i);
-            switch (char) {
-                case escapeChar:
-                    if (i + 1 === value.length) {
-                        escapedValue = escapedValue + escapeChar;
-                        break parseValue;
-                    }
-                    char = value.charAt(i + 1);
-                    if (char === ' ' || char === '\t') {
-                        whitespaceCheck: for (let j = i + 2; j < value.length; j++) {
-                            let char2 = value.charAt(j);
-                            switch (char2) {
-                                case ' ':
-                                case '\t':
-                                    break;
-                                case '\r':
-                                    j++;
-                                case '\n':
-                                    escaped = true;
-                                    i = j;
-                                    continue parseValue;
-                                default:
-                                    if (!inDouble && !inSingle && !literal) {
-                                        if (char2 === escapeChar) {
-                                            // add the escaped character
-                                            escapedValue = escapedValue + char;
-                                            // now start parsing from the next escape character
-                                            i = i + 1;
-                                        }
-                                        else {
-                                            // the expectation is that this j = i + 2 here
-                                            escapedValue = escapedValue + char + char2;
-                                            i = j;
-                                        }
-                                        continue parseValue;
-                                    }
-                                    break whitespaceCheck;
-                            }
-                        }
-                    }
-                    if (inDouble) {
-                        if (char === '\r') {
-                            escaped = true;
-                            i = i + 2;
-                        }
-                        else if (char === '\n') {
-                            escaped = true;
-                            i++;
-                        }
-                        else if (char !== '"') {
-                            if (char === escapeChar) {
-                                i++;
-                            }
-                            escapedValue = escapedValue + escapeChar;
-                        }
-                        continue parseValue;
-                    }
-                    else if (inSingle || literal) {
-                        if (char === '\r') {
-                            escaped = true;
-                            i = i + 2;
-                        }
-                        else if (char === '\n') {
-                            escaped = true;
-                            i++;
-                        }
-                        else {
-                            escapedValue = escapedValue + escapeChar;
-                        }
-                        continue parseValue;
-                    }
-                    else if (char === escapeChar) {
-                        // double escape, append one and move on
-                        escapedValue = escapedValue + escapeChar;
-                        i++;
-                    }
-                    else if (char === '\r') {
-                        escaped = true;
-                        // offset one more for \r\n
-                        i = i + 2;
-                    }
-                    else if (char === '\n') {
-                        escaped = true;
-                        i++;
-                        start = i;
-                    }
-                    else {
-                        // any other escapes are simply ignored
-                        escapedValue = escapedValue + char;
-                        i++;
-                    }
-                    break;
-                case ' ':
-                case '\t':
-                    if (escaped && commentCheck === -1) {
-                        commentCheck = i;
-                    }
-                    escapedValue = escapedValue + char;
-                    break;
-                case '\r':
-                    i++;
-                case '\n':
-                    if (escaped && commentCheck !== -1) {
-                        // rollback and remove the whitespace that was previously appended
-                        escapedValue = escapedValue.substring(0, escapedValue.length - (i - commentCheck - 1));
-                        commentCheck = -1;
-                    }
-                    break;
-                case '#':
-                    // a newline was escaped and now there's a comment
-                    if (escaped) {
-                        if (commentCheck !== -1) {
-                            // rollback and remove the whitespace that was previously appended
-                            escapedValue = escapedValue.substring(0, escapedValue.length - (i - commentCheck));
-                            commentCheck = -1;
-                        }
-                        newlineCheck: for (let j = i + 1; j < value.length; j++) {
-                            switch (value.charAt(j)) {
-                                case '\r':
-                                    j++;
-                                case '\n':
-                                    i = j;
-                                    break newlineCheck;
-                            }
-                        }
-                        continue parseValue;
-                    }
-                default:
-                    if (escaped) {
-                        escaped = false;
-                        commentCheck = -1;
-                    }
-                    escapedValue = escapedValue + char;
-                    break;
-            }
-        }
-        return escapedValue;
-    }
-}
-exports.Property = Property;
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const dockerFormatter_1 = __webpack_require__(108);
-const dockerValidator_1 = __webpack_require__(109);
-/**
- * Error codes that correspond to a given validation error. These
- * values are exposed for the purpose of allowing clients to identify
- * what kind of validation error has occurred and to then prompt
- * action that is appropriate for resolving the error to the user.
- *
- * Note that the names and values of these errors are not considered
- * to be API and may change between releases of dockerfiles-util.
- * This is because the Docker builder's errors and error messages are
- * itself not considered to be API. Thus, Dockerfiles that originally
- * would not build and throw an error may stop throwing an error
- * a future release of Docker due to newly added features. This would
- * then mean that an error (code and message) is no longer valid and
- * should thus be removed. Hence, this list of error codes is not
- * stable and as aforementioned may change between releases of
- * dockerfile-utils.
- */
-var ValidationCode;
-(function (ValidationCode) {
-    ValidationCode[ValidationCode["CASING_INSTRUCTION"] = 0] = "CASING_INSTRUCTION";
-    ValidationCode[ValidationCode["CASING_DIRECTIVE"] = 1] = "CASING_DIRECTIVE";
-    ValidationCode[ValidationCode["ARGUMENT_MISSING"] = 2] = "ARGUMENT_MISSING";
-    ValidationCode[ValidationCode["ARGUMENT_EXTRA"] = 3] = "ARGUMENT_EXTRA";
-    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_ONE"] = 4] = "ARGUMENT_REQUIRES_ONE";
-    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_AT_LEAST_ONE"] = 5] = "ARGUMENT_REQUIRES_AT_LEAST_ONE";
-    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_TWO"] = 6] = "ARGUMENT_REQUIRES_TWO";
-    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_AT_LEAST_TWO"] = 7] = "ARGUMENT_REQUIRES_AT_LEAST_TWO";
-    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_ONE_OR_THREE"] = 8] = "ARGUMENT_REQUIRES_ONE_OR_THREE";
-    ValidationCode[ValidationCode["ARGUMENT_UNNECESSARY"] = 9] = "ARGUMENT_UNNECESSARY";
-    ValidationCode[ValidationCode["DUPLICATE_BUILD_STAGE_NAME"] = 10] = "DUPLICATE_BUILD_STAGE_NAME";
-    ValidationCode[ValidationCode["EMPTY_CONTINUATION_LINE"] = 11] = "EMPTY_CONTINUATION_LINE";
-    ValidationCode[ValidationCode["INVALID_BUILD_STAGE_NAME"] = 12] = "INVALID_BUILD_STAGE_NAME";
-    ValidationCode[ValidationCode["FLAG_AT_LEAST_ONE"] = 13] = "FLAG_AT_LEAST_ONE";
-    ValidationCode[ValidationCode["FLAG_DUPLICATE"] = 14] = "FLAG_DUPLICATE";
-    ValidationCode[ValidationCode["FLAG_INVALID_DURATION"] = 15] = "FLAG_INVALID_DURATION";
-    ValidationCode[ValidationCode["FLAG_LESS_THAN_1MS"] = 16] = "FLAG_LESS_THAN_1MS";
-    ValidationCode[ValidationCode["FLAG_MISSING_DURATION"] = 17] = "FLAG_MISSING_DURATION";
-    ValidationCode[ValidationCode["FLAG_MISSING_VALUE"] = 18] = "FLAG_MISSING_VALUE";
-    ValidationCode[ValidationCode["FLAG_UNKNOWN_UNIT"] = 19] = "FLAG_UNKNOWN_UNIT";
-    ValidationCode[ValidationCode["NO_SOURCE_IMAGE"] = 20] = "NO_SOURCE_IMAGE";
-    ValidationCode[ValidationCode["INVALID_ESCAPE_DIRECTIVE"] = 21] = "INVALID_ESCAPE_DIRECTIVE";
-    ValidationCode[ValidationCode["INVALID_AS"] = 22] = "INVALID_AS";
-    ValidationCode[ValidationCode["INVALID_DESTINATION"] = 23] = "INVALID_DESTINATION";
-    ValidationCode[ValidationCode["INVALID_PORT"] = 24] = "INVALID_PORT";
-    ValidationCode[ValidationCode["INVALID_PROTO"] = 25] = "INVALID_PROTO";
-    /**
-     * The error code used if the base image of a FROM instruction
-     * has an invalid tag or digest specified.
-     */
-    ValidationCode[ValidationCode["INVALID_REFERENCE_FORMAT"] = 26] = "INVALID_REFERENCE_FORMAT";
-    ValidationCode[ValidationCode["INVALID_SIGNAL"] = 27] = "INVALID_SIGNAL";
-    ValidationCode[ValidationCode["INVALID_SYNTAX"] = 28] = "INVALID_SYNTAX";
-    ValidationCode[ValidationCode["ONBUILD_CHAINING_DISALLOWED"] = 29] = "ONBUILD_CHAINING_DISALLOWED";
-    ValidationCode[ValidationCode["ONBUILD_TRIGGER_DISALLOWED"] = 30] = "ONBUILD_TRIGGER_DISALLOWED";
-    ValidationCode[ValidationCode["SHELL_JSON_FORM"] = 31] = "SHELL_JSON_FORM";
-    ValidationCode[ValidationCode["SHELL_REQUIRES_ONE"] = 32] = "SHELL_REQUIRES_ONE";
-    ValidationCode[ValidationCode["SYNTAX_MISSING_EQUALS"] = 33] = "SYNTAX_MISSING_EQUALS";
-    ValidationCode[ValidationCode["SYNTAX_MISSING_NAMES"] = 34] = "SYNTAX_MISSING_NAMES";
-    ValidationCode[ValidationCode["SYNTAX_MISSING_SINGLE_QUOTE"] = 35] = "SYNTAX_MISSING_SINGLE_QUOTE";
-    ValidationCode[ValidationCode["SYNTAX_MISSING_DOUBLE_QUOTE"] = 36] = "SYNTAX_MISSING_DOUBLE_QUOTE";
-    ValidationCode[ValidationCode["MULTIPLE_INSTRUCTIONS"] = 37] = "MULTIPLE_INSTRUCTIONS";
-    ValidationCode[ValidationCode["UNKNOWN_INSTRUCTION"] = 38] = "UNKNOWN_INSTRUCTION";
-    ValidationCode[ValidationCode["UNKNOWN_ADD_FLAG"] = 39] = "UNKNOWN_ADD_FLAG";
-    ValidationCode[ValidationCode["UNKNOWN_COPY_FLAG"] = 40] = "UNKNOWN_COPY_FLAG";
-    ValidationCode[ValidationCode["UNKNOWN_HEALTHCHECK_FLAG"] = 41] = "UNKNOWN_HEALTHCHECK_FLAG";
-    ValidationCode[ValidationCode["UNKNOWN_TYPE"] = 42] = "UNKNOWN_TYPE";
-    ValidationCode[ValidationCode["DEPRECATED_MAINTAINER"] = 43] = "DEPRECATED_MAINTAINER";
-    ValidationCode[ValidationCode["HEALTHCHECK_CMD_ARGUMENT_MISSING"] = 44] = "HEALTHCHECK_CMD_ARGUMENT_MISSING";
-    ValidationCode[ValidationCode["FLAG_INVALID_FROM_VALUE"] = 45] = "FLAG_INVALID_FROM_VALUE";
-})(ValidationCode = exports.ValidationCode || (exports.ValidationCode = {}));
-/**
- * The severity options that may be defined for the validator.
- */
-var ValidationSeverity;
-(function (ValidationSeverity) {
-    /**
-     * The value to set to ignore a problem that has been detected of
-     * a certain type.
-     */
-    ValidationSeverity[ValidationSeverity["IGNORE"] = 0] = "IGNORE";
-    /**
-     * The value to set to classify a problem that has been detected
-     * of a certain type as a warning.
-     */
-    ValidationSeverity[ValidationSeverity["WARNING"] = 1] = "WARNING";
-    /**
-     * The value to set to classify a problem that has been detected
-     * of a certain type as an error.
-     */
-    ValidationSeverity[ValidationSeverity["ERROR"] = 2] = "ERROR";
-})(ValidationSeverity = exports.ValidationSeverity || (exports.ValidationSeverity = {}));
-/**
- * Analyzes the Dockerfile contained within the given string and
- * provides an array of TextEdits back for formatting the document.
- */
-function format(content, options) {
-    const document = vscode_languageserver_types_1.TextDocument.create("", "", 0, content);
-    let formatter = new dockerFormatter_1.DockerFormatter();
-    return formatter.formatDocument(document, options);
-}
-exports.format = format;
-/**
- * Validates the Dockerfile that is contained in the given string.
- */
-function validate(content, settings) {
-    const document = vscode_languageserver_types_1.TextDocument.create("", "", 0, content);
-    const validator = new dockerValidator_1.Validator(settings);
-    return validator.validate(document);
-}
-exports.validate = validate;
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const property_1 = __webpack_require__(48);
-const propertyInstruction_1 = __webpack_require__(24);
-class Arg extends propertyInstruction_1.PropertyInstruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-        this.property = null;
-        const args = this.getArguments();
-        if (args.length === 1) {
-            this.property = new property_1.Property(this.document, this.escapeChar, args[0]);
-        }
-        else {
-            this.property = null;
-        }
-    }
-    /**
-     * Returns the variable defined by this ARG. This may be null if
-     * this ARG instruction is malformed and has no variable
-     * declaration.
-     */
-    getProperty() {
-        return this.property;
-    }
-}
-exports.Arg = Arg;
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(7);
-class Cmd extends jsonInstruction_1.JSONInstruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-}
-exports.Cmd = Cmd;
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(7);
-class Copy extends jsonInstruction_1.JSONInstruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-    stopSearchingForFlags(argument) {
-        return argument.indexOf("--") === -1;
-    }
-    getFromFlag() {
-        let flags = super.getFlags();
-        return flags.length === 1 && flags[0].getName() === "from" ? flags[0] : null;
-    }
-}
-exports.Copy = Copy;
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(7);
-class Entrypoint extends jsonInstruction_1.JSONInstruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-}
-exports.Entrypoint = Entrypoint;
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(24);
-class Env extends propertyInstruction_1.PropertyInstruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-    getProperties() {
-        return super.getProperties();
-    }
-}
-exports.Env = Env;
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const instruction_1 = __webpack_require__(4);
-class From extends instruction_1.Instruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-    getImage() {
-        return this.getRangeContent(this.getImageRange());
-    }
-    /**
-     * Returns the name of the image that will be used as the base image.
-     *
-     * @return the base image's name, or null if unspecified
-     */
-    getImageName() {
-        let range = this.getImageRange();
-        if (range) {
-            let content = this.getRangeContent(range);
-            let index = content.lastIndexOf(':');
-            if (index === -1) {
-                index = content.lastIndexOf('@');
-            }
-            return index === -1 ? content : content.substring(0, index);
-        }
-        return null;
-    }
-    /**
-     * Returns the range that covers the image argument of this
-     * instruction. This includes the tag or digest of the image if
-     * it has been specified by the instruction.
-     *
-     * @return the range of the image argument, or null if no image
-     *         has been specified
-     */
-    getImageRange() {
-        let args = this.getArguments();
-        return args.length !== 0 ? args[0].getRange() : null;
-    }
-    /**
-     * Returns the range in the document that the tag of the base
-     * image encompasses.
-     *
-     * @return the base image's tag's range in the document, or null
-     *         if no tag has been specified
-     */
-    getImageTagRange() {
-        const range = this.getImageRange();
-        if (range) {
-            let content = this.getRangeContent(range);
-            if (content.indexOf('@') === -1) {
-                let index = content.lastIndexOf(':');
-                if (index !== -1) {
-                    return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
-                }
-            }
-        }
-        return null;
-    }
-    /**
-     * Returns the range in the document that the digest of the base
-     * image encompasses.
-     *
-     * @return the base image's digest's range in the document, or null
-     *         if no digest has been specified
-     */
-    getImageDigestRange() {
-        let range = this.getImageRange();
-        if (range) {
-            let content = this.getRangeContent(range);
-            let index = content.lastIndexOf('@');
-            if (index !== -1) {
-                return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
-            }
-        }
-        return null;
-    }
-    getBuildStage() {
-        let range = this.getBuildStageRange();
-        return range === null ? null : this.getRangeContent(range);
-    }
-    getBuildStageRange() {
-        let args = this.getArguments();
-        if (args.length === 3 && args[1].getValue().toUpperCase() === "AS") {
-            return args[2].getRange();
-        }
-        return null;
-    }
-}
-exports.From = From;
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const modifiableInstruction_1 = __webpack_require__(47);
-class Healthcheck extends modifiableInstruction_1.ModifiableInstruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-    stopSearchingForFlags(argument) {
-        argument = argument.toUpperCase();
-        return argument === "CMD" || argument === "NONE";
-    }
-    getSubcommand() {
-        let args = this.getArguments();
-        return args.length !== 0 ? args[0] : null;
-    }
-}
-exports.Healthcheck = Healthcheck;
-
-
-/***/ }),
-/* 46 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const parser_1 = __webpack_require__(77);
+const parser_1 = __webpack_require__(66);
 const instruction_1 = __webpack_require__(4);
 class Onbuild extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -7496,7 +7630,7 @@ exports.Onbuild = Onbuild;
 
 
 /***/ }),
-/* 47 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7507,7 +7641,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const flag_1 = __webpack_require__(69);
+const flag_1 = __webpack_require__(58);
 const instruction_1 = __webpack_require__(4);
 class ModifiableInstruction extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -7587,7 +7721,7 @@ exports.ModifiableInstruction = ModifiableInstruction;
 
 
 /***/ }),
-/* 48 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7903,7 +8037,814 @@ exports.Property = Property;
 
 
 /***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const dockerFormatter_1 = __webpack_require__(109);
+const dockerValidator_1 = __webpack_require__(110);
+/**
+ * Error codes that correspond to a given validation error. These
+ * values are exposed for the purpose of allowing clients to identify
+ * what kind of validation error has occurred and to then prompt
+ * action that is appropriate for resolving the error to the user.
+ *
+ * Note that the names and values of these errors are not considered
+ * to be API and may change between releases of dockerfiles-util.
+ * This is because the Docker builder's errors and error messages are
+ * itself not considered to be API. Thus, Dockerfiles that originally
+ * would not build and throw an error may stop throwing an error
+ * a future release of Docker due to newly added features. This would
+ * then mean that an error (code and message) is no longer valid and
+ * should thus be removed. Hence, this list of error codes is not
+ * stable and as aforementioned may change between releases of
+ * dockerfile-utils.
+ */
+var ValidationCode;
+(function (ValidationCode) {
+    ValidationCode[ValidationCode["CASING_INSTRUCTION"] = 0] = "CASING_INSTRUCTION";
+    ValidationCode[ValidationCode["CASING_DIRECTIVE"] = 1] = "CASING_DIRECTIVE";
+    ValidationCode[ValidationCode["ARGUMENT_MISSING"] = 2] = "ARGUMENT_MISSING";
+    ValidationCode[ValidationCode["ARGUMENT_EXTRA"] = 3] = "ARGUMENT_EXTRA";
+    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_ONE"] = 4] = "ARGUMENT_REQUIRES_ONE";
+    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_AT_LEAST_ONE"] = 5] = "ARGUMENT_REQUIRES_AT_LEAST_ONE";
+    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_TWO"] = 6] = "ARGUMENT_REQUIRES_TWO";
+    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_AT_LEAST_TWO"] = 7] = "ARGUMENT_REQUIRES_AT_LEAST_TWO";
+    ValidationCode[ValidationCode["ARGUMENT_REQUIRES_ONE_OR_THREE"] = 8] = "ARGUMENT_REQUIRES_ONE_OR_THREE";
+    ValidationCode[ValidationCode["ARGUMENT_UNNECESSARY"] = 9] = "ARGUMENT_UNNECESSARY";
+    ValidationCode[ValidationCode["DUPLICATE_BUILD_STAGE_NAME"] = 10] = "DUPLICATE_BUILD_STAGE_NAME";
+    ValidationCode[ValidationCode["EMPTY_CONTINUATION_LINE"] = 11] = "EMPTY_CONTINUATION_LINE";
+    ValidationCode[ValidationCode["INVALID_BUILD_STAGE_NAME"] = 12] = "INVALID_BUILD_STAGE_NAME";
+    ValidationCode[ValidationCode["FLAG_AT_LEAST_ONE"] = 13] = "FLAG_AT_LEAST_ONE";
+    ValidationCode[ValidationCode["FLAG_DUPLICATE"] = 14] = "FLAG_DUPLICATE";
+    ValidationCode[ValidationCode["FLAG_INVALID_DURATION"] = 15] = "FLAG_INVALID_DURATION";
+    ValidationCode[ValidationCode["FLAG_LESS_THAN_1MS"] = 16] = "FLAG_LESS_THAN_1MS";
+    ValidationCode[ValidationCode["FLAG_MISSING_DURATION"] = 17] = "FLAG_MISSING_DURATION";
+    ValidationCode[ValidationCode["FLAG_MISSING_VALUE"] = 18] = "FLAG_MISSING_VALUE";
+    ValidationCode[ValidationCode["FLAG_UNKNOWN_UNIT"] = 19] = "FLAG_UNKNOWN_UNIT";
+    ValidationCode[ValidationCode["NO_SOURCE_IMAGE"] = 20] = "NO_SOURCE_IMAGE";
+    ValidationCode[ValidationCode["INVALID_ESCAPE_DIRECTIVE"] = 21] = "INVALID_ESCAPE_DIRECTIVE";
+    ValidationCode[ValidationCode["INVALID_AS"] = 22] = "INVALID_AS";
+    ValidationCode[ValidationCode["INVALID_DESTINATION"] = 23] = "INVALID_DESTINATION";
+    ValidationCode[ValidationCode["INVALID_PORT"] = 24] = "INVALID_PORT";
+    ValidationCode[ValidationCode["INVALID_PROTO"] = 25] = "INVALID_PROTO";
+    /**
+     * The error code used if the base image of a FROM instruction
+     * has an invalid tag or digest specified.
+     */
+    ValidationCode[ValidationCode["INVALID_REFERENCE_FORMAT"] = 26] = "INVALID_REFERENCE_FORMAT";
+    ValidationCode[ValidationCode["INVALID_SIGNAL"] = 27] = "INVALID_SIGNAL";
+    ValidationCode[ValidationCode["INVALID_SYNTAX"] = 28] = "INVALID_SYNTAX";
+    ValidationCode[ValidationCode["ONBUILD_CHAINING_DISALLOWED"] = 29] = "ONBUILD_CHAINING_DISALLOWED";
+    ValidationCode[ValidationCode["ONBUILD_TRIGGER_DISALLOWED"] = 30] = "ONBUILD_TRIGGER_DISALLOWED";
+    ValidationCode[ValidationCode["SHELL_JSON_FORM"] = 31] = "SHELL_JSON_FORM";
+    ValidationCode[ValidationCode["SHELL_REQUIRES_ONE"] = 32] = "SHELL_REQUIRES_ONE";
+    ValidationCode[ValidationCode["SYNTAX_MISSING_EQUALS"] = 33] = "SYNTAX_MISSING_EQUALS";
+    ValidationCode[ValidationCode["SYNTAX_MISSING_NAMES"] = 34] = "SYNTAX_MISSING_NAMES";
+    ValidationCode[ValidationCode["SYNTAX_MISSING_SINGLE_QUOTE"] = 35] = "SYNTAX_MISSING_SINGLE_QUOTE";
+    ValidationCode[ValidationCode["SYNTAX_MISSING_DOUBLE_QUOTE"] = 36] = "SYNTAX_MISSING_DOUBLE_QUOTE";
+    ValidationCode[ValidationCode["MULTIPLE_INSTRUCTIONS"] = 37] = "MULTIPLE_INSTRUCTIONS";
+    ValidationCode[ValidationCode["UNKNOWN_INSTRUCTION"] = 38] = "UNKNOWN_INSTRUCTION";
+    ValidationCode[ValidationCode["UNKNOWN_ADD_FLAG"] = 39] = "UNKNOWN_ADD_FLAG";
+    ValidationCode[ValidationCode["UNKNOWN_COPY_FLAG"] = 40] = "UNKNOWN_COPY_FLAG";
+    ValidationCode[ValidationCode["UNKNOWN_HEALTHCHECK_FLAG"] = 41] = "UNKNOWN_HEALTHCHECK_FLAG";
+    ValidationCode[ValidationCode["UNKNOWN_TYPE"] = 42] = "UNKNOWN_TYPE";
+    ValidationCode[ValidationCode["DEPRECATED_MAINTAINER"] = 43] = "DEPRECATED_MAINTAINER";
+    ValidationCode[ValidationCode["HEALTHCHECK_CMD_ARGUMENT_MISSING"] = 44] = "HEALTHCHECK_CMD_ARGUMENT_MISSING";
+    ValidationCode[ValidationCode["FLAG_INVALID_FROM_VALUE"] = 45] = "FLAG_INVALID_FROM_VALUE";
+})(ValidationCode = exports.ValidationCode || (exports.ValidationCode = {}));
+/**
+ * The severity options that may be defined for the validator.
+ */
+var ValidationSeverity;
+(function (ValidationSeverity) {
+    /**
+     * The value to set to ignore a problem that has been detected of
+     * a certain type.
+     */
+    ValidationSeverity[ValidationSeverity["IGNORE"] = 0] = "IGNORE";
+    /**
+     * The value to set to classify a problem that has been detected
+     * of a certain type as a warning.
+     */
+    ValidationSeverity[ValidationSeverity["WARNING"] = 1] = "WARNING";
+    /**
+     * The value to set to classify a problem that has been detected
+     * of a certain type as an error.
+     */
+    ValidationSeverity[ValidationSeverity["ERROR"] = 2] = "ERROR";
+})(ValidationSeverity = exports.ValidationSeverity || (exports.ValidationSeverity = {}));
+/**
+ * Analyzes the Dockerfile contained within the given string and
+ * provides an array of TextEdits back for formatting the document.
+ */
+function format(content, options) {
+    const document = vscode_languageserver_types_1.TextDocument.create("", "", 0, content);
+    let formatter = new dockerFormatter_1.DockerFormatter();
+    return formatter.formatDocument(document, options);
+}
+exports.format = format;
+/**
+ * Validates the Dockerfile that is contained in the given string.
+ */
+function validate(content, settings) {
+    const document = vscode_languageserver_types_1.TextDocument.create("", "", 0, content);
+    const validator = new dockerValidator_1.Validator(settings);
+    return validator.validate(document);
+}
+exports.validate = validate;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const property_1 = __webpack_require__(49);
+const propertyInstruction_1 = __webpack_require__(25);
+class Arg extends propertyInstruction_1.PropertyInstruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+        this.property = null;
+        const args = this.getArguments();
+        if (args.length === 1) {
+            this.property = new property_1.Property(this.document, this.escapeChar, args[0]);
+        }
+        else {
+            this.property = null;
+        }
+    }
+    /**
+     * Returns the variable defined by this ARG. This may be null if
+     * this ARG instruction is malformed and has no variable
+     * declaration.
+     */
+    getProperty() {
+        return this.property;
+    }
+}
+exports.Arg = Arg;
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsonInstruction_1 = __webpack_require__(8);
+class Cmd extends jsonInstruction_1.JSONInstruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+}
+exports.Cmd = Cmd;
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsonInstruction_1 = __webpack_require__(8);
+class Copy extends jsonInstruction_1.JSONInstruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+    stopSearchingForFlags(argument) {
+        return argument.indexOf("--") === -1;
+    }
+    getFromFlag() {
+        let flags = super.getFlags();
+        return flags.length === 1 && flags[0].getName() === "from" ? flags[0] : null;
+    }
+}
+exports.Copy = Copy;
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsonInstruction_1 = __webpack_require__(8);
+class Entrypoint extends jsonInstruction_1.JSONInstruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+}
+exports.Entrypoint = Entrypoint;
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const propertyInstruction_1 = __webpack_require__(25);
+class Env extends propertyInstruction_1.PropertyInstruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+    getProperties() {
+        return super.getProperties();
+    }
+}
+exports.Env = Env;
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const instruction_1 = __webpack_require__(5);
+class From extends instruction_1.Instruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+    getImage() {
+        return this.getRangeContent(this.getImageRange());
+    }
+    /**
+     * Returns the name of the image that will be used as the base image.
+     *
+     * @return the base image's name, or null if unspecified
+     */
+    getImageName() {
+        let range = this.getImageRange();
+        if (range) {
+            let content = this.getRangeContent(range);
+            let index = content.lastIndexOf(':');
+            if (index === -1) {
+                index = content.lastIndexOf('@');
+            }
+            return index === -1 ? content : content.substring(0, index);
+        }
+        return null;
+    }
+    /**
+     * Returns the range that covers the image argument of this
+     * instruction. This includes the tag or digest of the image if
+     * it has been specified by the instruction.
+     *
+     * @return the range of the image argument, or null if no image
+     *         has been specified
+     */
+    getImageRange() {
+        let args = this.getArguments();
+        return args.length !== 0 ? args[0].getRange() : null;
+    }
+    /**
+     * Returns the range in the document that the tag of the base
+     * image encompasses.
+     *
+     * @return the base image's tag's range in the document, or null
+     *         if no tag has been specified
+     */
+    getImageTagRange() {
+        const range = this.getImageRange();
+        if (range) {
+            let content = this.getRangeContent(range);
+            if (content.indexOf('@') === -1) {
+                let index = content.lastIndexOf(':');
+                if (index !== -1) {
+                    return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
+                }
+            }
+        }
+        return null;
+    }
+    /**
+     * Returns the range in the document that the digest of the base
+     * image encompasses.
+     *
+     * @return the base image's digest's range in the document, or null
+     *         if no digest has been specified
+     */
+    getImageDigestRange() {
+        let range = this.getImageRange();
+        if (range) {
+            let content = this.getRangeContent(range);
+            let index = content.lastIndexOf('@');
+            if (index !== -1) {
+                return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
+            }
+        }
+        return null;
+    }
+    getBuildStage() {
+        let range = this.getBuildStageRange();
+        return range === null ? null : this.getRangeContent(range);
+    }
+    getBuildStageRange() {
+        let args = this.getArguments();
+        if (args.length === 3 && args[1].getValue().toUpperCase() === "AS") {
+            return args[2].getRange();
+        }
+        return null;
+    }
+}
+exports.From = From;
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const modifiableInstruction_1 = __webpack_require__(48);
+class Healthcheck extends modifiableInstruction_1.ModifiableInstruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+    stopSearchingForFlags(argument) {
+        argument = argument.toUpperCase();
+        return argument === "CMD" || argument === "NONE";
+    }
+    getSubcommand() {
+        let args = this.getArguments();
+        return args.length !== 0 ? args[0] : null;
+    }
+}
+exports.Healthcheck = Healthcheck;
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const parser_1 = __webpack_require__(78);
+const instruction_1 = __webpack_require__(5);
+class Onbuild extends instruction_1.Instruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+    getTrigger() {
+        let trigger = this.getTriggerWord();
+        return trigger === null ? null : trigger.toUpperCase();
+    }
+    getTriggerWord() {
+        return this.getRangeContent(this.getTriggerRange());
+    }
+    getTriggerRange() {
+        let args = this.getArguments();
+        return args.length > 0 ? args[0].getRange() : null;
+    }
+    getTriggerInstruction() {
+        let triggerRange = this.getTriggerRange();
+        if (triggerRange === null) {
+            return null;
+        }
+        let args = this.getArguments();
+        return parser_1.Parser.createInstruction(this.document, this.dockerfile, this.escapeChar, vscode_languageserver_types_1.Range.create(args[0].getRange().start, this.getRange().end), this.getTriggerWord(), triggerRange);
+    }
+}
+exports.Onbuild = Onbuild;
+
+
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const flag_1 = __webpack_require__(70);
+const instruction_1 = __webpack_require__(5);
+class ModifiableInstruction extends instruction_1.Instruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+    getFlags() {
+        if (!this.flags) {
+            this.flags = [];
+            for (let arg of this.getArguments()) {
+                let value = arg.getValue();
+                if (this.stopSearchingForFlags(value)) {
+                    return this.flags;
+                }
+                else if (value.indexOf("--") === 0) {
+                    let range = arg.getRange();
+                    let rawValue = this.document.getText().substring(this.document.offsetAt(range.start), this.document.offsetAt(range.end));
+                    let nameIndex = value.indexOf('=');
+                    let index = rawValue.indexOf('=');
+                    let firstMatch = false;
+                    let secondMatch = false;
+                    let startIndex = -1;
+                    nameSearchLoop: for (let i = 0; i < rawValue.length; i++) {
+                        switch (rawValue.charAt(i)) {
+                            case '\\':
+                            case ' ':
+                            case '\t':
+                            case '\r':
+                            case '\n':
+                                break;
+                            case '-':
+                                if (secondMatch) {
+                                    startIndex = i;
+                                    break nameSearchLoop;
+                                }
+                                else if (firstMatch) {
+                                    secondMatch = true;
+                                }
+                                else {
+                                    firstMatch = true;
+                                }
+                                break;
+                            default:
+                                startIndex = i;
+                                break nameSearchLoop;
+                        }
+                    }
+                    let nameStart = this.document.positionAt(this.document.offsetAt(range.start) + startIndex);
+                    if (index === -1) {
+                        this.flags.push(new flag_1.Flag(range, value.substring(2), vscode_languageserver_types_1.Range.create(nameStart, range.end), null, null));
+                    }
+                    else if (index === value.length - 1) {
+                        let nameEnd = this.document.positionAt(this.document.offsetAt(range.start) + index);
+                        this.flags.push(new flag_1.Flag(range, value.substring(2, index), vscode_languageserver_types_1.Range.create(nameStart, nameEnd), "", vscode_languageserver_types_1.Range.create(range.end, range.end)));
+                    }
+                    else {
+                        let nameEnd = this.document.positionAt(this.document.offsetAt(range.start) + index);
+                        this.flags.push(new flag_1.Flag(range, value.substring(2, nameIndex), vscode_languageserver_types_1.Range.create(nameStart, nameEnd), value.substring(nameIndex + 1), vscode_languageserver_types_1.Range.create(this.document.positionAt(this.document.offsetAt(range.start) + index + 1), range.end)));
+                    }
+                }
+            }
+        }
+        return this.flags;
+    }
+    getArguments() {
+        const args = super.getArguments();
+        const flags = this.getFlags();
+        if (flags.length === 0) {
+            return args;
+        }
+        for (let i = 0; i < flags.length; i++) {
+            args.shift();
+        }
+        return args;
+    }
+}
+exports.ModifiableInstruction = ModifiableInstruction;
+
+
+/***/ }),
 /* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const util_1 = __webpack_require__(11);
+class Property {
+    constructor(document, escapeChar, arg, arg2) {
+        this.name = null;
+        this.value = null;
+        this.document = document;
+        this.escapeChar = escapeChar;
+        if (arg2) {
+            this.nameRange = arg.getRange();
+            this.name = document.getText().substring(document.offsetAt(this.nameRange.start), document.offsetAt(this.nameRange.end));
+            this.valueRange = arg2.getRange();
+            let value = document.getText().substring(document.offsetAt(this.valueRange.start), document.offsetAt(this.valueRange.end));
+            this.value = Property.getValue(value, escapeChar);
+            this.range = vscode_languageserver_types_1.Range.create(this.nameRange.start, this.valueRange.end);
+        }
+        else {
+            this.nameRange = Property.getNameRange(document, arg);
+            this.name = document.getText().substring(document.offsetAt(this.nameRange.start), document.offsetAt(this.nameRange.end));
+            this.valueRange = Property.getValueRange(document, arg);
+            if (this.valueRange) {
+                let value = document.getText().substring(document.offsetAt(this.valueRange.start), document.offsetAt(this.valueRange.end));
+                this.value = Property.getValue(value, escapeChar);
+            }
+            this.range = arg.getRange();
+        }
+    }
+    getRange() {
+        return this.range;
+    }
+    getName() {
+        return this.name;
+    }
+    getNameRange() {
+        return this.nameRange;
+    }
+    getValue() {
+        return this.value;
+    }
+    getValueRange() {
+        return this.valueRange;
+    }
+    getRawValue() {
+        if (this.valueRange === null) {
+            return null;
+        }
+        let escaped = false;
+        let rawValue = "";
+        let value = this.document.getText().substring(this.document.offsetAt(this.valueRange.start), this.document.offsetAt(this.valueRange.end));
+        rawLoop: for (let i = 0; i < value.length; i++) {
+            let char = value.charAt(i);
+            switch (char) {
+                case this.escapeChar:
+                    for (let j = i + 1; j < value.length; j++) {
+                        switch (value.charAt(j)) {
+                            case '\r':
+                                j++;
+                            case '\n':
+                                escaped = true;
+                                i = j;
+                                continue rawLoop;
+                            case ' ':
+                            case '\t':
+                                break;
+                            default:
+                                rawValue = rawValue + char;
+                                continue rawLoop;
+                        }
+                    }
+                    // this happens if there's only whitespace after the escape character
+                    rawValue = rawValue + char;
+                    break;
+                case '\r':
+                case '\n':
+                    break;
+                case ' ':
+                case '\t':
+                    if (!escaped) {
+                        rawValue = rawValue + char;
+                    }
+                    break;
+                case '#':
+                    if (escaped) {
+                        for (let j = i + 1; j < value.length; j++) {
+                            switch (value.charAt(j)) {
+                                case '\r':
+                                    j++;
+                                case '\n':
+                                    i = j;
+                                    continue rawLoop;
+                            }
+                        }
+                    }
+                    else {
+                        rawValue = rawValue + char;
+                    }
+                    break;
+                default:
+                    rawValue = rawValue + char;
+                    escaped = false;
+                    break;
+            }
+        }
+        return rawValue;
+    }
+    static getNameRange(document, arg) {
+        let index = arg.getValue().indexOf('=');
+        if (index !== -1) {
+            return vscode_languageserver_types_1.Range.create(arg.getRange().start, document.positionAt(document.offsetAt(arg.getRange().start) + index));
+        }
+        // no '=' found, just defined the ARG's name
+        return arg.getRange();
+    }
+    static getValueRange(document, arg) {
+        let argValue = arg.getValue();
+        let index = argValue.indexOf('=');
+        if (index === -1) {
+            // no value declared if no '=' found
+            return null;
+        }
+        return vscode_languageserver_types_1.Range.create(document.positionAt(document.offsetAt(arg.getRange().start) + index + 1), document.positionAt(document.offsetAt(arg.getRange().end)));
+    }
+    /**
+     * Returns the actual value of this instruction's declared
+     * variable. The value will have its escape characters removed if
+     * applicable. If the value spans multiple lines and there are
+     * comments nested within the lines, they too will be removed.
+     *
+     * @return the value that this ARG instruction's declared
+     *         variable will resolve to, may be null if no value is
+     *         defined, may be the empty string if the value only
+     *         consists of whitespace
+     */
+    static getValue(value, escapeChar) {
+        let escaped = false;
+        const skip = util_1.Util.findLeadingNonWhitespace(value, escapeChar);
+        if (skip !== 0 && value.charAt(skip) === '#') {
+            // need to skip over comments
+            escaped = true;
+        }
+        value = value.substring(skip);
+        let first = value.charAt(0);
+        let last = value.charAt(value.length - 1);
+        let literal = first === '\'' || first === '"';
+        let inSingle = (first === '\'' && last === '\'');
+        let inDouble = false;
+        if (first === '"') {
+            for (let i = 1; i < value.length; i++) {
+                if (value.charAt(i) === escapeChar) {
+                    i++;
+                }
+                else if (value.charAt(i) === '"' && i === value.length - 1) {
+                    inDouble = true;
+                }
+            }
+        }
+        if (inSingle || inDouble) {
+            value = value.substring(1, value.length - 1);
+        }
+        let commentCheck = -1;
+        let escapedValue = "";
+        let start = 0;
+        parseValue: for (let i = 0; i < value.length; i++) {
+            let char = value.charAt(i);
+            switch (char) {
+                case escapeChar:
+                    if (i + 1 === value.length) {
+                        escapedValue = escapedValue + escapeChar;
+                        break parseValue;
+                    }
+                    char = value.charAt(i + 1);
+                    if (char === ' ' || char === '\t') {
+                        whitespaceCheck: for (let j = i + 2; j < value.length; j++) {
+                            let char2 = value.charAt(j);
+                            switch (char2) {
+                                case ' ':
+                                case '\t':
+                                    break;
+                                case '\r':
+                                    j++;
+                                case '\n':
+                                    escaped = true;
+                                    i = j;
+                                    continue parseValue;
+                                default:
+                                    if (!inDouble && !inSingle && !literal) {
+                                        if (char2 === escapeChar) {
+                                            // add the escaped character
+                                            escapedValue = escapedValue + char;
+                                            // now start parsing from the next escape character
+                                            i = i + 1;
+                                        }
+                                        else {
+                                            // the expectation is that this j = i + 2 here
+                                            escapedValue = escapedValue + char + char2;
+                                            i = j;
+                                        }
+                                        continue parseValue;
+                                    }
+                                    break whitespaceCheck;
+                            }
+                        }
+                    }
+                    if (inDouble) {
+                        if (char === '\r') {
+                            escaped = true;
+                            i = i + 2;
+                        }
+                        else if (char === '\n') {
+                            escaped = true;
+                            i++;
+                        }
+                        else if (char !== '"') {
+                            if (char === escapeChar) {
+                                i++;
+                            }
+                            escapedValue = escapedValue + escapeChar;
+                        }
+                        continue parseValue;
+                    }
+                    else if (inSingle || literal) {
+                        if (char === '\r') {
+                            escaped = true;
+                            i = i + 2;
+                        }
+                        else if (char === '\n') {
+                            escaped = true;
+                            i++;
+                        }
+                        else {
+                            escapedValue = escapedValue + escapeChar;
+                        }
+                        continue parseValue;
+                    }
+                    else if (char === escapeChar) {
+                        // double escape, append one and move on
+                        escapedValue = escapedValue + escapeChar;
+                        i++;
+                    }
+                    else if (char === '\r') {
+                        escaped = true;
+                        // offset one more for \r\n
+                        i = i + 2;
+                    }
+                    else if (char === '\n') {
+                        escaped = true;
+                        i++;
+                        start = i;
+                    }
+                    else {
+                        // any other escapes are simply ignored
+                        escapedValue = escapedValue + char;
+                        i++;
+                    }
+                    break;
+                case ' ':
+                case '\t':
+                    if (escaped && commentCheck === -1) {
+                        commentCheck = i;
+                    }
+                    escapedValue = escapedValue + char;
+                    break;
+                case '\r':
+                    i++;
+                case '\n':
+                    if (escaped && commentCheck !== -1) {
+                        // rollback and remove the whitespace that was previously appended
+                        escapedValue = escapedValue.substring(0, escapedValue.length - (i - commentCheck - 1));
+                        commentCheck = -1;
+                    }
+                    break;
+                case '#':
+                    // a newline was escaped and now there's a comment
+                    if (escaped) {
+                        if (commentCheck !== -1) {
+                            // rollback and remove the whitespace that was previously appended
+                            escapedValue = escapedValue.substring(0, escapedValue.length - (i - commentCheck));
+                            commentCheck = -1;
+                        }
+                        newlineCheck: for (let j = i + 1; j < value.length; j++) {
+                            switch (value.charAt(j)) {
+                                case '\r':
+                                    j++;
+                                case '\n':
+                                    i = j;
+                                    break newlineCheck;
+                            }
+                        }
+                        continue parseValue;
+                    }
+                default:
+                    if (escaped) {
+                        escaped = false;
+                        commentCheck = -1;
+                    }
+                    escapedValue = escapedValue + char;
+                    break;
+            }
+        }
+        return escapedValue;
+    }
+}
+exports.Property = Property;
+
+
+/***/ }),
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7913,7 +8854,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var services_1 = __webpack_require__(52);
+var services_1 = __webpack_require__(53);
 exports.Disposable = services_1.Disposable;
 var DisposableCollection = /** @class */ (function () {
     function DisposableCollection() {
@@ -7942,13 +8883,13 @@ exports.DisposableCollection = DisposableCollection;
 //# sourceMappingURL=disposable.js.map
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7959,12 +8900,12 @@ exports.DisposableCollection = DisposableCollection;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var docker_1 = __webpack_require__(15);
-var dockerfile_ast_1 = __webpack_require__(1);
+var docker_1 = __webpack_require__(16);
+var dockerfile_ast_1 = __webpack_require__(2);
 var DockerDefinition = /** @class */ (function () {
     function DockerDefinition() {
     }
-    DockerDefinition.prototype.computeBuildStageDefinition = function (uri, dockerfile, position) {
+    DockerDefinition.prototype.computeBuildStageDefinition = function (dockerfile, position) {
         var source = undefined;
         for (var _i = 0, _a = dockerfile.getCOPYs(); _i < _a.length; _i++) {
             var instruction = _a[_i];
@@ -7982,7 +8923,7 @@ var DockerDefinition = /** @class */ (function () {
             var range = instruction.getBuildStageRange();
             if (range &&
                 ((range.start.line === position.line && range.start.character <= position.character && position.character <= range.end.character) || (instruction.getBuildStage() === source))) {
-                return vscode_languageserver_types_1.Location.create(uri, range);
+                return range;
             }
         }
         return null;
@@ -8068,19 +9009,24 @@ var DockerDefinition = /** @class */ (function () {
         var image = dockerfile.getContainingImage(position);
         return DockerDefinition.computeVariableDefinition(image, position);
     };
-    DockerDefinition.prototype.computeVariableDefinition = function (uri, dockerfile, position) {
+    DockerDefinition.prototype.computeVariableDefinition = function (dockerfile, position) {
         var property = DockerDefinition.findDefinition(dockerfile, position);
-        return property ? vscode_languageserver_types_1.Location.create(uri, property.getNameRange()) : null;
+        return property ? property.getNameRange() : null;
+    };
+    DockerDefinition.prototype.computeDefinitionRange = function (content, position) {
+        var dockerfile = dockerfile_ast_1.DockerfileParser.parse(content);
+        var range = this.computeBuildStageDefinition(dockerfile, position);
+        return range ? range : this.computeVariableDefinition(dockerfile, position);
     };
     DockerDefinition.prototype.computeDefinition = function (textDocument, content, position) {
         var dockerfile = dockerfile_ast_1.DockerfileParser.parse(content);
-        var definition = this.computeBuildStageDefinition(textDocument.uri, dockerfile, position);
-        if (definition !== null) {
-            return definition;
+        var range = this.computeBuildStageDefinition(dockerfile, position);
+        if (range !== null) {
+            return vscode_languageserver_types_1.Location.create(textDocument.uri, range);
         }
-        definition = this.computeVariableDefinition(textDocument.uri, dockerfile, position);
-        if (definition !== null) {
-            return definition;
+        range = this.computeVariableDefinition(dockerfile, position);
+        if (range !== null) {
+            return vscode_languageserver_types_1.Location.create(textDocument.uri, range);
         }
         return null;
     };
@@ -8090,7 +9036,7 @@ exports.DockerDefinition = DockerDefinition;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8103,17 +9049,17 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_jsonrpc_1 = __webpack_require__(53);
+const vscode_jsonrpc_1 = __webpack_require__(54);
 exports.Disposable = vscode_jsonrpc_1.Disposable;
 exports.CancellationToken = vscode_jsonrpc_1.CancellationToken;
 exports.Event = vscode_jsonrpc_1.Event;
 exports.Emitter = vscode_jsonrpc_1.Emitter;
-__export(__webpack_require__(16));
+__export(__webpack_require__(17));
 __export(__webpack_require__(0));
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8137,8 +9083,8 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Is = __webpack_require__(17);
-var messages_1 = __webpack_require__(148);
+var Is = __webpack_require__(18);
+var messages_1 = __webpack_require__(149);
 exports.RequestType = messages_1.RequestType;
 exports.RequestType0 = messages_1.RequestType0;
 exports.RequestType1 = messages_1.RequestType1;
@@ -8163,26 +9109,26 @@ exports.NotificationType6 = messages_1.NotificationType6;
 exports.NotificationType7 = messages_1.NotificationType7;
 exports.NotificationType8 = messages_1.NotificationType8;
 exports.NotificationType9 = messages_1.NotificationType9;
-var messageReader_1 = __webpack_require__(54);
+var messageReader_1 = __webpack_require__(55);
 exports.MessageReader = messageReader_1.MessageReader;
 exports.StreamMessageReader = messageReader_1.StreamMessageReader;
 exports.IPCMessageReader = messageReader_1.IPCMessageReader;
 exports.SocketMessageReader = messageReader_1.SocketMessageReader;
-var messageWriter_1 = __webpack_require__(55);
+var messageWriter_1 = __webpack_require__(56);
 exports.MessageWriter = messageWriter_1.MessageWriter;
 exports.StreamMessageWriter = messageWriter_1.StreamMessageWriter;
 exports.IPCMessageWriter = messageWriter_1.IPCMessageWriter;
 exports.SocketMessageWriter = messageWriter_1.SocketMessageWriter;
-var events_1 = __webpack_require__(28);
+var events_1 = __webpack_require__(29);
 exports.Disposable = events_1.Disposable;
 exports.Event = events_1.Event;
 exports.Emitter = events_1.Emitter;
-var cancellation_1 = __webpack_require__(146);
+var cancellation_1 = __webpack_require__(147);
 exports.CancellationTokenSource = cancellation_1.CancellationTokenSource;
 exports.CancellationToken = cancellation_1.CancellationToken;
-var linkedMap_1 = __webpack_require__(147);
-__export(__webpack_require__(149));
+var linkedMap_1 = __webpack_require__(148);
 __export(__webpack_require__(150));
+__export(__webpack_require__(151));
 var CancelNotification;
 (function (CancelNotification) {
     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -8990,10 +9936,10 @@ function createMessageConnection(input, output, logger, strategy) {
 }
 exports.createMessageConnection = createMessageConnection;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(96).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(97).setImmediate))
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9013,8 +9959,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var events_1 = __webpack_require__(28);
-var Is = __webpack_require__(17);
+var events_1 = __webpack_require__(29);
+var Is = __webpack_require__(18);
 var DefaultSize = 8192;
 var CR = new Buffer('\r', 'ascii')[0];
 var LF = new Buffer('\n', 'ascii')[0];
@@ -9268,10 +10214,10 @@ var SocketMessageReader = /** @class */ (function (_super) {
 }(StreamMessageReader));
 exports.SocketMessageReader = SocketMessageReader;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer))
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9291,8 +10237,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var events_1 = __webpack_require__(28);
-var Is = __webpack_require__(17);
+var events_1 = __webpack_require__(29);
+var Is = __webpack_require__(18);
 var ContentLength = 'Content-Length: ';
 var CRLF = '\r\n';
 var MessageWriter;
@@ -9498,10 +10444,10 @@ var SocketMessageWriter = /** @class */ (function (_super) {
 }(AbstractMessageWriter));
 exports.SocketMessageWriter = SocketMessageWriter;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer))
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9512,8 +10458,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const line_1 = __webpack_require__(20);
-const util_1 = __webpack_require__(9);
+const line_1 = __webpack_require__(21);
+const util_1 = __webpack_require__(10);
 class Comment extends line_1.Line {
     constructor(document, range) {
         super(document, range);
@@ -9563,80 +10509,6 @@ class Comment extends line_1.Line {
     }
 }
 exports.Comment = Comment;
-
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class Flag {
-    constructor(range, name, nameRange, value, valueRange) {
-        this.range = range;
-        this.name = name;
-        this.nameRange = nameRange;
-        this.value = value;
-        this.valueRange = valueRange;
-    }
-    toString() {
-        if (this.valueRange) {
-            return "--" + this.name + "=" + this.value;
-        }
-        return "--" + this.name;
-    }
-    /**
-     * Returns the range that encompasses this entire flag. This includes the
-     * -- prefix in the beginning to the last character of the flag's value (if
-     * it has been defined).
-     *
-     * @return the entire range of this flag
-     */
-    getRange() {
-        return this.range;
-    }
-    /**
-     * Returns the name of this flag. The name does not include the -- prefix.
-     * Thus, for HEALTHCHECK's --interval flag, interval is the flag's name and
-     * not --interval.
-     *
-     * @return this flag's name
-     */
-    getName() {
-        return this.name;
-    }
-    /**
-     * Returns the range that encompasses the flag's name
-     *
-     * @return the range containing the flag's name
-     */
-    getNameRange() {
-        return this.nameRange;
-    }
-    /**
-     * Returns the value that has been set to this flag. May be null if the
-     * flag is invalid and has no value set like a --start-period. If the flag
-     * is instead a --start-period= with an equals sign then the flag's value
-     * is the empty string.
-     *
-     * @return this flag's value if it has been defined, null otherwise
-     */
-    getValue() {
-        return this.value;
-    }
-    /**
-     * Returns the range that encompasses this flag's value. If no value has
-     * been set then null will be returned.
-     *
-     * @return the range containing this flag's value, or null if the flag
-     *         has no value defined
-     */
-    getValueRange() {
-        return this.valueRange;
-    }
-}
-exports.Flag = Flag;
 
 
 /***/ }),
@@ -9646,7 +10518,81 @@ exports.Flag = Flag;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(6);
+class Flag {
+    constructor(range, name, nameRange, value, valueRange) {
+        this.range = range;
+        this.name = name;
+        this.nameRange = nameRange;
+        this.value = value;
+        this.valueRange = valueRange;
+    }
+    toString() {
+        if (this.valueRange) {
+            return "--" + this.name + "=" + this.value;
+        }
+        return "--" + this.name;
+    }
+    /**
+     * Returns the range that encompasses this entire flag. This includes the
+     * -- prefix in the beginning to the last character of the flag's value (if
+     * it has been defined).
+     *
+     * @return the entire range of this flag
+     */
+    getRange() {
+        return this.range;
+    }
+    /**
+     * Returns the name of this flag. The name does not include the -- prefix.
+     * Thus, for HEALTHCHECK's --interval flag, interval is the flag's name and
+     * not --interval.
+     *
+     * @return this flag's name
+     */
+    getName() {
+        return this.name;
+    }
+    /**
+     * Returns the range that encompasses the flag's name
+     *
+     * @return the range containing the flag's name
+     */
+    getNameRange() {
+        return this.nameRange;
+    }
+    /**
+     * Returns the value that has been set to this flag. May be null if the
+     * flag is invalid and has no value set like a --start-period. If the flag
+     * is instead a --start-period= with an equals sign then the flag's value
+     * is the empty string.
+     *
+     * @return this flag's value if it has been defined, null otherwise
+     */
+    getValue() {
+        return this.value;
+    }
+    /**
+     * Returns the range that encompasses this flag's value. If no value has
+     * been set then null will be returned.
+     *
+     * @return the range containing this flag's value, or null if the flag
+     *         has no value defined
+     */
+    getValueRange() {
+        return this.valueRange;
+    }
+}
+exports.Flag = Flag;
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsonInstruction_1 = __webpack_require__(7);
 class Add extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -9659,14 +10605,14 @@ exports.Add = Add;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(21);
-const util_1 = __webpack_require__(9);
+const propertyInstruction_1 = __webpack_require__(22);
+const util_1 = __webpack_require__(10);
 class Label extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -9700,13 +10646,13 @@ exports.Label = Label;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(6);
+const jsonInstruction_1 = __webpack_require__(7);
 class Shell extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -9716,13 +10662,13 @@ exports.Shell = Shell;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const instruction_1 = __webpack_require__(3);
+const instruction_1 = __webpack_require__(4);
 class Stopsignal extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -9732,13 +10678,13 @@ exports.Stopsignal = Stopsignal;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const instruction_1 = __webpack_require__(3);
+const instruction_1 = __webpack_require__(4);
 class User extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -9748,13 +10694,13 @@ exports.User = User;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(6);
+const jsonInstruction_1 = __webpack_require__(7);
 class Volume extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -9764,13 +10710,13 @@ exports.Volume = Volume;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const instruction_1 = __webpack_require__(3);
+const instruction_1 = __webpack_require__(4);
 class Workdir extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -9780,7 +10726,7 @@ exports.Workdir = Workdir;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9791,27 +10737,27 @@ exports.Workdir = Workdir;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const comment_1 = __webpack_require__(56);
-const parserDirective_1 = __webpack_require__(66);
-const instruction_1 = __webpack_require__(3);
-const jsonInstruction_1 = __webpack_require__(6);
-const add_1 = __webpack_require__(58);
-const arg_1 = __webpack_require__(29);
-const cmd_1 = __webpack_require__(30);
-const copy_1 = __webpack_require__(31);
-const env_1 = __webpack_require__(33);
-const entrypoint_1 = __webpack_require__(32);
-const from_1 = __webpack_require__(19);
-const healthcheck_1 = __webpack_require__(34);
-const label_1 = __webpack_require__(59);
-const onbuild_1 = __webpack_require__(35);
-const shell_1 = __webpack_require__(60);
-const stopsignal_1 = __webpack_require__(61);
-const workdir_1 = __webpack_require__(64);
-const user_1 = __webpack_require__(62);
-const volume_1 = __webpack_require__(63);
-const dockerfile_1 = __webpack_require__(106);
-const main_1 = __webpack_require__(1);
+const comment_1 = __webpack_require__(57);
+const parserDirective_1 = __webpack_require__(67);
+const instruction_1 = __webpack_require__(4);
+const jsonInstruction_1 = __webpack_require__(7);
+const add_1 = __webpack_require__(59);
+const arg_1 = __webpack_require__(30);
+const cmd_1 = __webpack_require__(31);
+const copy_1 = __webpack_require__(32);
+const env_1 = __webpack_require__(34);
+const entrypoint_1 = __webpack_require__(33);
+const from_1 = __webpack_require__(20);
+const healthcheck_1 = __webpack_require__(35);
+const label_1 = __webpack_require__(60);
+const onbuild_1 = __webpack_require__(36);
+const shell_1 = __webpack_require__(61);
+const stopsignal_1 = __webpack_require__(62);
+const workdir_1 = __webpack_require__(65);
+const user_1 = __webpack_require__(63);
+const volume_1 = __webpack_require__(64);
+const dockerfile_1 = __webpack_require__(107);
+const main_1 = __webpack_require__(2);
 class Parser {
     static createInstruction(document, dockerfile, escapeChar, lineRange, instruction, instructionRange) {
         switch (instruction.toUpperCase()) {
@@ -10160,14 +11106,14 @@ exports.Parser = Parser;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const main_1 = __webpack_require__(1);
-const line_1 = __webpack_require__(20);
+const main_1 = __webpack_require__(2);
+const line_1 = __webpack_require__(21);
 class ParserDirective extends line_1.Line {
     constructor(document, range, nameRange, valueRange) {
         super(document, range);
@@ -10194,7 +11140,7 @@ exports.ParserDirective = ParserDirective;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10243,7 +11189,7 @@ exports.Variable = Variable;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10253,9 +11199,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const line_1 = __webpack_require__(23);
-const util_1 = __webpack_require__(10);
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const line_1 = __webpack_require__(24);
+const util_1 = __webpack_require__(11);
 class Comment extends line_1.Line {
     constructor(document, range) {
         super(document, range);
@@ -10308,7 +11254,7 @@ exports.Comment = Comment;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10382,13 +11328,13 @@ exports.Flag = Flag;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(7);
+const jsonInstruction_1 = __webpack_require__(8);
 class Add extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10401,14 +11347,14 @@ exports.Add = Add;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(24);
-const util_1 = __webpack_require__(10);
+const propertyInstruction_1 = __webpack_require__(25);
+const util_1 = __webpack_require__(11);
 class Label extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10442,13 +11388,13 @@ exports.Label = Label;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(7);
+const jsonInstruction_1 = __webpack_require__(8);
 class Shell extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10458,13 +11404,13 @@ exports.Shell = Shell;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const instruction_1 = __webpack_require__(4);
+const instruction_1 = __webpack_require__(5);
 class Stopsignal extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10474,13 +11420,13 @@ exports.Stopsignal = Stopsignal;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const instruction_1 = __webpack_require__(4);
+const instruction_1 = __webpack_require__(5);
 class User extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10490,13 +11436,13 @@ exports.User = User;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const jsonInstruction_1 = __webpack_require__(7);
+const jsonInstruction_1 = __webpack_require__(8);
 class Volume extends jsonInstruction_1.JSONInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10506,13 +11452,13 @@ exports.Volume = Volume;
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const instruction_1 = __webpack_require__(4);
+const instruction_1 = __webpack_require__(5);
 class Workdir extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10522,7 +11468,7 @@ exports.Workdir = Workdir;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10532,28 +11478,28 @@ exports.Workdir = Workdir;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const comment_1 = __webpack_require__(68);
-const parserDirective_1 = __webpack_require__(78);
-const instruction_1 = __webpack_require__(4);
-const jsonInstruction_1 = __webpack_require__(7);
-const add_1 = __webpack_require__(70);
-const arg_1 = __webpack_require__(39);
-const cmd_1 = __webpack_require__(40);
-const copy_1 = __webpack_require__(41);
-const env_1 = __webpack_require__(43);
-const entrypoint_1 = __webpack_require__(42);
-const from_1 = __webpack_require__(44);
-const healthcheck_1 = __webpack_require__(45);
-const label_1 = __webpack_require__(71);
-const onbuild_1 = __webpack_require__(46);
-const shell_1 = __webpack_require__(72);
-const stopsignal_1 = __webpack_require__(73);
-const workdir_1 = __webpack_require__(76);
-const user_1 = __webpack_require__(74);
-const volume_1 = __webpack_require__(75);
-const dockerfile_1 = __webpack_require__(110);
-const main_1 = __webpack_require__(14);
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const comment_1 = __webpack_require__(69);
+const parserDirective_1 = __webpack_require__(79);
+const instruction_1 = __webpack_require__(5);
+const jsonInstruction_1 = __webpack_require__(8);
+const add_1 = __webpack_require__(71);
+const arg_1 = __webpack_require__(40);
+const cmd_1 = __webpack_require__(41);
+const copy_1 = __webpack_require__(42);
+const env_1 = __webpack_require__(44);
+const entrypoint_1 = __webpack_require__(43);
+const from_1 = __webpack_require__(45);
+const healthcheck_1 = __webpack_require__(46);
+const label_1 = __webpack_require__(72);
+const onbuild_1 = __webpack_require__(47);
+const shell_1 = __webpack_require__(73);
+const stopsignal_1 = __webpack_require__(74);
+const workdir_1 = __webpack_require__(77);
+const user_1 = __webpack_require__(75);
+const volume_1 = __webpack_require__(76);
+const dockerfile_1 = __webpack_require__(111);
+const main_1 = __webpack_require__(15);
 class Parser {
     static createInstruction(document, dockerfile, escapeChar, lineRange, instruction, instructionRange) {
         switch (instruction.toUpperCase()) {
@@ -10902,14 +11848,14 @@ exports.Parser = Parser;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const main_1 = __webpack_require__(14);
-const line_1 = __webpack_require__(23);
+const main_1 = __webpack_require__(15);
+const line_1 = __webpack_require__(24);
 class ParserDirective extends line_1.Line {
     constructor(document, range, nameRange, valueRange) {
         super(document, range);
@@ -10936,7 +11882,7 @@ exports.ParserDirective = ParserDirective;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10985,7 +11931,7 @@ exports.Variable = Variable;
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -11293,7 +12239,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -11304,7 +12250,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11331,7 +12277,7 @@ exports.MonacoCommands = MonacoCommands;
 //# sourceMappingURL=commands.js.map
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11341,7 +12287,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var protocol_1 = __webpack_require__(16);
+var protocol_1 = __webpack_require__(17);
 var ConsoleWindow = /** @class */ (function () {
     function ConsoleWindow() {
         this.channels = new Map();
@@ -11390,7 +12336,7 @@ exports.ConsoleWindow = ConsoleWindow;
 //# sourceMappingURL=console-window.js.map
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11408,8 +12354,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var is = __webpack_require__(27);
-var base_1 = __webpack_require__(101);
+var is = __webpack_require__(28);
+var base_1 = __webpack_require__(102);
 var ProtocolCodeLens;
 (function (ProtocolCodeLens) {
     function is(item) {
@@ -11982,7 +12928,7 @@ exports.ProtocolToMonacoConverter = ProtocolToMonacoConverter;
 //# sourceMappingURL=converter.js.map
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11992,10 +12938,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2018 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var globToRegExp = __webpack_require__(112);
-var services_1 = __webpack_require__(52);
-var diagnostic_collection_1 = __webpack_require__(115);
-var disposable_1 = __webpack_require__(49);
+var globToRegExp = __webpack_require__(113);
+var services_1 = __webpack_require__(53);
+var diagnostic_collection_1 = __webpack_require__(116);
+var disposable_1 = __webpack_require__(50);
 var MonacoModelIdentifier;
 (function (MonacoModelIdentifier) {
     function fromDocument(document) {
@@ -12417,13 +13363,13 @@ exports.MonacoLanguages = MonacoLanguages;
 //# sourceMappingURL=languages.js.map
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var services_1 = __webpack_require__(52);
+var services_1 = __webpack_require__(53);
 var MonacoWorkspace = /** @class */ (function () {
     function MonacoWorkspace(p2m, m2p, _rootUri) {
         if (_rootUri === void 0) { _rootUri = null; }
@@ -12560,7 +13506,7 @@ exports.MonacoWorkspace = MonacoWorkspace;
 //# sourceMappingURL=workspace.js.map
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12589,13 +13535,13 @@ exports.MonacoWorkspace = MonacoWorkspace;
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(25).nextTick;
+var pna = __webpack_require__(26);
 /*</replacement>*/
 
 module.exports = Readable;
 
 /*<replacement>*/
-var isArray = __webpack_require__(81);
+var isArray = __webpack_require__(82);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -12605,7 +13551,7 @@ var Duplex;
 Readable.ReadableState = ReadableState;
 
 /*<replacement>*/
-var EE = __webpack_require__(80).EventEmitter;
+var EE = __webpack_require__(81).EventEmitter;
 
 var EElistenerCount = function (emitter, type) {
   return emitter.listeners(type).length;
@@ -12613,12 +13559,12 @@ var EElistenerCount = function (emitter, type) {
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(91);
+var Stream = __webpack_require__(92);
 /*</replacement>*/
 
 /*<replacement>*/
 
-var Buffer = __webpack_require__(26).Buffer;
+var Buffer = __webpack_require__(27).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -12630,12 +13576,12 @@ function _isUint8Array(obj) {
 /*</replacement>*/
 
 /*<replacement>*/
-var util = __webpack_require__(13);
-util.inherits = __webpack_require__(11);
+var util = __webpack_require__(14);
+util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(153);
+var debugUtil = __webpack_require__(154);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -12644,8 +13590,8 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(125);
-var destroyImpl = __webpack_require__(90);
+var BufferList = __webpack_require__(126);
+var destroyImpl = __webpack_require__(91);
 var StringDecoder;
 
 util.inherits(Readable, Stream);
@@ -12665,7 +13611,7 @@ function prependListener(emitter, event, fn) {
 }
 
 function ReadableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(12);
+  Duplex = Duplex || __webpack_require__(13);
 
   options = options || {};
 
@@ -12735,14 +13681,14 @@ function ReadableState(options, stream) {
   this.decoder = null;
   this.encoding = null;
   if (options.encoding) {
-    if (!StringDecoder) StringDecoder = __webpack_require__(95).StringDecoder;
+    if (!StringDecoder) StringDecoder = __webpack_require__(96).StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
 }
 
 function Readable(options) {
-  Duplex = Duplex || __webpack_require__(12);
+  Duplex = Duplex || __webpack_require__(13);
 
   if (!(this instanceof Readable)) return new Readable(options);
 
@@ -12891,7 +13837,7 @@ Readable.prototype.isPaused = function () {
 
 // backwards compatibility.
 Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = __webpack_require__(95).StringDecoder;
+  if (!StringDecoder) StringDecoder = __webpack_require__(96).StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
@@ -13061,7 +14007,7 @@ function emitReadable(stream) {
   if (!state.emittedReadable) {
     debug('emitReadable', state.flowing);
     state.emittedReadable = true;
-    if (state.sync) processNextTick(emitReadable_, stream);else emitReadable_(stream);
+    if (state.sync) pna.nextTick(emitReadable_, stream);else emitReadable_(stream);
   }
 }
 
@@ -13080,7 +14026,7 @@ function emitReadable_(stream) {
 function maybeReadMore(stream, state) {
   if (!state.readingMore) {
     state.readingMore = true;
-    processNextTick(maybeReadMore_, stream, state);
+    pna.nextTick(maybeReadMore_, stream, state);
   }
 }
 
@@ -13125,7 +14071,7 @@ Readable.prototype.pipe = function (dest, pipeOpts) {
   var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
 
   var endFn = doEnd ? onend : unpipe;
-  if (state.endEmitted) processNextTick(endFn);else src.once('end', endFn);
+  if (state.endEmitted) pna.nextTick(endFn);else src.once('end', endFn);
 
   dest.on('unpipe', onunpipe);
   function onunpipe(readable, unpipeInfo) {
@@ -13315,7 +14261,7 @@ Readable.prototype.on = function (ev, fn) {
       state.readableListening = state.needReadable = true;
       state.emittedReadable = false;
       if (!state.reading) {
-        processNextTick(nReadingNextTick, this);
+        pna.nextTick(nReadingNextTick, this);
       } else if (state.length) {
         emitReadable(this);
       }
@@ -13346,7 +14292,7 @@ Readable.prototype.resume = function () {
 function resume(stream, state) {
   if (!state.resumeScheduled) {
     state.resumeScheduled = true;
-    processNextTick(resume_, stream, state);
+    pna.nextTick(resume_, stream, state);
   }
 }
 
@@ -13554,7 +14500,7 @@ function endReadable(stream) {
 
   if (!state.endEmitted) {
     state.ended = true;
-    processNextTick(endReadableNT, state, stream);
+    pna.nextTick(endReadableNT, state, stream);
   }
 }
 
@@ -13579,10 +14525,10 @@ function indexOf(xs, x) {
   }
   return -1;
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13653,11 +14599,11 @@ function indexOf(xs, x) {
 
 module.exports = Transform;
 
-var Duplex = __webpack_require__(12);
+var Duplex = __webpack_require__(13);
 
 /*<replacement>*/
-var util = __webpack_require__(13);
-util.inherits = __webpack_require__(11);
+var util = __webpack_require__(14);
+util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
 util.inherits(Transform, Duplex);
@@ -13802,7 +14748,7 @@ function done(stream, er, data) {
 }
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13835,7 +14781,7 @@ function done(stream, er, data) {
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(25).nextTick;
+var pna = __webpack_require__(26);
 /*</replacement>*/
 
 module.exports = Writable;
@@ -13862,7 +14808,7 @@ function CorkedRequest(state) {
 /* </replacement> */
 
 /*<replacement>*/
-var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : processNextTick;
+var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : pna.nextTick;
 /*</replacement>*/
 
 /*<replacement>*/
@@ -13872,23 +14818,23 @@ var Duplex;
 Writable.WritableState = WritableState;
 
 /*<replacement>*/
-var util = __webpack_require__(13);
-util.inherits = __webpack_require__(11);
+var util = __webpack_require__(14);
+util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(142)
+  deprecate: __webpack_require__(143)
 };
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(91);
+var Stream = __webpack_require__(92);
 /*</replacement>*/
 
 /*<replacement>*/
 
-var Buffer = __webpack_require__(26).Buffer;
+var Buffer = __webpack_require__(27).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -13899,14 +14845,14 @@ function _isUint8Array(obj) {
 
 /*</replacement>*/
 
-var destroyImpl = __webpack_require__(90);
+var destroyImpl = __webpack_require__(91);
 
 util.inherits(Writable, Stream);
 
 function nop() {}
 
 function WritableState(options, stream) {
-  Duplex = Duplex || __webpack_require__(12);
+  Duplex = Duplex || __webpack_require__(13);
 
   options = options || {};
 
@@ -14056,7 +15002,7 @@ if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.protot
 }
 
 function Writable(options) {
-  Duplex = Duplex || __webpack_require__(12);
+  Duplex = Duplex || __webpack_require__(13);
 
   // Writable ctor is applied to Duplexes, too.
   // `realHasInstance` is necessary because using plain `instanceof`
@@ -14096,7 +15042,7 @@ function writeAfterEnd(stream, cb) {
   var er = new Error('write after end');
   // TODO: defer error events consistently everywhere, not just the cb
   stream.emit('error', er);
-  processNextTick(cb, er);
+  pna.nextTick(cb, er);
 }
 
 // Checks that a user-supplied chunk is valid, especially for the particular
@@ -14113,7 +15059,7 @@ function validChunk(stream, state, chunk, cb) {
   }
   if (er) {
     stream.emit('error', er);
-    processNextTick(cb, er);
+    pna.nextTick(cb, er);
     valid = false;
   }
   return valid;
@@ -14233,10 +15179,10 @@ function onwriteError(stream, state, sync, er, cb) {
   if (sync) {
     // defer the callback if we are being called synchronously
     // to avoid piling up things on the stack
-    processNextTick(cb, er);
+    pna.nextTick(cb, er);
     // this can emit finish, and it will always happen
     // after error
-    processNextTick(finishMaybe, stream, state);
+    pna.nextTick(finishMaybe, stream, state);
     stream._writableState.errorEmitted = true;
     stream.emit('error', er);
   } else {
@@ -14411,7 +15357,7 @@ function prefinish(stream, state) {
     if (typeof stream._final === 'function') {
       state.pendingcb++;
       state.finalCalled = true;
-      processNextTick(callFinal, stream, state);
+      pna.nextTick(callFinal, stream, state);
     } else {
       state.prefinished = true;
       stream.emit('prefinish');
@@ -14435,7 +15381,7 @@ function endWritable(stream, state, cb) {
   state.ending = true;
   finishMaybe(stream, state);
   if (cb) {
-    if (state.finished) processNextTick(cb);else stream.once('finish', cb);
+    if (state.finished) pna.nextTick(cb);else stream.once('finish', cb);
   }
   state.ended = true;
   stream.writable = false;
@@ -14483,10 +15429,10 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(96).setImmediate, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(97).setImmediate, __webpack_require__(3)))
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14494,7 +15440,7 @@ Writable.prototype._destroy = function (err, cb) {
 
 /*<replacement>*/
 
-var processNextTick = __webpack_require__(25).nextTick;
+var pna = __webpack_require__(26);
 /*</replacement>*/
 
 // undocumented cb() API, needed for core, not for public API
@@ -14508,7 +15454,7 @@ function destroy(err, cb) {
     if (cb) {
       cb(err);
     } else if (err && (!this._writableState || !this._writableState.errorEmitted)) {
-      processNextTick(emitErrorNT, this, err);
+      pna.nextTick(emitErrorNT, this, err);
     }
     return this;
   }
@@ -14527,7 +15473,7 @@ function destroy(err, cb) {
 
   this._destroy(err || null, function (err) {
     if (!cb && err) {
-      processNextTick(emitErrorNT, _this, err);
+      pna.nextTick(emitErrorNT, _this, err);
       if (_this._writableState) {
         _this._writableState.errorEmitted = true;
       }
@@ -14566,27 +15512,27 @@ module.exports = {
 };
 
 /***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(80).EventEmitter;
-
-
-/***/ }),
 /* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(87);
-exports.Stream = exports;
-exports.Readable = exports;
-exports.Writable = __webpack_require__(89);
-exports.Duplex = __webpack_require__(12);
-exports.Transform = __webpack_require__(88);
-exports.PassThrough = __webpack_require__(124);
+module.exports = __webpack_require__(81).EventEmitter;
 
 
 /***/ }),
 /* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(88);
+exports.Stream = exports;
+exports.Readable = exports;
+exports.Writable = __webpack_require__(90);
+exports.Duplex = __webpack_require__(13);
+exports.Transform = __webpack_require__(89);
+exports.PassThrough = __webpack_require__(125);
+
+
+/***/ }),
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
@@ -14663,15 +15609,15 @@ function isFunction (value) {
 
 xhr = null // Help gc
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process, Buffer, global) {var capability = __webpack_require__(93)
-var inherits = __webpack_require__(11)
-var stream = __webpack_require__(92)
+/* WEBPACK VAR INJECTION */(function(process, Buffer, global) {var capability = __webpack_require__(94)
+var inherits = __webpack_require__(12)
+var stream = __webpack_require__(93)
 
 var rStates = exports.readyStates = {
 	UNSENT: 0,
@@ -14887,16 +15833,16 @@ IncomingMessage.prototype._onXHRProgress = function () {
 	}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5), __webpack_require__(8).Buffer, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(9).Buffer, __webpack_require__(3)))
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Buffer = __webpack_require__(26).Buffer;
+var Buffer = __webpack_require__(27).Buffer;
 
 var isEncoding = Buffer.isEncoding || function (encoding) {
   encoding = '' + encoding;
@@ -15168,7 +16114,7 @@ function simpleEnd(buf) {
 }
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
@@ -15221,7 +16167,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(126);
+__webpack_require__(127);
 // On some exotic environments, it's not clear which object `setimmeidate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -15232,10 +16178,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15246,19 +16192,19 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerfile_ast_1 = __webpack_require__(1);
-var dockerDefinition_1 = __webpack_require__(51);
-var docker_1 = __webpack_require__(15);
+var dockerfile_ast_1 = __webpack_require__(2);
+var dockerDefinition_1 = __webpack_require__(52);
+var docker_1 = __webpack_require__(16);
 var DockerHighlight = /** @class */ (function () {
     function DockerHighlight() {
     }
-    DockerHighlight.prototype.computeHighlightRanges = function (textDocument, content, position) {
+    DockerHighlight.prototype.computeHighlightRanges = function (content, position) {
         var dockerfile = dockerfile_ast_1.DockerfileParser.parse(content);
         var provider = new dockerDefinition_1.DockerDefinition();
-        var location = provider.computeDefinition(textDocument, content, position);
-        var image = location === null ? dockerfile.getContainingImage(position) : dockerfile.getContainingImage(location.range.start);
+        var definitionRange = provider.computeDefinitionRange(content, position);
+        var image = definitionRange === null ? dockerfile.getContainingImage(position) : dockerfile.getContainingImage(definitionRange.start);
         var highlights = [];
-        if (location === null) {
+        if (definitionRange === null) {
             for (var _i = 0, _a = dockerfile.getCOPYs(); _i < _a.length; _i++) {
                 var instruction = _a[_i];
                 var flag = instruction.getFromFlag();
@@ -15319,13 +16265,13 @@ var DockerHighlight = /** @class */ (function () {
             }
         }
         else {
-            var document = vscode_languageserver_types_1.TextDocument.create(textDocument.uri, "", 0, content);
-            var definition = document.getText().substring(document.offsetAt(location.range.start), document.offsetAt(location.range.end));
+            var document = vscode_languageserver_types_1.TextDocument.create("", "", 0, content);
+            var definition = document.getText().substring(document.offsetAt(definitionRange.start), document.offsetAt(definitionRange.end));
             for (var _v = 0, _w = dockerfile.getFROMs(); _v < _w.length; _v++) {
                 var from = _w[_v];
                 var range = from.getBuildStageRange();
-                if (range && range.start.line === location.range.start.line) {
-                    highlights.push(vscode_languageserver_types_1.DocumentHighlight.create(location.range, vscode_languageserver_types_1.DocumentHighlightKind.Write));
+                if (range && range.start.line === definitionRange.start.line) {
+                    highlights.push(vscode_languageserver_types_1.DocumentHighlight.create(definitionRange, vscode_languageserver_types_1.DocumentHighlightKind.Write));
                     for (var _x = 0, _y = dockerfile.getCOPYs(); _x < _y.length; _x++) {
                         var instruction = _y[_x];
                         var flag = instruction.getFromFlag();
@@ -15370,7 +16316,7 @@ var DockerHighlight = /** @class */ (function () {
             for (var _9 = 0, _10 = dockerfile.getInitialARGs(); _9 < _10.length; _9++) {
                 var arg = _10[_9];
                 var property = arg.getProperty();
-                if (property && docker_1.Util.rangeEquals(property.getNameRange(), location.range)) {
+                if (property && docker_1.Util.rangeEquals(property.getNameRange(), definitionRange)) {
                     for (var _11 = 0, _12 = dockerfile.getFROMs(); _11 < _12.length; _11++) {
                         var from = _12[_11];
                         for (var _13 = 0, _14 = from.getVariables(); _13 < _14.length; _13++) {
@@ -15391,7 +16337,7 @@ exports.DockerHighlight = DockerHighlight;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15405,7 +16351,7 @@ var PlainTextDocumentation = /** @class */ (function () {
     function PlainTextDocumentation() {
         this.dockerMessages = {
             "hoverAdd": "Copy files, folders, or remote URLs from `source` to the `dest` path in the image's filesystem.\n\n",
-            "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\n",
+            "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\nSince Docker 1.9\n\n",
             "hoverCmd": "Provide defaults for an executing container. If an executable is not specified, then ENTRYPOINT must be specified as well. There can only be one CMD instruction in a Dockerfile.\n\n",
             "hoverCopy": "Copy files or folders from `source` to the `dest` path in the image's filesystem.\n\n",
             "hoverEntrypoint": "Configures the container to be run as an executable.\n\n",
@@ -15418,7 +16364,7 @@ var PlainTextDocumentation = /** @class */ (function () {
             "hoverOnbuild": "Add a trigger instruction to the image that will be executed when the image is used as a base image for another build.\n\n",
             "hoverRun": "Execute any commands on top of the current image as a new layer and commit the results.\n\n",
             "hoverShell": "Override the default shell used for the shell form of commands.\n\nSince Docker 1.12\n\n",
-            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the SIGNAME format such as SIGKILL.\n\nSince Docker 1.12\n\n",
+            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the SIGNAME format such as SIGKILL.\n\nSince Docker 1.9\n\n",
             "hoverUser": "Set the user name or UID to use when running the image in addition to any subsequent CMD, ENTRYPOINT, or RUN instructions that follow it in the Dockerfile.\n\n",
             "hoverVolume": "Create a mount point with the specifid name and mark it as holding externally mounted volumes from the native host or from other containers.\n\n",
             "hoverWorkdir": "Set the working directory for any subsequent ADD, COPY, CMD, ENTRYPOINT, or RUN` instructions that follow it in the `Dockerfile`.\n\n",
@@ -15715,13 +16661,13 @@ exports.PlainTextDocumentation = PlainTextDocumentation;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var languageService_1 = __webpack_require__(140);
+var languageService_1 = __webpack_require__(141);
 var CommandIds;
 (function (CommandIds) {
     CommandIds["LOWERCASE"] = "docker.command.convertToLowercase";
@@ -15748,7 +16694,7 @@ var DockerfileLanguageServiceFactory;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15775,8 +16721,8 @@ var DockerfileLanguageServiceFactory;
 
 
 
-var punycode = __webpack_require__(120);
-var util = __webpack_require__(141);
+var punycode = __webpack_require__(121);
+var util = __webpack_require__(142);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -15851,7 +16797,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = __webpack_require__(123);
+    querystring = __webpack_require__(124);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -16487,7 +17433,7 @@ Url.prototype.parseHost = function() {
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16500,20 +17446,20 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_jsonrpc_1 = __webpack_require__(53);
+const vscode_jsonrpc_1 = __webpack_require__(54);
 exports.ErrorCodes = vscode_jsonrpc_1.ErrorCodes;
 exports.ResponseError = vscode_jsonrpc_1.ResponseError;
 exports.RequestType = vscode_jsonrpc_1.RequestType;
 exports.RequestType0 = vscode_jsonrpc_1.RequestType0;
 exports.NotificationType = vscode_jsonrpc_1.NotificationType;
 exports.NotificationType0 = vscode_jsonrpc_1.NotificationType0;
-const protocol_1 = __webpack_require__(16);
+const protocol_1 = __webpack_require__(17);
 exports.InitializeError = protocol_1.InitializeError;
-const is = __webpack_require__(27);
-const async_1 = __webpack_require__(144);
-const UUID = __webpack_require__(145);
+const is = __webpack_require__(28);
+const async_1 = __webpack_require__(145);
+const UUID = __webpack_require__(146);
 __export(__webpack_require__(0));
-__export(__webpack_require__(16));
+__export(__webpack_require__(17));
 /**
  * An action to be performed when the connection is producing errors.
  */
@@ -17818,10 +18764,10 @@ class SettingMonitor {
 }
 exports.SettingMonitor = SettingMonitor;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17831,8 +18777,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var dockerfile_language_service_1 = __webpack_require__(99);
-var monaco_languageclient_1 = __webpack_require__(116);
+var dockerfile_language_service_1 = __webpack_require__(100);
+var monaco_languageclient_1 = __webpack_require__(117);
 var LANGUAGE_ID = 'dockerfile';
 var MODEL_URI = 'inmemory://model.json';
 var MONACO_URI = monaco.Uri.parse(MODEL_URI);
@@ -17849,6 +18795,7 @@ var editor = monaco.editor.create(document.getElementById("container"), {
 });
 var monacoModel = monaco.editor.getModel(MONACO_URI);
 var service = dockerfile_language_service_1.DockerfileLanguageServiceFactory.createLanguageService();
+service.setCapabilities({ completion: { completionItem: { snippetSupport: true } } });
 var m2p = new monaco_languageclient_1.MonacoToProtocolConverter();
 var p2m = new monaco_languageclient_1.ProtocolToMonacoConverter();
 monacoModel.onDidChangeContent(function (event) {
@@ -17863,9 +18810,10 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
             editor._commandService.addCommand(command.command, {
                 handler: function () {
                     var args = command.arguments;
-                    var edits = service.createWorkspaceEdit(monacoModel.getValue(), command.command, args);
+                    var edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
                     if (edits) {
-                        var mEdits = p2m.asWorkspaceEdit(edits);
+                        var workspaceEdit = { changes: (_a = {}, _a[MODEL_URI] = edits, _a) };
+                        var mEdits = p2m.asWorkspaceEdit(workspaceEdit);
                         var rEdits = mEdits.edits.map(function (edit) {
                             return {
                                 identifier: { major: 1, minor: 0 },
@@ -17876,6 +18824,7 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
                         });
                         monacoModel.pushEditOperations([], rEdits, function () { return []; });
                     }
+                    var _a;
                 }
             });
         };
@@ -17890,7 +18839,7 @@ monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
     triggerCharacters: ['=', ' ', '$', '-'],
     provideCompletionItems: function (model, position, token) {
         var lspPosition = m2p.asPosition(position.lineNumber, position.column);
-        var items = service.computeCompletionItems(model.getValue(), lspPosition, true);
+        var items = service.computeCompletionItems(model.getValue(), lspPosition);
         if (items.then) {
             return items.then(function (result) {
                 return p2m.asCompletionResult(result);
@@ -17911,7 +18860,7 @@ monaco.languages.registerDefinitionProvider(LANGUAGE_ID, {
 });
 monaco.languages.registerDocumentHighlightProvider(LANGUAGE_ID, {
     provideDocumentHighlights: function (model, position, token) {
-        var highlightRanges = service.computeHighlightRanges(LSP_URI, model.getValue(), m2p.asPosition(position.lineNumber, position.column));
+        var highlightRanges = service.computeHighlightRanges(model.getValue(), m2p.asPosition(position.lineNumber, position.column));
         return p2m.asDocumentHighlights(highlightRanges);
     }
 });
@@ -17973,7 +18922,7 @@ monaco.languages.registerOnTypeFormattingEditProvider(LANGUAGE_ID, {
 //# sourceMappingURL=client.js.map
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* --------------------------------------------------------------------------------------------
@@ -17985,13 +18934,13 @@ window.onload = function () {
     // load Monaco code
     w.require(['vs/editor/editor.main'], function () {
         // load client code
-        __webpack_require__(102);
+        __webpack_require__(103);
     });
 };
 //# sourceMappingURL=main.js.map
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18011,6 +18960,8 @@ for (var i = 0, len = code.length; i < len; ++i) {
   revLookup[code.charCodeAt(i)] = i
 }
 
+// Support decoding URL-safe base64 strings, as Node.js does.
+// See: https://en.wikipedia.org/wiki/Base64#URL_applications
 revLookup['-'.charCodeAt(0)] = 62
 revLookup['_'.charCodeAt(0)] = 63
 
@@ -18072,7 +19023,7 @@ function encodeChunk (uint8, start, end) {
   var tmp
   var output = []
   for (var i = start; i < end; i += 3) {
-    tmp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+    tmp = ((uint8[i] << 16) & 0xFF0000) + ((uint8[i + 1] << 8) & 0xFF00) + (uint8[i + 2] & 0xFF)
     output.push(tripletToBase64(tmp))
   }
   return output.join('')
@@ -18112,7 +19063,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -18182,7 +19133,7 @@ module.exports = {
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18193,10 +19144,10 @@ module.exports = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const imageTemplate_1 = __webpack_require__(107);
-const from_1 = __webpack_require__(19);
-const util_1 = __webpack_require__(9);
-const main_1 = __webpack_require__(1);
+const imageTemplate_1 = __webpack_require__(108);
+const from_1 = __webpack_require__(20);
+const util_1 = __webpack_require__(10);
+const main_1 = __webpack_require__(2);
 class Dockerfile extends imageTemplate_1.ImageTemplate {
     constructor(document) {
         super();
@@ -18302,7 +19253,7 @@ exports.Dockerfile = Dockerfile;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18313,15 +19264,15 @@ exports.Dockerfile = Dockerfile;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const arg_1 = __webpack_require__(29);
-const cmd_1 = __webpack_require__(30);
-const copy_1 = __webpack_require__(31);
-const env_1 = __webpack_require__(33);
-const entrypoint_1 = __webpack_require__(32);
-const from_1 = __webpack_require__(19);
-const healthcheck_1 = __webpack_require__(34);
-const onbuild_1 = __webpack_require__(35);
-const util_1 = __webpack_require__(9);
+const arg_1 = __webpack_require__(30);
+const cmd_1 = __webpack_require__(31);
+const copy_1 = __webpack_require__(32);
+const env_1 = __webpack_require__(34);
+const entrypoint_1 = __webpack_require__(33);
+const from_1 = __webpack_require__(20);
+const healthcheck_1 = __webpack_require__(35);
+const onbuild_1 = __webpack_require__(36);
+const util_1 = __webpack_require__(10);
 class ImageTemplate {
     constructor() {
         this.comments = [];
@@ -18514,7 +19465,7 @@ exports.ImageTemplate = ImageTemplate;
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18524,8 +19475,8 @@ exports.ImageTemplate = ImageTemplate;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const dockerfile_ast_1 = __webpack_require__(14);
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const dockerfile_ast_1 = __webpack_require__(15);
 class DockerFormatter {
     getIndentation(formattingOptions) {
         let indentation = "\t";
@@ -18683,7 +19634,7 @@ exports.DockerFormatter = DockerFormatter;
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18693,9 +19644,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const dockerfile_ast_1 = __webpack_require__(14);
-const main_1 = __webpack_require__(38);
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const dockerfile_ast_1 = __webpack_require__(15);
+const main_1 = __webpack_require__(39);
 exports.KEYWORDS = [
     "ADD",
     "ARG",
@@ -18817,31 +19768,62 @@ class Validator {
             // no instructions in this file, or only ARGs
             problems.push(Validator.createNoSourceImage(document.positionAt(0), document.positionAt(0)));
         }
-        let cmds = dockerfile.getCMDs();
+        let cmds = [];
+        let entrypoints = [];
+        let healthchecks = [];
+        let duplicates = [];
+        for (let instruction of instructions) {
+            if (instruction instanceof dockerfile_ast_1.Cmd) {
+                cmds.push(instruction);
+            }
+            else if (instruction instanceof dockerfile_ast_1.Entrypoint) {
+                entrypoints.push(instruction);
+            }
+            else if (instruction instanceof dockerfile_ast_1.Healthcheck) {
+                healthchecks.push(instruction);
+            }
+            else if (instruction instanceof dockerfile_ast_1.From) {
+                if (cmds.length > 1) {
+                    duplicates = duplicates.concat(cmds);
+                }
+                if (entrypoints.length > 1) {
+                    duplicates = duplicates.concat(entrypoints);
+                }
+                if (healthchecks.length > 1) {
+                    duplicates = duplicates.concat(healthchecks);
+                }
+                cmds = [];
+                entrypoints = [];
+                healthchecks = [];
+            }
+        }
         if (cmds.length > 1) {
-            // more than one CMD found, warn the user
-            for (let cmd of cmds) {
-                let diagnostic = this.createMultipleInstructions(cmd.getInstructionRange(), this.settings.instructionCmdMultiple, "CMD");
-                if (diagnostic) {
-                    problems.push(diagnostic);
-                }
-            }
+            duplicates = duplicates.concat(cmds);
         }
-        let entrypoints = dockerfile.getENTRYPOINTs();
         if (entrypoints.length > 1) {
-            // more than one ENTRYPOINT found, warn the user
-            for (let entrypoint of entrypoints) {
-                let diagnostic = this.createMultipleInstructions(entrypoint.getInstructionRange(), this.settings.instructionEntrypointMultiple, "ENTRYPOINT");
+            duplicates = duplicates.concat(entrypoints);
+        }
+        if (healthchecks.length > 1) {
+            duplicates = duplicates.concat(healthchecks);
+        }
+        for (let duplicate of duplicates) {
+            if (duplicate instanceof dockerfile_ast_1.Cmd) {
+                // more than one CMD found, warn the user
+                let diagnostic = this.createMultipleInstructions(duplicate.getInstructionRange(), this.settings.instructionCmdMultiple, "CMD");
                 if (diagnostic) {
                     problems.push(diagnostic);
                 }
             }
-        }
-        let healthchecks = dockerfile.getHEALTHCHECKs();
-        if (healthchecks.length > 1) {
-            // more than one HEALTHCHECK found, warn the user
-            for (let healthcheck of healthchecks) {
-                let diagnostic = this.createMultipleInstructions(healthcheck.getInstructionRange(), this.settings.instructionHealthcheckMultiple, "HEALTHCHECK");
+            else if (duplicate instanceof dockerfile_ast_1.Entrypoint) {
+                // more than one ENTRYPOINT found, warn the user
+                let diagnostic = this.createMultipleInstructions(duplicate.getInstructionRange(), this.settings.instructionEntrypointMultiple, "ENTRYPOINT");
+                if (diagnostic) {
+                    problems.push(diagnostic);
+                }
+            }
+            else if (duplicate instanceof dockerfile_ast_1.Healthcheck) {
+                // more than one HEALTHCHECK found, warn the user
+                let diagnostic = this.createMultipleInstructions(duplicate.getInstructionRange(), this.settings.instructionHealthcheckMultiple, "HEALTHCHECK");
                 if (diagnostic) {
                     problems.push(diagnostic);
                 }
@@ -19022,6 +20004,11 @@ class Validator {
                                 }
                                 let endIndex = argument.indexOf(':');
                                 if (endIndex === -1) {
+                                    let digest = argument.substring(index + 1);
+                                    if (digest === "") {
+                                        // no digest specified, just highlight the whole argument
+                                        return Validator.createInvalidReferenceFormat(range);
+                                    }
                                     return Validator.createInvalidReferenceFormat(from.getImageDigestRange());
                                 }
                                 let algorithmRegexp = new RegExp(/[A-Fa-f0-9_+.-]+/);
@@ -19346,7 +20333,7 @@ class Validator {
                             case '9':
                                 continue;
                             default:
-                                let time = parseInt(value.substring(start, i));
+                                let time = parseFloat(value.substring(start, i));
                                 for (let j = i + 1; j < value.length; j++) {
                                     if (Validator.isNumberRelated(value.charAt(j))) {
                                         let unit = value.substring(i, j);
@@ -20010,7 +20997,7 @@ exports.Validator = Validator;
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20020,10 +21007,10 @@ exports.Validator = Validator;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const imageTemplate_1 = __webpack_require__(111);
-const util_1 = __webpack_require__(10);
-const main_1 = __webpack_require__(14);
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const imageTemplate_1 = __webpack_require__(112);
+const util_1 = __webpack_require__(11);
+const main_1 = __webpack_require__(15);
 class Dockerfile extends imageTemplate_1.ImageTemplate {
     constructor(document) {
         super();
@@ -20115,7 +21102,7 @@ exports.Dockerfile = Dockerfile;
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20125,16 +21112,16 @@ exports.Dockerfile = Dockerfile;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_languageserver_types_1 = __webpack_require__(0);
-const arg_1 = __webpack_require__(39);
-const cmd_1 = __webpack_require__(40);
-const copy_1 = __webpack_require__(41);
-const env_1 = __webpack_require__(43);
-const entrypoint_1 = __webpack_require__(42);
-const from_1 = __webpack_require__(44);
-const healthcheck_1 = __webpack_require__(45);
-const onbuild_1 = __webpack_require__(46);
-const util_1 = __webpack_require__(10);
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const arg_1 = __webpack_require__(40);
+const cmd_1 = __webpack_require__(41);
+const copy_1 = __webpack_require__(42);
+const env_1 = __webpack_require__(44);
+const entrypoint_1 = __webpack_require__(43);
+const from_1 = __webpack_require__(45);
+const healthcheck_1 = __webpack_require__(46);
+const onbuild_1 = __webpack_require__(47);
+const util_1 = __webpack_require__(11);
 class ImageTemplate {
     constructor() {
         this.comments = [];
@@ -20319,7 +21306,7 @@ exports.ImageTemplate = ImageTemplate;
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports) {
 
 module.exports = function (glob, opts) {
@@ -20456,11 +21443,11 @@ module.exports = function (glob, opts) {
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var http = __webpack_require__(127)
-var url = __webpack_require__(100)
+var http = __webpack_require__(128)
+var url = __webpack_require__(101)
 
 var https = module.exports
 
@@ -20493,7 +21480,7 @@ function validateParams (params) {
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -20583,13 +21570,13 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var disposable_1 = __webpack_require__(49);
+var disposable_1 = __webpack_require__(50);
 var MonacoDiagnosticCollection = /** @class */ (function () {
     function MonacoDiagnosticCollection(name, p2m) {
         this.name = name;
@@ -20670,7 +21657,7 @@ exports.MonacoModelDiagnostics = MonacoModelDiagnostics;
 //# sourceMappingURL=diagnostic-collection.js.map
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20683,29 +21670,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-__export(__webpack_require__(49));
-__export(__webpack_require__(82));
+__export(__webpack_require__(50));
 __export(__webpack_require__(83));
-__export(__webpack_require__(85));
-__export(__webpack_require__(86));
 __export(__webpack_require__(84));
-__export(__webpack_require__(117));
-__export(__webpack_require__(101));
-__export(__webpack_require__(143));
+__export(__webpack_require__(86));
+__export(__webpack_require__(87));
+__export(__webpack_require__(85));
+__export(__webpack_require__(118));
+__export(__webpack_require__(102));
+__export(__webpack_require__(144));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var converter_1 = __webpack_require__(84);
-var commands_1 = __webpack_require__(82);
-var languages_1 = __webpack_require__(85);
-var workspace_1 = __webpack_require__(86);
-var console_window_1 = __webpack_require__(83);
+var converter_1 = __webpack_require__(85);
+var commands_1 = __webpack_require__(83);
+var languages_1 = __webpack_require__(86);
+var workspace_1 = __webpack_require__(87);
+var console_window_1 = __webpack_require__(84);
 function createMonacoServices(editor, options) {
     if (options === void 0) { options = {}; }
     var m2p = new converter_1.MonacoToProtocolConverter();
@@ -20721,7 +21708,7 @@ exports.createMonacoServices = createMonacoServices;
 //# sourceMappingURL=services.js.map
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -20776,7 +21763,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -21004,10 +21991,10 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
@@ -21543,10 +22530,10 @@ var substr = 'ab'.substr(-1) === 'b'
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(151)(module), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(152)(module), __webpack_require__(3)))
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21637,7 +22624,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21729,18 +22716,18 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(121);
-exports.encode = exports.stringify = __webpack_require__(122);
+exports.decode = exports.parse = __webpack_require__(122);
+exports.encode = exports.stringify = __webpack_require__(123);
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21773,11 +22760,11 @@ exports.encode = exports.stringify = __webpack_require__(122);
 
 module.exports = PassThrough;
 
-var Transform = __webpack_require__(88);
+var Transform = __webpack_require__(89);
 
 /*<replacement>*/
-var util = __webpack_require__(13);
-util.inherits = __webpack_require__(11);
+var util = __webpack_require__(14);
+util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
 util.inherits(PassThrough, Transform);
@@ -21793,7 +22780,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21801,8 +22788,8 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Buffer = __webpack_require__(26).Buffer;
-var util = __webpack_require__(154);
+var Buffer = __webpack_require__(27).Buffer;
+var util = __webpack_require__(155);
 
 function copyBuffer(src, target, offset) {
   src.copy(target, offset);
@@ -21878,7 +22865,7 @@ if (util && util.inspect && util.inspect.custom) {
 }
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -22068,17 +23055,17 @@ if (util && util.inspect && util.inspect.custom) {
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(128)
-var IncomingMessage = __webpack_require__(94)
-var extend = __webpack_require__(152)
-var statusCodes = __webpack_require__(105)
-var url = __webpack_require__(100)
+/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(129)
+var IncomingMessage = __webpack_require__(95)
+var extend = __webpack_require__(153)
+var statusCodes = __webpack_require__(106)
+var url = __webpack_require__(101)
 
 var http = exports
 
@@ -22157,17 +23144,17 @@ http.METHODS = [
 	'UNLOCK',
 	'UNSUBSCRIBE'
 ]
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(93)
-var inherits = __webpack_require__(11)
-var response = __webpack_require__(94)
-var stream = __webpack_require__(92)
-var toArrayBuffer = __webpack_require__(129)
+/* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(94)
+var inherits = __webpack_require__(12)
+var response = __webpack_require__(95)
+var stream = __webpack_require__(93)
+var toArrayBuffer = __webpack_require__(130)
 
 var IncomingMessage = response.IncomingMessage
 var rStates = response.readyStates
@@ -22487,13 +23474,13 @@ var unsafeHeaders = [
 	'via'
 ]
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8).Buffer, __webpack_require__(2), __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Buffer = __webpack_require__(8).Buffer
+var Buffer = __webpack_require__(9).Buffer
 
 module.exports = function (buf) {
 	// If the buffer is backed by a Uint8Array, a faster version will work
@@ -22523,7 +23510,7 @@ module.exports = function (buf) {
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -22568,8 +23555,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var docker_1 = __webpack_require__(15);
-var dockerfile_ast_1 = __webpack_require__(1);
+var docker_1 = __webpack_require__(16);
+var dockerfile_ast_1 = __webpack_require__(2);
 var DockerAssist = /** @class */ (function () {
     /**
      * Creates a content assist processor for suggesting completion items related to a Dockerfile.
@@ -23243,7 +24230,7 @@ exports.DockerAssist = DockerAssist;
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23254,8 +24241,8 @@ exports.DockerAssist = DockerAssist;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerfile_utils_1 = __webpack_require__(38);
-var main_1 = __webpack_require__(99);
+var dockerfile_utils_1 = __webpack_require__(39);
+var main_1 = __webpack_require__(100);
 var DockerCommands = /** @class */ (function () {
     function DockerCommands() {
     }
@@ -23368,120 +24355,66 @@ var DockerCommands = /** @class */ (function () {
         }
         return commands;
     };
-    DockerCommands.prototype.createWorkspaceEdit = function (content, command, args) {
+    DockerCommands.prototype.computeCommandEdits = function (content, command, args) {
         var document = vscode_languageserver_types_1.TextDocument.create("", "", 0, content);
-        var uri = args[0];
         var range = args[1];
         switch (command) {
             case main_1.CommandIds.LOWERCASE:
                 var directive = document.getText().substring(document.offsetAt(range.start), document.offsetAt(range.end));
-                return {
-                    changes: (_a = {},
-                        _a[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, directive.toLowerCase())
-                        ],
-                        _a)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, directive.toLowerCase())
+                ];
             case main_1.CommandIds.UPPERCASE:
                 var instruction = document.getText().substring(document.offsetAt(range.start), document.offsetAt(range.end));
-                return {
-                    changes: (_b = {},
-                        _b[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, instruction.toUpperCase())
-                        ],
-                        _b)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, instruction.toUpperCase())
+                ];
             case main_1.CommandIds.EXTRA_ARGUMENT:
-                return {
-                    changes: (_c = {},
-                        _c[uri] = [
-                            vscode_languageserver_types_1.TextEdit.del(range)
-                        ],
-                        _c)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.del(range)
+                ];
             case main_1.CommandIds.DIRECTIVE_TO_BACKSLASH:
-                return {
-                    changes: (_d = {},
-                        _d[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, '\\')
-                        ],
-                        _d)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, '\\')
+                ];
             case main_1.CommandIds.DIRECTIVE_TO_BACKTICK:
-                return {
-                    changes: (_e = {},
-                        _e[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, '`')
-                        ],
-                        _e)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, '`')
+                ];
             case main_1.CommandIds.CONVERT_TO_AS:
-                return {
-                    changes: (_f = {},
-                        _f[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, "AS")
-                        ],
-                        _f)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, "AS")
+                ];
             case main_1.CommandIds.FLAG_TO_CHOWN:
-                return {
-                    changes: (_g = {},
-                        _g[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, "--chown")
-                        ],
-                        _g)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, "--chown")
+                ];
             case main_1.CommandIds.FLAG_TO_HEALTHCHECK_INTERVAL:
-                return {
-                    changes: (_h = {},
-                        _h[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, "--interval")
-                        ],
-                        _h)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, "--interval")
+                ];
             case main_1.CommandIds.FLAG_TO_HEALTHCHECK_RETRIES:
-                return {
-                    changes: (_j = {},
-                        _j[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, "--retries")
-                        ],
-                        _j)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, "--retries")
+                ];
             case main_1.CommandIds.FLAG_TO_HEALTHCHECK_START_PERIOD:
-                return {
-                    changes: (_k = {},
-                        _k[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, "--start-period")
-                        ],
-                        _k)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, "--start-period")
+                ];
             case main_1.CommandIds.FLAG_TO_HEALTHCHECK_TIMEOUT:
-                return {
-                    changes: (_l = {},
-                        _l[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, "--timeout")
-                        ],
-                        _l)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, "--timeout")
+                ];
             case main_1.CommandIds.FLAG_TO_COPY_FROM:
-                return {
-                    changes: (_m = {},
-                        _m[uri] = [
-                            vscode_languageserver_types_1.TextEdit.replace(range, "--from")
-                        ],
-                        _m)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.replace(range, "--from")
+                ];
             case main_1.CommandIds.REMOVE_EMPTY_CONTINUATION_LINE:
-                return {
-                    changes: (_o = {},
-                        _o[uri] = [
-                            vscode_languageserver_types_1.TextEdit.del(range)
-                        ],
-                        _o)
-                };
+                return [
+                    vscode_languageserver_types_1.TextEdit.del(range)
+                ];
         }
         return null;
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     };
     return DockerCommands;
 }());
@@ -23489,7 +24422,7 @@ exports.DockerCommands = DockerCommands;
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23500,7 +24433,7 @@ exports.DockerCommands = DockerCommands;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerfile_ast_1 = __webpack_require__(1);
+var dockerfile_ast_1 = __webpack_require__(2);
 var DockerFormatter = /** @class */ (function () {
     function DockerFormatter() {
     }
@@ -23657,7 +24590,7 @@ exports.DockerFormatter = DockerFormatter;
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23667,27 +24600,78 @@ exports.DockerFormatter = DockerFormatter;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var dockerfile_ast_1 = __webpack_require__(1);
-var docker_1 = __webpack_require__(15);
-var dockerDefinition_1 = __webpack_require__(51);
+var vscode_languageserver_types_1 = __webpack_require__(0);
+var dockerfile_ast_1 = __webpack_require__(2);
+var docker_1 = __webpack_require__(16);
+var dockerDefinition_1 = __webpack_require__(52);
 var DockerHover = /** @class */ (function () {
-    function DockerHover(markdown) {
+    function DockerHover(markdown, plainText) {
         this.markdown = markdown;
+        this.plainText = plainText;
     }
-    DockerHover.prototype.onHover = function (content, position) {
+    DockerHover.prototype.onHover = function (content, position, markupKind) {
         var dockerfile = dockerfile_ast_1.DockerfileParser.parse(content);
-        var directive = dockerfile.getDirective();
         var image = dockerfile.getContainingImage(position);
-        if (position.line === 0 && directive !== null && directive.getDirective() === dockerfile_ast_1.Directive.escape) {
-            var range = directive.getNameRange();
-            if (docker_1.Util.isInsideRange(position, range)) {
-                return this.markdown.getMarkdown(dockerfile_ast_1.Directive.escape);
+        if (!image) {
+            // position is invalid, not inside the Dockerfile
+            return null;
+        }
+        var key = this.computeHoverKey(dockerfile, position);
+        if (key) {
+            // if it's not a raw value, apply markup if necessary
+            if (markupKind && markupKind.length > 0) {
+                switch (markupKind[0]) {
+                    case vscode_languageserver_types_1.MarkupKind.Markdown:
+                        var markdownDocumentation = this.markdown.getMarkdown(key);
+                        if (markdownDocumentation) {
+                            return {
+                                contents: {
+                                    kind: vscode_languageserver_types_1.MarkupKind.Markdown,
+                                    value: markdownDocumentation.contents
+                                }
+                            };
+                        }
+                        return null;
+                    case vscode_languageserver_types_1.MarkupKind.PlainText:
+                        var plainTextDocumentation = this.plainText.getDocumentation(key);
+                        if (plainTextDocumentation) {
+                            return {
+                                contents: {
+                                    kind: vscode_languageserver_types_1.MarkupKind.PlainText,
+                                    value: plainTextDocumentation
+                                }
+                            };
+                        }
+                }
+                return null;
             }
+            return this.markdown.getMarkdown(key);
         }
         for (var _i = 0, _a = image.getInstructions(); _i < _a.length; _i++) {
             var instruction = _a[_i];
-            for (var _b = 0, _c = instruction.getVariables(); _b < _c.length; _b++) {
-                var variable = _c[_b];
+            if (instruction instanceof dockerfile_ast_1.Arg) {
+                // hovering over an argument defined by ARG
+                var property_1 = instruction.getProperty();
+                if (property_1 && docker_1.Util.isInsideRange(position, property_1.getNameRange()) && property_1.getValue() !== null) {
+                    return { contents: property_1.getValue() };
+                }
+            }
+            if (instruction instanceof dockerfile_ast_1.Env) {
+                // hovering over an argument defined by ENV
+                for (var _b = 0, _c = instruction.getProperties(); _b < _c.length; _b++) {
+                    var property_2 = _c[_b];
+                    if (docker_1.Util.isInsideRange(position, property_2.getNameRange()) && property_2.getValue() !== null) {
+                        return {
+                            contents: property_2.getValue()
+                        };
+                    }
+                }
+            }
+        }
+        for (var _d = 0, _e = image.getInstructions(); _d < _e.length; _d++) {
+            var instruction = _e[_d];
+            for (var _f = 0, _g = instruction.getVariables(); _f < _g.length; _f++) {
+                var variable = _g[_f];
                 // are we hovering over a variable
                 if (docker_1.Util.isInsideRange(position, variable.getNameRange())) {
                     var resolved = image.resolveVariable(variable.getName(), variable.getNameRange().start.line);
@@ -23700,49 +24684,49 @@ var DockerHover = /** @class */ (function () {
                 }
             }
         }
-        for (var _d = 0, _e = image.getInstructions(); _d < _e.length; _d++) {
-            var instruction = _e[_d];
-            var instructionRange = instruction.getInstructionRange();
-            if (docker_1.Util.isInsideRange(position, instructionRange)) {
-                return this.markdown.getMarkdown(instruction.getKeyword());
-            }
-            if (instruction instanceof dockerfile_ast_1.Onbuild) {
-                // hovering over a trigger instruction of an ONBUILD
-                var range = instruction.getTriggerRange();
-                if (docker_1.Util.isInsideRange(position, range)) {
-                    return this.markdown.getMarkdown(instruction.getTrigger());
-                }
-            }
-            if (instruction instanceof dockerfile_ast_1.Arg) {
-                // hovering over an argument defined by ARG
-                var property_1 = instruction.getProperty();
-                if (property_1 && docker_1.Util.isInsideRange(position, property_1.getNameRange()) && property_1.getValue() !== null) {
-                    return {
-                        contents: property_1.getValue()
-                    };
-                }
-            }
-            if (instruction instanceof dockerfile_ast_1.Env) {
-                // hovering over an argument defined by ENV
-                for (var _f = 0, _g = instruction.getProperties(); _f < _g.length; _f++) {
-                    var property_2 = _g[_f];
-                    if (docker_1.Util.isInsideRange(position, property_2.getNameRange()) && property_2.getValue() !== null) {
-                        return {
-                            contents: property_2.getValue()
-                        };
-                    }
-                }
-            }
-            var hover = this.getFlagsHover(position, instruction);
-            if (hover !== undefined) {
-                return hover;
-            }
-        }
         var property = dockerDefinition_1.DockerDefinition.findDefinition(dockerfile, position);
         if (property && property.getValue() !== null) {
             return { contents: property.getValue() };
         }
         return null;
+    };
+    /**
+     * Analyzes the Dockerfile at the given position to determine if the user
+     * is hovering over a keyword, a flag, or a directive.
+     *
+     * @param dockerfile the Dockerfile to check
+     * @param position the place that the user is hovering over
+     * @return the string key value for the keyword, flag, or directive that's
+     *         being hovered over, or null if the user isn't hovering over
+     *         such a word
+     */
+    DockerHover.prototype.computeHoverKey = function (dockerfile, position) {
+        var directive = dockerfile.getDirective();
+        var image = dockerfile.getContainingImage(position);
+        if (position.line === 0 && directive !== null && directive.getDirective() === dockerfile_ast_1.Directive.escape) {
+            var range = directive.getNameRange();
+            if (docker_1.Util.isInsideRange(position, range)) {
+                return dockerfile_ast_1.Directive.escape;
+            }
+        }
+        for (var _i = 0, _a = image.getInstructions(); _i < _a.length; _i++) {
+            var instruction = _a[_i];
+            var instructionRange = instruction.getInstructionRange();
+            if (docker_1.Util.isInsideRange(position, instructionRange)) {
+                return instruction.getKeyword();
+            }
+            if (instruction instanceof dockerfile_ast_1.Onbuild) {
+                // hovering over a trigger instruction of an ONBUILD
+                var range = instruction.getTriggerRange();
+                if (docker_1.Util.isInsideRange(position, range)) {
+                    return instruction.getTrigger();
+                }
+            }
+            var hover = this.getFlagsHover(position, instruction);
+            if (hover !== null) {
+                return hover;
+            }
+        }
     };
     DockerHover.prototype.getFlagsHover = function (position, instruction) {
         switch (instruction.getKeyword()) {
@@ -23753,7 +24737,7 @@ var DockerHover = /** @class */ (function () {
                     if (docker_1.Util.isInsideRange(position, flag.getNameRange())) {
                         switch (flag.getName()) {
                             case "chown":
-                                return this.markdown.getMarkdown("ADD_FlagChown");
+                                return "ADD_FlagChown";
                         }
                     }
                 }
@@ -23765,9 +24749,9 @@ var DockerHover = /** @class */ (function () {
                     if (docker_1.Util.isInsideRange(position, flag.getNameRange())) {
                         switch (flag.getName()) {
                             case "chown":
-                                return this.markdown.getMarkdown("COPY_FlagChown");
+                                return "COPY_FlagChown";
                             case "from":
-                                return this.markdown.getMarkdown("COPY_FlagFrom");
+                                return "COPY_FlagFrom";
                         }
                     }
                 }
@@ -23779,13 +24763,13 @@ var DockerHover = /** @class */ (function () {
                     if (docker_1.Util.isInsideRange(position, flag.getNameRange())) {
                         switch (flag.getName()) {
                             case "interval":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagInterval");
+                                return "HEALTHCHECK_FlagInterval";
                             case "retries":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagRetries");
+                                return "HEALTHCHECK_FlagRetries";
                             case "start-period":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagStartPeriod");
+                                return "HEALTHCHECK_FlagStartPeriod";
                             case "timeout":
-                                return this.markdown.getMarkdown("HEALTHCHECK_FlagTimeout");
+                                return "HEALTHCHECK_FlagTimeout";
                         }
                         return null;
                     }
@@ -23798,7 +24782,7 @@ var DockerHover = /** @class */ (function () {
                 }
                 break;
         }
-        return undefined;
+        return null;
     };
     return DockerHover;
 }());
@@ -23806,7 +24790,7 @@ exports.DockerHover = DockerHover;
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23816,7 +24800,7 @@ exports.DockerHover = DockerHover;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var dockerfile_ast_1 = __webpack_require__(1);
+var dockerfile_ast_1 = __webpack_require__(2);
 var DockerLinks = /** @class */ (function () {
     function DockerLinks() {
     }
@@ -23849,7 +24833,7 @@ exports.DockerLinks = DockerLinks;
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23863,7 +24847,7 @@ var MarkdownDocumentation = /** @class */ (function () {
     function MarkdownDocumentation() {
         this.dockerMessages = {
             "hoverAdd": "Copy files, folders, or remote URLs from `source` to the `dest` path in the image's filesystem.\n\n",
-            "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\n",
+            "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\nSince Docker 1.9\n\n",
             "hoverCmd": "Provide defaults for an executing container. If an executable is not specified, then `ENTRYPOINT` must be specified as well. There can only be one `CMD` instruction in a `Dockerfile`.\n\n",
             "hoverCopy": "Copy files or folders from `source` to the `dest` path in the image's filesystem.\n\n",
             "hoverEntrypoint": "Configures the container to be run as an executable.\n\n",
@@ -23876,7 +24860,7 @@ var MarkdownDocumentation = /** @class */ (function () {
             "hoverOnbuild": "Add a _trigger_ instruction to the image that will be executed when the image is used as a base image for another build.\n\n",
             "hoverRun": "Execute any commands on top of the current image as a new layer and commit the results.\n\n",
             "hoverShell": "Override the default shell used for the _shell_ form of commands.\n\nSince Docker 1.12\n\n",
-            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the `SIGNAME` format such as `SIGKILL`.\n\nSince Docker 1.12\n\n",
+            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the `SIGNAME` format such as `SIGKILL`.\n\nSince Docker 1.9\n\n",
             "hoverUser": "Set the user name or UID to use when running the image in addition to any subsequent `CMD`, `ENTRYPOINT`, or `RUN` instructions that follow it in the `Dockerfile`.\n\n",
             "hoverVolume": "Create a mount point with the specifid name and mark it as holding externally mounted volumes from the native host or from other containers.\n\n",
             "hoverWorkdir": "Set the working directory for any subsequent `ADD`, `COPY`, `CMD`, `ENTRYPOINT`, or `RUN` instructions that follow it in the `Dockerfile`.\n\n",
@@ -24079,7 +25063,7 @@ exports.MarkdownDocumentation = MarkdownDocumentation;
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24089,7 +25073,7 @@ exports.MarkdownDocumentation = MarkdownDocumentation;
 * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var https = __webpack_require__(113);
+var https = __webpack_require__(114);
 /**
  * The DockerRegistryClient provides a way to communicate with the
  * official Docker registry hosted on Docker Hub.
@@ -24212,7 +25196,7 @@ exports.DockerRegistryClient = DockerRegistryClient;
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24223,14 +25207,14 @@ exports.DockerRegistryClient = DockerRegistryClient;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerHighlight_1 = __webpack_require__(97);
+var dockerHighlight_1 = __webpack_require__(98);
 var DockerRename = /** @class */ (function () {
     function DockerRename() {
     }
     DockerRename.prototype.rename = function (textDocument, content, position, newName) {
         var edits = [];
         var highlighter = new dockerHighlight_1.DockerHighlight();
-        var highlightRanges = highlighter.computeHighlightRanges(textDocument, content, position);
+        var highlightRanges = highlighter.computeHighlightRanges(content, position);
         for (var _i = 0, highlightRanges_1 = highlightRanges; _i < highlightRanges_1.length; _i++) {
             var highlightRange = highlightRanges_1[_i];
             edits.push(vscode_languageserver_types_1.TextEdit.replace(highlightRange.range, newName));
@@ -24243,7 +25227,7 @@ exports.DockerRename = DockerRename;
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24254,9 +25238,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerPlainText_1 = __webpack_require__(98);
-var dockerfile_ast_1 = __webpack_require__(1);
-var docker_1 = __webpack_require__(15);
+var dockerPlainText_1 = __webpack_require__(99);
+var dockerfile_ast_1 = __webpack_require__(2);
+var docker_1 = __webpack_require__(16);
 var DockerSignatures = /** @class */ (function () {
     function DockerSignatures() {
         this.documentation = new dockerPlainText_1.PlainTextDocumentation();
@@ -25252,6 +26236,12 @@ var DockerSignatures = /** @class */ (function () {
                     documentation: this.documentation.getDocumentation("signatureFrom_Signature3_Param0")
                 },
                 {
+                    // placeholder parameter to get the activeParameter to line
+                    // up with all three signature types of FROM
+                    // see rcjsuen/dockerfile-language-service#8
+                    label: ""
+                },
+                {
                     label: "AS",
                 },
                 {
@@ -25341,24 +26331,24 @@ var DockerSignatures = /** @class */ (function () {
         var inDigest = digest && docker_1.Util.isInsideRange(position, from.getImageDigestRange());
         if (args.length === 1) {
             if (args[0].isBefore(position)) {
-                return tag || digest ? 2 : 1;
+                return 2;
             }
-            return inTag || inDigest ? 1 : 0;
         }
         else if (args.length === 2) {
             if (args[1].isBefore(position)) {
-                return tag || digest ? 3 : 2;
+                return 3;
             }
             else if (docker_1.Util.isInsideRange(position, args[1].getRange()) || args[0].isBefore(position)) {
-                return tag || digest ? 2 : 1;
+                return 2;
             }
-            return inTag || inDigest ? 1 : 0;
         }
-        if (docker_1.Util.isInsideRange(position, args[2].getRange()) || args[1].isBefore(position)) {
-            return tag || digest ? 3 : 2;
-        }
-        else if (docker_1.Util.isInsideRange(position, args[1].getRange()) || args[0].isBefore(position)) {
-            return tag || digest ? 2 : 1;
+        else {
+            if (docker_1.Util.isInsideRange(position, args[2].getRange()) || args[1].isBefore(position)) {
+                return 3;
+            }
+            else if (docker_1.Util.isInsideRange(position, args[1].getRange()) || args[0].isBefore(position)) {
+                return 2;
+            }
         }
         return inTag || inDigest ? 1 : 0;
     };
@@ -25590,7 +26580,7 @@ exports.DockerSignatures = DockerSignatures;
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25601,7 +26591,7 @@ exports.DockerSignatures = DockerSignatures;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerfile_ast_1 = __webpack_require__(1);
+var dockerfile_ast_1 = __webpack_require__(2);
 var DockerSymbols = /** @class */ (function () {
     function DockerSymbols() {
     }
@@ -25634,33 +26624,39 @@ exports.DockerSymbols = DockerSymbols;
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var DockerfileUtils = __webpack_require__(38);
-var dockerAssist_1 = __webpack_require__(130);
-var dockerRegistryClient_1 = __webpack_require__(136);
-var dockerCommands_1 = __webpack_require__(131);
-var dockerDefinition_1 = __webpack_require__(51);
-var dockerHighlight_1 = __webpack_require__(97);
-var dockerSymbols_1 = __webpack_require__(139);
-var dockerSignatures_1 = __webpack_require__(138);
-var dockerLinks_1 = __webpack_require__(134);
-var dockerPlainText_1 = __webpack_require__(98);
-var dockerRename_1 = __webpack_require__(137);
-var dockerHover_1 = __webpack_require__(133);
-var dockerMarkdown_1 = __webpack_require__(135);
-var dockerFormatter_1 = __webpack_require__(132);
+var DockerfileUtils = __webpack_require__(39);
+var dockerAssist_1 = __webpack_require__(131);
+var dockerRegistryClient_1 = __webpack_require__(137);
+var dockerCommands_1 = __webpack_require__(132);
+var dockerDefinition_1 = __webpack_require__(52);
+var dockerHighlight_1 = __webpack_require__(98);
+var dockerSymbols_1 = __webpack_require__(140);
+var dockerSignatures_1 = __webpack_require__(139);
+var dockerLinks_1 = __webpack_require__(135);
+var dockerPlainText_1 = __webpack_require__(99);
+var dockerRename_1 = __webpack_require__(138);
+var dockerHover_1 = __webpack_require__(134);
+var dockerMarkdown_1 = __webpack_require__(136);
+var dockerFormatter_1 = __webpack_require__(133);
 var LanguageService = /** @class */ (function () {
     function LanguageService() {
         this.markdownDocumentation = new dockerMarkdown_1.MarkdownDocumentation();
+        this.plainTextDocumentation = new dockerPlainText_1.PlainTextDocumentation();
+        this.snippetSupport = false;
     }
     LanguageService.prototype.setLogger = function (logger) {
         this.logger = logger;
+    };
+    LanguageService.prototype.setCapabilities = function (capabilities) {
+        this.markupKind = capabilities && capabilities.hover && capabilities.hover.contentFormat;
+        this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
     };
     LanguageService.prototype.computeCodeActions = function (textDocument, range, context) {
         var dockerCommands = new dockerCommands_1.DockerCommands();
@@ -25670,13 +26666,13 @@ var LanguageService = /** @class */ (function () {
         var dockerLinks = new dockerLinks_1.DockerLinks();
         return dockerLinks.getLinks(content);
     };
-    LanguageService.prototype.createWorkspaceEdit = function (content, command, args) {
+    LanguageService.prototype.computeCommandEdits = function (content, command, args) {
         var dockerCommands = new dockerCommands_1.DockerCommands();
-        return dockerCommands.createWorkspaceEdit(content, command, args);
+        return dockerCommands.computeCommandEdits(content, command, args);
     };
-    LanguageService.prototype.computeCompletionItems = function (content, position, snippetSupport) {
+    LanguageService.prototype.computeCompletionItems = function (content, position) {
         var document = vscode_languageserver_types_1.TextDocument.create("", "", 0, content);
-        var dockerAssist = new dockerAssist_1.DockerAssist(document, snippetSupport, new dockerRegistryClient_1.DockerRegistryClient(this.logger));
+        var dockerAssist = new dockerAssist_1.DockerAssist(document, this.snippetSupport, new dockerRegistryClient_1.DockerRegistryClient(this.logger));
         return dockerAssist.computeProposals(position);
     };
     LanguageService.prototype.resolveCompletionItem = function (item) {
@@ -25690,13 +26686,13 @@ var LanguageService = /** @class */ (function () {
         var dockerDefinition = new dockerDefinition_1.DockerDefinition();
         return dockerDefinition.computeDefinition(textDocument, content, position);
     };
-    LanguageService.prototype.computeHighlightRanges = function (textDocument, content, position) {
+    LanguageService.prototype.computeHighlightRanges = function (content, position) {
         var dockerHighlight = new dockerHighlight_1.DockerHighlight();
-        return dockerHighlight.computeHighlightRanges(textDocument, content, position);
+        return dockerHighlight.computeHighlightRanges(content, position);
     };
     LanguageService.prototype.computeHover = function (content, position) {
-        var dockerHover = new dockerHover_1.DockerHover(this.markdownDocumentation);
-        return dockerHover.onHover(content, position);
+        var dockerHover = new dockerHover_1.DockerHover(this.markdownDocumentation, this.plainTextDocumentation);
+        return dockerHover.onHover(content, position, this.markupKind);
     };
     LanguageService.prototype.computeSymbols = function (textDocument, content) {
         var dockerSymbols = new dockerSymbols_1.DockerSymbols();
@@ -25711,7 +26707,7 @@ var LanguageService = /** @class */ (function () {
         return dockerRename.rename(textDocument, content, position, newName);
     };
     LanguageService.prototype.validate = function (content, settings) {
-        return DockerfileUtils.validate(content);
+        return DockerfileUtils.validate(content, settings);
     };
     LanguageService.prototype.format = function (content, options) {
         return DockerfileUtils.format(content, options);
@@ -25730,7 +26726,7 @@ exports.LanguageService = LanguageService;
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25753,7 +26749,7 @@ module.exports = {
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -25824,10 +26820,10 @@ function config (name) {
   return String(val).toLowerCase() === 'true';
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25837,8 +26833,8 @@ function config (name) {
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const protocol_1 = __webpack_require__(16);
-const is = __webpack_require__(27);
+const protocol_1 = __webpack_require__(17);
+const is = __webpack_require__(28);
 function createConnection(connection, errorHandler, closeHandler) {
     connection.onError((data) => { errorHandler(data[0], data[1], data[2]); });
     connection.onClose(closeHandler);
@@ -25870,7 +26866,7 @@ exports.createConnection = createConnection;
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25941,7 +26937,7 @@ exports.Delayer = Delayer;
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26044,7 +27040,7 @@ exports.generateUuid = generateUuid;
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26054,8 +27050,8 @@ exports.generateUuid = generateUuid;
  *--------------------------------------------------------------------------------------------*/
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var events_1 = __webpack_require__(28);
-var Is = __webpack_require__(17);
+var events_1 = __webpack_require__(29);
+var Is = __webpack_require__(18);
 var CancellationToken;
 (function (CancellationToken) {
     CancellationToken.None = Object.freeze({
@@ -26148,7 +27144,7 @@ exports.CancellationTokenSource = CancellationTokenSource;
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26440,7 +27436,7 @@ exports.LinkedMap = LinkedMap;
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26460,7 +27456,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var is = __webpack_require__(17);
+var is = __webpack_require__(18);
 /**
  * Predefined error codes.
  */
@@ -26483,7 +27479,7 @@ var ErrorCodes;
     ErrorCodes.MessageReadError = 2;
 })(ErrorCodes = exports.ErrorCodes || (exports.ErrorCodes = {}));
 /**
- * A error object return in a response in case a request
+ * An error object return in a response in case a request
  * has failed.
  */
 var ResponseError = /** @class */ (function (_super) {
@@ -26786,7 +27782,7 @@ exports.isResponseMessage = isResponseMessage;
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26796,12 +27792,12 @@ exports.isResponseMessage = isResponseMessage;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __webpack_require__(119);
-var os_1 = __webpack_require__(118);
-var crypto_1 = __webpack_require__(50);
-var net_1 = __webpack_require__(50);
-var messageReader_1 = __webpack_require__(54);
-var messageWriter_1 = __webpack_require__(55);
+var path_1 = __webpack_require__(120);
+var os_1 = __webpack_require__(119);
+var crypto_1 = __webpack_require__(51);
+var net_1 = __webpack_require__(51);
+var messageReader_1 = __webpack_require__(55);
+var messageWriter_1 = __webpack_require__(56);
 function generateRandomPipeName() {
     var randomSuffix = crypto_1.randomBytes(21).toString('hex');
     if (process.platform === 'win32') {
@@ -26847,10 +27843,10 @@ function createServerPipeTransport(pipeName, encoding) {
 }
 exports.createServerPipeTransport = createServerPipeTransport;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26860,9 +27856,9 @@ exports.createServerPipeTransport = createServerPipeTransport;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var net_1 = __webpack_require__(50);
-var messageReader_1 = __webpack_require__(54);
-var messageWriter_1 = __webpack_require__(55);
+var net_1 = __webpack_require__(51);
+var messageReader_1 = __webpack_require__(55);
+var messageWriter_1 = __webpack_require__(56);
 function createClientSocketTransport(port, encoding) {
     if (encoding === void 0) { encoding = 'utf-8'; }
     var connectResolve;
@@ -26899,7 +27895,7 @@ exports.createServerSocketTransport = createServerSocketTransport;
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -26927,7 +27923,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports) {
 
 module.exports = extend
@@ -26952,13 +27948,13 @@ function extend() {
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
