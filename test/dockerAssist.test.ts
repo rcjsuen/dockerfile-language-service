@@ -54,6 +54,8 @@ function assertADD(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "ADD");
     }
+    assert.equal(item.data, "ADD");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -65,6 +67,8 @@ function assertARG(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.kind, CompletionItemKind.Keyword);
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
     assert.equal(item.textEdit.newText, "ARG");
+    assert.equal(item.data, "ARG");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -81,6 +85,8 @@ function assertARG_NameOnly(item: CompletionItem, line: number, character: numbe
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "ARG");
     }
+    assert.equal(item.data, "ARG_NameOnly");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -92,6 +98,8 @@ function assertARG_DefaultValue(item: CompletionItem, line: number, character: n
     assert.equal(item.kind, CompletionItemKind.Keyword);
     assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
     assert.equal(item.textEdit.newText, "ARG ${1:name}=${2:defaultValue}");
+    assert.equal(item.data, "ARG_DefaultValue");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -112,6 +120,8 @@ function assertCMD(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "CMD");
     }
+    assert.equal(item.data, "CMD");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -132,6 +142,8 @@ function assertCOPY(item: CompletionItem, line: number, character: number, prefi
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "COPY");
     }
+    assert.equal(item.data, "COPY");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -152,6 +164,8 @@ function assertENTRYPOINT(item: CompletionItem, line: number, character: number,
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "ENTRYPOINT");
     }
+    assert.equal(item.data, "ENTRYPOINT");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -172,6 +186,8 @@ function assertENV(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "ENV");
     }
+    assert.equal(item.data, "ENV");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -192,6 +208,8 @@ function assertEXPOSE(item: CompletionItem, line: number, character: number, pre
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "EXPOSE");
     }
+    assert.equal(item.data, "EXPOSE");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -212,6 +230,8 @@ function assertFROM(item: CompletionItem, line: number, character: number, prefi
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "FROM");
     }
+    assert.equal(item.data, "FROM");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -232,6 +252,8 @@ function assertHEALTHCHECK_CMD(item: CompletionItem, line: number, character: nu
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "HEALTHCHECK CMD");
     }
+    assert.equal(item.data, "HEALTHCHECK_CMD");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -252,6 +274,8 @@ function assertHEALTHCHECK_CMD_Subcommand(item: CompletionItem, line: number, ch
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "CMD");
     }
+    assert.equal(item.data, "HEALTHCHECK_CMD");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -272,6 +296,8 @@ function assertADD_FlagChown(item: CompletionItem, startLine: number, startChara
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "--chown=");
     }
+    assert.equal(item.data, "ADD_FlagChown");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -292,6 +318,8 @@ function assertCOPY_FlagChown(item: CompletionItem, startLine: number, startChar
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "--chown=");
     }
+    assert.equal(item.data, "COPY_FlagChown");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -312,6 +340,8 @@ function assertCOPY_FlagFrom(item: CompletionItem, startLine: number, startChara
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "--from=");
     }
+    assert.equal(item.data, "COPY_FlagFrom");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -332,6 +362,8 @@ function assertHEALTHCHECK_FlagInterval(item: CompletionItem, startLine: number,
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "--interval=");
     }
+    assert.equal(item.data, "HEALTHCHECK_FlagInterval");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -352,6 +384,8 @@ function assertHEALTHCHECK_FlagTimeout(item: CompletionItem, startLine: number, 
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "--timeout=");
     }
+    assert.equal(item.data, "HEALTHCHECK_FlagTimeout");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -372,6 +406,8 @@ function assertHEALTHCHECK_FlagStartPeriod(item: CompletionItem, startLine: numb
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "--start-period=");
     }
+    assert.equal(item.data, "HEALTHCHECK_FlagStartPeriod");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -392,6 +428,8 @@ function assertHEALTHCHECK_FlagRetries(item: CompletionItem, startLine: number, 
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "--retries=");
     }
+    assert.equal(item.data, "HEALTHCHECK_FlagRetries");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -402,6 +440,8 @@ function assertHEALTHCHECK_NONE(item: CompletionItem, line: number, character: n
     assert.equal(item.label, "HEALTHCHECK NONE");
     assert.equal(item.kind, CompletionItemKind.Keyword);
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.equal(item.data, "HEALTHCHECK_NONE");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.newText, "HEALTHCHECK NONE");
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -414,6 +454,8 @@ function assertHEALTHCHECK_NONE_Subcommand(item: CompletionItem, line: number, c
     assert.equal(item.kind, CompletionItemKind.Keyword);
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
     assert.equal(item.textEdit.newText, "NONE");
+    assert.equal(item.data, "HEALTHCHECK_NONE");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, endLine);
@@ -434,6 +476,8 @@ function assertLABEL(item: CompletionItem, line: number, character: number, pref
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "LABEL");
     }
+    assert.equal(item.data, "LABEL");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -454,6 +498,8 @@ function assertMAINTAINER(item: CompletionItem, line: number, character: number,
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "MAINTAINER");
     }
+    assert.equal(item.data, "MAINTAINER");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -474,6 +520,8 @@ function assertONBUILD(item: CompletionItem, line: number, character: number, pr
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "ONBUILD");
     }
+    assert.equal(item.data, "ONBUILD");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -494,6 +542,8 @@ function assertRUN(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "RUN");
     }
+    assert.equal(item.data, "RUN");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -514,6 +564,8 @@ function assertSHELL(item: CompletionItem, line: number, character: number, pref
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "SHELL");
     }
+    assert.equal(item.data, "SHELL");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -534,6 +586,8 @@ function assertSTOPSIGNAL(item: CompletionItem, line: number, character: number,
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "STOPSIGNAL");
     }
+    assert.equal(item.data, "STOPSIGNAL");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -554,6 +608,8 @@ function assertUSER(item: CompletionItem, line: number, character: number, prefi
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "USER");
     }
+    assert.equal(item.data, "USER");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -574,6 +630,8 @@ function assertVOLUME(item: CompletionItem, line: number, character: number, pre
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "VOLUME");
     }
+    assert.equal(item.data, "VOLUME");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -594,6 +652,8 @@ function assertWORKDIR(item: CompletionItem, line: number, character: number, pr
         assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
         assert.equal(item.textEdit.newText, "WORKDIR");
     }
+    assert.equal(item.data, "WORKDIR");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -605,6 +665,7 @@ function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex
     assert.equal(item.kind, CompletionItemKind.Reference);
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
     assert.equal(item.sortText, buildIndex.toString());
+    assert.equal(item.data, undefined);
     assert.equal(item.documentation, documentation);
     assert.equal(item.textEdit.newText, sourceImage);
     assert.equal(item.textEdit.range.start.line, startLine);
@@ -623,6 +684,8 @@ function assertDirectiveEscape(item: CompletionItem, line: number, character: nu
     assert.equal(item.kind, CompletionItemKind.Keyword);
     assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
     assert.equal(item.textEdit.newText, "escape=${1:`}");
+    assert.equal(item.data, "escape");
+    assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
@@ -642,6 +705,7 @@ function assertVariable(variable: string, item: CompletionItem, line: number, ch
     } else {
         assert.equal(item.textEdit.newText, '$' + variable);
     }
+    assert.equal(item.data, undefined);
     assert.equal(item.documentation, documentation);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
