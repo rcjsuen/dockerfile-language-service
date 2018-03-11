@@ -875,7 +875,7 @@ describe('Docker Content Assist Tests', function () {
             proposals = compute("\n", 0);
             assertOnlyFROM(proposals, 0, 0, 0);
 
-            proposals = compute("\r", 1);
+            proposals = compute("\n", 1);
             assertOnlyFROM(proposals, 1, 0, 0);
 
             proposals = compute("\r\n", 2);
