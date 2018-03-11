@@ -258,6 +258,26 @@ function assertHEALTHCHECK_CMD_Subcommand(item: CompletionItem, line: number, ch
     assert.equal(item.textEdit.range.end.character, endCharacter);
 }
 
+function assertADD_FlagChown(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
+    if (snippetSupport === undefined || snippetSupport) {
+        assert.equal(item.label, "--chown=user:group");
+    } else {
+        assert.equal(item.label, "--chown=");
+    }
+    assert.equal(item.kind, CompletionItemKind.Field);
+    if (snippetSupport === undefined || snippetSupport) {
+        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.equal(item.textEdit.newText, "--chown=${1:user\:group}");
+    } else {
+        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.equal(item.textEdit.newText, "--chown=");
+    }
+    assert.equal(item.textEdit.range.start.line, startLine);
+    assert.equal(item.textEdit.range.start.character, startCharacter);
+    assert.equal(item.textEdit.range.end.line, endLine);
+    assert.equal(item.textEdit.range.end.character, endCharacter);
+}
+
 function assertCOPY_FlagChown(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
         assert.equal(item.label, "--chown=user:group");
@@ -715,7 +735,7 @@ function assertProposals(proposals: CompletionItem[], offset: number, prefix: nu
 
 function assertAddFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     assert.equal(items.length, 1);
-    assertCOPY_FlagChown(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+    assertADD_FlagChown(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 }
 
 function assertCopyFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
