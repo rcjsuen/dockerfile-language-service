@@ -14,7 +14,7 @@ export class DockerCompletion {
     private dockerPlainText = new PlainTextDocumentation();
 
     public resolveCompletionItem(item: CompletionItem, documentationFormat?: MarkupKind[]): CompletionItem {
-        if (!item.documentation) {
+        if (!item.documentation && item.data) {
             if (documentationFormat === undefined || documentationFormat === null) {
                 item.documentation = this.dockerPlainText.getDocumentation(item.data);
             } else {
