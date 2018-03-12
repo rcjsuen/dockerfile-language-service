@@ -35,9 +35,9 @@ install:
 
 script:
   - if [ $TRAVIS_NODE_VERSION == "8" ]; then
-      npm install coveralls --save-dev
+      npm install coveralls --save-dev;
       npm run nyc-ci;
       npm run coverage;
     else
-      npm run test
+      npm run test;
     fi
