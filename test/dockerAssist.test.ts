@@ -5,10 +5,16 @@
 import * as assert from "assert";
 
 import {
-    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat
+    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat, MarkupContent, MarkupKind
 } from 'vscode-languageserver-types';
 import { KEYWORDS } from '../src/docker';
+import { MarkdownDocumentation } from '../src/dockerMarkdown';
+import { PlainTextDocumentation } from '../src/dockerPlainText';
 import { DockerfileLanguageServiceFactory } from '../src/main';
+
+const service = DockerfileLanguageServiceFactory.createLanguageService();
+const markdownDocumentation = new MarkdownDocumentation();
+const plainTextDocumentation = new PlainTextDocumentation();
 
 function createDocument(content: string): any {
     return TextDocument.create("uri://host/Dockerfile.sample", "dockerfile", 1, content);
@@ -19,7 +25,6 @@ function compute(content: string, offset: number, snippetSupport?: boolean): Com
         snippetSupport = true;
     }
     let document = createDocument(content);
-    let service = DockerfileLanguageServiceFactory.createLanguageService();
     service.setCapabilities({ completion: { completionItem: { snippetSupport: snippetSupport } } });
     let items = service.computeCompletionItems(content, document.positionAt(offset));
     return items as CompletionItem[];
@@ -29,7 +34,6 @@ function computePosition(content: string, line: number, character: number, snipp
     if (snippetSupport === undefined) {
         snippetSupport = true;
     }
-    let service = DockerfileLanguageServiceFactory.createLanguageService();
     service.setCapabilities({ completion: { completionItem: { snippetSupport: snippetSupport } }});
     let items = service.computeCompletionItems(content, Position.create(line, character));
     return items as CompletionItem[];
@@ -38,6 +42,102 @@ function computePosition(content: string, line: number, character: number, snipp
 function assertOnlyFROM(proposals: CompletionItem[], line: number, number: number, prefixLength: number) {
     assert.equal(proposals.length, 1);
     assertFROM(proposals[0], line, number, prefixLength);
+}
+
+function assertRawdDocumentation(item: CompletionItem, expected: string) {
+    service.setCapabilities({ });
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ undefined ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ null ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown, MarkupKind.PlainText ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText, MarkupKind.Markdown ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, expected);
+}
+
+function assertResolvedDocumentation(item: CompletionItem) {
+    item.documentation = undefined;
+    let service = DockerfileLanguageServiceFactory.createLanguageService();
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+
+    item.documentation = undefined;
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+
+    item.documentation = undefined;
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ undefined ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+
+    item.documentation = undefined;
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ null ] } }});
+    service.resolveCompletionItem(item);
+    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+
+    item.documentation = undefined;
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown ] } }});
+    service.resolveCompletionItem(item);
+    let markupContent = item.documentation as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.notEqual(markupContent.value, undefined);
+    assert.notEqual(markupContent.value, null);
+    assert.notEqual(markupContent.value, "");
+    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
+
+    item.documentation = undefined;
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText ] } }});
+    service.resolveCompletionItem(item);
+    markupContent = item.documentation as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.notEqual(markupContent.value, undefined);
+    assert.notEqual(markupContent.value, null);
+    assert.notEqual(markupContent.value, "");
+    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
+
+    item.documentation = undefined;
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown, MarkupKind.PlainText ] } }});
+    service.resolveCompletionItem(item);
+    markupContent = item.documentation as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.notEqual(markupContent.value, undefined);
+    assert.notEqual(markupContent.value, null);
+    assert.notEqual(markupContent.value, "");
+    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
+
+    item.documentation = undefined;
+    service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText, MarkupKind.Markdown ] } }});
+    service.resolveCompletionItem(item);
+    markupContent = item.documentation as MarkupContent;
+    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.notEqual(markupContent.value, undefined);
+    assert.notEqual(markupContent.value, null);
+    assert.notEqual(markupContent.value, "");
+    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
 }
 
 function assertADD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -60,6 +160,7 @@ function assertADD(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertARG(item: CompletionItem, line: number, character: number, prefixLength: number) {
@@ -73,6 +174,7 @@ function assertARG(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertARG_NameOnly(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -91,6 +193,7 @@ function assertARG_NameOnly(item: CompletionItem, line: number, character: numbe
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertARG_DefaultValue(item: CompletionItem, line: number, character: number, prefixLength: number) {
@@ -104,6 +207,7 @@ function assertARG_DefaultValue(item: CompletionItem, line: number, character: n
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertCMD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -126,6 +230,7 @@ function assertCMD(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertCOPY(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -148,6 +253,7 @@ function assertCOPY(item: CompletionItem, line: number, character: number, prefi
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertENTRYPOINT(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -170,6 +276,7 @@ function assertENTRYPOINT(item: CompletionItem, line: number, character: number,
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertENV(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -192,6 +299,7 @@ function assertENV(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertEXPOSE(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -214,6 +322,7 @@ function assertEXPOSE(item: CompletionItem, line: number, character: number, pre
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertFROM(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -236,6 +345,7 @@ function assertFROM(item: CompletionItem, line: number, character: number, prefi
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_CMD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -258,6 +368,7 @@ function assertHEALTHCHECK_CMD(item: CompletionItem, line: number, character: nu
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_CMD_Subcommand(item: CompletionItem, line: number, character: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -280,6 +391,7 @@ function assertHEALTHCHECK_CMD_Subcommand(item: CompletionItem, line: number, ch
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertADD_FlagChown(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -302,6 +414,7 @@ function assertADD_FlagChown(item: CompletionItem, startLine: number, startChara
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertCOPY_FlagChown(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -324,6 +437,7 @@ function assertCOPY_FlagChown(item: CompletionItem, startLine: number, startChar
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertCOPY_FlagFrom(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -346,6 +460,7 @@ function assertCOPY_FlagFrom(item: CompletionItem, startLine: number, startChara
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagInterval(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -368,6 +483,7 @@ function assertHEALTHCHECK_FlagInterval(item: CompletionItem, startLine: number,
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagTimeout(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -390,6 +506,7 @@ function assertHEALTHCHECK_FlagTimeout(item: CompletionItem, startLine: number, 
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagStartPeriod(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -412,6 +529,7 @@ function assertHEALTHCHECK_FlagStartPeriod(item: CompletionItem, startLine: numb
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagRetries(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
@@ -434,6 +552,7 @@ function assertHEALTHCHECK_FlagRetries(item: CompletionItem, startLine: number, 
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_NONE(item: CompletionItem, line: number, character: number, prefixLength: number) {
@@ -447,6 +566,7 @@ function assertHEALTHCHECK_NONE(item: CompletionItem, line: number, character: n
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_NONE_Subcommand(item: CompletionItem, line: number, character: number, endLine: number, endCharacter: number) {
@@ -460,6 +580,7 @@ function assertHEALTHCHECK_NONE_Subcommand(item: CompletionItem, line: number, c
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
 }
 
 function assertLABEL(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -482,6 +603,7 @@ function assertLABEL(item: CompletionItem, line: number, character: number, pref
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertMAINTAINER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -504,6 +626,7 @@ function assertMAINTAINER(item: CompletionItem, line: number, character: number,
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertONBUILD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -526,6 +649,7 @@ function assertONBUILD(item: CompletionItem, line: number, character: number, pr
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertRUN(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -548,6 +672,7 @@ function assertRUN(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertSHELL(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -570,6 +695,7 @@ function assertSHELL(item: CompletionItem, line: number, character: number, pref
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertSTOPSIGNAL(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -592,6 +718,7 @@ function assertSTOPSIGNAL(item: CompletionItem, line: number, character: number,
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertUSER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -614,6 +741,7 @@ function assertUSER(item: CompletionItem, line: number, character: number, prefi
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertVOLUME(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -636,6 +764,7 @@ function assertVOLUME(item: CompletionItem, line: number, character: number, pre
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertWORKDIR(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -658,6 +787,7 @@ function assertWORKDIR(item: CompletionItem, line: number, character: number, pr
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex: number, documentation: string, startLine: number, startCharacter: number, endLine: number, endCharacter: number) {
@@ -672,6 +802,7 @@ function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertRawdDocumentation(item, documentation);
 }
 
 function assertOnlyDirectiveEscape(items: CompletionItem[], line: number, character: number, prefixLength: number) {
@@ -690,6 +821,7 @@ function assertDirectiveEscape(item: CompletionItem, line: number, character: nu
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
 }
 
 function assertVariable(variable: string, item: CompletionItem, line: number, character: number, prefixLength: number, brace: boolean, documentation?: string) {
@@ -711,6 +843,7 @@ function assertVariable(variable: string, item: CompletionItem, line: number, ch
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertRawdDocumentation(item, documentation);
 }
 
 function assertDockerVariables(items: CompletionItem[], line: number, character: number, prefixLength: number, brace: boolean) {

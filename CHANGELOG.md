@@ -1,6 +1,35 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- updated Capabilities interface to support documentation formats for CompletionItems
+```TypeScript
+interface Capabilities {
+    /**
+     * Capabilities related to completion requests.
+     */
+    completion?: {
+        /**
+         * Capabilities related to completion items.
+         */
+        completionItem?: {
+            /**
+             * Describes the supported content types that can be used
+             * for a CompletionItem's documentation field.
+             */
+            documentationFormat?: MarkupKind[];
+            /**
+             * Indicates whether the snippet syntax should be used in
+             * returned completion items.
+             */
+            snippetSupport?: boolean;
+        }
+    }
+}
+```
+- allow documentation in CompletionItems to be provided in Markdown ([#12](https://github.com/rcjsuen/dockerfile-language-service/issues/12))
+
 ## [0.0.2] - 2018-03-08
 ### Added
 - new Capabilities interface for defining what features the language service should support and enable
@@ -103,4 +132,5 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.2...HEAD
 [0.0.2]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.1...v0.0.2

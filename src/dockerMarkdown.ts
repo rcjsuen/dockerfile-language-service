@@ -72,6 +72,22 @@ export class MarkdownDocumentation {
                     this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#arg")
             },
 
+            ARG_NameOnly: {
+                contents: this.dockerMessages["proposalArgNameOnly"] +
+                    "```\n" +
+                    "ARG userName\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#arg")
+            },
+
+            ARG_DefaultValue: {
+                contents: this.dockerMessages["proposalArgDefaultValue"] +
+                    "```\n" +
+                    "ARG testOutputDir=test\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#arg")
+            },
+
             CMD: {
                 contents: this.dockerMessages["hoverCmd"] +
                     "```\n" +
@@ -143,6 +159,15 @@ export class MarkdownDocumentation {
                     this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#healthcheck")
             },
 
+            HEALTHCHECK_CMD: {
+                contents: this.dockerMessages["proposalHealthcheckExec"] +
+                    "```\n" +
+                    "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
+                    "    CMD curl -f http://localhost/ || exit 1\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#healthcheck")
+            },
+
             HEALTHCHECK_FlagInterval: {
                 contents: this.dockerMessages["hoverHealthcheckFlagInterval"]
             },
@@ -157,6 +182,14 @@ export class MarkdownDocumentation {
 
             HEALTHCHECK_FlagTimeout: {
                 contents: this.dockerMessages["hoverHealthcheckFlagTimeout"]
+            },
+
+            HEALTHCHECK_NONE: {
+                contents: this.dockerMessages["proposalHealthcheckNone"] +
+                    "```\n" +
+                    "HEALTHCHECK NONE\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#healthcheck")
             },
 
             LABEL: {

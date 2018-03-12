@@ -48,6 +48,11 @@ export interface Capabilities {
          */
         completionItem?: {
             /**
+             * Describes the supported content types that can be used
+             * for a CompletionItem's documentation field.
+             */
+            documentationFormat?: MarkupKind[];
+            /**
              * Indicates whether the snippet syntax should be used in
              * returned completion items.
              */

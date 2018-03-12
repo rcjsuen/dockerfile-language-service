@@ -20,6 +20,7 @@ import { DockerRename } from "./dockerRename";
 import { DockerHover } from "./dockerHover";
 import { MarkdownDocumentation } from "./dockerMarkdown";
 import { DockerFormatter } from "./dockerFormatter";
+import { DockerCompletion } from "./dockerCompletion";
 
 export class LanguageService implements DockerfileLanguageService {
 
@@ -27,6 +28,7 @@ export class LanguageService implements DockerfileLanguageService {
     private plainTextDocumentation = new PlainTextDocumentation();
     private logger: ILogger;
 
+    private completionDocumentationFormat: MarkupKind[];
     private markupKind: MarkupKind[];
     private snippetSupport: boolean = false;
 
@@ -35,6 +37,7 @@ export class LanguageService implements DockerfileLanguageService {
     }
 
     public setCapabilities(capabilities: Capabilities) {
+        this.completionDocumentationFormat = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.documentationFormat;
         this.markupKind = capabilities && capabilities.hover && capabilities.hover.contentFormat;
         this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
     }
@@ -62,8 +65,8 @@ export class LanguageService implements DockerfileLanguageService {
 
     public resolveCompletionItem(item: CompletionItem): CompletionItem {
         if (!item.documentation) {
-            let dockerPlainText = new PlainTextDocumentation();
-            item.documentation = dockerPlainText.getDocumentation(item.data);
+            let dockerCompletion = new DockerCompletion();
+            return dockerCompletion.resolveCompletionItem(item, this.completionDocumentationFormat);
         }
         return item;
     }
