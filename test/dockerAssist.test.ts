@@ -44,7 +44,7 @@ function assertOnlyFROM(proposals: CompletionItem[], line: number, number: numbe
     assertFROM(proposals[0], line, number, prefixLength);
 }
 
-function assertRawdDocumentation(item: CompletionItem, expected: string) {
+function assertRawDocumentation(item: CompletionItem, expected: string) {
     service.setCapabilities({ });
     service.resolveCompletionItem(item);
     assert.equal(item.documentation, expected);
@@ -802,7 +802,7 @@ function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex
     assert.equal(item.textEdit.range.start.character, startCharacter);
     assert.equal(item.textEdit.range.end.line, endLine);
     assert.equal(item.textEdit.range.end.character, endCharacter);
-    assertRawdDocumentation(item, documentation);
+    assertRawDocumentation(item, documentation);
 }
 
 function assertOnlyDirectiveEscape(items: CompletionItem[], line: number, character: number, prefixLength: number) {
@@ -843,7 +843,7 @@ function assertVariable(variable: string, item: CompletionItem, line: number, ch
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
-    assertRawdDocumentation(item, documentation);
+    assertRawDocumentation(item, documentation);
 }
 
 function assertDockerVariables(items: CompletionItem[], line: number, character: number, prefixLength: number, brace: boolean) {
