@@ -35,5 +35,7 @@ install:
   - npm pack
 
 script:
-  - npm run nyc-ci
-  - npm run coverage
+  - if [ $TRAVIS_NODE_VERSION == "8" ]; then
+      npm run nyc-ci
+      npm run coverage
+    fi
