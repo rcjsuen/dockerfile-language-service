@@ -29,7 +29,7 @@ export class LanguageService implements DockerfileLanguageService {
     private logger: ILogger;
 
     private completionDocumentationFormat: MarkupKind[];
-    private markupKind: MarkupKind[];
+    private hoverContentFormat: MarkupKind[];
     private snippetSupport: boolean = false;
 
     public setLogger(logger: ILogger): void {
@@ -38,7 +38,7 @@ export class LanguageService implements DockerfileLanguageService {
 
     public setCapabilities(capabilities: Capabilities) {
         this.completionDocumentationFormat = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.documentationFormat;
-        this.markupKind = capabilities && capabilities.hover && capabilities.hover.contentFormat;
+        this.hoverContentFormat = capabilities && capabilities.hover && capabilities.hover.contentFormat;
         this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
     }
 
@@ -83,7 +83,7 @@ export class LanguageService implements DockerfileLanguageService {
 
     public computeHover(content: string, position: Position): Hover | null {
         let dockerHover = new DockerHover(this.markdownDocumentation, this.plainTextDocumentation);
-        return dockerHover.onHover(content, position, this.markupKind);
+        return dockerHover.onHover(content, position, this.hoverContentFormat);
     }
 
     public computeSymbols(textDocument: TextDocumentIdentifier, content: string): SymbolInformation[] {
