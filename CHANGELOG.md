@@ -29,6 +29,7 @@ interface Capabilities {
 }
 ```
 - allow documentation in CompletionItems to be provided in Markdown ([#12](https://github.com/rcjsuen/dockerfile-language-service/issues/12))
+- warn if instruction is written in JSON form incorrectly with single quotes ([rcjsuen/dockerfile-utils#28](https://github.com/rcjsuen/dockerfile-utils/issues/28))
 
 ## [0.0.2] - 2018-03-08
 ### Added
