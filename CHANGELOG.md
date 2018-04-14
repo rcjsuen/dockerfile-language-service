@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.0.3] - 2018-04-14
 ### Added
 - updated Capabilities interface to support documentation formats for CompletionItems
 ```TypeScript
@@ -142,5 +142,5 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.2...HEAD
+[0.0.3]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.1...v0.0.2
