@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 104);
+/******/ 	return __webpack_require__(__webpack_require__.s = 106);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1917,58 +1917,58 @@ var Is;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var argument_1 = __webpack_require__(19);
+var argument_1 = __webpack_require__(20);
 exports.Argument = argument_1.Argument;
-const comment_1 = __webpack_require__(57);
+const comment_1 = __webpack_require__(58);
 exports.Comment = comment_1.Comment;
-const parser_1 = __webpack_require__(66);
-var flag_1 = __webpack_require__(58);
+const parser_1 = __webpack_require__(67);
+var flag_1 = __webpack_require__(59);
 exports.Flag = flag_1.Flag;
 const instruction_1 = __webpack_require__(4);
 exports.Instruction = instruction_1.Instruction;
-var line_1 = __webpack_require__(21);
+var line_1 = __webpack_require__(22);
 exports.Line = line_1.Line;
-const parserDirective_1 = __webpack_require__(67);
+const parserDirective_1 = __webpack_require__(68);
 exports.ParserDirective = parserDirective_1.ParserDirective;
-var property_1 = __webpack_require__(38);
+var property_1 = __webpack_require__(39);
 exports.Property = property_1.Property;
-var variable_1 = __webpack_require__(68);
+var variable_1 = __webpack_require__(69);
 exports.Variable = variable_1.Variable;
-var add_1 = __webpack_require__(59);
+var add_1 = __webpack_require__(60);
 exports.Add = add_1.Add;
-const arg_1 = __webpack_require__(30);
+const arg_1 = __webpack_require__(31);
 exports.Arg = arg_1.Arg;
-const cmd_1 = __webpack_require__(31);
+const cmd_1 = __webpack_require__(32);
 exports.Cmd = cmd_1.Cmd;
-const copy_1 = __webpack_require__(32);
+const copy_1 = __webpack_require__(33);
 exports.Copy = copy_1.Copy;
-const entrypoint_1 = __webpack_require__(33);
+const entrypoint_1 = __webpack_require__(34);
 exports.Entrypoint = entrypoint_1.Entrypoint;
-const env_1 = __webpack_require__(34);
+const env_1 = __webpack_require__(35);
 exports.Env = env_1.Env;
-const from_1 = __webpack_require__(20);
+const from_1 = __webpack_require__(21);
 exports.From = from_1.From;
-const healthcheck_1 = __webpack_require__(35);
+const healthcheck_1 = __webpack_require__(36);
 exports.Healthcheck = healthcheck_1.Healthcheck;
 var jsonInstruction_1 = __webpack_require__(7);
 exports.JSONInstruction = jsonInstruction_1.JSONInstruction;
-var label_1 = __webpack_require__(60);
+var label_1 = __webpack_require__(61);
 exports.Label = label_1.Label;
-var modifiableInstruction_1 = __webpack_require__(37);
+var modifiableInstruction_1 = __webpack_require__(38);
 exports.ModifiableInstruction = modifiableInstruction_1.ModifiableInstruction;
-var onbuild_1 = __webpack_require__(36);
+var onbuild_1 = __webpack_require__(37);
 exports.Onbuild = onbuild_1.Onbuild;
-var propertyInstruction_1 = __webpack_require__(22);
+var propertyInstruction_1 = __webpack_require__(23);
 exports.PropertyInstruction = propertyInstruction_1.PropertyInstruction;
-var shell_1 = __webpack_require__(61);
+var shell_1 = __webpack_require__(62);
 exports.Shell = shell_1.Shell;
-var stopsignal_1 = __webpack_require__(62);
+var stopsignal_1 = __webpack_require__(63);
 exports.Stopsignal = stopsignal_1.Stopsignal;
-var user_1 = __webpack_require__(63);
+var user_1 = __webpack_require__(64);
 exports.User = user_1.User;
-var volume_1 = __webpack_require__(64);
+var volume_1 = __webpack_require__(65);
 exports.Volume = volume_1.Volume;
-var workdir_1 = __webpack_require__(65);
+var workdir_1 = __webpack_require__(66);
 exports.Workdir = workdir_1.Workdir;
 var Keyword;
 (function (Keyword) {
@@ -2051,9 +2051,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
 const util_1 = __webpack_require__(10);
-const line_1 = __webpack_require__(21);
-const argument_1 = __webpack_require__(19);
-const variable_1 = __webpack_require__(68);
+const line_1 = __webpack_require__(22);
+const argument_1 = __webpack_require__(20);
+const variable_1 = __webpack_require__(69);
 class Instruction extends line_1.Line {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range);
@@ -2487,9 +2487,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(1);
 const util_1 = __webpack_require__(11);
-const line_1 = __webpack_require__(24);
-const argument_1 = __webpack_require__(23);
-const variable_1 = __webpack_require__(80);
+const line_1 = __webpack_require__(25);
+const argument_1 = __webpack_require__(15);
+const variable_1 = __webpack_require__(82);
 class Instruction extends line_1.Line {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range);
@@ -2497,6 +2497,14 @@ class Instruction extends line_1.Line {
         this.escapeChar = escapeChar;
         this.instruction = instruction;
         this.instructionRange = instructionRange;
+    }
+    toString() {
+        let value = this.getKeyword();
+        for (let arg of this.getArguments()) {
+            value += ' ';
+            value += arg.getValue();
+        }
+        return value;
     }
     getRangeContent(range) {
         if (range === null) {
@@ -3104,8 +3112,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const argument_1 = __webpack_require__(19);
-const modifiableInstruction_1 = __webpack_require__(37);
+const argument_1 = __webpack_require__(20);
+const modifiableInstruction_1 = __webpack_require__(38);
 class JSONInstruction extends modifiableInstruction_1.ModifiableInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -3285,7 +3293,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const argument_1 = __webpack_require__(23);
+const argument_1 = __webpack_require__(15);
+const jsonArgument_1 = __webpack_require__(79);
 const modifiableInstruction_1 = __webpack_require__(48);
 class JSONInstruction extends modifiableInstruction_1.ModifiableInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -3340,7 +3349,7 @@ class JSONInstruction extends modifiableInstruction_1.ModifiableInstruction {
                             escapedArg = escapedArg + char;
                             // quoted string done
                             quoted = false;
-                            this.jsonStrings.push(new argument_1.Argument(escapedArg, vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + start), document.positionAt(argsOffset + i + 1))));
+                            this.jsonStrings.push(new jsonArgument_1.JSONArgument(escapedArg, vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + start), document.positionAt(argsOffset + i + 1)), vscode_languageserver_types_1.Range.create(document.positionAt(argsOffset + start + 1), document.positionAt(argsOffset + i))));
                             escapedArg = "";
                         }
                         else {
@@ -3469,9 +3478,9 @@ exports.JSONInstruction = JSONInstruction;
 
 
 
-var base64 = __webpack_require__(105)
-var ieee754 = __webpack_require__(115)
-var isArray = __webpack_require__(82)
+var base64 = __webpack_require__(107)
+var ieee754 = __webpack_require__(117)
+var isArray = __webpack_require__(84)
 
 exports.Buffer = Buffer
 exports.SlowBuffer = SlowBuffer
@@ -5461,7 +5470,7 @@ if (typeof Object.create === 'function') {
 
 /*<replacement>*/
 
-var pna = __webpack_require__(26);
+var pna = __webpack_require__(27);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -5480,8 +5489,8 @@ var util = __webpack_require__(14);
 util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
-var Readable = __webpack_require__(88);
-var Writable = __webpack_require__(90);
+var Readable = __webpack_require__(90);
+var Writable = __webpack_require__(92);
 
 util.inherits(Duplex, Readable);
 
@@ -5677,58 +5686,97 @@ function objectToString(o) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var argument_1 = __webpack_require__(23);
+class Argument {
+    constructor(value, range) {
+        this.value = value;
+        this.range = range;
+    }
+    toString() {
+        return this.value;
+    }
+    getRange() {
+        return this.range;
+    }
+    getValue() {
+        return this.value;
+    }
+    isAfter(position) {
+        if (this.range.end.line < position.line) {
+            return false;
+        }
+        return this.range.start.line > position.line ? true : this.range.start.character > position.character;
+    }
+    isBefore(position) {
+        if (this.range.start.line < position.line) {
+            return true;
+        }
+        return this.range.end.line > position.line ? false : this.range.end.character < position.character;
+    }
+}
+exports.Argument = Argument;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var argument_1 = __webpack_require__(15);
 exports.Argument = argument_1.Argument;
-const comment_1 = __webpack_require__(69);
+var jsonArgument_1 = __webpack_require__(79);
+exports.JSONArgument = jsonArgument_1.JSONArgument;
+const comment_1 = __webpack_require__(70);
 exports.Comment = comment_1.Comment;
-const parser_1 = __webpack_require__(78);
-var flag_1 = __webpack_require__(70);
+const parser_1 = __webpack_require__(80);
+var flag_1 = __webpack_require__(71);
 exports.Flag = flag_1.Flag;
 const instruction_1 = __webpack_require__(5);
 exports.Instruction = instruction_1.Instruction;
-var line_1 = __webpack_require__(24);
+var line_1 = __webpack_require__(25);
 exports.Line = line_1.Line;
-const parserDirective_1 = __webpack_require__(79);
+const parserDirective_1 = __webpack_require__(81);
 exports.ParserDirective = parserDirective_1.ParserDirective;
 var property_1 = __webpack_require__(49);
 exports.Property = property_1.Property;
-var variable_1 = __webpack_require__(80);
+var variable_1 = __webpack_require__(82);
 exports.Variable = variable_1.Variable;
-var add_1 = __webpack_require__(71);
+var add_1 = __webpack_require__(72);
 exports.Add = add_1.Add;
-const arg_1 = __webpack_require__(40);
+const arg_1 = __webpack_require__(41);
 exports.Arg = arg_1.Arg;
-const cmd_1 = __webpack_require__(41);
+const cmd_1 = __webpack_require__(42);
 exports.Cmd = cmd_1.Cmd;
-const copy_1 = __webpack_require__(42);
+const copy_1 = __webpack_require__(43);
 exports.Copy = copy_1.Copy;
-const entrypoint_1 = __webpack_require__(43);
+const entrypoint_1 = __webpack_require__(44);
 exports.Entrypoint = entrypoint_1.Entrypoint;
-const env_1 = __webpack_require__(44);
+const env_1 = __webpack_require__(45);
 exports.Env = env_1.Env;
-const from_1 = __webpack_require__(45);
+const from_1 = __webpack_require__(24);
 exports.From = from_1.From;
 const healthcheck_1 = __webpack_require__(46);
 exports.Healthcheck = healthcheck_1.Healthcheck;
 var jsonInstruction_1 = __webpack_require__(8);
 exports.JSONInstruction = jsonInstruction_1.JSONInstruction;
-var label_1 = __webpack_require__(72);
+var label_1 = __webpack_require__(73);
 exports.Label = label_1.Label;
 var modifiableInstruction_1 = __webpack_require__(48);
 exports.ModifiableInstruction = modifiableInstruction_1.ModifiableInstruction;
 var onbuild_1 = __webpack_require__(47);
 exports.Onbuild = onbuild_1.Onbuild;
-var propertyInstruction_1 = __webpack_require__(25);
+var propertyInstruction_1 = __webpack_require__(26);
 exports.PropertyInstruction = propertyInstruction_1.PropertyInstruction;
-var shell_1 = __webpack_require__(73);
+var shell_1 = __webpack_require__(74);
 exports.Shell = shell_1.Shell;
-var stopsignal_1 = __webpack_require__(74);
+var stopsignal_1 = __webpack_require__(75);
 exports.Stopsignal = stopsignal_1.Stopsignal;
-var user_1 = __webpack_require__(75);
+var user_1 = __webpack_require__(76);
 exports.User = user_1.User;
-var volume_1 = __webpack_require__(76);
+var volume_1 = __webpack_require__(77);
 exports.Volume = volume_1.Volume;
-var workdir_1 = __webpack_require__(77);
+var workdir_1 = __webpack_require__(78);
 exports.Workdir = workdir_1.Workdir;
 var Keyword;
 (function (Keyword) {
@@ -5772,7 +5820,7 @@ var DockerfileParser;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5855,7 +5903,7 @@ exports.Util = Util;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5865,8 +5913,8 @@ exports.Util = Util;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Is = __webpack_require__(28);
-const vscode_jsonrpc_1 = __webpack_require__(54);
+const Is = __webpack_require__(29);
+const vscode_jsonrpc_1 = __webpack_require__(55);
 var DocumentFilter;
 (function (DocumentFilter) {
     function is(value) {
@@ -6294,7 +6342,7 @@ var ApplyWorkspaceEditRequest;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6336,7 +6384,7 @@ exports.stringArray = stringArray;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6373,7 +6421,7 @@ exports.Argument = Argument;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6489,7 +6537,7 @@ exports.From = From;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6517,7 +6565,7 @@ exports.Line = Line;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6529,8 +6577,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
 const instruction_1 = __webpack_require__(4);
-const property_1 = __webpack_require__(38);
-const argument_1 = __webpack_require__(19);
+const property_1 = __webpack_require__(39);
+const argument_1 = __webpack_require__(20);
 const util_1 = __webpack_require__(10);
 class PropertyInstruction extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -6793,44 +6841,123 @@ exports.PropertyInstruction = PropertyInstruction;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-class Argument {
-    constructor(value, range) {
-        this.value = value;
-        this.range = range;
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Remy Suen. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+const vscode_languageserver_types_1 = __webpack_require__(1);
+const instruction_1 = __webpack_require__(5);
+class From extends instruction_1.Instruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
     }
-    toString() {
-        return this.value;
+    getImage() {
+        return this.getRangeContent(this.getImageRange());
     }
-    getRange() {
-        return this.range;
+    /**
+     * Returns the name of the image that will be used as the base image.
+     *
+     * @return the base image's name, or null if unspecified
+     */
+    getImageName() {
+        return this.getRangeContent(this.getImageNameRange());
     }
-    getValue() {
-        return this.value;
-    }
-    isAfter(position) {
-        if (this.range.end.line < position.line) {
-            return false;
+    /**
+     * Returns the range that covers the name of the image used by
+     * this instruction.
+     *
+     * @return the range of the name of this instruction's argument,
+     *         or null if no image has been specified
+     */
+    getImageNameRange() {
+        let range = this.getImageRange();
+        if (range) {
+            let content = this.getRangeContent(range);
+            let index = content.lastIndexOf(':');
+            let digestIndex = content.lastIndexOf('@');
+            if (index === -1 || (digestIndex !== -1 && digestIndex < index)) {
+                index = digestIndex;
+            }
+            if (index !== -1) {
+                return vscode_languageserver_types_1.Range.create(range.start, this.document.positionAt(this.document.offsetAt(range.start) + index));
+            }
+            return range;
         }
-        return this.range.start.line > position.line ? true : this.range.start.character > position.character;
+        return null;
     }
-    isBefore(position) {
-        if (this.range.start.line < position.line) {
-            return true;
+    /**
+     * Returns the range that covers the image argument of this
+     * instruction. This includes the tag or digest of the image if
+     * it has been specified by the instruction.
+     *
+     * @return the range of the image argument, or null if no image
+     *         has been specified
+     */
+    getImageRange() {
+        let args = this.getArguments();
+        return args.length !== 0 ? args[0].getRange() : null;
+    }
+    /**
+     * Returns the range in the document that the tag of the base
+     * image encompasses.
+     *
+     * @return the base image's tag's range in the document, or null
+     *         if no tag has been specified
+     */
+    getImageTagRange() {
+        const range = this.getImageRange();
+        if (range) {
+            let content = this.getRangeContent(range);
+            if (content.indexOf('@') === -1) {
+                let index = content.lastIndexOf(':');
+                if (index !== -1) {
+                    return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
+                }
+            }
         }
-        return this.range.end.line > position.line ? false : this.range.end.character < position.character;
+        return null;
+    }
+    /**
+     * Returns the range in the document that the digest of the base
+     * image encompasses.
+     *
+     * @return the base image's digest's range in the document, or null
+     *         if no digest has been specified
+     */
+    getImageDigestRange() {
+        let range = this.getImageRange();
+        if (range) {
+            let content = this.getRangeContent(range);
+            let index = content.lastIndexOf('@');
+            if (index !== -1) {
+                return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
+            }
+        }
+        return null;
+    }
+    getBuildStage() {
+        let range = this.getBuildStageRange();
+        return range === null ? null : this.getRangeContent(range);
+    }
+    getBuildStageRange() {
+        let args = this.getArguments();
+        if (args.length === 3 && args[1].getValue().toUpperCase() === "AS") {
+            return args[2].getRange();
+        }
+        return null;
     }
 }
-exports.Argument = Argument;
+exports.From = From;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6858,7 +6985,7 @@ exports.Line = Line;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6871,7 +6998,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(1);
 const instruction_1 = __webpack_require__(5);
 const property_1 = __webpack_require__(49);
-const argument_1 = __webpack_require__(23);
+const argument_1 = __webpack_require__(15);
 const util_1 = __webpack_require__(11);
 class PropertyInstruction extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -7134,7 +7261,7 @@ exports.PropertyInstruction = PropertyInstruction;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7186,7 +7313,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable node/no-deprecated-api */
@@ -7254,7 +7381,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7304,7 +7431,7 @@ exports.thenable = thenable;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7458,14 +7585,14 @@ exports.Emitter = Emitter;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const property_1 = __webpack_require__(38);
-const propertyInstruction_1 = __webpack_require__(22);
+const property_1 = __webpack_require__(39);
+const propertyInstruction_1 = __webpack_require__(23);
 class Arg extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -7491,7 +7618,7 @@ exports.Arg = Arg;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7507,7 +7634,7 @@ exports.Cmd = Cmd;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7530,7 +7657,7 @@ exports.Copy = Copy;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7546,13 +7673,13 @@ exports.Entrypoint = Entrypoint;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(22);
+const propertyInstruction_1 = __webpack_require__(23);
 class Env extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -7565,13 +7692,13 @@ exports.Env = Env;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const modifiableInstruction_1 = __webpack_require__(37);
+const modifiableInstruction_1 = __webpack_require__(38);
 class Healthcheck extends modifiableInstruction_1.ModifiableInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -7589,7 +7716,7 @@ exports.Healthcheck = Healthcheck;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7600,7 +7727,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const parser_1 = __webpack_require__(66);
+const parser_1 = __webpack_require__(67);
 const instruction_1 = __webpack_require__(4);
 class Onbuild extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -7630,7 +7757,7 @@ exports.Onbuild = Onbuild;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7641,7 +7768,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const flag_1 = __webpack_require__(58);
+const flag_1 = __webpack_require__(59);
 const instruction_1 = __webpack_require__(4);
 class ModifiableInstruction extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -7721,7 +7848,7 @@ exports.ModifiableInstruction = ModifiableInstruction;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8037,7 +8164,7 @@ exports.Property = Property;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8048,8 +8175,8 @@ exports.Property = Property;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const dockerFormatter_1 = __webpack_require__(109);
-const dockerValidator_1 = __webpack_require__(110);
+const dockerFormatter_1 = __webpack_require__(111);
+const dockerValidator_1 = __webpack_require__(112);
 /**
  * Error codes that correspond to a given validation error. These
  * values are exposed for the purpose of allowing clients to identify
@@ -8119,6 +8246,12 @@ var ValidationCode;
     ValidationCode[ValidationCode["DEPRECATED_MAINTAINER"] = 43] = "DEPRECATED_MAINTAINER";
     ValidationCode[ValidationCode["HEALTHCHECK_CMD_ARGUMENT_MISSING"] = 44] = "HEALTHCHECK_CMD_ARGUMENT_MISSING";
     ValidationCode[ValidationCode["FLAG_INVALID_FROM_VALUE"] = 45] = "FLAG_INVALID_FROM_VALUE";
+    /**
+     * The error code used if an instruction has arguments written in
+     * JSON form except that it is not actually valid JSON because
+     * single quotes are used instead of double quotes.
+     */
+    ValidationCode[ValidationCode["JSON_IN_SINGLE_QUOTES"] = 46] = "JSON_IN_SINGLE_QUOTES";
 })(ValidationCode = exports.ValidationCode || (exports.ValidationCode = {}));
 /**
  * The severity options that may be defined for the validator.
@@ -8163,14 +8296,14 @@ exports.validate = validate;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const property_1 = __webpack_require__(49);
-const propertyInstruction_1 = __webpack_require__(25);
+const propertyInstruction_1 = __webpack_require__(26);
 class Arg extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -8196,7 +8329,7 @@ exports.Arg = Arg;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8212,7 +8345,7 @@ exports.Cmd = Cmd;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8235,7 +8368,7 @@ exports.Copy = Copy;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8251,13 +8384,13 @@ exports.Entrypoint = Entrypoint;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(25);
+const propertyInstruction_1 = __webpack_require__(26);
 class Env extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -8267,108 +8400,6 @@ class Env extends propertyInstruction_1.PropertyInstruction {
     }
 }
 exports.Env = Env;
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Remy Suen. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-const vscode_languageserver_types_1 = __webpack_require__(1);
-const instruction_1 = __webpack_require__(5);
-class From extends instruction_1.Instruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-    getImage() {
-        return this.getRangeContent(this.getImageRange());
-    }
-    /**
-     * Returns the name of the image that will be used as the base image.
-     *
-     * @return the base image's name, or null if unspecified
-     */
-    getImageName() {
-        let range = this.getImageRange();
-        if (range) {
-            let content = this.getRangeContent(range);
-            let index = content.lastIndexOf(':');
-            if (index === -1) {
-                index = content.lastIndexOf('@');
-            }
-            return index === -1 ? content : content.substring(0, index);
-        }
-        return null;
-    }
-    /**
-     * Returns the range that covers the image argument of this
-     * instruction. This includes the tag or digest of the image if
-     * it has been specified by the instruction.
-     *
-     * @return the range of the image argument, or null if no image
-     *         has been specified
-     */
-    getImageRange() {
-        let args = this.getArguments();
-        return args.length !== 0 ? args[0].getRange() : null;
-    }
-    /**
-     * Returns the range in the document that the tag of the base
-     * image encompasses.
-     *
-     * @return the base image's tag's range in the document, or null
-     *         if no tag has been specified
-     */
-    getImageTagRange() {
-        const range = this.getImageRange();
-        if (range) {
-            let content = this.getRangeContent(range);
-            if (content.indexOf('@') === -1) {
-                let index = content.lastIndexOf(':');
-                if (index !== -1) {
-                    return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
-                }
-            }
-        }
-        return null;
-    }
-    /**
-     * Returns the range in the document that the digest of the base
-     * image encompasses.
-     *
-     * @return the base image's digest's range in the document, or null
-     *         if no digest has been specified
-     */
-    getImageDigestRange() {
-        let range = this.getImageRange();
-        if (range) {
-            let content = this.getRangeContent(range);
-            let index = content.lastIndexOf('@');
-            if (index !== -1) {
-                return vscode_languageserver_types_1.Range.create(range.start.line, range.start.character + index + 1, range.end.line, range.end.character);
-            }
-        }
-        return null;
-    }
-    getBuildStage() {
-        let range = this.getBuildStageRange();
-        return range === null ? null : this.getRangeContent(range);
-    }
-    getBuildStageRange() {
-        let args = this.getArguments();
-        if (args.length === 3 && args[1].getValue().toUpperCase() === "AS") {
-            return args[2].getRange();
-        }
-        return null;
-    }
-}
-exports.From = From;
 
 
 /***/ }),
@@ -8407,7 +8438,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const parser_1 = __webpack_require__(78);
+const parser_1 = __webpack_require__(80);
 const instruction_1 = __webpack_require__(5);
 class Onbuild extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -8448,7 +8479,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const flag_1 = __webpack_require__(70);
+const flag_1 = __webpack_require__(71);
 const instruction_1 = __webpack_require__(5);
 class ModifiableInstruction extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -8854,7 +8885,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var services_1 = __webpack_require__(53);
+var services_1 = __webpack_require__(54);
 exports.Disposable = services_1.Disposable;
 var DisposableCollection = /** @class */ (function () {
     function DisposableCollection() {
@@ -8900,7 +8931,7 @@ exports.DisposableCollection = DisposableCollection;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var docker_1 = __webpack_require__(16);
+var docker_1 = __webpack_require__(17);
 var dockerfile_ast_1 = __webpack_require__(2);
 var DockerDefinition = /** @class */ (function () {
     function DockerDefinition() {
@@ -9041,6 +9072,330 @@ exports.DockerDefinition = DockerDefinition;
 
 "use strict";
 /* --------------------------------------------------------------------------------------------
+* Copyright (c) Remy Suen. All rights reserved.
+* Licensed under the MIT License. See License.txt in the project root for license information.
+* ------------------------------------------------------------------------------------------ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PlainTextDocumentation = /** @class */ (function () {
+    function PlainTextDocumentation() {
+        this.dockerMessages = {
+            "hoverAdd": "Copy files, folders, or remote URLs from `source` to the `dest` path in the image's filesystem.\n\n",
+            "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\nSince Docker 1.9\n\n",
+            "hoverCmd": "Provide defaults for an executing container. If an executable is not specified, then ENTRYPOINT must be specified as well. There can only be one CMD instruction in a Dockerfile.\n\n",
+            "hoverCopy": "Copy files or folders from `source` to the `dest` path in the image's filesystem.\n\n",
+            "hoverEntrypoint": "Configures the container to be run as an executable.\n\n",
+            "hoverEnv": "Set the environment variable `key` to the value `value`.\n\n",
+            "hoverExpose": "Define the network `port`s that this container will listen on at runtime.\n\n",
+            "hoverFrom": "Set the `baseImage` to use for subsequent instructions. FROM must be the first instruction in a Dockerfile.\n\n",
+            "hoverHealthcheck": "Define how Docker should test the container to check that it is still working. Alternatively, disable the base image's HEALTHCHECK instruction. There can only be one HEALTHCHECK instruction in a Dockerfile.\n\nSince Docker 1.12\n\n",
+            "hoverLabel": "Adds metadata to an image.\n\nSince Docker 1.6\n\n",
+            "hoverMaintainer": "Set the Author field of the generated images. This instruction has been deprecated in favor of LABEL.\n\n",
+            "hoverOnbuild": "Add a trigger instruction to the image that will be executed when the image is used as a base image for another build.\n\n",
+            "hoverRun": "Execute any commands on top of the current image as a new layer and commit the results.\n\n",
+            "hoverShell": "Override the default shell used for the shell form of commands.\n\nSince Docker 1.12\n\n",
+            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the SIGNAME format such as SIGKILL.\n\nSince Docker 1.9\n\n",
+            "hoverUser": "Set the user name or UID to use when running the image in addition to any subsequent CMD, ENTRYPOINT, or RUN instructions that follow it in the Dockerfile.\n\n",
+            "hoverVolume": "Create a mount point with the specifid name and mark it as holding externally mounted volumes from the native host or from other containers.\n\n",
+            "hoverWorkdir": "Set the working directory for any subsequent ADD, COPY, CMD, ENTRYPOINT, or RUN` instructions that follow it in the `Dockerfile`.\n\n",
+            "hoverAddFlagChown": "The username, groupname, or UID/GID combination to own the added content.",
+            "hoverCopyFlagChown": "The username, groupname, or UID/GID combination to own the copied content.",
+            "hoverCopyFlagFrom": "The previous build stage to use as the source location instead of the build's context.\n\nSince Docker 17.05.0-ce.",
+            "hoverHealthcheckFlagInterval": "The seconds to wait for the health check to run after the container has started, and then again the number of seconds to wait before running again after the previous check has completed.",
+            "hoverHealthcheckFlagRetries": "The number of consecutive failures of this health check before the container is considered to be `unhealthy`.",
+            "hoverHealthcheckFlagStartPeriod": "The number of seconds to wait for the container to startup. Failures during this grace period will not count towards the maximum number of retries. However, should a health check succeed during this period then any subsequent failures will count towards the maximum number of retries.\n\nSince Docker 17.05.0-ce.",
+            "hoverHealthcheckFlagTimeout": "The number of seconds to wait for the check to complete before considering it to have failed.",
+            "hoverEscape": "Sets the character to use to escape characters and newlines in this Dockerfile. If unspecified, the default escape character is `\\`.\n\n",
+            "signatureEscape": "Sets this Dockerfile's escape character. If unspecified, the default escape character is `\\`.",
+            "signatureEscape_Param": "The character to use to escape characters and newlines in this Dockerfile.",
+            "signatureAdd_Signature0": "Copy new files, directories or remote URLs to the image's filesystem.",
+            "signatureAdd_Signature0_Param1": "The resource to copy or unpack if it is a local tar archive in a recognized compression format.",
+            "signatureAdd_Signature0_Param3": "The name of the destination file or folder.",
+            "signatureArg_Signature0": "Define a variable that users can pass a value to at build-time with `docker build`.",
+            "signatureArg_Signature0_Param": "The name of the variable.",
+            "signatureArg_Signature1": "Define a variable with an optional default value that users can override at build-time with `docker build`.",
+            "signatureArg_Signature1_Param1": "The default value of the variable.",
+            "signatureCmd_Signature0": "Set the default executable and parameters for this executing container.",
+            "signatureCmd_Signature0_Param0": "The default executable for this executing container.",
+            "signatureCmd_Signature0_Param1": "A parameter to the default executable.",
+            "signatureCmd_Signature1": "Set the default parameters for this executing container. An ENTRYPOINT instruction must also be specified.",
+            "signatureCmd_Signature1_Param0": "A parameter to the entrypoint executable.",
+            "signatureCopy_Signature0": "Copy new files and directories to the image's filesystem.",
+            "signatureCopy_Signature0_Param0": "Optional flags to configure this instruction.",
+            "signatureCopy_Signature0_Param1": "The resource to copy.",
+            "signatureCopyFlagFrom": "Set the build stage to use as the source location of this copy instruction instead of the build's context.",
+            "signatureCopyFlagFrom_Param": "The build stage or image name to use as the source. Also may be a numeric index.",
+            "signatureEntrypoint_Signature0": "Configure this container for running as an executable.",
+            "signatureEntrypoint_Signature0_Param1": "The container's main executable.",
+            "signatureEntrypoint_Signature0_Param2": "A parameter to the entrypoint executable.",
+            "signatureEnv_Signature0": "Set an environment variable to the specified value. The value will be in the environment of any descendent Dockerfiles",
+            "signatureEnv_Signature0_Param0": "The name of the environment variable.",
+            "signatureEnv_Signature0_Param1": "The value to set the environment variable to.",
+            "signatureExpose": "Define network ports for this container to listen on at runtime.",
+            "signatureExpose_Param0": "The port that this container should listen on.",
+            "signatureFrom_Signature0": "Set the base image to use for any subsequent instructions that follow.",
+            "signatureFrom_Signature0_Param": "The name of the base image to use.",
+            "signatureFrom_Signature1_Param1": "The tag of the base image to use.",
+            "signatureFrom_Signature2_Param1": "The digest of the base image to use.",
+            "signatureFrom_Signature3": "Set the base image to use for any subsequent instructions that follow and also give this build stage a name.",
+            "signatureFrom_Signature3_Param2": "The name of this build stage.",
+            "signatureFrom_Param2": "The name of this build stage.",
+            "signatureHealthcheck_Signature0": "Define how Docker should test the container to check that it is still working.",
+            "signatureHealthcheck_Signature1_Param2": "The parameters to the CMD instruction for the healthcheck.",
+            "signatureHealthcheck_Signature2": "Disable the inherited HEALTHCHECK instruction from the base image.",
+            "signatureLabel_Signature0": "Set metadata to an image.",
+            "signatureLabel_Signature0_Param0": "The name of the metadata.",
+            "signatureLabel_Signature0_Param1": "The value of the metadata.",
+            "signatureMaintainer": "Set the \"Author\" field of this image.",
+            "signatureMaintainer_Param": "The name of this image's maintainer.",
+            "signatureOnbuild": "Register a build instruction as a trigger to be executed when this image is used as a base image for another build.",
+            "signatureOnbuild_Param": "The build instruction to register as a trigger instruction.",
+            "signatureRun_Signature0": "Execute commands inside a shell.",
+            "signatureRun_Signature0_Param0": "The command to run.",
+            "signatureRun_Signature0_Param1": "A parameter to the command.",
+            "signatureRun_Signature1": "Execute commands without invoking a command shell.",
+            "signatureShell": "Override default shell used for the shell form of commands.",
+            "signatureShell_Param1": "The shell executable to use.",
+            "signatureShell_Param2": "The parameters to the shell executable.",
+            "signatureStopsignal": "Set the system call signal to use to send to the container to exit.",
+            "signatureStopsignal_Param": "The signal to send to the container to exit. This may be an valid unsigned number or a signal name in the SIGNAME format such as SIGKILL.",
+            "signatureUser_Signature0": "Set the user name to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
+            "signatureUser_Signature0_Param": "The user name to use.",
+            "signatureUser_Signature1": "Set the user name and user group to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
+            "signatureUser_Signature1_Param1": "The group name to use.",
+            "signatureUser_Signature2": "Set the UID to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
+            "signatureUser_Signature2_Param": "The UID to use.",
+            "signatureUser_Signature3": "Set the UID and GID to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
+            "signatureUser_Signature3_Param1": "The GID to use.",
+            "signatureVolume_Signature0": "Create mount points for holding externally mounted volumes from the native host or other containers.",
+            "signatureVolume_Signature0_Param0": "The name of the mount point.",
+            "signatureWorkdir": "Set the working directory for any ADD, COPY, CMD, ENTRYPOINT, or RUN instructions that follow.",
+            "signatureWorkdir_Param": "The absolute or relative path to use as the working directory. Will be created if it does not exist.",
+            "proposalArgNameOnly": "Define a variable that users can set at build-time when using `docker build`.\n\n",
+            "proposalArgDefaultValue": "Define a variable with the given default value that users can override at build-time when using `docker build`.\n\n",
+            "proposalHealthcheckExec": "Define how Docker should test the container to check that it is still working. There can only be one HEALTHCHECK instruction in a Dockerfile.\n\nSince Docker 1.12\n\n",
+            "proposalHealthcheckNone": "Disable the HEALTHCHECK instruction inherited from the base image if one exists. There can only be one HEALTHCHECK instruction in a Dockerfile.\n\nSince Docker 1.12"
+        };
+        this.markdowns = {
+            ADD: this.dockerMessages["hoverAdd"] +
+                "ADD hello.txt /absolute/path\n" +
+                "ADD hello.txt relative/to/workdir",
+            ADD_FlagChown: this.dockerMessages["hoverAddFlagChown"],
+            ARG: this.dockerMessages["hoverArg"] +
+                "ARG userName\n" +
+                "ARG testOutputDir=test",
+            ARG_NameOnly: this.dockerMessages["proposalArgNameOnly"] +
+                "ARG userName",
+            ARG_DefaultValue: this.dockerMessages["proposalArgDefaultValue"] +
+                "ARG testOutputDir=test",
+            CMD: this.dockerMessages["hoverCmd"] +
+                "CMD [ \"/bin/ls\", \"-l\" ]",
+            COPY: this.dockerMessages["hoverCopy"] +
+                "COPY hello.txt /absolute/path\n" +
+                "COPY hello.txt relative/to/workdir",
+            COPY_FlagChown: this.dockerMessages["hoverCopyFlagChown"],
+            COPY_FlagFrom: this.dockerMessages["hoverCopyFlagFrom"],
+            ENTRYPOINT: this.dockerMessages["hoverEntrypoint"] +
+                "ENTRYPOINT [ \"/opt/app/run.sh\", \"--port\", \"8080\" ]",
+            ENV: this.dockerMessages["hoverEnv"] +
+                "ENV buildTag=1.0",
+            EXPOSE: this.dockerMessages["hoverExpose"] +
+                "EXPOSE 8080\n" +
+                "EXPOSE 80 443 22\n" +
+                "EXPOSE 7000-8000",
+            FROM: this.dockerMessages["hoverFrom"] +
+                "FROM baseImage\n" +
+                "FROM baseImage:tag\n" +
+                "FROM baseImage@digest",
+            HEALTHCHECK: this.dockerMessages["hoverHealthcheck"] +
+                "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
+                "    CMD curl -f http://localhost/ || exit 1\n" +
+                "HEALTHCHECK NONE",
+            HEALTHCHECK_CMD: this.dockerMessages["proposalHealthcheckExec"] +
+                "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
+                "    CMD curl -f http://localhost/ || exit 1",
+            HEALTHCHECK_FlagInterval: this.dockerMessages["hoverHealthcheckFlagInterval"],
+            HEALTHCHECK_FlagRetries: this.dockerMessages["hoverHealthcheckFlagRetries"],
+            HEALTHCHECK_FlagStartPeriod: this.dockerMessages["hoverHealthcheckFlagStartPeriod"],
+            HEALTHCHECK_FlagTimeout: this.dockerMessages["hoverHealthcheckFlagTimeout"],
+            HEALTHCHECK_NONE: this.dockerMessages["proposalHealthcheckNone"],
+            LABEL: this.dockerMessages["hoverLabel"] +
+                "LABEL version=\"1.0\"",
+            MAINTAINER: this.dockerMessages["hoverMaintainer"] +
+                "MAINTAINER name",
+            ONBUILD: this.dockerMessages["hoverOnbuild"] +
+                "ONBUILD ADD . /opt/app/src/extensions\n" +
+                "ONBUILD RUN /usr/local/bin/build.sh /opt/app",
+            RUN: this.dockerMessages["hoverRun"] +
+                "RUN apt-get update && apt-get install -y curl",
+            SHELL: this.dockerMessages["hoverShell"] +
+                "SHELL [ \"powershell\", \"-command\" ]",
+            STOPSIGNAL: this.dockerMessages["hoverStopsignal"] +
+                "STOPSIGNAL 9",
+            USER: this.dockerMessages["hoverUser"] +
+                "USER daemon",
+            VOLUME: this.dockerMessages["hoverVolume"] +
+                "VOLUME [ \"/var/db\" ]",
+            WORKDIR: this.dockerMessages["hoverWorkdir"] +
+                "WORKDIR /path/to/workdir\n" +
+                "WORKDIR relative/path",
+            escape: this.dockerMessages["hoverEscape"] +
+                "# escape=`",
+            signatureEscape: this.dockerMessages["signatureEscape"],
+            signatureEscape_Param: this.dockerMessages["signatureEscape_Param"],
+            signatureAdd_Signature0: this.dockerMessages["signatureAdd_Signature0"],
+            signatureAdd_Signature0_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
+            signatureAdd_Signature0_Param1: this.dockerMessages["signatureAdd_Signature0_Param1"],
+            signatureAdd_Signature0_Param2: this.dockerMessages["signatureAdd_Signature0_Param1"],
+            signatureAdd_Signature0_Param3: this.dockerMessages["signatureAdd_Signature0_Param3"],
+            signatureAdd_Signature1: this.dockerMessages["signatureAdd_Signature0"],
+            signatureAdd_Signature1_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
+            signatureAdd_Signature1_Param2: this.dockerMessages["signatureAdd_Signature0_Param1"],
+            signatureAdd_Signature1_Param3: this.dockerMessages["signatureAdd_Signature0_Param1"],
+            signatureAdd_Signature1_Param4: this.dockerMessages["signatureAdd_Signature0_Param3"],
+            signatureArg_Signature0: this.dockerMessages["signatureArg_Signature0"],
+            signatureArg_Signature0_Param: this.dockerMessages["signatureArg_Signature0_Param"],
+            signatureArg_Signature1: this.dockerMessages["signatureArg_Signature1"],
+            signatureArg_Signature1_Param0: this.dockerMessages["signatureArg_Signature0_Param"],
+            signatureArg_Signature1_Param1: this.dockerMessages["signatureArg_Signature1_Param1"],
+            signatureCmd_Signature0: this.dockerMessages["signatureCmd_Signature0"],
+            signatureCmd_Signature0_Param1: this.dockerMessages["signatureCmd_Signature0_Param0"],
+            signatureCmd_Signature0_Param2: this.dockerMessages["signatureCmd_Signature0_Param1"],
+            signatureCmd_Signature0_Param3: this.dockerMessages["signatureCmd_Signature0_Param1"],
+            signatureCmd_Signature1: this.dockerMessages["signatureCmd_Signature1"],
+            signatureCmd_Signature1_Param1: this.dockerMessages["signatureCmd_Signature1_Param0"],
+            signatureCmd_Signature1_Param2: this.dockerMessages["signatureCmd_Signature1_Param0"],
+            signatureCmd_Signature1_Param3: this.dockerMessages["signatureCmd_Signature1_Param0"],
+            signatureCmd_Signature2: this.dockerMessages["signatureCmd_Signature0"],
+            signatureCmd_Signature2_Param0: this.dockerMessages["signatureCmd_Signature0_Param0"],
+            signatureCmd_Signature2_Param1: this.dockerMessages["signatureCmd_Signature0_Param1"],
+            signatureCmd_Signature2_Param2: this.dockerMessages["signatureCmd_Signature0_Param1"],
+            signatureCopy_Signature0: this.dockerMessages["signatureCopy_Signature0"],
+            signatureCopy_Signature0_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
+            signatureCopy_Signature0_Param1: this.dockerMessages["signatureCopy_Signature0_Param1"],
+            signatureCopy_Signature0_Param2: this.dockerMessages["signatureCopy_Signature0_Param1"],
+            signatureCopy_Signature0_Param3: this.dockerMessages["signatureAdd_Signature0_Param3"],
+            signatureCopy_Signature1: this.dockerMessages["signatureCopy_Signature0"],
+            signatureCopy_Signature1_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
+            signatureCopy_Signature1_Param2: this.dockerMessages["signatureCopy_Signature0_Param1"],
+            signatureCopy_Signature1_Param3: this.dockerMessages["signatureCopy_Signature0_Param1"],
+            signatureCopy_Signature1_Param4: this.dockerMessages["signatureAdd_Signature0_Param3"],
+            signatureCopyFlagFrom: this.dockerMessages["signatureCopyFlagFrom"],
+            signatureCopyFlagFrom_Param: this.dockerMessages["signatureCopyFlagFrom_Param"],
+            signatureEntrypoint_Signature0: this.dockerMessages["signatureEntrypoint_Signature0"],
+            signatureEntrypoint_Signature0_Param1: this.dockerMessages["signatureEntrypoint_Signature0_Param1"],
+            signatureEntrypoint_Signature0_Param2: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
+            signatureEntrypoint_Signature0_Param3: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
+            signatureEntrypoint_Signature1: this.dockerMessages["signatureEntrypoint_Signature0"],
+            signatureEntrypoint_Signature1_Param0: this.dockerMessages["signatureEntrypoint_Signature0_Param1"],
+            signatureEntrypoint_Signature1_Param1: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
+            signatureEntrypoint_Signature1_Param2: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
+            signatureEnv_Signature0: this.dockerMessages["signatureEnv_Signature0"],
+            signatureEnv_Signature0_Param0: this.dockerMessages["signatureEnv_Signature0_Param0"],
+            signatureEnv_Signature0_Param1: this.dockerMessages["signatureEnv_Signature0_Param1"],
+            signatureEnv_Signature1: this.dockerMessages["signatureEnv_Signature0"],
+            signatureEnv_Signature1_Param0: this.dockerMessages["signatureEnv_Signature0_Param0"],
+            signatureEnv_Signature1_Param1: this.dockerMessages["signatureEnv_Signature0_Param1"],
+            signatureEnv_Signature2: this.dockerMessages["signatureEnv_Signature0"],
+            signatureEnv_Signature2_Param0: this.dockerMessages["signatureEnv_Signature0_Param0"],
+            signatureEnv_Signature2_Param1: this.dockerMessages["signatureEnv_Signature0_Param1"],
+            signatureEnv_Signature2_Param2: this.dockerMessages["signatureEnv_Signature0_Param0"],
+            signatureEnv_Signature2_Param3: this.dockerMessages["signatureEnv_Signature0_Param1"],
+            signatureExpose: this.dockerMessages["signatureExpose"],
+            signatureExpose_Param0: this.dockerMessages["signatureExpose_Param0"],
+            signatureExpose_Param1: this.dockerMessages["signatureExpose_Param0"],
+            signatureFrom_Signature0: this.dockerMessages["signatureFrom_Signature0"],
+            signatureFrom_Signature0_Param: this.dockerMessages["signatureFrom_Signature0_Param"],
+            signatureFrom_Signature1: this.dockerMessages["signatureFrom_Signature0"],
+            signatureFrom_Signature1_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
+            signatureFrom_Signature1_Param1: this.dockerMessages["signatureFrom_Signature1_Param1"],
+            signatureFrom_Signature2: this.dockerMessages["signatureFrom_Signature0"],
+            signatureFrom_Signature2_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
+            signatureFrom_Signature2_Param1: this.dockerMessages["signatureFrom_Signature2_Param1"],
+            signatureFrom_Signature3: this.dockerMessages["signatureFrom_Signature3"],
+            signatureFrom_Signature3_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
+            signatureFrom_Signature3_Param2: this.dockerMessages["signatureFrom_Signature3_Param2"],
+            signatureFrom_Signature4: this.dockerMessages["signatureFrom_Signature3"],
+            signatureFrom_Signature4_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
+            signatureFrom_Signature4_Param1: this.dockerMessages["signatureFrom_Signature1_Param1"],
+            signatureFrom_Signature4_Param3: this.dockerMessages["signatureFrom_Signature3_Param2"],
+            signatureFrom_Signature5: this.dockerMessages["signatureFrom_Signature3"],
+            signatureFrom_Signature5_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
+            signatureFrom_Signature5_Param1: this.dockerMessages["signatureFrom_Signature2_Param1"],
+            signatureFrom_Signature5_Param3: this.dockerMessages["signatureFrom_Signature3_Param2"],
+            signatureHealthcheck: this.dockerMessages["signatureHealthcheck_Signature0"],
+            signatureHealthcheck_Signature0: this.dockerMessages["signatureHealthcheck_Signature0"],
+            signatureHealthcheck_Signature1: this.dockerMessages["signatureHealthcheck_Signature0"],
+            signatureHealthcheck_Signature1_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
+            signatureHealthcheck_Signature1_Param2: this.dockerMessages["signatureHealthcheck_Signature1_Param2"],
+            signatureHealthcheck_Signature2: this.dockerMessages["signatureHealthcheck_Signature0"],
+            signatureHealthcheckFlagInterval_Param: this.dockerMessages["hoverHealthcheckFlagInterval"],
+            signatureHealthcheckFlagRetries_Param: this.dockerMessages["hoverHealthcheckFlagRetries"],
+            signatureHealthcheckFlagStartPeriod_Param: this.dockerMessages["hoverHealthcheckFlagStartPeriod"],
+            signatureHealthcheckFlagTimeout_Param: this.dockerMessages["hoverHealthcheckFlagTimeout"],
+            signatureLabel_Signature0: this.dockerMessages["signatureLabel_Signature0"],
+            signatureLabel_Signature0_Param0: this.dockerMessages["signatureLabel_Signature0_Param0"],
+            signatureLabel_Signature0_Param1: this.dockerMessages["signatureLabel_Signature0_Param1"],
+            signatureLabel_Signature1: this.dockerMessages["signatureLabel_Signature0"],
+            signatureLabel_Signature1_Param0: this.dockerMessages["signatureLabel_Signature0_Param0"],
+            signatureLabel_Signature1_Param1: this.dockerMessages["signatureLabel_Signature0_Param1"],
+            signatureLabel_Signature2: this.dockerMessages["signatureLabel_Signature0"],
+            signatureLabel_Signature2_Param0: this.dockerMessages["signatureLabel_Signature0_Param0"],
+            signatureLabel_Signature2_Param1: this.dockerMessages["signatureLabel_Signature0_Param1"],
+            signatureLabel_Signature2_Param2: this.dockerMessages["signatureLabel_Signature0_Param0"],
+            signatureLabel_Signature2_Param3: this.dockerMessages["signatureLabel_Signature0_Param1"],
+            signatureMaintainer: this.dockerMessages["signatureMaintainer"],
+            signatureMaintainer_Param: this.dockerMessages["signatureMaintainer_Param"],
+            signatureOnbuild: this.dockerMessages["signatureOnbuild"],
+            signatureOnbuild_Param: this.dockerMessages["signatureOnbuild_Param"],
+            signatureRun_Signature0: this.dockerMessages["signatureRun_Signature0"],
+            signatureRun_Signature0_Param0: this.dockerMessages["signatureRun_Signature0_Param0"],
+            signatureRun_Signature0_Param1: this.dockerMessages["signatureRun_Signature0_Param1"],
+            signatureRun_Signature0_Param2: this.dockerMessages["signatureRun_Signature0_Param1"],
+            signatureRun_Signature1: this.dockerMessages["signatureRun_Signature1"],
+            signatureRun_Signature1_Param1: this.dockerMessages["signatureRun_Signature0_Param0"],
+            signatureRun_Signature1_Param2: this.dockerMessages["signatureRun_Signature0_Param1"],
+            signatureRun_Signature1_Param3: this.dockerMessages["signatureRun_Signature0_Param1"],
+            signatureShell: this.dockerMessages["signatureShell"],
+            signatureShell_Param1: this.dockerMessages["signatureShell_Param1"],
+            signatureShell_Param2: this.dockerMessages["signatureShell_Param2"],
+            signatureShell_Param3: this.dockerMessages["signatureShell_Param2"],
+            signatureStopsignal: this.dockerMessages["signatureStopsignal"],
+            signatureStopsignal_Param: this.dockerMessages["signatureStopsignal_Param"],
+            signatureUser_Signature0: this.dockerMessages["signatureUser_Signature0"],
+            signatureUser_Signature0_Param: this.dockerMessages["signatureUser_Signature0_Param"],
+            signatureUser_Signature1: this.dockerMessages["signatureUser_Signature1"],
+            signatureUser_Signature1_Param0: this.dockerMessages["signatureUser_Signature0"],
+            signatureUser_Signature1_Param1: this.dockerMessages["signatureUser_Signature1_Param1"],
+            signatureUser_Signature2: this.dockerMessages["signatureUser_Signature2"],
+            signatureUser_Signature2_Param: this.dockerMessages["signatureUser_Signature2_Param"],
+            signatureUser_Signature3: this.dockerMessages["signatureUser_Signature3"],
+            signatureUser_Signature3_Param0: this.dockerMessages["signatureUser_Signature2_Param"],
+            signatureUser_Signature3_Param1: this.dockerMessages["signatureUser_Signature3_Param1"],
+            signatureVolume_Signature0: this.dockerMessages["signatureVolume_Signature0"],
+            signatureVolume_Signature0_Param0: this.dockerMessages["signatureVolume_Signature0_Param0"],
+            signatureVolume_Signature0_Param1: this.dockerMessages["signatureVolume_Signature0_Param0"],
+            signatureVolume_Signature1: this.dockerMessages["signatureVolume_Signature0"],
+            signatureVolume_Signature1_Param1: this.dockerMessages["signatureVolume_Signature0_Param0"],
+            signatureVolume_Signature1_Param2: this.dockerMessages["signatureVolume_Signature0_Param0"],
+            signatureWorkdir: this.dockerMessages["signatureWorkdir"],
+            signatureWorkdir_Param: this.dockerMessages["signatureWorkdir_Param"]
+        };
+    }
+    PlainTextDocumentation.prototype.getDocumentation = function (data) {
+        return this.markdowns[data];
+    };
+    return PlainTextDocumentation;
+}());
+exports.PlainTextDocumentation = PlainTextDocumentation;
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* --------------------------------------------------------------------------------------------
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
@@ -9049,17 +9404,17 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_jsonrpc_1 = __webpack_require__(54);
+const vscode_jsonrpc_1 = __webpack_require__(55);
 exports.Disposable = vscode_jsonrpc_1.Disposable;
 exports.CancellationToken = vscode_jsonrpc_1.CancellationToken;
 exports.Event = vscode_jsonrpc_1.Event;
 exports.Emitter = vscode_jsonrpc_1.Emitter;
-__export(__webpack_require__(17));
+__export(__webpack_require__(18));
 __export(__webpack_require__(0));
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9083,8 +9438,8 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Is = __webpack_require__(18);
-var messages_1 = __webpack_require__(149);
+var Is = __webpack_require__(19);
+var messages_1 = __webpack_require__(151);
 exports.RequestType = messages_1.RequestType;
 exports.RequestType0 = messages_1.RequestType0;
 exports.RequestType1 = messages_1.RequestType1;
@@ -9109,26 +9464,26 @@ exports.NotificationType6 = messages_1.NotificationType6;
 exports.NotificationType7 = messages_1.NotificationType7;
 exports.NotificationType8 = messages_1.NotificationType8;
 exports.NotificationType9 = messages_1.NotificationType9;
-var messageReader_1 = __webpack_require__(55);
+var messageReader_1 = __webpack_require__(56);
 exports.MessageReader = messageReader_1.MessageReader;
 exports.StreamMessageReader = messageReader_1.StreamMessageReader;
 exports.IPCMessageReader = messageReader_1.IPCMessageReader;
 exports.SocketMessageReader = messageReader_1.SocketMessageReader;
-var messageWriter_1 = __webpack_require__(56);
+var messageWriter_1 = __webpack_require__(57);
 exports.MessageWriter = messageWriter_1.MessageWriter;
 exports.StreamMessageWriter = messageWriter_1.StreamMessageWriter;
 exports.IPCMessageWriter = messageWriter_1.IPCMessageWriter;
 exports.SocketMessageWriter = messageWriter_1.SocketMessageWriter;
-var events_1 = __webpack_require__(29);
+var events_1 = __webpack_require__(30);
 exports.Disposable = events_1.Disposable;
 exports.Event = events_1.Event;
 exports.Emitter = events_1.Emitter;
-var cancellation_1 = __webpack_require__(147);
+var cancellation_1 = __webpack_require__(149);
 exports.CancellationTokenSource = cancellation_1.CancellationTokenSource;
 exports.CancellationToken = cancellation_1.CancellationToken;
-var linkedMap_1 = __webpack_require__(148);
-__export(__webpack_require__(150));
-__export(__webpack_require__(151));
+var linkedMap_1 = __webpack_require__(150);
+__export(__webpack_require__(152));
+__export(__webpack_require__(153));
 var CancelNotification;
 (function (CancelNotification) {
     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -9936,10 +10291,10 @@ function createMessageConnection(input, output, logger, strategy) {
 }
 exports.createMessageConnection = createMessageConnection;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(97).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(99).setImmediate))
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9959,8 +10314,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var events_1 = __webpack_require__(29);
-var Is = __webpack_require__(18);
+var events_1 = __webpack_require__(30);
+var Is = __webpack_require__(19);
 var DefaultSize = 8192;
 var CR = new Buffer('\r', 'ascii')[0];
 var LF = new Buffer('\n', 'ascii')[0];
@@ -10217,7 +10572,7 @@ exports.SocketMessageReader = SocketMessageReader;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer))
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10237,8 +10592,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var events_1 = __webpack_require__(29);
-var Is = __webpack_require__(18);
+var events_1 = __webpack_require__(30);
+var Is = __webpack_require__(19);
 var ContentLength = 'Content-Length: ';
 var CRLF = '\r\n';
 var MessageWriter;
@@ -10447,7 +10802,7 @@ exports.SocketMessageWriter = SocketMessageWriter;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer))
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10458,7 +10813,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const line_1 = __webpack_require__(21);
+const line_1 = __webpack_require__(22);
 const util_1 = __webpack_require__(10);
 class Comment extends line_1.Line {
     constructor(document, range) {
@@ -10512,7 +10867,7 @@ exports.Comment = Comment;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10586,7 +10941,7 @@ exports.Flag = Flag;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10605,13 +10960,13 @@ exports.Add = Add;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(22);
+const propertyInstruction_1 = __webpack_require__(23);
 const util_1 = __webpack_require__(10);
 class Label extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -10646,7 +11001,7 @@ exports.Label = Label;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10659,22 +11014,6 @@ class Shell extends jsonInstruction_1.JSONInstruction {
     }
 }
 exports.Shell = Shell;
-
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const instruction_1 = __webpack_require__(4);
-class Stopsignal extends instruction_1.Instruction {
-    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
-        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
-    }
-}
-exports.Stopsignal = Stopsignal;
 
 
 /***/ }),
@@ -10685,6 +11024,22 @@ exports.Stopsignal = Stopsignal;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const instruction_1 = __webpack_require__(4);
+class Stopsignal extends instruction_1.Instruction {
+    constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
+        super(document, range, dockerfile, escapeChar, instruction, instructionRange);
+    }
+}
+exports.Stopsignal = Stopsignal;
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const instruction_1 = __webpack_require__(4);
 class User extends instruction_1.Instruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
         super(document, range, dockerfile, escapeChar, instruction, instructionRange);
@@ -10694,7 +11049,7 @@ exports.User = User;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10710,7 +11065,7 @@ exports.Volume = Volume;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10726,7 +11081,7 @@ exports.Workdir = Workdir;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10737,26 +11092,26 @@ exports.Workdir = Workdir;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const comment_1 = __webpack_require__(57);
-const parserDirective_1 = __webpack_require__(67);
+const comment_1 = __webpack_require__(58);
+const parserDirective_1 = __webpack_require__(68);
 const instruction_1 = __webpack_require__(4);
 const jsonInstruction_1 = __webpack_require__(7);
-const add_1 = __webpack_require__(59);
-const arg_1 = __webpack_require__(30);
-const cmd_1 = __webpack_require__(31);
-const copy_1 = __webpack_require__(32);
-const env_1 = __webpack_require__(34);
-const entrypoint_1 = __webpack_require__(33);
-const from_1 = __webpack_require__(20);
-const healthcheck_1 = __webpack_require__(35);
-const label_1 = __webpack_require__(60);
-const onbuild_1 = __webpack_require__(36);
-const shell_1 = __webpack_require__(61);
-const stopsignal_1 = __webpack_require__(62);
-const workdir_1 = __webpack_require__(65);
-const user_1 = __webpack_require__(63);
-const volume_1 = __webpack_require__(64);
-const dockerfile_1 = __webpack_require__(107);
+const add_1 = __webpack_require__(60);
+const arg_1 = __webpack_require__(31);
+const cmd_1 = __webpack_require__(32);
+const copy_1 = __webpack_require__(33);
+const env_1 = __webpack_require__(35);
+const entrypoint_1 = __webpack_require__(34);
+const from_1 = __webpack_require__(21);
+const healthcheck_1 = __webpack_require__(36);
+const label_1 = __webpack_require__(61);
+const onbuild_1 = __webpack_require__(37);
+const shell_1 = __webpack_require__(62);
+const stopsignal_1 = __webpack_require__(63);
+const workdir_1 = __webpack_require__(66);
+const user_1 = __webpack_require__(64);
+const volume_1 = __webpack_require__(65);
+const dockerfile_1 = __webpack_require__(109);
 const main_1 = __webpack_require__(2);
 class Parser {
     static createInstruction(document, dockerfile, escapeChar, lineRange, instruction, instructionRange) {
@@ -11106,14 +11461,14 @@ exports.Parser = Parser;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const main_1 = __webpack_require__(2);
-const line_1 = __webpack_require__(21);
+const line_1 = __webpack_require__(22);
 class ParserDirective extends line_1.Line {
     constructor(document, range, nameRange, valueRange) {
         super(document, range);
@@ -11140,7 +11495,7 @@ exports.ParserDirective = ParserDirective;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11189,7 +11544,7 @@ exports.Variable = Variable;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11200,11 +11555,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const line_1 = __webpack_require__(24);
+const line_1 = __webpack_require__(25);
 const util_1 = __webpack_require__(11);
 class Comment extends line_1.Line {
     constructor(document, range) {
         super(document, range);
+    }
+    toString() {
+        const content = this.getContent();
+        if (content) {
+            return "# " + content;
+        }
+        return "#";
     }
     /**
      * Returns the content of this comment. This excludes leading and
@@ -11254,7 +11616,7 @@ exports.Comment = Comment;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11328,7 +11690,7 @@ exports.Flag = Flag;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11347,13 +11709,13 @@ exports.Add = Add;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const propertyInstruction_1 = __webpack_require__(25);
+const propertyInstruction_1 = __webpack_require__(26);
 const util_1 = __webpack_require__(11);
 class Label extends propertyInstruction_1.PropertyInstruction {
     constructor(document, range, dockerfile, escapeChar, instruction, instructionRange) {
@@ -11388,7 +11750,7 @@ exports.Label = Label;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11404,7 +11766,7 @@ exports.Shell = Shell;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11420,7 +11782,7 @@ exports.Stopsignal = Stopsignal;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11436,7 +11798,7 @@ exports.User = User;
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11452,7 +11814,7 @@ exports.Volume = Volume;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11468,7 +11830,32 @@ exports.Workdir = Workdir;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const argument_1 = __webpack_require__(15);
+class JSONArgument extends argument_1.Argument {
+    constructor(value, range, jsonRange) {
+        super(value, range);
+        this.jsonRange = jsonRange;
+    }
+    getJSONRange() {
+        return this.jsonRange;
+    }
+    getJSONValue() {
+        let value = super.getValue();
+        value = value.substring(1, value.length - 1);
+        return value;
+    }
+}
+exports.JSONArgument = JSONArgument;
+
+
+/***/ }),
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11479,27 +11866,27 @@ exports.Workdir = Workdir;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const comment_1 = __webpack_require__(69);
-const parserDirective_1 = __webpack_require__(79);
+const comment_1 = __webpack_require__(70);
+const parserDirective_1 = __webpack_require__(81);
 const instruction_1 = __webpack_require__(5);
 const jsonInstruction_1 = __webpack_require__(8);
-const add_1 = __webpack_require__(71);
-const arg_1 = __webpack_require__(40);
-const cmd_1 = __webpack_require__(41);
-const copy_1 = __webpack_require__(42);
-const env_1 = __webpack_require__(44);
-const entrypoint_1 = __webpack_require__(43);
-const from_1 = __webpack_require__(45);
+const add_1 = __webpack_require__(72);
+const arg_1 = __webpack_require__(41);
+const cmd_1 = __webpack_require__(42);
+const copy_1 = __webpack_require__(43);
+const env_1 = __webpack_require__(45);
+const entrypoint_1 = __webpack_require__(44);
+const from_1 = __webpack_require__(24);
 const healthcheck_1 = __webpack_require__(46);
-const label_1 = __webpack_require__(72);
+const label_1 = __webpack_require__(73);
 const onbuild_1 = __webpack_require__(47);
-const shell_1 = __webpack_require__(73);
-const stopsignal_1 = __webpack_require__(74);
-const workdir_1 = __webpack_require__(77);
-const user_1 = __webpack_require__(75);
-const volume_1 = __webpack_require__(76);
-const dockerfile_1 = __webpack_require__(111);
-const main_1 = __webpack_require__(15);
+const shell_1 = __webpack_require__(74);
+const stopsignal_1 = __webpack_require__(75);
+const workdir_1 = __webpack_require__(78);
+const user_1 = __webpack_require__(76);
+const volume_1 = __webpack_require__(77);
+const dockerfile_1 = __webpack_require__(113);
+const main_1 = __webpack_require__(16);
 class Parser {
     static createInstruction(document, dockerfile, escapeChar, lineRange, instruction, instructionRange) {
         switch (instruction.toUpperCase()) {
@@ -11848,14 +12235,14 @@ exports.Parser = Parser;
 
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const main_1 = __webpack_require__(15);
-const line_1 = __webpack_require__(24);
+const main_1 = __webpack_require__(16);
+const line_1 = __webpack_require__(25);
 class ParserDirective extends line_1.Line {
     constructor(document, range, nameRange, valueRange) {
         super(document, range);
@@ -11882,7 +12269,7 @@ exports.ParserDirective = ParserDirective;
 
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11931,7 +12318,7 @@ exports.Variable = Variable;
 
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -12239,7 +12626,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports) {
 
 var toString = {}.toString;
@@ -12250,7 +12637,7 @@ module.exports = Array.isArray || function (arr) {
 
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12277,7 +12664,7 @@ exports.MonacoCommands = MonacoCommands;
 //# sourceMappingURL=commands.js.map
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12287,7 +12674,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var protocol_1 = __webpack_require__(17);
+var protocol_1 = __webpack_require__(18);
 var ConsoleWindow = /** @class */ (function () {
     function ConsoleWindow() {
         this.channels = new Map();
@@ -12336,7 +12723,7 @@ exports.ConsoleWindow = ConsoleWindow;
 //# sourceMappingURL=console-window.js.map
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12354,8 +12741,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var is = __webpack_require__(28);
-var base_1 = __webpack_require__(102);
+var is = __webpack_require__(29);
+var base_1 = __webpack_require__(104);
 var ProtocolCodeLens;
 (function (ProtocolCodeLens) {
     function is(item) {
@@ -12928,7 +13315,7 @@ exports.ProtocolToMonacoConverter = ProtocolToMonacoConverter;
 //# sourceMappingURL=converter.js.map
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12938,9 +13325,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) 2018 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var globToRegExp = __webpack_require__(113);
-var services_1 = __webpack_require__(53);
-var diagnostic_collection_1 = __webpack_require__(116);
+var globToRegExp = __webpack_require__(115);
+var services_1 = __webpack_require__(54);
+var diagnostic_collection_1 = __webpack_require__(118);
 var disposable_1 = __webpack_require__(50);
 var MonacoModelIdentifier;
 (function (MonacoModelIdentifier) {
@@ -13363,13 +13750,13 @@ exports.MonacoLanguages = MonacoLanguages;
 //# sourceMappingURL=languages.js.map
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var services_1 = __webpack_require__(53);
+var services_1 = __webpack_require__(54);
 var MonacoWorkspace = /** @class */ (function () {
     function MonacoWorkspace(p2m, m2p, _rootUri) {
         if (_rootUri === void 0) { _rootUri = null; }
@@ -13506,7 +13893,7 @@ exports.MonacoWorkspace = MonacoWorkspace;
 //# sourceMappingURL=workspace.js.map
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13535,13 +13922,13 @@ exports.MonacoWorkspace = MonacoWorkspace;
 
 /*<replacement>*/
 
-var pna = __webpack_require__(26);
+var pna = __webpack_require__(27);
 /*</replacement>*/
 
 module.exports = Readable;
 
 /*<replacement>*/
-var isArray = __webpack_require__(82);
+var isArray = __webpack_require__(84);
 /*</replacement>*/
 
 /*<replacement>*/
@@ -13551,7 +13938,7 @@ var Duplex;
 Readable.ReadableState = ReadableState;
 
 /*<replacement>*/
-var EE = __webpack_require__(81).EventEmitter;
+var EE = __webpack_require__(83).EventEmitter;
 
 var EElistenerCount = function (emitter, type) {
   return emitter.listeners(type).length;
@@ -13559,12 +13946,12 @@ var EElistenerCount = function (emitter, type) {
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(92);
+var Stream = __webpack_require__(94);
 /*</replacement>*/
 
 /*<replacement>*/
 
-var Buffer = __webpack_require__(27).Buffer;
+var Buffer = __webpack_require__(28).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -13581,7 +13968,7 @@ util.inherits = __webpack_require__(12);
 /*</replacement>*/
 
 /*<replacement>*/
-var debugUtil = __webpack_require__(154);
+var debugUtil = __webpack_require__(156);
 var debug = void 0;
 if (debugUtil && debugUtil.debuglog) {
   debug = debugUtil.debuglog('stream');
@@ -13590,8 +13977,8 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(126);
-var destroyImpl = __webpack_require__(91);
+var BufferList = __webpack_require__(128);
+var destroyImpl = __webpack_require__(93);
 var StringDecoder;
 
 util.inherits(Readable, Stream);
@@ -13681,7 +14068,7 @@ function ReadableState(options, stream) {
   this.decoder = null;
   this.encoding = null;
   if (options.encoding) {
-    if (!StringDecoder) StringDecoder = __webpack_require__(96).StringDecoder;
+    if (!StringDecoder) StringDecoder = __webpack_require__(98).StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
@@ -13837,7 +14224,7 @@ Readable.prototype.isPaused = function () {
 
 // backwards compatibility.
 Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = __webpack_require__(96).StringDecoder;
+  if (!StringDecoder) StringDecoder = __webpack_require__(98).StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
   return this;
@@ -14528,7 +14915,7 @@ function indexOf(xs, x) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14748,7 +15135,7 @@ function done(stream, er, data) {
 }
 
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14781,7 +15168,7 @@ function done(stream, er, data) {
 
 /*<replacement>*/
 
-var pna = __webpack_require__(26);
+var pna = __webpack_require__(27);
 /*</replacement>*/
 
 module.exports = Writable;
@@ -14824,17 +15211,17 @@ util.inherits = __webpack_require__(12);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(143)
+  deprecate: __webpack_require__(145)
 };
 /*</replacement>*/
 
 /*<replacement>*/
-var Stream = __webpack_require__(92);
+var Stream = __webpack_require__(94);
 /*</replacement>*/
 
 /*<replacement>*/
 
-var Buffer = __webpack_require__(27).Buffer;
+var Buffer = __webpack_require__(28).Buffer;
 var OurUint8Array = global.Uint8Array || function () {};
 function _uint8ArrayToBuffer(chunk) {
   return Buffer.from(chunk);
@@ -14845,7 +15232,7 @@ function _isUint8Array(obj) {
 
 /*</replacement>*/
 
-var destroyImpl = __webpack_require__(91);
+var destroyImpl = __webpack_require__(93);
 
 util.inherits(Writable, Stream);
 
@@ -15429,10 +15816,10 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(97).setImmediate, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(99).setImmediate, __webpack_require__(3)))
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15440,7 +15827,7 @@ Writable.prototype._destroy = function (err, cb) {
 
 /*<replacement>*/
 
-var pna = __webpack_require__(26);
+var pna = __webpack_require__(27);
 /*</replacement>*/
 
 // undocumented cb() API, needed for core, not for public API
@@ -15512,27 +15899,27 @@ module.exports = {
 };
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(81).EventEmitter;
+module.exports = __webpack_require__(83).EventEmitter;
 
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(88);
+exports = module.exports = __webpack_require__(90);
 exports.Stream = exports;
 exports.Readable = exports;
-exports.Writable = __webpack_require__(90);
+exports.Writable = __webpack_require__(92);
 exports.Duplex = __webpack_require__(13);
-exports.Transform = __webpack_require__(89);
-exports.PassThrough = __webpack_require__(125);
+exports.Transform = __webpack_require__(91);
+exports.PassThrough = __webpack_require__(127);
 
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
@@ -15612,12 +15999,12 @@ xhr = null // Help gc
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(process, Buffer, global) {var capability = __webpack_require__(94)
+/* WEBPACK VAR INJECTION */(function(process, Buffer, global) {var capability = __webpack_require__(96)
 var inherits = __webpack_require__(12)
-var stream = __webpack_require__(93)
+var stream = __webpack_require__(95)
 
 var rStates = exports.readyStates = {
 	UNSENT: 0,
@@ -15836,13 +16223,13 @@ IncomingMessage.prototype._onXHRProgress = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(9).Buffer, __webpack_require__(3)))
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Buffer = __webpack_require__(27).Buffer;
+var Buffer = __webpack_require__(28).Buffer;
 
 var isEncoding = Buffer.isEncoding || function (encoding) {
   encoding = '' + encoding;
@@ -16114,7 +16501,7 @@ function simpleEnd(buf) {
 }
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
@@ -16167,7 +16554,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(127);
+__webpack_require__(129);
 // On some exotic environments, it's not clear which object `setimmeidate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -16181,7 +16568,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16194,7 +16581,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
 var dockerfile_ast_1 = __webpack_require__(2);
 var dockerDefinition_1 = __webpack_require__(52);
-var docker_1 = __webpack_require__(16);
+var docker_1 = __webpack_require__(17);
 var DockerHighlight = /** @class */ (function () {
     function DockerHighlight() {
     }
@@ -16337,7 +16724,7 @@ exports.DockerHighlight = DockerHighlight;
 
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16347,27 +16734,29 @@ exports.DockerHighlight = DockerHighlight;
 * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PlainTextDocumentation = /** @class */ (function () {
-    function PlainTextDocumentation() {
+var MarkdownDocumentation = /** @class */ (function () {
+    function MarkdownDocumentation() {
         this.dockerMessages = {
             "hoverAdd": "Copy files, folders, or remote URLs from `source` to the `dest` path in the image's filesystem.\n\n",
             "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\nSince Docker 1.9\n\n",
-            "hoverCmd": "Provide defaults for an executing container. If an executable is not specified, then ENTRYPOINT must be specified as well. There can only be one CMD instruction in a Dockerfile.\n\n",
+            "hoverCmd": "Provide defaults for an executing container. If an executable is not specified, then `ENTRYPOINT` must be specified as well. There can only be one `CMD` instruction in a `Dockerfile`.\n\n",
             "hoverCopy": "Copy files or folders from `source` to the `dest` path in the image's filesystem.\n\n",
             "hoverEntrypoint": "Configures the container to be run as an executable.\n\n",
             "hoverEnv": "Set the environment variable `key` to the value `value`.\n\n",
             "hoverExpose": "Define the network `port`s that this container will listen on at runtime.\n\n",
-            "hoverFrom": "Set the `baseImage` to use for subsequent instructions. FROM must be the first instruction in a Dockerfile.\n\n",
-            "hoverHealthcheck": "Define how Docker should test the container to check that it is still working. Alternatively, disable the base image's HEALTHCHECK instruction. There can only be one HEALTHCHECK instruction in a Dockerfile.\n\nSince Docker 1.12\n\n",
+            "hoverFrom": "Set the `baseImage` to use for subsequent instructions. `FROM` must be the first instruction in a `Dockerfile`.\n\n",
+            "hoverHealthcheck": "Define how Docker should test the container to check that it is still working. Alternatively, disable the base image's `HEALTHCHECK` instruction. There can only be one `HEALTHCHECK` instruction in a `Dockerfile`.\n\nSince Docker 1.12\n\n",
             "hoverLabel": "Adds metadata to an image.\n\nSince Docker 1.6\n\n",
-            "hoverMaintainer": "Set the Author field of the generated images. This instruction has been deprecated in favor of LABEL.\n\n",
-            "hoverOnbuild": "Add a trigger instruction to the image that will be executed when the image is used as a base image for another build.\n\n",
+            "hoverMaintainer": "Set the _Author_ field of the generated images. This instruction has been deprecated in favor of `LABEL`.\n\n",
+            "hoverOnbuild": "Add a _trigger_ instruction to the image that will be executed when the image is used as a base image for another build.\n\n",
             "hoverRun": "Execute any commands on top of the current image as a new layer and commit the results.\n\n",
-            "hoverShell": "Override the default shell used for the shell form of commands.\n\nSince Docker 1.12\n\n",
-            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the SIGNAME format such as SIGKILL.\n\nSince Docker 1.9\n\n",
-            "hoverUser": "Set the user name or UID to use when running the image in addition to any subsequent CMD, ENTRYPOINT, or RUN instructions that follow it in the Dockerfile.\n\n",
+            "hoverShell": "Override the default shell used for the _shell_ form of commands.\n\nSince Docker 1.12\n\n",
+            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the `SIGNAME` format such as `SIGKILL`.\n\nSince Docker 1.9\n\n",
+            "hoverUser": "Set the user name or UID to use when running the image in addition to any subsequent `CMD`, `ENTRYPOINT`, or `RUN` instructions that follow it in the `Dockerfile`.\n\n",
             "hoverVolume": "Create a mount point with the specifid name and mark it as holding externally mounted volumes from the native host or from other containers.\n\n",
-            "hoverWorkdir": "Set the working directory for any subsequent ADD, COPY, CMD, ENTRYPOINT, or RUN` instructions that follow it in the `Dockerfile`.\n\n",
+            "hoverWorkdir": "Set the working directory for any subsequent `ADD`, `COPY`, `CMD`, `ENTRYPOINT`, or `RUN` instructions that follow it in the `Dockerfile`.\n\n",
+            "hoverEscape": "Sets the character to use to escape characters and newlines in this Dockerfile. If unspecified, the default escape character is `\\`.\n\n",
+            "hoverOnlineDocumentationFooter": "\n\n[Online documentation](${0})",
             "hoverAddFlagChown": "The username, groupname, or UID/GID combination to own the added content.",
             "hoverCopyFlagChown": "The username, groupname, or UID/GID combination to own the copied content.",
             "hoverCopyFlagFrom": "The previous build stage to use as the source location instead of the build's context.\n\nSince Docker 17.05.0-ce.",
@@ -16375,299 +16764,232 @@ var PlainTextDocumentation = /** @class */ (function () {
             "hoverHealthcheckFlagRetries": "The number of consecutive failures of this health check before the container is considered to be `unhealthy`.",
             "hoverHealthcheckFlagStartPeriod": "The number of seconds to wait for the container to startup. Failures during this grace period will not count towards the maximum number of retries. However, should a health check succeed during this period then any subsequent failures will count towards the maximum number of retries.\n\nSince Docker 17.05.0-ce.",
             "hoverHealthcheckFlagTimeout": "The number of seconds to wait for the check to complete before considering it to have failed.",
-            "hoverEscape": "Sets the character to use to escape characters and newlines in this Dockerfile. If unspecified, the default escape character is `\\`.\n\n",
-            "signatureEscape": "Sets this Dockerfile's escape character. If unspecified, the default escape character is `\\`.",
-            "signatureEscape_Param": "The character to use to escape characters and newlines in this Dockerfile.",
-            "signatureAdd_Signature0": "Copy new files, directories or remote URLs to the image's filesystem.",
-            "signatureAdd_Signature0_Param1": "The resource to copy or unpack if it is a local tar archive in a recognized compression format.",
-            "signatureAdd_Signature0_Param3": "The name of the destination file or folder.",
-            "signatureArg_Signature0": "Define a variable that users can pass a value to at build-time with `docker build`.",
-            "signatureArg_Signature0_Param": "The name of the variable.",
-            "signatureArg_Signature1": "Define a variable with an optional default value that users can override at build-time with `docker build`.",
-            "signatureArg_Signature1_Param1": "The default value of the variable.",
-            "signatureCmd_Signature0": "Set the default executable and parameters for this executing container.",
-            "signatureCmd_Signature0_Param0": "The default executable for this executing container.",
-            "signatureCmd_Signature0_Param1": "A parameter to the default executable.",
-            "signatureCmd_Signature1": "Set the default parameters for this executing container. An ENTRYPOINT instruction must also be specified.",
-            "signatureCmd_Signature1_Param0": "A parameter to the entrypoint executable.",
-            "signatureCopy_Signature0": "Copy new files and directories to the image's filesystem.",
-            "signatureCopy_Signature0_Param0": "Optional flags to configure this instruction.",
-            "signatureCopy_Signature0_Param1": "The resource to copy.",
-            "signatureCopyFlagFrom": "Set the build stage to use as the source location of this copy instruction instead of the build's context.",
-            "signatureCopyFlagFrom_Param": "The build stage or image name to use as the source. Also may be a numeric index.",
-            "signatureEntrypoint_Signature0": "Configure this container for running as an executable.",
-            "signatureEntrypoint_Signature0_Param1": "The container's main executable.",
-            "signatureEntrypoint_Signature0_Param2": "A parameter to the entrypoint executable.",
-            "signatureEnv_Signature0": "Set an environment variable to the specified value. The value will be in the environment of any descendent Dockerfiles",
-            "signatureEnv_Signature0_Param0": "The name of the environment variable.",
-            "signatureEnv_Signature0_Param1": "The value to set the environment variable to.",
-            "signatureExpose": "Define network ports for this container to listen on at runtime.",
-            "signatureExpose_Param0": "The port that this container should listen on.",
-            "signatureFrom_Signature0": "Set the base image to use for any subsequent instructions that follow.",
-            "signatureFrom_Signature0_Param": "The name of the base image to use.",
-            "signatureFrom_Signature1_Param1": "The tag of the base image to use.",
-            "signatureFrom_Signature2_Param1": "The digest of the base image to use.",
-            "signatureFrom_Signature3": "Set the base image to use for any subsequent instructions that follow and also give this build stage a name.",
-            "signatureFrom_Signature3_Param2": "The name of this build stage.",
-            "signatureFrom_Param2": "The name of this build stage.",
-            "signatureHealthcheck_Signature0": "Define how Docker should test the container to check that it is still working.",
-            "signatureHealthcheck_Signature1_Param2": "The parameters to the CMD instruction for the healthcheck.",
-            "signatureHealthcheck_Signature2": "Disable the inherited HEALTHCHECK instruction from the base image.",
-            "signatureLabel_Signature0": "Set metadata to an image.",
-            "signatureLabel_Signature0_Param0": "The name of the metadata.",
-            "signatureLabel_Signature0_Param1": "The value of the metadata.",
-            "signatureMaintainer": "Set the \"Author\" field of this image.",
-            "signatureMaintainer_Param": "The name of this image's maintainer.",
-            "signatureOnbuild": "Register a build instruction as a trigger to be executed when this image is used as a base image for another build.",
-            "signatureOnbuild_Param": "The build instruction to register as a trigger instruction.",
-            "signatureRun_Signature0": "Execute commands inside a shell.",
-            "signatureRun_Signature0_Param0": "The command to run.",
-            "signatureRun_Signature0_Param1": "A parameter to the command.",
-            "signatureRun_Signature1": "Execute commands without invoking a command shell.",
-            "signatureShell": "Override default shell used for the shell form of commands.",
-            "signatureShell_Param1": "The shell executable to use.",
-            "signatureShell_Param2": "The parameters to the shell executable.",
-            "signatureStopsignal": "Set the system call signal to use to send to the container to exit.",
-            "signatureStopsignal_Param": "The signal to send to the container to exit. This may be an valid unsigned number or a signal name in the SIGNAME format such as SIGKILL.",
-            "signatureUser_Signature0": "Set the user name to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
-            "signatureUser_Signature0_Param": "The user name to use.",
-            "signatureUser_Signature1": "Set the user name and user group to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
-            "signatureUser_Signature1_Param1": "The group name to use.",
-            "signatureUser_Signature2": "Set the UID to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
-            "signatureUser_Signature2_Param": "The UID to use.",
-            "signatureUser_Signature3": "Set the UID and GID to use for running any RUN, CMD, and ENTRYPOINT instructions that follow.",
-            "signatureUser_Signature3_Param1": "The GID to use.",
-            "signatureVolume_Signature0": "Create mount points for holding externally mounted volumes from the native host or other containers.",
-            "signatureVolume_Signature0_Param0": "The name of the mount point.",
-            "signatureWorkdir": "Set the working directory for any ADD, COPY, CMD, ENTRYPOINT, or RUN instructions that follow.",
-            "signatureWorkdir_Param": "The absolute or relative path to use as the working directory. Will be created if it does not exist.",
             "proposalArgNameOnly": "Define a variable that users can set at build-time when using `docker build`.\n\n",
             "proposalArgDefaultValue": "Define a variable with the given default value that users can override at build-time when using `docker build`.\n\n",
-            "proposalHealthcheckExec": "Define how Docker should test the container to check that it is still working. There can only be one HEALTHCHECK instruction in a Dockerfile.\n\nSince Docker 1.12\n\n",
-            "proposalHealthcheckNone": "Disable the HEALTHCHECK instruction inherited from the base image if one exists. There can only be one HEALTHCHECK instruction in a Dockerfile.\n\nSince Docker 1.12"
+            "proposalHealthcheckExec": "Define how Docker should test the container to check that it is still working. There can only be one `HEALTHCHECK` instruction in a `Dockerfile`.\n\nSince Docker 1.12\n\n",
+            "proposalHealthcheckNone": "Disable the `HEALTHCHECK` instruction inherited from the base image if one exists. There can only be one `HEALTHCHECK` instruction in a `Dockerfile`.\n\nSince Docker 1.12"
         };
         this.markdowns = {
-            ADD: this.dockerMessages["hoverAdd"] +
-                "ADD hello.txt /absolute/path\n" +
-                "ADD hello.txt relative/to/workdir",
-            ADD_FlagChown: this.dockerMessages["hoverAddFlagChown"],
-            ARG: this.dockerMessages["hoverArg"] +
-                "ARG userName\n" +
-                "ARG testOutputDir=test",
-            ARG_NameOnly: this.dockerMessages["proposalArgNameOnly"] +
-                "ARG userName",
-            ARG_DefaultValue: this.dockerMessages["proposalArgDefaultValue"] +
-                "ARG testOutputDir=test",
-            CMD: this.dockerMessages["hoverCmd"] +
-                "CMD [ \"/bin/ls\", \"-l\" ]",
-            COPY: this.dockerMessages["hoverCopy"] +
-                "COPY hello.txt /absolute/path\n" +
-                "COPY hello.txt relative/to/workdir",
-            COPY_FlagChown: this.dockerMessages["hoverCopyFlagChown"],
-            COPY_FlagFrom: this.dockerMessages["hoverCopyFlagFrom"],
-            ENTRYPOINT: this.dockerMessages["hoverEntrypoint"] +
-                "ENTRYPOINT [ \"/opt/app/run.sh\", \"--port\", \"8080\" ]",
-            ENV: this.dockerMessages["hoverEnv"] +
-                "ENV buildTag=1.0",
-            EXPOSE: this.dockerMessages["hoverExpose"] +
-                "EXPOSE 8080\n" +
-                "EXPOSE 80 443 22\n" +
-                "EXPOSE 7000-8000",
-            FROM: this.dockerMessages["hoverFrom"] +
-                "FROM baseImage\n" +
-                "FROM baseImage:tag\n" +
-                "FROM baseImage@digest",
-            HEALTHCHECK: this.dockerMessages["hoverHealthcheck"] +
-                "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
-                "    CMD curl -f http://localhost/ || exit 1\n" +
-                "HEALTHCHECK NONE",
-            HEALTHCHECK_CMD: this.dockerMessages["proposalHealthcheckExec"] +
-                "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
-                "    CMD curl -f http://localhost/ || exit 1",
-            HEALTHCHECK_FlagInterval: this.dockerMessages["hoverHealthcheckFlagInterval"],
-            HEALTHCHECK_FlagRetries: this.dockerMessages["hoverHealthcheckFlagRetries"],
-            HEALTHCHECK_FlagStartPeriod: this.dockerMessages["hoverHealthcheckFlagStartPeriod"],
-            HEALTHCHECK_FlagTimeout: this.dockerMessages["hoverHealthcheckFlagTimeout"],
-            HEALTHCHECK_NONE: this.dockerMessages["proposalHealthcheckNone"],
-            LABEL: this.dockerMessages["hoverLabel"] +
-                "LABEL version=\"1.0\"",
-            MAINTAINER: this.dockerMessages["hoverMaintainer"] +
-                "MAINTAINER name",
-            ONBUILD: this.dockerMessages["hoverOnbuild"] +
-                "ONBUILD ADD . /opt/app/src/extensions\n" +
-                "ONBUILD RUN /usr/local/bin/build.sh /opt/app",
-            RUN: this.dockerMessages["hoverRun"] +
-                "RUN apt-get update && apt-get install -y curl",
-            SHELL: this.dockerMessages["hoverShell"] +
-                "SHELL [ \"powershell\", \"-command\" ]",
-            STOPSIGNAL: this.dockerMessages["hoverStopsignal"] +
-                "STOPSIGNAL 9",
-            USER: this.dockerMessages["hoverUser"] +
-                "USER daemon",
-            VOLUME: this.dockerMessages["hoverVolume"] +
-                "VOLUME [ \"/var/db\" ]",
-            WORKDIR: this.dockerMessages["hoverWorkdir"] +
-                "WORKDIR /path/to/workdir\n" +
-                "WORKDIR relative/path",
-            escape: this.dockerMessages["hoverEscape"] +
-                "# escape=`",
-            signatureEscape: this.dockerMessages["signatureEscape"],
-            signatureEscape_Param: this.dockerMessages["signatureEscape_Param"],
-            signatureAdd_Signature0: this.dockerMessages["signatureAdd_Signature0"],
-            signatureAdd_Signature0_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
-            signatureAdd_Signature0_Param1: this.dockerMessages["signatureAdd_Signature0_Param1"],
-            signatureAdd_Signature0_Param2: this.dockerMessages["signatureAdd_Signature0_Param1"],
-            signatureAdd_Signature0_Param3: this.dockerMessages["signatureAdd_Signature0_Param3"],
-            signatureAdd_Signature1: this.dockerMessages["signatureAdd_Signature0"],
-            signatureAdd_Signature1_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
-            signatureAdd_Signature1_Param2: this.dockerMessages["signatureAdd_Signature0_Param1"],
-            signatureAdd_Signature1_Param3: this.dockerMessages["signatureAdd_Signature0_Param1"],
-            signatureAdd_Signature1_Param4: this.dockerMessages["signatureAdd_Signature0_Param3"],
-            signatureArg_Signature0: this.dockerMessages["signatureArg_Signature0"],
-            signatureArg_Signature0_Param: this.dockerMessages["signatureArg_Signature0_Param"],
-            signatureArg_Signature1: this.dockerMessages["signatureArg_Signature1"],
-            signatureArg_Signature1_Param0: this.dockerMessages["signatureArg_Signature0_Param"],
-            signatureArg_Signature1_Param1: this.dockerMessages["signatureArg_Signature1_Param1"],
-            signatureCmd_Signature0: this.dockerMessages["signatureCmd_Signature0"],
-            signatureCmd_Signature0_Param1: this.dockerMessages["signatureCmd_Signature0_Param0"],
-            signatureCmd_Signature0_Param2: this.dockerMessages["signatureCmd_Signature0_Param1"],
-            signatureCmd_Signature0_Param3: this.dockerMessages["signatureCmd_Signature0_Param1"],
-            signatureCmd_Signature1: this.dockerMessages["signatureCmd_Signature1"],
-            signatureCmd_Signature1_Param1: this.dockerMessages["signatureCmd_Signature1_Param0"],
-            signatureCmd_Signature1_Param2: this.dockerMessages["signatureCmd_Signature1_Param0"],
-            signatureCmd_Signature1_Param3: this.dockerMessages["signatureCmd_Signature1_Param0"],
-            signatureCmd_Signature2: this.dockerMessages["signatureCmd_Signature0"],
-            signatureCmd_Signature2_Param0: this.dockerMessages["signatureCmd_Signature0_Param0"],
-            signatureCmd_Signature2_Param1: this.dockerMessages["signatureCmd_Signature0_Param1"],
-            signatureCmd_Signature2_Param2: this.dockerMessages["signatureCmd_Signature0_Param1"],
-            signatureCopy_Signature0: this.dockerMessages["signatureCopy_Signature0"],
-            signatureCopy_Signature0_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
-            signatureCopy_Signature0_Param1: this.dockerMessages["signatureCopy_Signature0_Param1"],
-            signatureCopy_Signature0_Param2: this.dockerMessages["signatureCopy_Signature0_Param1"],
-            signatureCopy_Signature0_Param3: this.dockerMessages["signatureAdd_Signature0_Param3"],
-            signatureCopy_Signature1: this.dockerMessages["signatureCopy_Signature0"],
-            signatureCopy_Signature1_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
-            signatureCopy_Signature1_Param2: this.dockerMessages["signatureCopy_Signature0_Param1"],
-            signatureCopy_Signature1_Param3: this.dockerMessages["signatureCopy_Signature0_Param1"],
-            signatureCopy_Signature1_Param4: this.dockerMessages["signatureAdd_Signature0_Param3"],
-            signatureCopyFlagFrom: this.dockerMessages["signatureCopyFlagFrom"],
-            signatureCopyFlagFrom_Param: this.dockerMessages["signatureCopyFlagFrom_Param"],
-            signatureEntrypoint_Signature0: this.dockerMessages["signatureEntrypoint_Signature0"],
-            signatureEntrypoint_Signature0_Param1: this.dockerMessages["signatureEntrypoint_Signature0_Param1"],
-            signatureEntrypoint_Signature0_Param2: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
-            signatureEntrypoint_Signature0_Param3: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
-            signatureEntrypoint_Signature1: this.dockerMessages["signatureEntrypoint_Signature0"],
-            signatureEntrypoint_Signature1_Param0: this.dockerMessages["signatureEntrypoint_Signature0_Param1"],
-            signatureEntrypoint_Signature1_Param1: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
-            signatureEntrypoint_Signature1_Param2: this.dockerMessages["signatureEntrypoint_Signature0_Param2"],
-            signatureEnv_Signature0: this.dockerMessages["signatureEnv_Signature0"],
-            signatureEnv_Signature0_Param0: this.dockerMessages["signatureEnv_Signature0_Param0"],
-            signatureEnv_Signature0_Param1: this.dockerMessages["signatureEnv_Signature0_Param1"],
-            signatureEnv_Signature1: this.dockerMessages["signatureEnv_Signature0"],
-            signatureEnv_Signature1_Param0: this.dockerMessages["signatureEnv_Signature0_Param0"],
-            signatureEnv_Signature1_Param1: this.dockerMessages["signatureEnv_Signature0_Param1"],
-            signatureEnv_Signature2: this.dockerMessages["signatureEnv_Signature0"],
-            signatureEnv_Signature2_Param0: this.dockerMessages["signatureEnv_Signature0_Param0"],
-            signatureEnv_Signature2_Param1: this.dockerMessages["signatureEnv_Signature0_Param1"],
-            signatureEnv_Signature2_Param2: this.dockerMessages["signatureEnv_Signature0_Param0"],
-            signatureEnv_Signature2_Param3: this.dockerMessages["signatureEnv_Signature0_Param1"],
-            signatureExpose: this.dockerMessages["signatureExpose"],
-            signatureExpose_Param0: this.dockerMessages["signatureExpose_Param0"],
-            signatureExpose_Param1: this.dockerMessages["signatureExpose_Param0"],
-            signatureFrom_Signature0: this.dockerMessages["signatureFrom_Signature0"],
-            signatureFrom_Signature0_Param: this.dockerMessages["signatureFrom_Signature0_Param"],
-            signatureFrom_Signature1: this.dockerMessages["signatureFrom_Signature0"],
-            signatureFrom_Signature1_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
-            signatureFrom_Signature1_Param1: this.dockerMessages["signatureFrom_Signature1_Param1"],
-            signatureFrom_Signature2: this.dockerMessages["signatureFrom_Signature0"],
-            signatureFrom_Signature2_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
-            signatureFrom_Signature2_Param1: this.dockerMessages["signatureFrom_Signature2_Param1"],
-            signatureFrom_Signature3: this.dockerMessages["signatureFrom_Signature3"],
-            signatureFrom_Signature3_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
-            signatureFrom_Signature3_Param2: this.dockerMessages["signatureFrom_Signature3_Param2"],
-            signatureFrom_Signature4: this.dockerMessages["signatureFrom_Signature3"],
-            signatureFrom_Signature4_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
-            signatureFrom_Signature4_Param1: this.dockerMessages["signatureFrom_Signature1_Param1"],
-            signatureFrom_Signature4_Param3: this.dockerMessages["signatureFrom_Signature3_Param2"],
-            signatureFrom_Signature5: this.dockerMessages["signatureFrom_Signature3"],
-            signatureFrom_Signature5_Param0: this.dockerMessages["signatureFrom_Signature0_Param"],
-            signatureFrom_Signature5_Param1: this.dockerMessages["signatureFrom_Signature2_Param1"],
-            signatureFrom_Signature5_Param3: this.dockerMessages["signatureFrom_Signature3_Param2"],
-            signatureHealthcheck: this.dockerMessages["signatureHealthcheck_Signature0"],
-            signatureHealthcheck_Signature0: this.dockerMessages["signatureHealthcheck_Signature0"],
-            signatureHealthcheck_Signature1: this.dockerMessages["signatureHealthcheck_Signature0"],
-            signatureHealthcheck_Signature1_Param0: this.dockerMessages["signatureCopy_Signature0_Param0"],
-            signatureHealthcheck_Signature1_Param2: this.dockerMessages["signatureHealthcheck_Signature1_Param2"],
-            signatureHealthcheck_Signature2: this.dockerMessages["signatureHealthcheck_Signature0"],
-            signatureHealthcheckFlagInterval_Param: this.dockerMessages["hoverHealthcheckFlagInterval"],
-            signatureHealthcheckFlagRetries_Param: this.dockerMessages["hoverHealthcheckFlagRetries"],
-            signatureHealthcheckFlagStartPeriod_Param: this.dockerMessages["hoverHealthcheckFlagStartPeriod"],
-            signatureHealthcheckFlagTimeout_Param: this.dockerMessages["hoverHealthcheckFlagTimeout"],
-            signatureLabel_Signature0: this.dockerMessages["signatureLabel_Signature0"],
-            signatureLabel_Signature0_Param0: this.dockerMessages["signatureLabel_Signature0_Param0"],
-            signatureLabel_Signature0_Param1: this.dockerMessages["signatureLabel_Signature0_Param1"],
-            signatureLabel_Signature1: this.dockerMessages["signatureLabel_Signature0"],
-            signatureLabel_Signature1_Param0: this.dockerMessages["signatureLabel_Signature0_Param0"],
-            signatureLabel_Signature1_Param1: this.dockerMessages["signatureLabel_Signature0_Param1"],
-            signatureLabel_Signature2: this.dockerMessages["signatureLabel_Signature0"],
-            signatureLabel_Signature2_Param0: this.dockerMessages["signatureLabel_Signature0_Param0"],
-            signatureLabel_Signature2_Param1: this.dockerMessages["signatureLabel_Signature0_Param1"],
-            signatureLabel_Signature2_Param2: this.dockerMessages["signatureLabel_Signature0_Param0"],
-            signatureLabel_Signature2_Param3: this.dockerMessages["signatureLabel_Signature0_Param1"],
-            signatureMaintainer: this.dockerMessages["signatureMaintainer"],
-            signatureMaintainer_Param: this.dockerMessages["signatureMaintainer_Param"],
-            signatureOnbuild: this.dockerMessages["signatureOnbuild"],
-            signatureOnbuild_Param: this.dockerMessages["signatureOnbuild_Param"],
-            signatureRun_Signature0: this.dockerMessages["signatureRun_Signature0"],
-            signatureRun_Signature0_Param0: this.dockerMessages["signatureRun_Signature0_Param0"],
-            signatureRun_Signature0_Param1: this.dockerMessages["signatureRun_Signature0_Param1"],
-            signatureRun_Signature0_Param2: this.dockerMessages["signatureRun_Signature0_Param1"],
-            signatureRun_Signature1: this.dockerMessages["signatureRun_Signature1"],
-            signatureRun_Signature1_Param1: this.dockerMessages["signatureRun_Signature0_Param0"],
-            signatureRun_Signature1_Param2: this.dockerMessages["signatureRun_Signature0_Param1"],
-            signatureRun_Signature1_Param3: this.dockerMessages["signatureRun_Signature0_Param1"],
-            signatureShell: this.dockerMessages["signatureShell"],
-            signatureShell_Param1: this.dockerMessages["signatureShell_Param1"],
-            signatureShell_Param2: this.dockerMessages["signatureShell_Param2"],
-            signatureShell_Param3: this.dockerMessages["signatureShell_Param2"],
-            signatureStopsignal: this.dockerMessages["signatureStopsignal"],
-            signatureStopsignal_Param: this.dockerMessages["signatureStopsignal_Param"],
-            signatureUser_Signature0: this.dockerMessages["signatureUser_Signature0"],
-            signatureUser_Signature0_Param: this.dockerMessages["signatureUser_Signature0_Param"],
-            signatureUser_Signature1: this.dockerMessages["signatureUser_Signature1"],
-            signatureUser_Signature1_Param0: this.dockerMessages["signatureUser_Signature0"],
-            signatureUser_Signature1_Param1: this.dockerMessages["signatureUser_Signature1_Param1"],
-            signatureUser_Signature2: this.dockerMessages["signatureUser_Signature2"],
-            signatureUser_Signature2_Param: this.dockerMessages["signatureUser_Signature2_Param"],
-            signatureUser_Signature3: this.dockerMessages["signatureUser_Signature3"],
-            signatureUser_Signature3_Param0: this.dockerMessages["signatureUser_Signature2_Param"],
-            signatureUser_Signature3_Param1: this.dockerMessages["signatureUser_Signature3_Param1"],
-            signatureVolume_Signature0: this.dockerMessages["signatureVolume_Signature0"],
-            signatureVolume_Signature0_Param0: this.dockerMessages["signatureVolume_Signature0_Param0"],
-            signatureVolume_Signature0_Param1: this.dockerMessages["signatureVolume_Signature0_Param0"],
-            signatureVolume_Signature1: this.dockerMessages["signatureVolume_Signature0"],
-            signatureVolume_Signature1_Param1: this.dockerMessages["signatureVolume_Signature0_Param0"],
-            signatureVolume_Signature1_Param2: this.dockerMessages["signatureVolume_Signature0_Param0"],
-            signatureWorkdir: this.dockerMessages["signatureWorkdir"],
-            signatureWorkdir_Param: this.dockerMessages["signatureWorkdir_Param"]
+            ADD: {
+                contents: this.dockerMessages["hoverAdd"] +
+                    "```\n" +
+                    "ADD hello.txt /absolute/path\n" +
+                    "ADD hello.txt relative/to/workdir\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#add")
+            },
+            ADD_FlagChown: {
+                contents: this.dockerMessages["hoverAddFlagChown"]
+            },
+            ARG: {
+                contents: this.dockerMessages["hoverArg"] +
+                    "```\n" +
+                    "ARG userName\n" +
+                    "ARG testOutputDir=test\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#arg")
+            },
+            ARG_NameOnly: {
+                contents: this.dockerMessages["proposalArgNameOnly"] +
+                    "```\n" +
+                    "ARG userName\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#arg")
+            },
+            ARG_DefaultValue: {
+                contents: this.dockerMessages["proposalArgDefaultValue"] +
+                    "```\n" +
+                    "ARG testOutputDir=test\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#arg")
+            },
+            CMD: {
+                contents: this.dockerMessages["hoverCmd"] +
+                    "```\n" +
+                    "CMD [ \"/bin/ls\", \"-l\" ]\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#cmd")
+            },
+            COPY: {
+                contents: this.dockerMessages["hoverCopy"] +
+                    "```\n" +
+                    "COPY hello.txt /absolute/path\n" +
+                    "COPY hello.txt relative/to/workdir\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#copy")
+            },
+            COPY_FlagChown: {
+                contents: this.dockerMessages["hoverCopyFlagChown"]
+            },
+            COPY_FlagFrom: {
+                contents: this.dockerMessages["hoverCopyFlagFrom"]
+            },
+            ENTRYPOINT: {
+                contents: this.dockerMessages["hoverEntrypoint"] +
+                    "```\n" +
+                    "ENTRYPOINT [ \"/opt/app/run.sh\", \"--port\", \"8080\" ]\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#entrypoint")
+            },
+            ENV: {
+                contents: this.dockerMessages["hoverEnv"] +
+                    "```\n" +
+                    "ENV buildTag=1.0\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#env")
+            },
+            EXPOSE: {
+                contents: this.dockerMessages["hoverExpose"] +
+                    "```\n" +
+                    "EXPOSE 8080\n" +
+                    "EXPOSE 80 443 22\n" +
+                    "EXPOSE 7000-8000\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#expose")
+            },
+            FROM: {
+                contents: this.dockerMessages["hoverFrom"] +
+                    "```\n" +
+                    "FROM baseImage\n" +
+                    "FROM baseImage:tag\n" +
+                    "FROM baseImage@digest\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#from")
+            },
+            HEALTHCHECK: {
+                contents: this.dockerMessages["hoverHealthcheck"] +
+                    "```\n" +
+                    "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
+                    "    CMD curl -f http://localhost/ || exit 1\n" +
+                    "HEALTHCHECK NONE\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#healthcheck")
+            },
+            HEALTHCHECK_CMD: {
+                contents: this.dockerMessages["proposalHealthcheckExec"] +
+                    "```\n" +
+                    "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
+                    "    CMD curl -f http://localhost/ || exit 1\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#healthcheck")
+            },
+            HEALTHCHECK_FlagInterval: {
+                contents: this.dockerMessages["hoverHealthcheckFlagInterval"]
+            },
+            HEALTHCHECK_FlagRetries: {
+                contents: this.dockerMessages["hoverHealthcheckFlagRetries"]
+            },
+            HEALTHCHECK_FlagStartPeriod: {
+                contents: this.dockerMessages["hoverHealthcheckFlagStartPeriod"]
+            },
+            HEALTHCHECK_FlagTimeout: {
+                contents: this.dockerMessages["hoverHealthcheckFlagTimeout"]
+            },
+            HEALTHCHECK_NONE: {
+                contents: this.dockerMessages["proposalHealthcheckNone"] +
+                    "```\n" +
+                    "HEALTHCHECK NONE\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#healthcheck")
+            },
+            LABEL: {
+                contents: this.dockerMessages["hoverLabel"] +
+                    "```\n" +
+                    "LABEL version=\"1.0\"\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#label")
+            },
+            MAINTAINER: {
+                contents: this.dockerMessages["hoverMaintainer"] +
+                    "```\n" +
+                    "MAINTAINER name\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#maintainer")
+            },
+            ONBUILD: {
+                contents: this.dockerMessages["hoverOnbuild"] +
+                    "```\n" +
+                    "ONBUILD ADD . /opt/app/src/extensions\n" +
+                    "ONBUILD RUN /usr/local/bin/build.sh /opt/app" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#cmd")
+            },
+            RUN: {
+                contents: this.dockerMessages["hoverRun"] +
+                    "```\n" +
+                    "RUN apt-get update && apt-get install -y curl\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#run")
+            },
+            SHELL: {
+                contents: this.dockerMessages["hoverShell"] +
+                    "```\n" +
+                    "SHELL [ \"powershell\", \"-command\" ]\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#shell")
+            },
+            STOPSIGNAL: {
+                contents: this.dockerMessages["hoverStopsignal"] +
+                    "```\n" +
+                    "STOPSIGNAL 9\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#stopsignal")
+            },
+            USER: {
+                contents: this.dockerMessages["hoverUser"] +
+                    "```\n" +
+                    "USER daemon\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#user")
+            },
+            VOLUME: {
+                contents: this.dockerMessages["hoverVolume"] +
+                    "```\n" +
+                    "VOLUME [ \"/var/db\" ]\n" +
+                    "```\n" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#volume")
+            },
+            WORKDIR: {
+                contents: this.dockerMessages["hoverWorkdir"] +
+                    "```\n" +
+                    "WORKDIR /path/to/workdir\n" +
+                    "WORKDIR relative/path\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#workdir")
+            },
+            escape: {
+                contents: this.dockerMessages["hoverEscape"] +
+                    "```\n" +
+                    "# escape=`\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#escape")
+            }
         };
     }
-    PlainTextDocumentation.prototype.getDocumentation = function (data) {
-        return this.markdowns[data];
+    MarkdownDocumentation.prototype.formatMessage = function (text, variable) {
+        return text.replace("${0}", variable);
     };
-    return PlainTextDocumentation;
+    /**
+     * Retrieves the Markdown documentation for the given word.
+     *
+     * @param word the Dockerfile keyword or directive, must not be null
+     */
+    MarkdownDocumentation.prototype.getMarkdown = function (word) {
+        return this.markdowns[word];
+    };
+    return MarkdownDocumentation;
 }());
-exports.PlainTextDocumentation = PlainTextDocumentation;
+exports.MarkdownDocumentation = MarkdownDocumentation;
 
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var languageService_1 = __webpack_require__(141);
+var languageService_1 = __webpack_require__(143);
 var CommandIds;
 (function (CommandIds) {
     CommandIds["LOWERCASE"] = "docker.command.convertToLowercase";
@@ -16694,7 +17016,7 @@ var DockerfileLanguageServiceFactory;
 
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16721,8 +17043,8 @@ var DockerfileLanguageServiceFactory;
 
 
 
-var punycode = __webpack_require__(121);
-var util = __webpack_require__(142);
+var punycode = __webpack_require__(123);
+var util = __webpack_require__(144);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -16797,7 +17119,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = __webpack_require__(124);
+    querystring = __webpack_require__(126);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -17433,7 +17755,7 @@ Url.prototype.parseHost = function() {
 
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17446,20 +17768,20 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_jsonrpc_1 = __webpack_require__(54);
+const vscode_jsonrpc_1 = __webpack_require__(55);
 exports.ErrorCodes = vscode_jsonrpc_1.ErrorCodes;
 exports.ResponseError = vscode_jsonrpc_1.ResponseError;
 exports.RequestType = vscode_jsonrpc_1.RequestType;
 exports.RequestType0 = vscode_jsonrpc_1.RequestType0;
 exports.NotificationType = vscode_jsonrpc_1.NotificationType;
 exports.NotificationType0 = vscode_jsonrpc_1.NotificationType0;
-const protocol_1 = __webpack_require__(17);
+const protocol_1 = __webpack_require__(18);
 exports.InitializeError = protocol_1.InitializeError;
-const is = __webpack_require__(28);
-const async_1 = __webpack_require__(145);
-const UUID = __webpack_require__(146);
+const is = __webpack_require__(29);
+const async_1 = __webpack_require__(147);
+const UUID = __webpack_require__(148);
 __export(__webpack_require__(0));
-__export(__webpack_require__(17));
+__export(__webpack_require__(18));
 /**
  * An action to be performed when the connection is producing errors.
  */
@@ -18767,7 +19089,7 @@ exports.SettingMonitor = SettingMonitor;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18777,8 +19099,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-var dockerfile_language_service_1 = __webpack_require__(100);
-var monaco_languageclient_1 = __webpack_require__(117);
+var dockerfile_language_service_1 = __webpack_require__(102);
+var monaco_languageclient_1 = __webpack_require__(119);
 var LANGUAGE_ID = 'dockerfile';
 var MODEL_URI = 'inmemory://model.json';
 var MONACO_URI = monaco.Uri.parse(MODEL_URI);
@@ -18922,7 +19244,7 @@ monaco.languages.registerOnTypeFormattingEditProvider(LANGUAGE_ID, {
 //# sourceMappingURL=client.js.map
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* --------------------------------------------------------------------------------------------
@@ -18934,13 +19256,13 @@ window.onload = function () {
     // load Monaco code
     w.require(['vs/editor/editor.main'], function () {
         // load client code
-        __webpack_require__(103);
+        __webpack_require__(105);
     });
 };
 //# sourceMappingURL=main.js.map
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19063,7 +19385,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -19133,7 +19455,7 @@ module.exports = {
 
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19144,8 +19466,8 @@ module.exports = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const imageTemplate_1 = __webpack_require__(108);
-const from_1 = __webpack_require__(20);
+const imageTemplate_1 = __webpack_require__(110);
+const from_1 = __webpack_require__(21);
 const util_1 = __webpack_require__(10);
 const main_1 = __webpack_require__(2);
 class Dockerfile extends imageTemplate_1.ImageTemplate {
@@ -19253,7 +19575,7 @@ exports.Dockerfile = Dockerfile;
 
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19264,14 +19586,14 @@ exports.Dockerfile = Dockerfile;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(0);
-const arg_1 = __webpack_require__(30);
-const cmd_1 = __webpack_require__(31);
-const copy_1 = __webpack_require__(32);
-const env_1 = __webpack_require__(34);
-const entrypoint_1 = __webpack_require__(33);
-const from_1 = __webpack_require__(20);
-const healthcheck_1 = __webpack_require__(35);
-const onbuild_1 = __webpack_require__(36);
+const arg_1 = __webpack_require__(31);
+const cmd_1 = __webpack_require__(32);
+const copy_1 = __webpack_require__(33);
+const env_1 = __webpack_require__(35);
+const entrypoint_1 = __webpack_require__(34);
+const from_1 = __webpack_require__(21);
+const healthcheck_1 = __webpack_require__(36);
+const onbuild_1 = __webpack_require__(37);
 const util_1 = __webpack_require__(10);
 class ImageTemplate {
     constructor() {
@@ -19465,7 +19787,7 @@ exports.ImageTemplate = ImageTemplate;
 
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19476,7 +19798,7 @@ exports.ImageTemplate = ImageTemplate;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const dockerfile_ast_1 = __webpack_require__(15);
+const dockerfile_ast_1 = __webpack_require__(16);
 class DockerFormatter {
     getIndentation(formattingOptions) {
         let indentation = "\t";
@@ -19634,7 +19956,7 @@ exports.DockerFormatter = DockerFormatter;
 
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19645,8 +19967,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const dockerfile_ast_1 = __webpack_require__(15);
-const main_1 = __webpack_require__(39);
+const dockerfile_ast_1 = __webpack_require__(16);
+const main_1 = __webpack_require__(40);
 exports.KEYWORDS = [
     "ADD",
     "ARG",
@@ -19676,7 +19998,8 @@ class Validator {
             instructionCasing: main_1.ValidationSeverity.WARNING,
             instructionCmdMultiple: main_1.ValidationSeverity.WARNING,
             instructionEntrypointMultiple: main_1.ValidationSeverity.WARNING,
-            instructionHealthcheckMultiple: main_1.ValidationSeverity.WARNING
+            instructionHealthcheckMultiple: main_1.ValidationSeverity.WARNING,
+            instructionJSONInSingleQuotes: main_1.ValidationSeverity.WARNING
         };
         if (settings) {
             this.settings = settings;
@@ -19821,7 +20144,7 @@ class Validator {
                     problems.push(diagnostic);
                 }
             }
-            else if (duplicate instanceof dockerfile_ast_1.Healthcheck) {
+            else {
                 // more than one HEALTHCHECK found, warn the user
                 let diagnostic = this.createMultipleInstructions(duplicate.getInstructionRange(), this.settings.instructionHealthcheckMultiple, "HEALTHCHECK");
                 if (diagnostic) {
@@ -19923,7 +20246,15 @@ class Validator {
             }
             switch (keyword) {
                 case "CMD":
-                    // don't validate CMD instructions
+                    this.checkJSONQuotes(instruction, problems);
+                    break;
+                case "ENTRYPOINT":
+                case "RUN":
+                case "VOLUME":
+                    this.checkArguments(instruction, problems, [-1], function () {
+                        return null;
+                    });
+                    this.checkJSONQuotes(instruction, problems);
                     break;
                 case "ARG":
                     this.checkArguments(instruction, problems, [-1], function (index) {
@@ -20118,7 +20449,7 @@ class Validator {
                     this.checkArguments(instruction, problems, [-1], function () {
                         return null;
                     });
-                    this.checkJSON(instruction, problems);
+                    this.checkJSON(document, instruction, problems);
                     break;
                 case "STOPSIGNAL":
                     this.checkArguments(instruction, problems, [1], function (_index, argument) {
@@ -20196,21 +20527,70 @@ class Validator {
                     }
                     break;
                 case "ADD":
+                    const add = instruction;
                     const addArgs = instruction.getArguments();
                     if (addArgs.length === 1) {
-                        problems.push(Validator.createADDRequiresAtLeastTwoArguments(addArgs[0].getRange()));
+                        if (add.getClosingBracket()) {
+                            const jsonStrings = add.getJSONStrings();
+                            if (jsonStrings.length === 0) {
+                                problems.push(Validator.createADDRequiresAtLeastTwoArguments(instruction.getArgumentsRange()));
+                            }
+                            else if (jsonStrings.length === 1) {
+                                problems.push(Validator.createADDRequiresAtLeastTwoArguments(jsonStrings[0].getJSONRange()));
+                            }
+                            else if (jsonStrings.length > 2) {
+                                const addDestination = jsonStrings[jsonStrings.length - 1].getValue();
+                                const lastChar = addDestination.charAt(addDestination.length - 2);
+                                if (lastChar !== '\\' && lastChar !== '/') {
+                                    problems.push(Validator.createADDDestinationNotDirectory(jsonStrings[jsonStrings.length - 1].getJSONRange()));
+                                }
+                            }
+                        }
+                        else {
+                            problems.push(Validator.createADDRequiresAtLeastTwoArguments(addArgs[0].getRange()));
+                        }
                     }
                     else if (addArgs.length === 0) {
                         problems.push(Validator.createADDRequiresAtLeastTwoArguments(instruction.getInstructionRange()));
                     }
-                    else if (addArgs.length > 2) {
-                        let addDestination = addArgs[addArgs.length - 1].getValue();
-                        let lastChar = addDestination.charAt(addDestination.length - 1);
-                        if (lastChar !== '\\' && lastChar !== '/') {
-                            problems.push(Validator.createADDDestinationNotDirectory(addArgs[addArgs.length - 1].getRange()));
+                    else if (addArgs.length === 2) {
+                        if (add.getClosingBracket()) {
+                            const jsonStrings = add.getJSONStrings();
+                            if (jsonStrings.length === 0) {
+                                problems.push(Validator.createADDRequiresAtLeastTwoArguments(instruction.getArgumentsRange()));
+                            }
+                            else if (jsonStrings.length === 1) {
+                                problems.push(Validator.createADDRequiresAtLeastTwoArguments(jsonStrings[0].getJSONRange()));
+                            }
+                            else if (jsonStrings.length > 2) {
+                                const addDestination = jsonStrings[jsonStrings.length - 1].getValue();
+                                const lastChar = addDestination.charAt(addDestination.length - 2);
+                                if (lastChar !== '\\' && lastChar !== '/') {
+                                    problems.push(Validator.createADDDestinationNotDirectory(jsonStrings[jsonStrings.length - 1].getJSONRange()));
+                                }
+                            }
                         }
                     }
-                    const addFlags = instruction.getFlags();
+                    else {
+                        if (add.getClosingBracket()) {
+                            const jsonStrings = add.getJSONStrings();
+                            if (jsonStrings.length > 2) {
+                                const addDestination = jsonStrings[jsonStrings.length - 1].getValue();
+                                const lastChar = addDestination.charAt(addDestination.length - 2);
+                                if (lastChar !== '\\' && lastChar !== '/') {
+                                    problems.push(Validator.createADDDestinationNotDirectory(jsonStrings[jsonStrings.length - 1].getJSONRange()));
+                                }
+                            }
+                        }
+                        else {
+                            const addDestination = addArgs[addArgs.length - 1].getValue();
+                            const lastChar = addDestination.charAt(addDestination.length - 1);
+                            if (lastChar !== '\\' && lastChar !== '/') {
+                                problems.push(Validator.createADDDestinationNotDirectory(addArgs[addArgs.length - 1].getRange()));
+                            }
+                        }
+                    }
+                    const addFlags = add.getFlags();
                     for (let flag of addFlags) {
                         const name = flag.getName();
                         const flagRange = flag.getRange();
@@ -20224,6 +20604,7 @@ class Validator {
                     }
                     this.checkFlagValue(addFlags, ["chown"], problems);
                     this.checkDuplicateFlags(addFlags, ["chown"], problems);
+                    this.checkJSONQuotes(instruction, problems);
                     break;
                 case "COPY":
                     let copy = instruction;
@@ -20254,20 +20635,69 @@ class Validator {
                         }
                     }
                     if (copyArgs.length === 1) {
-                        problems.push(Validator.createCOPYRequiresAtLeastTwoArguments(copyArgs[0].getRange()));
+                        if (copy.getClosingBracket()) {
+                            const jsonStrings = copy.getJSONStrings();
+                            if (jsonStrings.length === 0) {
+                                problems.push(Validator.createCOPYRequiresAtLeastTwoArguments(instruction.getArgumentsRange()));
+                            }
+                            else if (jsonStrings.length === 1) {
+                                problems.push(Validator.createCOPYRequiresAtLeastTwoArguments(jsonStrings[0].getJSONRange()));
+                            }
+                            else if (jsonStrings.length > 2) {
+                                let copyDestination = jsonStrings[jsonStrings.length - 1].getValue();
+                                let lastChar = copyDestination.charAt(copyDestination.length - 2);
+                                if (lastChar !== '\\' && lastChar !== '/') {
+                                    problems.push(Validator.createCOPYDestinationNotDirectory(jsonStrings[jsonStrings.length - 1].getJSONRange()));
+                                }
+                            }
+                        }
+                        else {
+                            problems.push(Validator.createCOPYRequiresAtLeastTwoArguments(copyArgs[0].getRange()));
+                        }
                     }
                     else if (copyArgs.length === 0) {
                         problems.push(Validator.createCOPYRequiresAtLeastTwoArguments(instruction.getInstructionRange()));
                     }
-                    else if (copyArgs.length > 2) {
-                        let copyDestination = copyArgs[copyArgs.length - 1].getValue();
-                        let lastChar = copyDestination.charAt(copyDestination.length - 1);
-                        if (lastChar !== '\\' && lastChar !== '/') {
-                            problems.push(Validator.createCOPYDestinationNotDirectory(copyArgs[copyArgs.length - 1].getRange()));
+                    else if (copyArgs.length === 2) {
+                        if (copy.getClosingBracket()) {
+                            const jsonStrings = copy.getJSONStrings();
+                            if (jsonStrings.length === 0) {
+                                problems.push(Validator.createCOPYRequiresAtLeastTwoArguments(instruction.getArgumentsRange()));
+                            }
+                            else if (jsonStrings.length === 1) {
+                                problems.push(Validator.createCOPYRequiresAtLeastTwoArguments(jsonStrings[0].getJSONRange()));
+                            }
+                            else if (jsonStrings.length > 2) {
+                                let copyDestination = jsonStrings[jsonStrings.length - 1].getValue();
+                                let lastChar = copyDestination.charAt(copyDestination.length - 2);
+                                if (lastChar !== '\\' && lastChar !== '/') {
+                                    problems.push(Validator.createCOPYDestinationNotDirectory(jsonStrings[jsonStrings.length - 1].getJSONRange()));
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        if (copy.getClosingBracket()) {
+                            let jsonStrings = copy.getJSONStrings();
+                            if (jsonStrings.length > 2) {
+                                let copyDestination = jsonStrings[jsonStrings.length - 1].getValue();
+                                let lastChar = copyDestination.charAt(copyDestination.length - 2);
+                                if (lastChar !== '\\' && lastChar !== '/') {
+                                    problems.push(Validator.createCOPYDestinationNotDirectory(jsonStrings[jsonStrings.length - 1].getJSONRange()));
+                                }
+                            }
+                        }
+                        else {
+                            let copyDestination = copyArgs[copyArgs.length - 1].getValue();
+                            let lastChar = copyDestination.charAt(copyDestination.length - 1);
+                            if (lastChar !== '\\' && lastChar !== '/') {
+                                problems.push(Validator.createCOPYDestinationNotDirectory(copyArgs[copyArgs.length - 1].getRange()));
+                            }
                         }
                     }
                     this.checkFlagValue(flags, ["chown", "from"], problems);
                     this.checkDuplicateFlags(flags, ["chown", "from"], problems);
+                    this.checkJSONQuotes(instruction, problems);
                     break;
                 default:
                     this.checkArguments(instruction, problems, [-1], function () {
@@ -20316,11 +20746,28 @@ class Validator {
                     let durationSpecified = false;
                     let start = 0;
                     let duration = 0;
+                    let digitFound = false;
+                    let hyphenFound = false;
+                    let periodsDetected = 0;
                     durationParse: for (let i = 0; i < value.length; i++) {
                         durationSpecified = false;
                         switch (value.charAt(i)) {
                             case '-':
+                                if (digitFound) {
+                                    let range = flag.getValueRange();
+                                    problems.push(Validator.createFlagUnknownUnit(range, value.charAt(i), value));
+                                    continue flagCheck;
+                                }
+                                else if (hyphenFound) {
+                                    let range = flag.getValueRange();
+                                    problems.push(Validator.createFlagInvalidDuration(range.start, range.end, value));
+                                    continue flagCheck;
+                                }
+                                hyphenFound = true;
+                                continue;
                             case '.':
+                                periodsDetected++;
+                                continue;
                             case '0':
                             case '1':
                             case '2':
@@ -20331,8 +20778,15 @@ class Validator {
                             case '7':
                             case '8':
                             case '9':
+                                digitFound = true;
                                 continue;
                             default:
+                                if (periodsDetected > 1) {
+                                    let range = flag.getValueRange();
+                                    problems.push(Validator.createFlagMissingDuration(range.start, range.end, value));
+                                    continue flagCheck;
+                                }
+                                periodsDetected = 0;
                                 let time = parseFloat(value.substring(start, i));
                                 for (let j = i + 1; j < value.length; j++) {
                                     if (Validator.isNumberRelated(value.charAt(j))) {
@@ -20483,7 +20937,7 @@ class Validator {
             }
         }
     }
-    checkJSON(instruction, problems) {
+    checkJSON(document, instruction, problems) {
         let argsContent = instruction.getArgumentsContent();
         if (argsContent === null) {
             return;
@@ -20495,25 +20949,48 @@ class Validator {
             problems.push(Validator.createShellRequiresOne(argsRange));
             return;
         }
-        let last = "";
+        const closing = instruction.getClosingBracket();
+        if (closing) {
+            let content = document.getText();
+            content = content.substring(document.offsetAt(instruction.getOpeningBracket().getRange().end), document.offsetAt(closing.getRange().start));
+            content = content.trim();
+            if (content.charAt(content.length - 1) !== '"') {
+                problems.push(Validator.createShellJsonForm(argsRange));
+            }
+        }
+        else {
+            problems.push(Validator.createShellJsonForm(argsRange));
+        }
+    }
+    checkJSONQuotes(instruction, problems) {
+        let argsContent = instruction.getArgumentsContent();
+        if (argsContent === null) {
+            return;
+        }
+        let argsRange = instruction.getArgumentsRange();
+        let args = instruction.getArguments();
+        if ((args.length === 1 && args[0].getValue() === "[]") ||
+            (args.length === 2 && args[0].getValue() === '[' && args[1].getValue() === ']')) {
+            return;
+        }
+        let jsonLike = false;
+        let last = null;
         let quoted = false;
         argsCheck: for (let i = 0; i < argsContent.length; i++) {
             switch (argsContent.charAt(i)) {
                 case '[':
-                    if (last === "") {
+                    if (last === null) {
                         last = '[';
-                    }
-                    else if (!quoted) {
-                        break argsCheck;
+                        jsonLike = true;
                     }
                     break;
-                case '"':
+                case '\'':
                     if (last === '[' || last === ',') {
                         quoted = true;
-                        last = '"';
+                        last = '\'';
                         continue;
                     }
-                    else if (last === '"') {
+                    else if (last === '\'') {
                         if (quoted) {
                             // quoted string done
                             quoted = false;
@@ -20528,8 +21005,11 @@ class Validator {
                     }
                     break;
                 case ',':
-                    if (!quoted) {
-                        if (last === '"') {
+                    if (!jsonLike) {
+                        break argsCheck;
+                    }
+                    else if (!quoted) {
+                        if (last === '\'') {
                             last = ',';
                         }
                         else {
@@ -20539,65 +21019,18 @@ class Validator {
                     break;
                 case ']':
                     if (!quoted) {
-                        if (last === null) {
-                            last = ']';
-                            break argsCheck;
-                        }
-                        else if (last !== ',') {
+                        if (last === '\'' || last === ',') {
                             last = null;
+                            const problem = Validator.createJSONInSingleQuotes(argsRange, this.settings.instructionJSONInSingleQuotes);
+                            if (problem) {
+                                problems.push(problem);
+                            }
                         }
+                        break argsCheck;
                     }
                     break;
                 case ' ':
                 case '\t':
-                    break;
-                case '\\':
-                    if (quoted) {
-                        switch (argsContent.charAt(i + 1)) {
-                            case '"':
-                            case '\\':
-                                i++;
-                                continue;
-                            case ' ':
-                            case '\t':
-                                for (let j = i + 2; j < argsContent.length; j++) {
-                                    switch (argsContent.charAt(j)) {
-                                        case '\r':
-                                            j++;
-                                        case '\n':
-                                            i = j;
-                                            continue argsCheck;
-                                        case ' ':
-                                        case '\t':
-                                            break;
-                                        default:
-                                            break argsCheck;
-                                    }
-                                }
-                                break;
-                            default:
-                                i++;
-                                continue;
-                        }
-                    }
-                    else {
-                        for (let j = i + 1; j < argsContent.length; j++) {
-                            switch (argsContent.charAt(j)) {
-                                case '\r':
-                                    if (argsContent.charAt(j + 1) === '\n') {
-                                        j++;
-                                    }
-                                case '\n':
-                                    i = j;
-                                    continue argsCheck;
-                                case ' ':
-                                case '\t':
-                                    break;
-                                default:
-                                    break argsCheck;
-                            }
-                        }
-                    }
                     break;
                 default:
                     if (!quoted) {
@@ -20605,9 +21038,6 @@ class Validator {
                     }
                     break;
             }
-        }
-        if (last !== null) {
-            problems.push(Validator.createShellJsonForm(argsRange));
         }
     }
     static formatMessage(text, ...variables) {
@@ -20732,6 +21162,9 @@ class Validator {
     }
     static getDiagnosticMessage_InstructionCasing() {
         return Validator.dockerProblems["instructionCasing"];
+    }
+    static getDiagnosticMessage_InstructionJSONInSingleQuotes() {
+        return Validator.dockerProblems["instructionJSONInSingleQuotes"];
     }
     static getDiagnosticMessage_OnbuildChainingDisallowed() {
         return Validator.dockerProblems["onbuildChainingDisallowed"];
@@ -20886,6 +21319,15 @@ class Validator {
     static createError(start, end, description, code) {
         return Validator.createDiagnostic(vscode_languageserver_types_1.DiagnosticSeverity.Error, start, end, description, code);
     }
+    static createJSONInSingleQuotes(range, severity) {
+        if (severity === main_1.ValidationSeverity.ERROR) {
+            return Validator.createError(range.start, range.end, Validator.getDiagnosticMessage_InstructionJSONInSingleQuotes(), main_1.ValidationCode.JSON_IN_SINGLE_QUOTES);
+        }
+        else if (severity === main_1.ValidationSeverity.WARNING) {
+            return Validator.createWarning(range.start, range.end, Validator.getDiagnosticMessage_InstructionJSONInSingleQuotes(), main_1.ValidationCode.JSON_IN_SINGLE_QUOTES);
+        }
+        return null;
+    }
     static createEmptyContinuationLine(start, end, severity) {
         if (severity === main_1.ValidationSeverity.ERROR) {
             return Validator.createError(start, end, Validator.getDiagnosticMessage_EmptyContinuationLine(), main_1.ValidationCode.EMPTY_CONTINUATION_LINE);
@@ -20985,6 +21427,7 @@ Validator.dockerProblems = {
     "instructionUnnecessaryArgument": "${0} takes no arguments",
     "instructionUnknown": "Unknown instruction: ${0}",
     "instructionCasing": "Instructions should be written in uppercase letters",
+    "instructionJSONInSingleQuotes": "Instruction written as a JSON array but is using single quotes instead of double quotes",
     "onbuildChainingDisallowed": "Chaining ONBUILD via `ONBUILD ONBUILD` isn't allowed",
     "onbuildTriggerDisallowed": "${0} isn't allowed as an ONBUILD trigger",
     "shellJsonForm": "SHELL requires the arguments to be in JSON form",
@@ -20997,7 +21440,7 @@ exports.Validator = Validator;
 
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21008,9 +21451,10 @@ exports.Validator = Validator;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const imageTemplate_1 = __webpack_require__(112);
+const imageTemplate_1 = __webpack_require__(114);
+const from_1 = __webpack_require__(24);
 const util_1 = __webpack_require__(11);
-const main_1 = __webpack_require__(15);
+const main_1 = __webpack_require__(16);
 class Dockerfile extends imageTemplate_1.ImageTemplate {
     constructor(document) {
         super();
@@ -21097,12 +21541,26 @@ class Dockerfile extends imageTemplate_1.ImageTemplate {
         let image = this.getContainingImage(vscode_languageserver_types_1.Position.create(line, 0));
         return image.resolveVariable(variable, line);
     }
+    getAvailableVariables(currentLine) {
+        if (this.getInstructionAt(currentLine) instanceof from_1.From) {
+            let variables = [];
+            for (let arg of this.getInitialARGs()) {
+                let property = arg.getProperty();
+                if (property) {
+                    variables.push(property.getName());
+                }
+            }
+            return variables;
+        }
+        let image = this.getContainingImage(vscode_languageserver_types_1.Position.create(currentLine, 0));
+        return image.getAvailableVariables(currentLine);
+    }
 }
 exports.Dockerfile = Dockerfile;
 
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21113,12 +21571,12 @@ exports.Dockerfile = Dockerfile;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(1);
-const arg_1 = __webpack_require__(40);
-const cmd_1 = __webpack_require__(41);
-const copy_1 = __webpack_require__(42);
-const env_1 = __webpack_require__(44);
-const entrypoint_1 = __webpack_require__(43);
-const from_1 = __webpack_require__(45);
+const arg_1 = __webpack_require__(41);
+const cmd_1 = __webpack_require__(42);
+const copy_1 = __webpack_require__(43);
+const env_1 = __webpack_require__(45);
+const entrypoint_1 = __webpack_require__(44);
+const from_1 = __webpack_require__(24);
 const healthcheck_1 = __webpack_require__(46);
 const onbuild_1 = __webpack_require__(47);
 const util_1 = __webpack_require__(11);
@@ -21138,6 +21596,14 @@ class ImageTemplate {
     }
     getInstructions() {
         return this.instructions;
+    }
+    getInstructionAt(line) {
+        for (let instruction of this.instructions) {
+            if (util_1.Util.isInsideRange(vscode_languageserver_types_1.Position.create(line, 0), instruction.getRange())) {
+                return instruction;
+            }
+        }
+        return null;
     }
     /**
      * Gets all the ARG instructions that are defined in this image.
@@ -21306,7 +21772,7 @@ exports.ImageTemplate = ImageTemplate;
 
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports) {
 
 module.exports = function (glob, opts) {
@@ -21443,11 +21909,11 @@ module.exports = function (glob, opts) {
 
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var http = __webpack_require__(128)
-var url = __webpack_require__(101)
+var http = __webpack_require__(130)
+var url = __webpack_require__(103)
 
 var https = module.exports
 
@@ -21480,7 +21946,7 @@ function validateParams (params) {
 
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -21570,7 +22036,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21657,7 +22123,7 @@ exports.MonacoModelDiagnostics = MonacoModelDiagnostics;
 //# sourceMappingURL=diagnostic-collection.js.map
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21671,28 +22137,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 __export(__webpack_require__(50));
-__export(__webpack_require__(83));
-__export(__webpack_require__(84));
-__export(__webpack_require__(86));
-__export(__webpack_require__(87));
 __export(__webpack_require__(85));
-__export(__webpack_require__(118));
-__export(__webpack_require__(102));
-__export(__webpack_require__(144));
+__export(__webpack_require__(86));
+__export(__webpack_require__(88));
+__export(__webpack_require__(89));
+__export(__webpack_require__(87));
+__export(__webpack_require__(120));
+__export(__webpack_require__(104));
+__export(__webpack_require__(146));
 //# sourceMappingURL=index.js.map
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var converter_1 = __webpack_require__(85);
-var commands_1 = __webpack_require__(83);
-var languages_1 = __webpack_require__(86);
-var workspace_1 = __webpack_require__(87);
-var console_window_1 = __webpack_require__(84);
+var converter_1 = __webpack_require__(87);
+var commands_1 = __webpack_require__(85);
+var languages_1 = __webpack_require__(88);
+var workspace_1 = __webpack_require__(89);
+var console_window_1 = __webpack_require__(86);
 function createMonacoServices(editor, options) {
     if (options === void 0) { options = {}; }
     var m2p = new converter_1.MonacoToProtocolConverter();
@@ -21708,7 +22174,7 @@ exports.createMonacoServices = createMonacoServices;
 //# sourceMappingURL=services.js.map
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -21763,7 +22229,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -21994,7 +22460,7 @@ var substr = 'ab'.substr(-1) === 'b'
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
@@ -22530,10 +22996,10 @@ var substr = 'ab'.substr(-1) === 'b'
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(152)(module), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(154)(module), __webpack_require__(3)))
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22624,7 +23090,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22716,18 +23182,18 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(122);
-exports.encode = exports.stringify = __webpack_require__(123);
+exports.decode = exports.parse = __webpack_require__(124);
+exports.encode = exports.stringify = __webpack_require__(125);
 
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22760,7 +23226,7 @@ exports.encode = exports.stringify = __webpack_require__(123);
 
 module.exports = PassThrough;
 
-var Transform = __webpack_require__(89);
+var Transform = __webpack_require__(91);
 
 /*<replacement>*/
 var util = __webpack_require__(14);
@@ -22780,7 +23246,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22788,8 +23254,8 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Buffer = __webpack_require__(27).Buffer;
-var util = __webpack_require__(155);
+var Buffer = __webpack_require__(28).Buffer;
+var util = __webpack_require__(157);
 
 function copyBuffer(src, target, offset) {
   src.copy(target, offset);
@@ -22865,7 +23331,7 @@ if (util && util.inspect && util.inspect.custom) {
 }
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -23058,14 +23524,14 @@ if (util && util.inspect && util.inspect.custom) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(129)
-var IncomingMessage = __webpack_require__(95)
-var extend = __webpack_require__(153)
-var statusCodes = __webpack_require__(106)
-var url = __webpack_require__(101)
+/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(131)
+var IncomingMessage = __webpack_require__(97)
+var extend = __webpack_require__(155)
+var statusCodes = __webpack_require__(108)
+var url = __webpack_require__(103)
 
 var http = exports
 
@@ -23147,14 +23613,14 @@ http.METHODS = [
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(94)
+/* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(96)
 var inherits = __webpack_require__(12)
-var response = __webpack_require__(95)
-var stream = __webpack_require__(93)
-var toArrayBuffer = __webpack_require__(130)
+var response = __webpack_require__(97)
+var stream = __webpack_require__(95)
+var toArrayBuffer = __webpack_require__(132)
 
 var IncomingMessage = response.IncomingMessage
 var rStates = response.readyStates
@@ -23477,7 +23943,7 @@ var unsafeHeaders = [
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).Buffer, __webpack_require__(3), __webpack_require__(6)))
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Buffer = __webpack_require__(9).Buffer
@@ -23510,7 +23976,7 @@ module.exports = function (buf) {
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -23555,7 +24021,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 'use strict';
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var docker_1 = __webpack_require__(16);
+var docker_1 = __webpack_require__(17);
 var dockerfile_ast_1 = __webpack_require__(2);
 var DockerAssist = /** @class */ (function () {
     /**
@@ -24230,7 +24696,7 @@ exports.DockerAssist = DockerAssist;
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24241,8 +24707,8 @@ exports.DockerAssist = DockerAssist;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerfile_utils_1 = __webpack_require__(39);
-var main_1 = __webpack_require__(100);
+var dockerfile_utils_1 = __webpack_require__(40);
+var main_1 = __webpack_require__(102);
 var DockerCommands = /** @class */ (function () {
     function DockerCommands() {
     }
@@ -24422,7 +24888,60 @@ exports.DockerCommands = DockerCommands;
 
 
 /***/ }),
-/* 133 */
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* --------------------------------------------------------------------------------------------
+* Copyright (c) Remy Suen. All rights reserved.
+* Licensed under the MIT License. See License.txt in the project root for license information.
+* ------------------------------------------------------------------------------------------ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var vscode_languageserver_types_1 = __webpack_require__(0);
+var dockerMarkdown_1 = __webpack_require__(101);
+var dockerPlainText_1 = __webpack_require__(53);
+var DockerCompletion = /** @class */ (function () {
+    function DockerCompletion() {
+        this.dockerMarkdown = new dockerMarkdown_1.MarkdownDocumentation();
+        this.dockerPlainText = new dockerPlainText_1.PlainTextDocumentation();
+    }
+    DockerCompletion.prototype.resolveCompletionItem = function (item, documentationFormat) {
+        if (!item.documentation && item.data) {
+            if (documentationFormat === undefined || documentationFormat === null) {
+                item.documentation = this.dockerPlainText.getDocumentation(item.data);
+            }
+            else {
+                for (var _i = 0, documentationFormat_1 = documentationFormat; _i < documentationFormat_1.length; _i++) {
+                    var format = documentationFormat_1[_i];
+                    if (format === vscode_languageserver_types_1.MarkupKind.PlainText) {
+                        item.documentation = {
+                            kind: vscode_languageserver_types_1.MarkupKind.PlainText,
+                            value: this.dockerPlainText.getDocumentation(item.data)
+                        };
+                        return item;
+                    }
+                    else if (format === vscode_languageserver_types_1.MarkupKind.Markdown) {
+                        item.documentation = {
+                            kind: vscode_languageserver_types_1.MarkupKind.Markdown,
+                            value: this.dockerMarkdown.getMarkdown(item.data).contents
+                        };
+                        return item;
+                    }
+                }
+                // no known format detected, just use plain text then
+                item.documentation = this.dockerPlainText.getDocumentation(item.data);
+            }
+        }
+        return item;
+    };
+    return DockerCompletion;
+}());
+exports.DockerCompletion = DockerCompletion;
+
+
+/***/ }),
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24590,7 +25109,7 @@ exports.DockerFormatter = DockerFormatter;
 
 
 /***/ }),
-/* 134 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24602,7 +25121,7 @@ exports.DockerFormatter = DockerFormatter;
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
 var dockerfile_ast_1 = __webpack_require__(2);
-var docker_1 = __webpack_require__(16);
+var docker_1 = __webpack_require__(17);
 var dockerDefinition_1 = __webpack_require__(52);
 var DockerHover = /** @class */ (function () {
     function DockerHover(markdown, plainText) {
@@ -24790,7 +25309,7 @@ exports.DockerHover = DockerHover;
 
 
 /***/ }),
-/* 135 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24833,7 +25352,7 @@ exports.DockerLinks = DockerLinks;
 
 
 /***/ }),
-/* 136 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24843,237 +25362,7 @@ exports.DockerLinks = DockerLinks;
 * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var MarkdownDocumentation = /** @class */ (function () {
-    function MarkdownDocumentation() {
-        this.dockerMessages = {
-            "hoverAdd": "Copy files, folders, or remote URLs from `source` to the `dest` path in the image's filesystem.\n\n",
-            "hoverArg": "Define a variable with an optional default value that users can override at build-time when using `docker build`.\n\nSince Docker 1.9\n\n",
-            "hoverCmd": "Provide defaults for an executing container. If an executable is not specified, then `ENTRYPOINT` must be specified as well. There can only be one `CMD` instruction in a `Dockerfile`.\n\n",
-            "hoverCopy": "Copy files or folders from `source` to the `dest` path in the image's filesystem.\n\n",
-            "hoverEntrypoint": "Configures the container to be run as an executable.\n\n",
-            "hoverEnv": "Set the environment variable `key` to the value `value`.\n\n",
-            "hoverExpose": "Define the network `port`s that this container will listen on at runtime.\n\n",
-            "hoverFrom": "Set the `baseImage` to use for subsequent instructions. `FROM` must be the first instruction in a `Dockerfile`.\n\n",
-            "hoverHealthcheck": "Define how Docker should test the container to check that it is still working. Alternatively, disable the base image's `HEALTHCHECK` instruction. There can only be one `HEALTHCHECK` instruction in a `Dockerfile`.\n\nSince Docker 1.12\n\n",
-            "hoverLabel": "Adds metadata to an image.\n\nSince Docker 1.6\n\n",
-            "hoverMaintainer": "Set the _Author_ field of the generated images. This instruction has been deprecated in favor of `LABEL`.\n\n",
-            "hoverOnbuild": "Add a _trigger_ instruction to the image that will be executed when the image is used as a base image for another build.\n\n",
-            "hoverRun": "Execute any commands on top of the current image as a new layer and commit the results.\n\n",
-            "hoverShell": "Override the default shell used for the _shell_ form of commands.\n\nSince Docker 1.12\n\n",
-            "hoverStopsignal": "Set the system call signal to use to send to the container to exit. Signals can be valid unsigned numbers or a signal name in the `SIGNAME` format such as `SIGKILL`.\n\nSince Docker 1.9\n\n",
-            "hoverUser": "Set the user name or UID to use when running the image in addition to any subsequent `CMD`, `ENTRYPOINT`, or `RUN` instructions that follow it in the `Dockerfile`.\n\n",
-            "hoverVolume": "Create a mount point with the specifid name and mark it as holding externally mounted volumes from the native host or from other containers.\n\n",
-            "hoverWorkdir": "Set the working directory for any subsequent `ADD`, `COPY`, `CMD`, `ENTRYPOINT`, or `RUN` instructions that follow it in the `Dockerfile`.\n\n",
-            "hoverEscape": "Sets the character to use to escape characters and newlines in this Dockerfile. If unspecified, the default escape character is `\\`.\n\n",
-            "hoverOnlineDocumentationFooter": "\n\n[Online documentation](${0})",
-            "hoverAddFlagChown": "The username, groupname, or UID/GID combination to own the added content.",
-            "hoverCopyFlagChown": "The username, groupname, or UID/GID combination to own the copied content.",
-            "hoverCopyFlagFrom": "The previous build stage to use as the source location instead of the build's context.\n\nSince Docker 17.05.0-ce.",
-            "hoverHealthcheckFlagInterval": "The seconds to wait for the health check to run after the container has started, and then again the number of seconds to wait before running again after the previous check has completed.",
-            "hoverHealthcheckFlagRetries": "The number of consecutive failures of this health check before the container is considered to be `unhealthy`.",
-            "hoverHealthcheckFlagStartPeriod": "The number of seconds to wait for the container to startup. Failures during this grace period will not count towards the maximum number of retries. However, should a health check succeed during this period then any subsequent failures will count towards the maximum number of retries.\n\nSince Docker 17.05.0-ce.",
-            "hoverHealthcheckFlagTimeout": "The number of seconds to wait for the check to complete before considering it to have failed.",
-            "proposalArgNameOnly": "Define a variable that users can set at build-time when using `docker build`.\n\n",
-            "proposalArgDefaultValue": "Define a variable with the given default value that users can override at build-time when using `docker build`.\n\n",
-            "proposalHealthcheckExec": "Define how Docker should test the container to check that it is still working. There can only be one `HEALTHCHECK` instruction in a `Dockerfile`.\n\nSince Docker 1.12\n\n",
-            "proposalHealthcheckNone": "Disable the `HEALTHCHECK` instruction inherited from the base image if one exists. There can only be one `HEALTHCHECK` instruction in a `Dockerfile`.\n\nSince Docker 1.12"
-        };
-        this.markdowns = {
-            ADD: {
-                contents: this.dockerMessages["hoverAdd"] +
-                    "```\n" +
-                    "ADD hello.txt /absolute/path\n" +
-                    "ADD hello.txt relative/to/workdir\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#add")
-            },
-            ADD_FlagChown: {
-                contents: this.dockerMessages["hoverAddFlagChown"]
-            },
-            ARG: {
-                contents: this.dockerMessages["hoverArg"] +
-                    "```\n" +
-                    "ARG userName\n" +
-                    "ARG testOutputDir=test\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#arg")
-            },
-            CMD: {
-                contents: this.dockerMessages["hoverCmd"] +
-                    "```\n" +
-                    "CMD [ \"/bin/ls\", \"-l\" ]\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#cmd")
-            },
-            COPY: {
-                contents: this.dockerMessages["hoverCopy"] +
-                    "```\n" +
-                    "COPY hello.txt /absolute/path\n" +
-                    "COPY hello.txt relative/to/workdir\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#copy")
-            },
-            COPY_FlagChown: {
-                contents: this.dockerMessages["hoverCopyFlagChown"]
-            },
-            COPY_FlagFrom: {
-                contents: this.dockerMessages["hoverCopyFlagFrom"]
-            },
-            ENTRYPOINT: {
-                contents: this.dockerMessages["hoverEntrypoint"] +
-                    "```\n" +
-                    "ENTRYPOINT [ \"/opt/app/run.sh\", \"--port\", \"8080\" ]\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#entrypoint")
-            },
-            ENV: {
-                contents: this.dockerMessages["hoverEnv"] +
-                    "```\n" +
-                    "ENV buildTag=1.0\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#env")
-            },
-            EXPOSE: {
-                contents: this.dockerMessages["hoverExpose"] +
-                    "```\n" +
-                    "EXPOSE 8080\n" +
-                    "EXPOSE 80 443 22\n" +
-                    "EXPOSE 7000-8000\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#expose")
-            },
-            FROM: {
-                contents: this.dockerMessages["hoverFrom"] +
-                    "```\n" +
-                    "FROM baseImage\n" +
-                    "FROM baseImage:tag\n" +
-                    "FROM baseImage@digest\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#from")
-            },
-            HEALTHCHECK: {
-                contents: this.dockerMessages["hoverHealthcheck"] +
-                    "```\n" +
-                    "HEALTHCHECK --interval=10m --timeout=5s \\\n" +
-                    "    CMD curl -f http://localhost/ || exit 1\n" +
-                    "HEALTHCHECK NONE\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#healthcheck")
-            },
-            HEALTHCHECK_FlagInterval: {
-                contents: this.dockerMessages["hoverHealthcheckFlagInterval"]
-            },
-            HEALTHCHECK_FlagRetries: {
-                contents: this.dockerMessages["hoverHealthcheckFlagRetries"]
-            },
-            HEALTHCHECK_FlagStartPeriod: {
-                contents: this.dockerMessages["hoverHealthcheckFlagStartPeriod"]
-            },
-            HEALTHCHECK_FlagTimeout: {
-                contents: this.dockerMessages["hoverHealthcheckFlagTimeout"]
-            },
-            LABEL: {
-                contents: this.dockerMessages["hoverLabel"] +
-                    "```\n" +
-                    "LABEL version=\"1.0\"\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#label")
-            },
-            MAINTAINER: {
-                contents: this.dockerMessages["hoverMaintainer"] +
-                    "```\n" +
-                    "MAINTAINER name\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#maintainer")
-            },
-            ONBUILD: {
-                contents: this.dockerMessages["hoverOnbuild"] +
-                    "```\n" +
-                    "ONBUILD ADD . /opt/app/src/extensions\n" +
-                    "ONBUILD RUN /usr/local/bin/build.sh /opt/app" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#cmd")
-            },
-            RUN: {
-                contents: this.dockerMessages["hoverRun"] +
-                    "```\n" +
-                    "RUN apt-get update && apt-get install -y curl\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#run")
-            },
-            SHELL: {
-                contents: this.dockerMessages["hoverShell"] +
-                    "```\n" +
-                    "SHELL [ \"powershell\", \"-command\" ]\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#shell")
-            },
-            STOPSIGNAL: {
-                contents: this.dockerMessages["hoverStopsignal"] +
-                    "```\n" +
-                    "STOPSIGNAL 9\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#stopsignal")
-            },
-            USER: {
-                contents: this.dockerMessages["hoverUser"] +
-                    "```\n" +
-                    "USER daemon\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#user")
-            },
-            VOLUME: {
-                contents: this.dockerMessages["hoverVolume"] +
-                    "```\n" +
-                    "VOLUME [ \"/var/db\" ]\n" +
-                    "```\n" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#volume")
-            },
-            WORKDIR: {
-                contents: this.dockerMessages["hoverWorkdir"] +
-                    "```\n" +
-                    "WORKDIR /path/to/workdir\n" +
-                    "WORKDIR relative/path\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#workdir")
-            },
-            escape: {
-                contents: this.dockerMessages["hoverEscape"] +
-                    "```\n" +
-                    "# escape=`\n" +
-                    "```" +
-                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#escape")
-            }
-        };
-    }
-    MarkdownDocumentation.prototype.formatMessage = function (text, variable) {
-        return text.replace("${0}", variable);
-    };
-    /**
-     * Retrieves the Markdown documentation for the given word.
-     *
-     * @param word the Dockerfile keyword or directive, must not be null
-     */
-    MarkdownDocumentation.prototype.getMarkdown = function (word) {
-        return this.markdowns[word];
-    };
-    return MarkdownDocumentation;
-}());
-exports.MarkdownDocumentation = MarkdownDocumentation;
-
-
-/***/ }),
-/* 137 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* --------------------------------------------------------------------------------------------
-* Copyright (c) Remy Suen. All rights reserved.
-* Licensed under the MIT License. See License.txt in the project root for license information.
-* ------------------------------------------------------------------------------------------ */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var https = __webpack_require__(114);
+var https = __webpack_require__(116);
 /**
  * The DockerRegistryClient provides a way to communicate with the
  * official Docker registry hosted on Docker Hub.
@@ -25196,7 +25485,7 @@ exports.DockerRegistryClient = DockerRegistryClient;
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25207,7 +25496,7 @@ exports.DockerRegistryClient = DockerRegistryClient;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerHighlight_1 = __webpack_require__(98);
+var dockerHighlight_1 = __webpack_require__(100);
 var DockerRename = /** @class */ (function () {
     function DockerRename() {
     }
@@ -25227,7 +25516,7 @@ exports.DockerRename = DockerRename;
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25238,9 +25527,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var dockerPlainText_1 = __webpack_require__(99);
+var dockerPlainText_1 = __webpack_require__(53);
 var dockerfile_ast_1 = __webpack_require__(2);
-var docker_1 = __webpack_require__(16);
+var docker_1 = __webpack_require__(17);
 var DockerSignatures = /** @class */ (function () {
     function DockerSignatures() {
         this.documentation = new dockerPlainText_1.PlainTextDocumentation();
@@ -26580,7 +26869,7 @@ exports.DockerSignatures = DockerSignatures;
 
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26624,27 +26913,28 @@ exports.DockerSymbols = DockerSymbols;
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
-var DockerfileUtils = __webpack_require__(39);
-var dockerAssist_1 = __webpack_require__(131);
-var dockerRegistryClient_1 = __webpack_require__(137);
-var dockerCommands_1 = __webpack_require__(132);
+var DockerfileUtils = __webpack_require__(40);
+var dockerAssist_1 = __webpack_require__(133);
+var dockerRegistryClient_1 = __webpack_require__(139);
+var dockerCommands_1 = __webpack_require__(134);
 var dockerDefinition_1 = __webpack_require__(52);
-var dockerHighlight_1 = __webpack_require__(98);
-var dockerSymbols_1 = __webpack_require__(140);
-var dockerSignatures_1 = __webpack_require__(139);
-var dockerLinks_1 = __webpack_require__(135);
-var dockerPlainText_1 = __webpack_require__(99);
-var dockerRename_1 = __webpack_require__(138);
-var dockerHover_1 = __webpack_require__(134);
-var dockerMarkdown_1 = __webpack_require__(136);
-var dockerFormatter_1 = __webpack_require__(133);
+var dockerHighlight_1 = __webpack_require__(100);
+var dockerSymbols_1 = __webpack_require__(142);
+var dockerSignatures_1 = __webpack_require__(141);
+var dockerLinks_1 = __webpack_require__(138);
+var dockerPlainText_1 = __webpack_require__(53);
+var dockerRename_1 = __webpack_require__(140);
+var dockerHover_1 = __webpack_require__(137);
+var dockerMarkdown_1 = __webpack_require__(101);
+var dockerFormatter_1 = __webpack_require__(136);
+var dockerCompletion_1 = __webpack_require__(135);
 var LanguageService = /** @class */ (function () {
     function LanguageService() {
         this.markdownDocumentation = new dockerMarkdown_1.MarkdownDocumentation();
@@ -26655,7 +26945,8 @@ var LanguageService = /** @class */ (function () {
         this.logger = logger;
     };
     LanguageService.prototype.setCapabilities = function (capabilities) {
-        this.markupKind = capabilities && capabilities.hover && capabilities.hover.contentFormat;
+        this.completionDocumentationFormat = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.documentationFormat;
+        this.hoverContentFormat = capabilities && capabilities.hover && capabilities.hover.contentFormat;
         this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
     };
     LanguageService.prototype.computeCodeActions = function (textDocument, range, context) {
@@ -26677,8 +26968,8 @@ var LanguageService = /** @class */ (function () {
     };
     LanguageService.prototype.resolveCompletionItem = function (item) {
         if (!item.documentation) {
-            var dockerPlainText = new dockerPlainText_1.PlainTextDocumentation();
-            item.documentation = dockerPlainText.getDocumentation(item.data);
+            var dockerCompletion = new dockerCompletion_1.DockerCompletion();
+            return dockerCompletion.resolveCompletionItem(item, this.completionDocumentationFormat);
         }
         return item;
     };
@@ -26692,7 +26983,7 @@ var LanguageService = /** @class */ (function () {
     };
     LanguageService.prototype.computeHover = function (content, position) {
         var dockerHover = new dockerHover_1.DockerHover(this.markdownDocumentation, this.plainTextDocumentation);
-        return dockerHover.onHover(content, position, this.markupKind);
+        return dockerHover.onHover(content, position, this.hoverContentFormat);
     };
     LanguageService.prototype.computeSymbols = function (textDocument, content) {
         var dockerSymbols = new dockerSymbols_1.DockerSymbols();
@@ -26726,7 +27017,7 @@ exports.LanguageService = LanguageService;
 
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26749,7 +27040,7 @@ module.exports = {
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -26823,7 +27114,7 @@ function config (name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26833,8 +27124,8 @@ function config (name) {
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const protocol_1 = __webpack_require__(17);
-const is = __webpack_require__(28);
+const protocol_1 = __webpack_require__(18);
+const is = __webpack_require__(29);
 function createConnection(connection, errorHandler, closeHandler) {
     connection.onError((data) => { errorHandler(data[0], data[1], data[2]); });
     connection.onClose(closeHandler);
@@ -26866,7 +27157,7 @@ exports.createConnection = createConnection;
 
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26937,7 +27228,7 @@ exports.Delayer = Delayer;
 
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27040,7 +27331,7 @@ exports.generateUuid = generateUuid;
 
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27050,8 +27341,8 @@ exports.generateUuid = generateUuid;
  *--------------------------------------------------------------------------------------------*/
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var events_1 = __webpack_require__(29);
-var Is = __webpack_require__(18);
+var events_1 = __webpack_require__(30);
+var Is = __webpack_require__(19);
 var CancellationToken;
 (function (CancellationToken) {
     CancellationToken.None = Object.freeze({
@@ -27144,7 +27435,7 @@ exports.CancellationTokenSource = CancellationTokenSource;
 
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27436,7 +27727,7 @@ exports.LinkedMap = LinkedMap;
 
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27456,7 +27747,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var is = __webpack_require__(18);
+var is = __webpack_require__(19);
 /**
  * Predefined error codes.
  */
@@ -27782,7 +28073,7 @@ exports.isResponseMessage = isResponseMessage;
 
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27792,12 +28083,12 @@ exports.isResponseMessage = isResponseMessage;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var path_1 = __webpack_require__(120);
-var os_1 = __webpack_require__(119);
+var path_1 = __webpack_require__(122);
+var os_1 = __webpack_require__(121);
 var crypto_1 = __webpack_require__(51);
 var net_1 = __webpack_require__(51);
-var messageReader_1 = __webpack_require__(55);
-var messageWriter_1 = __webpack_require__(56);
+var messageReader_1 = __webpack_require__(56);
+var messageWriter_1 = __webpack_require__(57);
 function generateRandomPipeName() {
     var randomSuffix = crypto_1.randomBytes(21).toString('hex');
     if (process.platform === 'win32') {
@@ -27846,7 +28137,7 @@ exports.createServerPipeTransport = createServerPipeTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27857,8 +28148,8 @@ exports.createServerPipeTransport = createServerPipeTransport;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var net_1 = __webpack_require__(51);
-var messageReader_1 = __webpack_require__(55);
-var messageWriter_1 = __webpack_require__(56);
+var messageReader_1 = __webpack_require__(56);
+var messageWriter_1 = __webpack_require__(57);
 function createClientSocketTransport(port, encoding) {
     if (encoding === void 0) { encoding = 'utf-8'; }
     var connectResolve;
@@ -27895,7 +28186,7 @@ exports.createServerSocketTransport = createServerSocketTransport;
 
 
 /***/ }),
-/* 152 */
+/* 154 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -27923,7 +28214,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 153 */
+/* 155 */
 /***/ (function(module, exports) {
 
 module.exports = extend
@@ -27948,13 +28239,13 @@ function extend() {
 
 
 /***/ }),
-/* 154 */
+/* 156 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 155 */
+/* 157 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
