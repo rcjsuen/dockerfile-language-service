@@ -9,7 +9,7 @@ The purpose of this project is to provide an API for creating a feature-rich Doc
 While this language service implements requests from the language server protocol, they are exposed as regular JavaScript functions so you can use them in the browser if you wish.
 For a demonstration of this language service's capabilities with Microsoft's [Monaco Editor](https://microsoft.github.io/monaco-editor/), please click [here](https://rcjsuen.github.io/dockerfile-language-service/).
 
-To [install](#installation-instructions) this language service as a dependency into your project, you will need to have [Node.js](https://nodejs.org/en/download/).
+To [install](#installation-instructions) this language service as a dependency into your project, you will need to have [Node.js](https://nodejs.org/en/download/) installed.
 
 **Supported features:**
 - code actions
