@@ -8882,7 +8882,7 @@ exports.Property = Property;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /* --------------------------------------------------------------------------------------------
- * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
+ * Copyright (c) 2018 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var services_1 = __webpack_require__(54);
@@ -9687,7 +9687,7 @@ function _createMessageConnection(messageReader, messageWriter, logger, strategy
     }
     var callback = function (message) {
         try {
-            // We have recevied a cancellation message. Check if the message is still in the queue
+            // We have received a cancellation message. Check if the message is still in the queue
             // and cancel it if allowed to do so.
             if (messages_1.isNotificationMessage(message) && message.method === CancelNotification.type.method) {
                 var key = createRequestQueueKey(message.params.id);
@@ -12648,7 +12648,8 @@ var MonacoCommands = /** @class */ (function () {
         this.editor = editor;
     }
     MonacoCommands.prototype.registerCommand = function (command, callback, thisArg) {
-        return this.editor._commandService.addCommand(command, {
+        return this.editor._commandService.addCommand({
+            id: command,
             handler: function (_accessor) {
                 var args = [];
                 for (var _i = 1; _i < arguments.length; _i++) {
@@ -12671,7 +12672,7 @@ exports.MonacoCommands = MonacoCommands;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /* --------------------------------------------------------------------------------------------
- * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
+ * Copyright (c) 2018 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var protocol_1 = __webpack_require__(18);
@@ -12738,7 +12739,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* --------------------------------------------------------------------------------------------
- * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
+ * Copyright (c) 2018 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var is = __webpack_require__(29);
@@ -12815,8 +12816,13 @@ var MonacoToProtocolConverter = /** @class */ (function () {
         if (item.sortText) {
             result.sortText = item.sortText;
         }
-        // TODO: if (item.additionalTextEdits) { result.additionalTextEdits = asTextEdits(item.additionalTextEdits); }
-        // TODO: if (item.command) { result.command = asCommand(item.command); }
+        if (item.additionalTextEdits) {
+            result.additionalTextEdits = this.asTextEdits(item.additionalTextEdits);
+        }
+        if (item.command) {
+            result.command = this.asCommand(item.command);
+        }
+        result.commitCharacters = item.commitCharacters;
         if (ProtocolCompletionItem.is(item)) {
             result.data = item.data;
         }
@@ -12848,6 +12854,20 @@ var MonacoToProtocolConverter = /** @class */ (function () {
             target.insertText = text;
         }
     };
+    MonacoToProtocolConverter.prototype.asTextEdit = function (edit) {
+        var range = this.asRange(edit.range);
+        return {
+            range: range,
+            newText: edit.text
+        };
+    };
+    MonacoToProtocolConverter.prototype.asTextEdits = function (items) {
+        var _this = this;
+        if (!items) {
+            return undefined;
+        }
+        return items.map(function (item) { return _this.asTextEdit(item); });
+    };
     MonacoToProtocolConverter.prototype.asReferenceParams = function (model, position, options) {
         return {
             textDocument: this.asTextDocumentIdentifier(model),
@@ -12867,12 +12887,14 @@ var MonacoToProtocolConverter = /** @class */ (function () {
     };
     MonacoToProtocolConverter.prototype.asDiagnosticSeverity = function (value) {
         switch (value) {
-            case monaco.Severity.Error:
+            case monaco.MarkerSeverity.Error:
                 return base_1.DiagnosticSeverity.Error;
-            case monaco.Severity.Warning:
+            case monaco.MarkerSeverity.Warning:
                 return base_1.DiagnosticSeverity.Warning;
-            case monaco.Severity.Info:
+            case monaco.MarkerSeverity.Info:
                 return base_1.DiagnosticSeverity.Information;
+            case monaco.MarkerSeverity.Hint:
+                return base_1.DiagnosticSeverity.Hint;
         }
         return undefined;
     };
@@ -12967,16 +12989,12 @@ exports.MonacoToProtocolConverter = MonacoToProtocolConverter;
 var ProtocolToMonacoConverter = /** @class */ (function () {
     function ProtocolToMonacoConverter() {
     }
-    ProtocolToMonacoConverter.prototype.asResourceEdits = function (resource, edits) {
-        var _this = this;
-        return edits.map(function (edit) {
-            var range = _this.asRange(edit.range);
-            return {
-                resource: resource,
-                range: range,
-                newText: edit.newText
-            };
-        });
+    ProtocolToMonacoConverter.prototype.asResourceEdits = function (resource, edits, modelVersionId) {
+        return {
+            resource: resource,
+            edits: this.asTextEdits(edits),
+            modelVersionId: modelVersionId
+        };
     };
     ProtocolToMonacoConverter.prototype.asWorkspaceEdit = function (item) {
         if (!item) {
@@ -12987,14 +13005,14 @@ var ProtocolToMonacoConverter = /** @class */ (function () {
             for (var _i = 0, _a = item.documentChanges; _i < _a.length; _i++) {
                 var change = _a[_i];
                 var resource = monaco.Uri.parse(change.textDocument.uri);
-                edits.push.apply(edits, this.asResourceEdits(resource, change.edits));
+                edits.push(this.asResourceEdits(resource, change.edits, change.textDocument.version));
             }
         }
         else if (item.changes) {
             for (var _b = 0, _c = Object.keys(item.changes); _b < _c.length; _b++) {
                 var key = _c[_b];
                 var resource = monaco.Uri.parse(key);
-                edits.push.apply(edits, this.asResourceEdits(resource, item.changes[key]));
+                edits.push(this.asResourceEdits(resource, item.changes[key]));
             }
         }
         return {
@@ -13036,16 +13054,26 @@ var ProtocolToMonacoConverter = /** @class */ (function () {
         }
         return items.map(function (codeLens) { return _this.asCodeLens(codeLens); });
     };
+    ProtocolToMonacoConverter.prototype.asCodeAction = function (command) {
+        return {
+            command: {
+                id: command.command,
+                title: command.title,
+                arguments: command.arguments
+            },
+            title: command.title
+        };
+    };
+    ProtocolToMonacoConverter.prototype.asCodeActions = function (commands) {
+        var _this = this;
+        return commands.map(function (command) { return _this.asCodeAction(command); });
+    };
     ProtocolToMonacoConverter.prototype.asCommand = function (command) {
         return {
             id: command.command,
             title: command.title,
             arguments: command.arguments
         };
-    };
-    ProtocolToMonacoConverter.prototype.asCommands = function (commands) {
-        var _this = this;
-        return commands.map(function (command) { return _this.asCommand(command); });
     };
     ProtocolToMonacoConverter.prototype.asSymbolInformations = function (values, uri) {
         var _this = this;
@@ -13172,20 +13200,40 @@ var ProtocolToMonacoConverter = /** @class */ (function () {
         var contents = Array.isArray(hover.contents) ? hover.contents : [hover.contents];
         var range = this.asRange(hover.range);
         return {
-            contents: contents, range: range
+            contents: this.asIMarkdownStrings(contents),
+            range: range
         };
+    };
+    ProtocolToMonacoConverter.prototype.asIMarkdownString = function (content) {
+        if (typeof content === 'string') {
+            return {
+                value: content
+            };
+        }
+        if ('kind' in content) {
+            var value_1 = content.value;
+            return { value: value_1 };
+        }
+        var language = content.language, value = content.value;
+        return {
+            value: '```' + language + '\n' + value + '\n```'
+        };
+    };
+    ProtocolToMonacoConverter.prototype.asIMarkdownStrings = function (contents) {
+        var _this = this;
+        return contents.map(function (string) { return _this.asIMarkdownString(string); });
     };
     ProtocolToMonacoConverter.prototype.asSeverity = function (severity) {
         if (severity === 1) {
-            return monaco.Severity.Error;
+            return monaco.MarkerSeverity.Error;
         }
         if (severity === 2) {
-            return monaco.Severity.Warning;
+            return monaco.MarkerSeverity.Warning;
         }
         if (severity === 3) {
-            return monaco.Severity.Info;
+            return monaco.MarkerSeverity.Info;
         }
-        return monaco.Severity.Ignore;
+        return monaco.MarkerSeverity.Hint;
     };
     ProtocolToMonacoConverter.prototype.asMarker = function (diagnostic) {
         return {
@@ -13202,10 +13250,17 @@ var ProtocolToMonacoConverter = /** @class */ (function () {
     ProtocolToMonacoConverter.prototype.asCompletionResult = function (result) {
         var _this = this;
         if (!result) {
-            return undefined;
+            return {
+                isIncomplete: false,
+                items: []
+            };
         }
         if (Array.isArray(result)) {
-            return result.map(function (item) { return _this.asCompletionItem(item); });
+            var items = result.map(function (item) { return _this.asCompletionItem(item); });
+            return {
+                isIncomplete: false,
+                items: items
+            };
         }
         return {
             isIncomplete: result.isIncomplete,
@@ -13237,8 +13292,13 @@ var ProtocolToMonacoConverter = /** @class */ (function () {
         if (item.sortText) {
             result.sortText = item.sortText;
         }
-        // TODO: if (item.additionalTextEdits) { result.additionalTextEdits = asTextEdits(item.additionalTextEdits); }
-        // TODO: if (item.command) { result.command = asCommand(item.command); }
+        if (item.additionalTextEdits) {
+            result.additionalTextEdits = this.asTextEdits(item.additionalTextEdits);
+        }
+        if (item.command) {
+            result.command = this.asCommand(item.command);
+        }
+        result.commitCharacters = item.commitCharacters;
         if (item.data !== void 0 && item.data !== null) {
             result.data = item.data;
         }
@@ -13569,7 +13629,7 @@ var MonacoLanguages = /** @class */ (function () {
                     return [];
                 }
                 var params = _this.m2p.asCodeActionParams(model, range, context);
-                return provider.provideCodeActions(params, token).then(function (result) { return _this.p2m.asCommands(result); });
+                return provider.provideCodeActions(params, token).then(function (result) { return _this.p2m.asCodeActions(result); });
             }
         };
     };
@@ -13857,7 +13917,8 @@ var MonacoWorkspace = /** @class */ (function () {
         var edit = this.p2m.asWorkspaceEdit(workspaceEdit);
         // Collect all referenced models
         var models = edit.edits.reduce(function (acc, currentEdit) {
-            acc[currentEdit.resource.toString()] = monaco.editor.getModel(currentEdit.resource);
+            var textEdit = currentEdit;
+            acc[textEdit.resource.toString()] = monaco.editor.getModel(textEdit.resource);
             return acc;
         }, {});
         // If any of the models do not exist, refuse to apply the edit.
@@ -13866,12 +13927,20 @@ var MonacoWorkspace = /** @class */ (function () {
         }
         // Group edits by resource so we can batch them when applying
         var editsByResource = edit.edits.reduce(function (acc, currentEdit) {
-            var uri = currentEdit.resource.toString();
+            var textEdit = currentEdit;
+            var uri = textEdit.resource.toString();
             if (!(uri in acc)) {
                 acc[uri] = [];
             }
-            acc[uri].push(currentEdit);
+            var operations = textEdit.edits.map(function (edit) {
+                return {
+                    range: monaco.Range.lift(edit.range),
+                    text: edit.text
+                };
+            });
+            (_a = acc[uri]).push.apply(_a, operations);
             return acc;
+            var _a;
         }, {});
         // Apply edits for each resource
         Object.keys(editsByResource).forEach(function (uri) {
@@ -13879,8 +13948,8 @@ var MonacoWorkspace = /** @class */ (function () {
             editsByResource[uri].map(function (resourceEdit) {
                 return {
                     identifier: { major: 1, minor: 0 },
-                    range: monaco.Range.lift(resourceEdit.range),
-                    text: resourceEdit.newText,
+                    range: resourceEdit.range,
+                    text: resourceEdit.text,
                     forceMoveMarkers: true,
                 };
             }), function () { return []; });
@@ -18532,7 +18601,7 @@ class BaseLanguageClient {
                         }
                     };
                 }
-                else if (this._capabilites.textDocumentSync !== void 0 && this._capabilites.textDocumentSync === null) {
+                else if (this._capabilites.textDocumentSync !== void 0 && this._capabilites.textDocumentSync !== null) {
                     textDocumentSyncOptions = this._capabilites.textDocumentSync;
                 }
                 if (textDocumentSyncOptions) {
@@ -19111,7 +19180,9 @@ var content = "FROM node:alpine\nCOPY lib /docker-langserver/lib\nCOPY bin /dock
 var editor = monaco.editor.create(document.getElementById("container"), {
     language: LANGUAGE_ID,
     model: monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI),
-    glyphMargin: true,
+    lightbulb: {
+        enabled: true
+    },
     formatOnType: true,
     theme: "vs-dark"
 });
@@ -19129,24 +19200,20 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
     provideCodeActions: function (model, range, context, token) {
         var commands = service.computeCodeActions(LSP_URI, m2p.asRange(range), m2p.asCodeActionContext(context));
         var _loop_1 = function (command) {
-            editor._commandService.addCommand(command.command, {
+            editor._commandService.addCommand({
+                id: command.command,
                 handler: function () {
                     var args = command.arguments;
                     var edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
                     if (edits) {
-                        var workspaceEdit = { changes: (_a = {}, _a[MODEL_URI] = edits, _a) };
-                        var mEdits = p2m.asWorkspaceEdit(workspaceEdit);
-                        var rEdits = mEdits.edits.map(function (edit) {
+                        var ops = edits.map(function (edit) {
                             return {
-                                identifier: { major: 1, minor: 0 },
-                                range: monaco.Range.lift(edit.range),
-                                text: edit.newText,
-                                forceMoveMarkers: true,
+                                range: p2m.asRange(edit.range),
+                                text: edit.newText
                             };
                         });
-                        monacoModel.pushEditOperations([], rEdits, function () { return []; });
+                        monacoModel.pushEditOperations([], ops, function () { return []; });
                     }
-                    var _a;
                 }
             });
         };
@@ -19154,7 +19221,7 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
             var command = commands_1[_i];
             _loop_1(command);
         }
-        return p2m.asCommands(commands);
+        return p2m.asCodeActions(commands);
     }
 });
 monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
@@ -20323,7 +20390,10 @@ class Validator {
                                         return null;
                                     }
                                     let tag = argument.substring(index + 1);
-                                    if (tag === "") {
+                                    if (tag.indexOf('$') !== -1) {
+                                        return null;
+                                    }
+                                    else if (tag === "") {
                                         // no tag specified, just highlight the whole argument
                                         return Validator.createInvalidReferenceFormat(range);
                                     }
@@ -20336,7 +20406,10 @@ class Validator {
                                 let endIndex = argument.indexOf(':');
                                 if (endIndex === -1) {
                                     let digest = argument.substring(index + 1);
-                                    if (digest === "") {
+                                    if (digest.indexOf('$') !== -1) {
+                                        return null;
+                                    }
+                                    else if (digest === "") {
                                         // no digest specified, just highlight the whole argument
                                         return Validator.createInvalidReferenceFormat(range);
                                     }
@@ -22080,6 +22153,8 @@ var MonacoModelDiagnostics = /** @class */ (function () {
         var _this = this;
         this.owner = owner;
         this.p2m = p2m;
+        this._markers = [];
+        this._diagnostics = [];
         this.uri = monaco.Uri.parse(uri);
         this.diagnostics = diagnostics;
         monaco.editor.onDidCreateModel(function (model) { return _this.doUpdateModelMarkers(model); });
@@ -22133,7 +22208,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 /* --------------------------------------------------------------------------------------------
- * Copyright (c) 2017 TypeFox GmbH (http://www.typefox.io). All rights reserved.
+ * Copyright (c) 2018 TypeFox GmbH (http://www.typefox.io). All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 __export(__webpack_require__(50));

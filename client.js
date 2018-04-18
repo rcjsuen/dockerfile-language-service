@@ -16,7 +16,9 @@ var content = "FROM node:alpine\nCOPY lib /docker-langserver/lib\nCOPY bin /dock
 var editor = monaco.editor.create(document.getElementById("container"), {
     language: LANGUAGE_ID,
     model: monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI),
-    glyphMargin: true,
+    lightbulb: {
+        enabled: true
+    },
     formatOnType: true,
     theme: "vs-dark"
 });
@@ -34,24 +36,20 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
     provideCodeActions: function (model, range, context, token) {
         var commands = service.computeCodeActions(LSP_URI, m2p.asRange(range), m2p.asCodeActionContext(context));
         var _loop_1 = function (command) {
-            editor._commandService.addCommand(command.command, {
+            editor._commandService.addCommand({
+                id: command.command,
                 handler: function () {
                     var args = command.arguments;
                     var edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
                     if (edits) {
-                        var workspaceEdit = { changes: (_a = {}, _a[MODEL_URI] = edits, _a) };
-                        var mEdits = p2m.asWorkspaceEdit(workspaceEdit);
-                        var rEdits = mEdits.edits.map(function (edit) {
+                        var ops = edits.map(function (edit) {
                             return {
-                                identifier: { major: 1, minor: 0 },
-                                range: monaco.Range.lift(edit.range),
-                                text: edit.newText,
-                                forceMoveMarkers: true,
+                                range: p2m.asRange(edit.range),
+                                text: edit.newText
                             };
                         });
-                        monacoModel.pushEditOperations([], rEdits, function () { return []; });
+                        monacoModel.pushEditOperations([], ops, function () { return []; });
                     }
-                    var _a;
                 }
             });
         };
@@ -59,7 +57,7 @@ monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
             var command = commands_1[_i];
             _loop_1(command);
         }
-        return p2m.asCommands(commands);
+        return p2m.asCodeActions(commands);
     }
 });
 monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
