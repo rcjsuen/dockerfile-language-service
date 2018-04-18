@@ -55,8 +55,3 @@ npm run build
 
 As the example naturally relies on the language service, it is necessary to invoke `npm install` on the root folder first before invoking `npm install` in the `/example/` folder.
 Once `npm run build` has completed, you can open the `/example/lib/index.html` in a browser to test things out!
-
-### Known Issues
-
-If a light bulb appears when your text cursor is over a problem, you cannot click on the light bulb to see the possible code actions available to you for fixing the problem. This issue is being tracked by [Microsoft/monaco-editor#574](https://github.com/Microsoft/monaco-editor/issues/574).
-As a workaround, please place the cursor inside the range of the problem's squiggly lines and then hit `Ctrl+.` and select a code from action from the context menu that appears.

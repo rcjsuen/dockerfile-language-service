@@ -25,7 +25,9 @@ ENTRYPOINT [ "/docker-langserver/bin/docker-langserver" ]`;
 const editor = monaco.editor.create(document.getElementById("container")!, {
     language: LANGUAGE_ID,
     model: monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI),
-    glyphMargin: true,
+    lightbulb: {
+        enabled: true
+    },
     formatOnType: true,
     theme: "vs-dark"
 });
@@ -43,30 +45,27 @@ monacoModel.onDidChangeContent((event) => {
 });
 
 monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
-    provideCodeActions(model, range, context, token): monaco.languages.Command[] {
+    provideCodeActions(model, range, context, token): monaco.languages.CodeAction[] {
         const commands = service.computeCodeActions(LSP_URI, m2p.asRange(range), m2p.asCodeActionContext(context));
         for (let command of commands) {
-            (editor as any)._commandService.addCommand(command.command, {
+            (editor as any)._commandService.addCommand({
+                id: command.command,
                 handler: () => {
                     const args = command.arguments as any[];
                     const edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
                     if (edits) {
-                        const workspaceEdit = { changes: { [ MODEL_URI ] : edits }};
-                        const mEdits: monaco.languages.WorkspaceEdit = p2m.asWorkspaceEdit(workspaceEdit);
-                        const rEdits = mEdits.edits.map((edit) => {
+                        const ops = edits.map((edit): monaco.editor.IIdentifiedSingleEditOperation => {
                             return {
-                                identifier: { major: 1, minor: 0 },
-                                range: monaco.Range.lift(edit.range),
-                                text: edit.newText,
-                                forceMoveMarkers: true,
+                                range: p2m.asRange(edit.range),
+                                text: edit.newText
                             }
                         });
-                        monacoModel.pushEditOperations([], rEdits, () => []);
+                        monacoModel.pushEditOperations([], ops, () => []);
                     }
                 }
             });
         }
-        return p2m.asCommands(commands);
+        return p2m.asCodeActions(commands);
     }
 });
 
@@ -82,7 +81,7 @@ monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
             });
         }
         const completionItems = items as any;
-        return p2m.asCompletionResult(completionItems) as monaco.languages.CompletionItem[];
+        return p2m.asCompletionResult(completionItems);
     },
 
     resolveCompletionItem(completionItem, token): monaco.languages.CompletionItem {
