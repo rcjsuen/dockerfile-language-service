@@ -31,7 +31,7 @@ interface Capabilities {
 
 ## [0.0.3] - 2018-04-14
 ### Added
-- updated Capabilities interface to support documentation formats for CompletionItems
+- updated Capabilities interface to support documentation formats for CompletionItems ([#12](https://github.com/rcjsuen/dockerfile-language-service/issues/12))
 ```TypeScript
 interface Capabilities {
     /**
@@ -47,11 +47,6 @@ interface Capabilities {
              * for a CompletionItem's documentation field.
              */
             documentationFormat?: MarkupKind[];
-            /**
-             * Indicates whether the snippet syntax should be used in
-             * returned completion items.
-             */
-            snippetSupport?: boolean;
         }
     }
 }
