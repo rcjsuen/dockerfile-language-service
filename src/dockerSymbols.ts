@@ -9,7 +9,7 @@ import { DockerfileParser } from 'dockerfile-ast';
 
 export class DockerSymbols {
 
-    private createSymbolInformation(name: string, textDocumentURI: string, range: Range, kind: SymbolKind) {
+    private createSymbolInformation(name: string, textDocumentURI: string, range: Range, kind: SymbolKind): SymbolInformation {
         return {
             name: name,
             location: {

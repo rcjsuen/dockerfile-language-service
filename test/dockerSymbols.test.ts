@@ -4,13 +4,13 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
-import { TextDocument, SymbolKind, TextDocumentIdentifier } from 'vscode-languageserver-types';
+import { TextDocument, SymbolInformation, SymbolKind, TextDocumentIdentifier } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 
 const uri = "uri://host/Dockerfile.sample";
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 
-function computeSymbols(content: string): any {
+function computeSymbols(content: string): SymbolInformation[] {
     return service.computeSymbols(TextDocumentIdentifier.create(uri), content);
 }
 
