@@ -5,11 +5,22 @@
 'use strict';
 
 import { SymbolInformation, SymbolKind, Range, TextDocumentIdentifier } from 'vscode-languageserver-types';
-import { DockerfileParser } from 'dockerfile-ast';
+import { DockerfileParser, Keyword } from 'dockerfile-ast';
 
 export class DockerSymbols {
 
-    private createSymbolInformation(name: string, textDocumentURI: string, range: Range, kind: SymbolKind): SymbolInformation {
+    private createSymbolInformation(name: string, textDocumentURI: string, range: Range, kind: SymbolKind, deprecated: boolean): SymbolInformation {
+        if (deprecated) {
+            return {
+                name: name,
+                location: {
+                    uri: textDocumentURI,
+                    range: range
+                },
+                kind: kind,
+                deprecated: true
+            };
+        }
         return {
             name: name,
             location: {
@@ -25,10 +36,11 @@ export class DockerSymbols {
         let directive = dockerfile.getDirective();
         let symbols: SymbolInformation[] = [];
         if (directive !== null) {
-            symbols.push(this.createSymbolInformation(directive.getName(), textDocument.uri, directive.getNameRange(), SymbolKind.Property));
+            symbols.push(this.createSymbolInformation(directive.getName(), textDocument.uri, directive.getNameRange(), SymbolKind.Property, false));
         }
         for (let instruction of dockerfile.getInstructions()) {
-            symbols.push(this.createSymbolInformation(instruction.getInstruction(), textDocument.uri, instruction.getInstructionRange(), SymbolKind.Function));
+            let keyword = instruction.getKeyword();
+            symbols.push(this.createSymbolInformation(instruction.getInstruction(), textDocument.uri, instruction.getInstructionRange(), SymbolKind.Function, keyword === Keyword.MAINTAINER));
         }
         return symbols;
     }

@@ -24,6 +24,7 @@ interface Capabilities {
 }
 ```
 - add support for indicating that a completion item entry is deprecated ([#35](https://github.com/rcjsuen/dockerfile-language-service/issues/35))
+- add support for indicating that the MAINTAINER instruction is deprecated when returning the document's list of symbols ([#36](https://github.com/rcjsuen/dockerfile-language-service/issues/36))
 
 ## [0.0.4] - 2018-04-16
 ### Fixed

@@ -35,6 +35,7 @@ describe("Dockerfile document symbols", function () {
             let symbols = computeSymbols("#escape=`");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -48,6 +49,7 @@ describe("Dockerfile document symbols", function () {
             let symbols = computeSymbols("# escape=`");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -59,6 +61,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("#\tescape=`");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -70,6 +73,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("# escape= `");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -81,6 +85,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("# escape=\t`");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -92,6 +97,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("# escape=` ");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -105,6 +111,7 @@ describe("Dockerfile document symbols", function () {
             let symbols = computeSymbols(" #escape=`");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -116,6 +123,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("\t#escape=`");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -127,6 +135,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("# escape\t=\t` ");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -162,6 +171,7 @@ describe("Dockerfile document symbols", function () {
             let symbols = computeSymbols("#escape=");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -173,6 +183,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("#escape=\r");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -184,6 +195,7 @@ describe("Dockerfile document symbols", function () {
             symbols = computeSymbols("#escape=\n");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "escape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -197,6 +209,7 @@ describe("Dockerfile document symbols", function () {
             let symbols = computeSymbols("#eskape=`");
             assert.equal(symbols.length, 1);
             assert.equal(symbols[0].containerName, undefined);
+            assert.equal(symbols[0].deprecated, undefined);
             assert.equal(symbols[0].name, "eskape");
             assert.equal(symbols[0].kind, SymbolKind.Property);
             assert.equal(symbols[0].location.uri, uri);
@@ -213,6 +226,7 @@ describe("Dockerfile document symbols", function () {
                 let symbols = computeSymbols("FROM");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -224,6 +238,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("FROM\r");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -235,6 +250,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("FROM\n");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -248,6 +264,7 @@ describe("Dockerfile document symbols", function () {
                 let symbols = computeSymbols("FROM node");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -257,10 +274,25 @@ describe("Dockerfile document symbols", function () {
                 assert.equal(symbols[0].location.range.end.character, 4);
             });
 
+            it("MAINTAINER", function () {
+                let symbols = computeSymbols("MAINTAINER abc");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, true);
+                assert.equal(symbols[0].name, "MAINTAINER");
+                assert.equal(symbols[0].kind, SymbolKind.Function);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 0);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 10);
+            });
+
             it("escaped", function () {
                 let symbols = computeSymbols("RUN npm install && \\\n\tnpm test");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "RUN");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -272,6 +304,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("RUN npm install && \\\r\tnpm test");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "RUN");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -283,6 +316,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("RUN npm install && \\\r\n\tnpm test");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "RUN");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -296,6 +330,7 @@ describe("Dockerfile document symbols", function () {
                 let symbols = computeSymbols("HEALTHCHECK\\\nNONE");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "HEALTHCHECKNONE");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -307,6 +342,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("HEALTHCHECK\\\r\nNONE");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "HEALTHCHECKNONE");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -318,6 +354,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("HEALTHCHECK\\\nNONE ");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "HEALTHCHECKNONE");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -329,6 +366,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("HEALTHCHECK\\\nNONE\r");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "HEALTHCHECKNONE");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -340,6 +378,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("HEALTHCHECK\\\nNONE\n");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "HEALTHCHECKNONE");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -353,6 +392,7 @@ describe("Dockerfile document symbols", function () {
                 let symbols = computeSymbols("RUN echo \"\\\\n\"");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "RUN");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -366,6 +406,7 @@ describe("Dockerfile document symbols", function () {
                 let symbols = computeSymbols("FR\\om node");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FR\\om");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -379,6 +420,7 @@ describe("Dockerfile document symbols", function () {
                 let symbols = computeSymbols("\rFROM node");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -390,6 +432,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("\nFROM node");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -401,6 +444,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("\r\nFROM node");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -412,6 +456,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("\rFROM node\r");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -423,6 +468,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("\nFROM node\n");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
@@ -434,6 +480,7 @@ describe("Dockerfile document symbols", function () {
                 symbols = computeSymbols("\r\nFROM node\r\n");
                 assert.equal(symbols.length, 1);
                 assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
                 assert.equal(symbols[0].name, "FROM");
                 assert.equal(symbols[0].kind, SymbolKind.Function);
                 assert.equal(symbols[0].location.uri, uri);
