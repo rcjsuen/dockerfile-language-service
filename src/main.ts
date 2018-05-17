@@ -48,6 +48,11 @@ export interface Capabilities {
          */
         completionItem?: {
             /**
+             * Indicates whether completion items for deprecated
+             * entries should be explicitly flagged in the item.
+             */
+            deprecatedSupport?: boolean;
+            /**
              * Describes the supported content types that can be used
              * for a CompletionItem's documentation field.
              */

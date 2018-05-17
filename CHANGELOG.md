@@ -1,6 +1,30 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- updated Capabilities interface to support the deprecated property on CompletionItems ([#35](https://github.com/rcjsuen/dockerfile-language-service/issues/35))
+```TypeScript
+interface Capabilities {
+    /**
+     * Capabilities related to completion requests.
+     */
+    completion?: {
+        /**
+         * Capabilities related to completion items.
+         */
+        completionItem?: {
+            /**
+             * Indicates whether completion items for deprecated
+             * entries should be explicitly flagged in the item.
+             */
+            deprecatedSupport?: boolean;
+        }
+    }
+}
+```
+- add support for indicating that a completion item entry is deprecated ([#35](https://github.com/rcjsuen/dockerfile-language-service/issues/35))
+
 ## [0.0.4] - 2018-04-16
 ### Fixed
 - do not flag FROM instructions that use variables with an error ([rcjsuen/dockerfile-utils#35](https://github.com/rcjsuen/dockerfile-utils/issues/35))
@@ -146,6 +170,7 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.4...HEAD
 [0.0.4]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.1...v0.0.2

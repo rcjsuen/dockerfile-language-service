@@ -20,12 +20,15 @@ function createDocument(content: string): any {
     return TextDocument.create("uri://host/Dockerfile.sample", "dockerfile", 1, content);
 }
 
-function compute(content: string, offset: number, snippetSupport?: boolean): CompletionItem[] {
+function compute(content: string, offset: number, snippetSupport?: boolean, deprecatedSupport?: boolean): CompletionItem[] {
     if (snippetSupport === undefined) {
         snippetSupport = true;
     }
+    if (deprecatedSupport === undefined) {
+        deprecatedSupport = false;
+    }
     let document = createDocument(content);
-    service.setCapabilities({ completion: { completionItem: { snippetSupport: snippetSupport } } });
+    service.setCapabilities({ completion: { completionItem: { snippetSupport: snippetSupport, deprecatedSupport: deprecatedSupport } } });
     let items = service.computeCompletionItems(content, document.positionAt(offset));
     return items as CompletionItem[];
 }
@@ -155,6 +158,7 @@ function assertADD(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.textEdit.newText, "ADD");
     }
     assert.equal(item.data, "ADD");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -169,6 +173,7 @@ function assertARG(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
     assert.equal(item.textEdit.newText, "ARG");
     assert.equal(item.data, "ARG");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -188,6 +193,7 @@ function assertARG_NameOnly(item: CompletionItem, line: number, character: numbe
         assert.equal(item.textEdit.newText, "ARG");
     }
     assert.equal(item.data, "ARG_NameOnly");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -202,6 +208,7 @@ function assertARG_DefaultValue(item: CompletionItem, line: number, character: n
     assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
     assert.equal(item.textEdit.newText, "ARG ${1:name}=${2:defaultValue}");
     assert.equal(item.data, "ARG_DefaultValue");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -225,6 +232,7 @@ function assertCMD(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.textEdit.newText, "CMD");
     }
     assert.equal(item.data, "CMD");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -248,6 +256,7 @@ function assertCOPY(item: CompletionItem, line: number, character: number, prefi
         assert.equal(item.textEdit.newText, "COPY");
     }
     assert.equal(item.data, "COPY");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -271,6 +280,7 @@ function assertENTRYPOINT(item: CompletionItem, line: number, character: number,
         assert.equal(item.textEdit.newText, "ENTRYPOINT");
     }
     assert.equal(item.data, "ENTRYPOINT");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -294,6 +304,7 @@ function assertENV(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.textEdit.newText, "ENV");
     }
     assert.equal(item.data, "ENV");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -317,6 +328,7 @@ function assertEXPOSE(item: CompletionItem, line: number, character: number, pre
         assert.equal(item.textEdit.newText, "EXPOSE");
     }
     assert.equal(item.data, "EXPOSE");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -340,6 +352,7 @@ function assertFROM(item: CompletionItem, line: number, character: number, prefi
         assert.equal(item.textEdit.newText, "FROM");
     }
     assert.equal(item.data, "FROM");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -363,6 +376,7 @@ function assertHEALTHCHECK_CMD(item: CompletionItem, line: number, character: nu
         assert.equal(item.textEdit.newText, "HEALTHCHECK CMD");
     }
     assert.equal(item.data, "HEALTHCHECK_CMD");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -386,6 +400,7 @@ function assertHEALTHCHECK_CMD_Subcommand(item: CompletionItem, line: number, ch
         assert.equal(item.textEdit.newText, "CMD");
     }
     assert.equal(item.data, "HEALTHCHECK_CMD");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -409,6 +424,7 @@ function assertADD_FlagChown(item: CompletionItem, startLine: number, startChara
         assert.equal(item.textEdit.newText, "--chown=");
     }
     assert.equal(item.data, "ADD_FlagChown");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
@@ -432,6 +448,7 @@ function assertCOPY_FlagChown(item: CompletionItem, startLine: number, startChar
         assert.equal(item.textEdit.newText, "--chown=");
     }
     assert.equal(item.data, "COPY_FlagChown");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
@@ -455,6 +472,7 @@ function assertCOPY_FlagFrom(item: CompletionItem, startLine: number, startChara
         assert.equal(item.textEdit.newText, "--from=");
     }
     assert.equal(item.data, "COPY_FlagFrom");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
@@ -478,6 +496,7 @@ function assertHEALTHCHECK_FlagInterval(item: CompletionItem, startLine: number,
         assert.equal(item.textEdit.newText, "--interval=");
     }
     assert.equal(item.data, "HEALTHCHECK_FlagInterval");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
@@ -501,6 +520,7 @@ function assertHEALTHCHECK_FlagTimeout(item: CompletionItem, startLine: number, 
         assert.equal(item.textEdit.newText, "--timeout=");
     }
     assert.equal(item.data, "HEALTHCHECK_FlagTimeout");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
@@ -524,6 +544,7 @@ function assertHEALTHCHECK_FlagStartPeriod(item: CompletionItem, startLine: numb
         assert.equal(item.textEdit.newText, "--start-period=");
     }
     assert.equal(item.data, "HEALTHCHECK_FlagStartPeriod");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
@@ -547,6 +568,7 @@ function assertHEALTHCHECK_FlagRetries(item: CompletionItem, startLine: number, 
         assert.equal(item.textEdit.newText, "--retries=");
     }
     assert.equal(item.data, "HEALTHCHECK_FlagRetries");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
     assert.equal(item.textEdit.range.start.character, startCharacter);
@@ -560,6 +582,7 @@ function assertHEALTHCHECK_NONE(item: CompletionItem, line: number, character: n
     assert.equal(item.kind, CompletionItemKind.Keyword);
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
     assert.equal(item.data, "HEALTHCHECK_NONE");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.newText, "HEALTHCHECK NONE");
     assert.equal(item.textEdit.range.start.line, line);
@@ -575,6 +598,7 @@ function assertHEALTHCHECK_NONE_Subcommand(item: CompletionItem, line: number, c
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
     assert.equal(item.textEdit.newText, "NONE");
     assert.equal(item.data, "HEALTHCHECK_NONE");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -598,6 +622,7 @@ function assertLABEL(item: CompletionItem, line: number, character: number, pref
         assert.equal(item.textEdit.newText, "LABEL");
     }
     assert.equal(item.data, "LABEL");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -606,7 +631,7 @@ function assertLABEL(item: CompletionItem, line: number, character: number, pref
     assertResolvedDocumentation(item);
 }
 
-function assertMAINTAINER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
+function assertMAINTAINER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
         assert.equal(item.label, "MAINTAINER name");
     } else {
@@ -621,6 +646,11 @@ function assertMAINTAINER(item: CompletionItem, line: number, character: number,
         assert.equal(item.textEdit.newText, "MAINTAINER");
     }
     assert.equal(item.data, "MAINTAINER");
+    if (deprecatedSupport) {
+        assert.equal(item.deprecated, true);
+    } else {
+        assert.equal(item.deprecated, undefined);
+    }
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -644,6 +674,7 @@ function assertONBUILD(item: CompletionItem, line: number, character: number, pr
         assert.equal(item.textEdit.newText, "ONBUILD");
     }
     assert.equal(item.data, "ONBUILD");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -667,6 +698,7 @@ function assertRUN(item: CompletionItem, line: number, character: number, prefix
         assert.equal(item.textEdit.newText, "RUN");
     }
     assert.equal(item.data, "RUN");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -690,6 +722,7 @@ function assertSHELL(item: CompletionItem, line: number, character: number, pref
         assert.equal(item.textEdit.newText, "SHELL");
     }
     assert.equal(item.data, "SHELL");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -713,6 +746,7 @@ function assertSTOPSIGNAL(item: CompletionItem, line: number, character: number,
         assert.equal(item.textEdit.newText, "STOPSIGNAL");
     }
     assert.equal(item.data, "STOPSIGNAL");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -736,6 +770,7 @@ function assertUSER(item: CompletionItem, line: number, character: number, prefi
         assert.equal(item.textEdit.newText, "USER");
     }
     assert.equal(item.data, "USER");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -759,6 +794,7 @@ function assertVOLUME(item: CompletionItem, line: number, character: number, pre
         assert.equal(item.textEdit.newText, "VOLUME");
     }
     assert.equal(item.data, "VOLUME");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -782,6 +818,7 @@ function assertWORKDIR(item: CompletionItem, line: number, character: number, pr
         assert.equal(item.textEdit.newText, "WORKDIR");
     }
     assert.equal(item.data, "WORKDIR");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -796,6 +833,7 @@ function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
     assert.equal(item.sortText, buildIndex.toString());
     assert.equal(item.data, undefined);
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, documentation);
     assert.equal(item.textEdit.newText, sourceImage);
     assert.equal(item.textEdit.range.start.line, startLine);
@@ -816,6 +854,7 @@ function assertDirectiveEscape(item: CompletionItem, line: number, character: nu
     assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
     assert.equal(item.textEdit.newText, "escape=${1:`}");
     assert.equal(item.data, "escape");
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -838,6 +877,7 @@ function assertVariable(variable: string, item: CompletionItem, line: number, ch
         assert.equal(item.textEdit.newText, '$' + variable);
     }
     assert.equal(item.data, undefined);
+    assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, documentation);
     assert.equal(item.textEdit.range.start.line, line);
     assert.equal(item.textEdit.range.start.character, character);
@@ -858,7 +898,7 @@ function assertDockerVariables(items: CompletionItem[], line: number, character:
     assertVariable("no_proxy", items[7], line, character, prefixLength, brace);
 }
 
-function assertProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean) {
+function assertProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean) {
     for (var i = 0; i < proposals.length; i++) {
         switch (proposals[i].data) {
             case "ADD":
@@ -901,7 +941,7 @@ function assertProposals(proposals: CompletionItem[], offset: number, prefix: nu
                 assertLABEL(proposals[i], offset, prefix, prefixLength, snippetSupport);
                 break;
             case "MAINTAINER":
-                assertMAINTAINER(proposals[i], offset, prefix, prefixLength, snippetSupport);
+                assertMAINTAINER(proposals[i], offset, prefix, prefixLength, snippetSupport, deprecatedSupport);
                 break;
             case "ONBUILD":
                 assertONBUILD(proposals[i], offset, prefix, prefixLength, snippetSupport);
@@ -982,7 +1022,7 @@ function assertONBUILDProposals(proposals: CompletionItem[], offset: number, pre
     assertProposals(proposals, offset, prefix, prefixLength);
 }
 
-function assertAllProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean) {
+function assertAllProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
         // +1 for two ARG proposals
         // +1 for two HEALTHCHECK proposals
@@ -991,7 +1031,7 @@ function assertAllProposals(proposals: CompletionItem[], offset: number, prefix:
         // +1 for two HEALTHCHECK proposals
         assert.equal(proposals.length, KEYWORDS.length + 1);
     }
-    assertProposals(proposals, offset, prefix, prefixLength, snippetSupport);
+    assertProposals(proposals, offset, prefix, prefixLength, snippetSupport, deprecatedSupport);
 }
 
 describe('Docker Content Assist Tests', function () {
@@ -1076,8 +1116,17 @@ describe('Docker Content Assist Tests', function () {
             var proposals = compute("FROM node\n", 10);
             assertAllProposals(proposals, 1, 0, 0);
 
-            proposals = compute("FROM node\n", 10, false);
-            assertAllProposals(proposals, 1, 0, 0, false);
+            proposals = compute("FROM node\n", 10, false, false);
+            assertAllProposals(proposals, 1, 0, 0, false, false);
+
+            proposals = compute("FROM node\n", 10, false, true);
+            assertAllProposals(proposals, 1, 0, 0, false, true);
+
+            proposals = compute("FROM node\n", 10, true, false);
+            assertAllProposals(proposals, 1, 0, 0, true, false);
+
+            proposals = compute("FROM node\n", 10, true, true);
+            assertAllProposals(proposals, 1, 0, 0, true, true);
 
             proposals = compute("FROM node\n", 0);
             assertAllProposals(proposals, 0, 0, 0);

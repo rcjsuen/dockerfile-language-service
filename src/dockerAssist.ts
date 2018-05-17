@@ -19,6 +19,7 @@ import {
 export class DockerAssist {
 
     private snippetSupport: boolean;
+    private deprecatedSupport: boolean;
     private document: TextDocument;
 
     /**
@@ -30,13 +31,15 @@ export class DockerAssist {
      * Creates a content assist processor for suggesting completion items related to a Dockerfile.
      * 
      * @param document the text document to provide suggestions for
-     * @param snippetSupport true if snippets are supported by the client, false otherwise
      * @param dockerRegistryClient the client for communicating with a Docker registry
+     * @param snippetSupport true if snippets are supported by the client, false otherwise
+     * @param deprecatedSupport true if the client supports the deprecated property on a completion item
      */
-    constructor(document: TextDocument, snippetSupport: boolean, dockerRegistryClient: DockerRegistryClient) {
+    constructor(document: TextDocument, dockerRegistryClient: DockerRegistryClient, snippetSupport: boolean, deprecatedSupport: boolean) {
         this.document = document;
-        this.snippetSupport = snippetSupport;
         this.dockerRegistryClient = dockerRegistryClient;
+        this.snippetSupport = snippetSupport;
+        this.deprecatedSupport = deprecatedSupport;
     }
 
     public computeProposals(position: Position): CompletionItem[] | PromiseLike<CompletionItem[]> {
@@ -626,7 +629,11 @@ export class DockerAssist {
     }
 
     createMAINTAINER(prefixLength: number, offset: number, markdown: string): CompletionItem {
-        return this.createKeywordCompletionItem("MAINTAINER", "MAINTAINER name", prefixLength, offset, "MAINTAINER ${1:name}", markdown);
+        let item = this.createKeywordCompletionItem("MAINTAINER", "MAINTAINER name", prefixLength, offset, "MAINTAINER ${1:name}", markdown);
+        if (this.deprecatedSupport) {
+            item.deprecated = true;
+        }
+        return item;
     }
 
     createONBUILD(prefixLength: number, offset: number, markdown: string): CompletionItem {

@@ -31,6 +31,7 @@ export class LanguageService implements DockerfileLanguageService {
     private completionDocumentationFormat: MarkupKind[];
     private hoverContentFormat: MarkupKind[];
     private snippetSupport: boolean = false;
+    private deprecatedSupport: boolean = false;
 
     public setLogger(logger: ILogger): void {
         this.logger = logger;
@@ -40,6 +41,7 @@ export class LanguageService implements DockerfileLanguageService {
         this.completionDocumentationFormat = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.documentationFormat;
         this.hoverContentFormat = capabilities && capabilities.hover && capabilities.hover.contentFormat;
         this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
+        this.deprecatedSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.deprecatedSupport;
     }
 
     public computeCodeActions(textDocument: TextDocumentIdentifier, range: Range, context: CodeActionContext): Command[] {
@@ -59,7 +61,7 @@ export class LanguageService implements DockerfileLanguageService {
 
     public computeCompletionItems(content: string, position: Position): CompletionItem[] | PromiseLike<CompletionItem[]> {
         const document = TextDocument.create("", "", 0, content);
-        const dockerAssist = new DockerAssist(document, this.snippetSupport, new DockerRegistryClient(this.logger));
+        const dockerAssist = new DockerAssist(document, new DockerRegistryClient(this.logger), this.snippetSupport, this.deprecatedSupport);
         return dockerAssist.computeProposals(position);
     }
 
