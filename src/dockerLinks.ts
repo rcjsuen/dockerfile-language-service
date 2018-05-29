@@ -18,16 +18,23 @@ export class DockerLinks {
                 if (name.indexOf('/') === -1) {
                     links.push({
                         range: from.getImageNameRange(),
-                        target: "https://hub.docker.com/_/" + name + "/"
+                        data: "_/" + name + '/'
                     });
                 } else {
                     links.push({
                         range: from.getImageNameRange(),
-                        target: "https://hub.docker.com/r/" + name + "/"
+                        data: "r/" + name + '/'
                     });
                 }
             }
         }
         return links;
+    }
+
+    public resolveLink(link: DocumentLink): DocumentLink {
+        if (link.data) {
+            link.target =  "https://hub.docker.com/" + link.data;
+        }
+        return link;
     }
 }

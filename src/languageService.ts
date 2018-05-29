@@ -54,6 +54,11 @@ export class LanguageService implements DockerfileLanguageService {
         return dockerLinks.getLinks(content);
     }
 
+    public resolveLink(link: DocumentLink): DocumentLink {
+        let dockerLinks = new DockerLinks();
+        return dockerLinks.resolveLink(link);
+    }
+
     public computeCommandEdits(content: string, command: string, args: any[]): TextEdit[] {
         let dockerCommands = new DockerCommands();
         return dockerCommands.computeCommandEdits(content, command, args);

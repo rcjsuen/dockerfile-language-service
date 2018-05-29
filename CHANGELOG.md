@@ -25,6 +25,7 @@ interface Capabilities {
 ```
 - add support for indicating that the MAINTAINER instruction is deprecated when returning it as a completion item ([#35](https://github.com/rcjsuen/dockerfile-language-service/issues/35))
 - add support for indicating that the MAINTAINER instruction is deprecated when returning the document's list of symbols ([#36](https://github.com/rcjsuen/dockerfile-language-service/issues/36))
+- add support for populating targets in document links in a resolution step ([#38](https://github.com/rcjsuen/dockerfile-language-service/issues/38))
 
 ## [0.0.4] - 2018-04-16
 ### Fixed

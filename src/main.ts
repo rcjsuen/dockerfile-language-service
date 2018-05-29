@@ -101,6 +101,8 @@ export interface DockerfileLanguageService {
 
     computeLinks(content: string): DocumentLink[];
 
+    resolveLink(link: DocumentLink): DocumentLink;
+
     validate(content: string, settings?: ValidatorSettings): Diagnostic[];
 
     format(content: string, options: FormattingOptions): TextEdit[];
