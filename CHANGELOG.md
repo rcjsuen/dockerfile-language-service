@@ -29,6 +29,7 @@ interface Capabilities {
 
 ### Fixed
 - image tag completion inserts extra text if word boundary is ambiguous ([#39](https://github.com/rcjsuen/dockerfile-language-service/issues/39)) 
+- resolve variables to uninitialized ARGs with ARGs at the top of the Dockerfile if they exist ([#34](https://github.com/rcjsuen/dockerfile-language-service/issues/34))
 
 ## [0.0.4] - 2018-04-16
 ### Fixed

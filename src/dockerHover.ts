@@ -86,7 +86,7 @@ export class DockerHover {
             for (let variable of instruction.getVariables()) {
                 // are we hovering over a variable
                 if (Util.isInsideRange(position, variable.getNameRange())) {
-                    let resolved = image.resolveVariable(variable.getName(), variable.getNameRange().start.line);
+                    let resolved = dockerfile.resolveVariable(variable.getName(), variable.getNameRange().start.line);
                     if (resolved || resolved === "") {
                         return { contents: resolved };
                     } else if (resolved === null) {

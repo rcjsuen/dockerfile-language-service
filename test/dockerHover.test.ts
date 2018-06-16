@@ -1635,6 +1635,11 @@ describe("Dockerfile hover", function () {
                 assertNullHover(content, 2, 12);
             });
 
+            it("redefining", function () {
+                let content = "ARG image=alpine\nFROM alpine\nARG image\nRUN echo $image";
+                assertRawHover(content, 3, 12, "alpine");
+            });
+
             it("non-existent variable", function () {
                 let content = "FROM $image\nARG image";
                 assertNullHover(content, 0, 8);
