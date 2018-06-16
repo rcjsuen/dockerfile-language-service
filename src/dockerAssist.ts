@@ -355,6 +355,7 @@ export class DockerAssist {
                 for (const tag of tags) {
                     if (tag.indexOf(prefix) === 0) {
                         items.push({
+                            textEdit: this.createTextEdit(prefix.length, this.document.offsetAt(position), tag),
                             label: tag,
                             kind: CompletionItemKind.Property,
                             insertTextFormat: InsertTextFormat.PlainText,

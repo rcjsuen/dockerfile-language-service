@@ -27,6 +27,9 @@ interface Capabilities {
 - add support for indicating that the MAINTAINER instruction is deprecated when returning the document's list of symbols ([#36](https://github.com/rcjsuen/dockerfile-language-service/issues/36))
 - add support for populating targets in document links in a resolution step ([#38](https://github.com/rcjsuen/dockerfile-language-service/issues/38))
 
+### Fixed
+- image tag completion inserts extra text if word boundary is ambiguous ([#39](https://github.com/rcjsuen/dockerfile-language-service/issues/39)) 
+
 ## [0.0.4] - 2018-04-16
 ### Fixed
 - do not flag FROM instructions that use variables with an error ([rcjsuen/dockerfile-utils#35](https://github.com/rcjsuen/dockerfile-utils/issues/35))
