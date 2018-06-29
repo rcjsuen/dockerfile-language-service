@@ -26,6 +26,10 @@ interface Capabilities {
 - add support for indicating that the MAINTAINER instruction is deprecated when returning it as a completion item ([#35](https://github.com/rcjsuen/dockerfile-language-service/issues/35))
 - add support for indicating that the MAINTAINER instruction is deprecated when returning the document's list of symbols ([#36](https://github.com/rcjsuen/dockerfile-language-service/issues/36))
 - add support for populating targets in document links in a resolution step ([#38](https://github.com/rcjsuen/dockerfile-language-service/issues/38))
+- flag FROM instructions that refer to an invalid image digest in a private registry with a port as an error ([rcjsuen/dockerfile-utils#42](https://github.com/rcjsuen/dockerfile-utils/issues/42))
+- flag variables that have an invalid modifier set ([rcjsuen/dockerfile-utils#38](https://github.com/rcjsuen/dockerfile-utils/issues/38))
+- warn if ARG instruction does not define a name for the variable ([rcjsuen/dockerfile-utils#45](https://github.com/rcjsuen/dockerfile-utils/issues/45))
+- flag incorrectly quoted arguments for ARG, ENV, and LABEL ([rcjsuen/dockerfile-utils#40](https://github.com/rcjsuen/dockerfile-utils/issues/40))
 
 ### Changed
 - [upgraded the dependency of Mocha](https://github.com/mochajs/mocha/issues/2791) from 3.x to 5.x
@@ -35,6 +39,10 @@ interface Capabilities {
 ### Fixed
 - image tag completion inserts extra text if word boundary is ambiguous ([#39](https://github.com/rcjsuen/dockerfile-language-service/issues/39)) 
 - resolve variables to uninitialized ARGs with ARGs at the top of the Dockerfile if they exist ([#34](https://github.com/rcjsuen/dockerfile-language-service/issues/34))
+- fix incorrect validation warning in ARG, ENV, and LABEL instructions caused by quotes being used in variable replacements ([rcjsuen/dockerfile-utils#36](https://github.com/rcjsuen/dockerfile-utils/issues/36))
+- fix incorrect validation of tagged images caused by FROM referencing images in a private registry ([rcjsuen/dockerfile-utils#39](https://github.com/rcjsuen/dockerfile-utils/issues/39))
+- allow variables to be used in a FROM's base image argument ([rcjsuen/dockerfile-utils#43](https://github.com/rcjsuen/dockerfile-utils/issues/43))
+- handle ARG instructions with escaped newlines that lead to an EOF comment ([rcjsuen/dockerfile-utils#44](https://github.com/rcjsuen/dockerfile-utils/issues/44))
 
 ## [0.0.4] - 2018-04-16
 ### Fixed
