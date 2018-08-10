@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import {
-    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, TextEdit, DocumentLink, Hover, FormattingOptions, Diagnostic, MarkupKind
+    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, TextEdit, DocumentLink, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange
 } from 'vscode-languageserver-types';
 import { ValidatorSettings } from 'dockerfile-utils';
 import { LanguageService } from './languageService';
@@ -65,6 +65,22 @@ export interface Capabilities {
         }
     };
     /**
+     * Capabilities related to folding range requests.
+     */
+    foldingRange?: {
+        /**
+         * If set, the service may choose to return ranges that have
+         * a bogus `startCharacter` and/or `endCharacter` and/or to
+         * leave them as undefined.
+         */
+        lineFoldingOnly?: boolean;
+        /**
+         * The maximum number of folding ranges to return. This is a
+         * hint and the service may choose to ignore this limit.
+         */
+        rangeLimit?: number;
+    };
+    /**
      * Capabilities related to hover requests.
      */
     hover?: {
@@ -88,6 +104,8 @@ export interface DockerfileLanguageService {
     resolveCompletionItem(item: CompletionItem): CompletionItem;
 
     computeDefinition(textDocument: TextDocumentIdentifier, content: string, position: Position): Location;
+
+    computeFoldingRanges(content: string): FoldingRange[];
 
     computeHighlightRanges(content: string, position: Position): DocumentHighlight[];
 

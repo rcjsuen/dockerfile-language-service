@@ -19,6 +19,7 @@ To [install](#installation-instructions) this language service as a dependency i
 - document highlight
 - document links
 - document symbols
+- folding
 - formatting
 - hovers
 - rename

@@ -1,6 +1,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- updated Capabilities interface to support customizing how folding ranges should be processed and returned ([#33](https://github.com/rcjsuen/dockerfile-language-service/issues/33))
+```TypeScript
+export interface Capabilities {
+    /**
+     * Capabilities related to folding range requests.
+     */
+    foldingRange?: {
+        /**
+         * If set, the service may choose to return ranges that have
+         * a bogus `startCharacter` and/or `endCharacter` and/or to
+         * leave them as undefined.
+         */
+        lineFoldingOnly?: boolean;
+        /**
+         * The maximum number of folding ranges to return. This is a
+         * hint and the service may choose to ignore this limit.
+         */
+        rangeLimit?: number;
+    };
+}
+```
+- add support for computing folding ranges of a Dockerfile ([#33](https://github.com/rcjsuen/dockerfile-language-service/issues/33))
+
 ## [0.0.5] - 2018-06-29
 ### Added
 - updated Capabilities interface to support the deprecated property on CompletionItems ([#35](https://github.com/rcjsuen/dockerfile-language-service/issues/35))
@@ -184,6 +209,7 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.5...HEAD
 [0.0.5]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.2...v0.0.3

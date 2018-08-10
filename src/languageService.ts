@@ -4,12 +4,13 @@
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageService, ILogger, Capabilities } from "./main";
 import {
-    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind
+    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange
 } from "vscode-languageserver-types";
 import * as DockerfileUtils from 'dockerfile-utils';
 import { DockerAssist } from "./dockerAssist";
 import { DockerRegistryClient } from "./dockerRegistryClient";
 import { DockerCommands } from "./dockerCommands";
+import { DockerFolding } from "./dockerFolding";
 import { DockerDefinition } from "./dockerDefinition";
 import { DockerHighlight } from "./dockerHighlight";
 import { DockerSymbols } from "./dockerSymbols";
@@ -33,6 +34,9 @@ export class LanguageService implements DockerfileLanguageService {
     private snippetSupport: boolean = false;
     private deprecatedSupport: boolean = false;
 
+    private foldingRangeLineFoldingOnly: boolean = false;
+    private foldingRangeLimit: number = Number.MAX_VALUE;
+
     public setLogger(logger: ILogger): void {
         this.logger = logger;
     }
@@ -42,6 +46,8 @@ export class LanguageService implements DockerfileLanguageService {
         this.hoverContentFormat = capabilities && capabilities.hover && capabilities.hover.contentFormat;
         this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
         this.deprecatedSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.deprecatedSupport;
+        this.foldingRangeLineFoldingOnly = capabilities && capabilities.foldingRange && capabilities.foldingRange.lineFoldingOnly;
+        this.foldingRangeLimit = capabilities && capabilities.foldingRange && capabilities.foldingRange.rangeLimit;
     }
 
     public computeCodeActions(textDocument: TextDocumentIdentifier, range: Range, context: CodeActionContext): Command[] {
@@ -81,6 +87,11 @@ export class LanguageService implements DockerfileLanguageService {
     public computeDefinition(textDocument: TextDocumentIdentifier, content: string, position: Position): Location {
         let dockerDefinition = new DockerDefinition();
         return dockerDefinition.computeDefinition(textDocument, content, position);
+    }
+
+    public computeFoldingRanges(content: string): FoldingRange[] {
+        let dockerFolding = new DockerFolding();
+        return dockerFolding.computeFoldingRanges(content, this.foldingRangeLineFoldingOnly, this.foldingRangeLimit);
     }
 
     public computeHighlightRanges(content: string, position: Position): DocumentHighlight[] {
