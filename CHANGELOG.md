@@ -25,6 +25,11 @@ export interface Capabilities {
 }
 ```
 - add support for computing folding ranges of a Dockerfile ([#33](https://github.com/rcjsuen/dockerfile-language-service/issues/33))
+- optionally flag WORKDIR instructions that do not point to an absolute path ([rcjsuen/dockerfile-utils#47](https://github.com/rcjsuen/dockerfile-utils/issues/47))
+- add support for SCTP in EXPOSE instruction ([rcjsuen/dockerfile-utils#52](https://github.com/rcjsuen/dockerfile-utils/issues/52))
+
+### Fixed
+- fix incorrect validation of ENV and LABEL instructions with many quoted properties on mulitple lines ([rcjsuen/dockerfile-utils#50](https://github.com/rcjsuen/dockerfile-utils/issues/50))
 
 ## [0.0.5] - 2018-06-29
 ### Added
