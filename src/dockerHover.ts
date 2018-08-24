@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { TextDocument, Hover, Position, MarkupKind, MarkupContent } from 'vscode-languageserver-types';
+import { Hover, Position, MarkupKind } from 'vscode-languageserver-types';
 import { DockerfileParser, Dockerfile, Arg, Env, Instruction, ModifiableInstruction, Onbuild, Directive } from 'dockerfile-ast';
 import { Util } from './docker';
 import { MarkdownDocumentation } from './dockerMarkdown';

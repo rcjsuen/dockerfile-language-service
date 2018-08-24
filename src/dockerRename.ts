@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { Position, TextEdit, TextDocumentIdentifier, WorkspaceEdit } from 'vscode-languageserver-types';
+import { Position, TextEdit, TextDocumentIdentifier } from 'vscode-languageserver-types';
 import { DockerHighlight } from './dockerHighlight';
 
 export class DockerRename {

@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
-import { TextDocument, Range, Position, TextEdit, TextDocumentIdentifier } from 'vscode-languageserver-types';
+import { Range, Position, TextEdit, TextDocumentIdentifier } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();

@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import {
-    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat
+    Position, CompletionItem, CompletionItemKind, InsertTextFormat
 } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 import { DockerRegistryClient } from '../src/dockerRegistryClient';

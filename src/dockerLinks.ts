@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { TextDocument, DocumentLink } from 'vscode-languageserver-types';
+import { DocumentLink } from 'vscode-languageserver-types';
 import { DockerfileParser } from 'dockerfile-ast';
 
 export class DockerLinks {

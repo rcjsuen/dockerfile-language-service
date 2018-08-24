@@ -5,7 +5,7 @@
 'use strict';
 
 import {
-    TextDocument, Position, DocumentHighlight, DocumentHighlightKind, TextDocumentIdentifier
+    TextDocument, Position, DocumentHighlight, DocumentHighlightKind
 } from 'vscode-languageserver-types';
 import { DockerfileParser, From } from 'dockerfile-ast';
 import { DockerDefinition } from './dockerDefinition';
