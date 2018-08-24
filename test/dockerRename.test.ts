@@ -41,7 +41,7 @@ describe("Dockerfile Document Rename tests", function () {
             it("no COPY", function () {
                 let content = "FROM node AS bootstrap";
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(1, edits.length);
+                assert.equal(edits.length, 1);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
             });
 
@@ -49,13 +49,13 @@ describe("Dockerfile Document Rename tests", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=bootstrap /git/bin/app .";
                 // cursor in the FROM
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(2, edits.length);
+                assert.equal(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
 
                 // cursor in the COPY
                 edits = rename(content, 2, 16, "renamed");
-                assert.equal(2, edits.length);
+                assert.equal(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
             });
@@ -64,13 +64,13 @@ describe("Dockerfile Document Rename tests", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=bootstrap";
                 // cursor in the FROM
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(2, edits.length);
+                assert.equal(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
 
                 // cursor in the COPY
                 edits = rename(content, 2, 16, "renamed");
-                assert.equal(2, edits.length);
+                assert.equal(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
             });
