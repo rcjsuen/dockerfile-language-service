@@ -2358,7 +2358,6 @@ describe("Dockerfile Document Rename tests", function () {
                 assertEdits(rename(content, 0, 6, "renamed"), expectedEdits);
                 assertEdits(rename(content, 1, 8, "renamed"), expectedEdits);
                 assertEdits(rename(content, 2, 6, "renamed"), [TextEdit.replace(Range.create(2, 4, 2, 9), "renamed")]);
-                assertEdits(rename(content, 0, 6, "renamed"), expectedEdits);
 
                 expectedEdits = [
                     TextEdit.replace(Range.create(0, 4, 0, 9), "renamed"),
