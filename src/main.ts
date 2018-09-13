@@ -117,6 +117,8 @@ export interface DockerfileLanguageService {
 
     computeRename(textDocument: TextDocumentIdentifier, content: string, position: Position, newName: string): TextEdit[];
 
+    prepareRename(content: string, position: Position): Range | null;
+
     computeLinks(content: string): DocumentLink[];
 
     resolveLink(link: DocumentLink): DocumentLink;

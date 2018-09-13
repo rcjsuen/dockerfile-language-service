@@ -119,6 +119,11 @@ export class LanguageService implements DockerfileLanguageService {
         return dockerRename.rename(textDocument, content, position, newName);
     }
 
+    public prepareRename(content: string, position: Position): Range | null {
+        let dockerRename = new DockerRename();
+        return dockerRename.prepareRename(content, position);
+    }
+
     public validate(content: string, settings?: DockerfileUtils.ValidatorSettings): Diagnostic[] {
         return DockerfileUtils.validate(content, settings);
     }
