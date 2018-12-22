@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - allow build stages to be case insensitive when looking up its definition ([#41](https://github.com/rcjsuen/dockerfile-language-service/issues/41))
 - allow build stages to be case insensitive when highlighting them ([#41](https://github.com/rcjsuen/dockerfile-language-service/issues/41))
 - allow build stages to be case insensitive when renaming them ([#41](https://github.com/rcjsuen/dockerfile-language-service/issues/41))
+- consider all build stages with the same name in FROMs when highlighting or renaming ([#42](https://github.com/rcjsuen/dockerfile-language-service/issues/42))
 
 ## [0.0.6] - 2018-08-19
 ### Added

@@ -46,6 +46,32 @@ describe("Dockerfile Document Highlight tests", function () {
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
             });
 
+            it("repeated FROM", function () {
+                // same casing
+                let content = "FROM node AS bootstrap\nFROM node AS bootstrap";
+                let ranges = computeHighlightRanges(content, 0, 17);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
+
+                ranges = computeHighlightRanges(content, 1, 17);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
+
+                // differnt casing
+                content = "FROM node AS bootstrap\nFROM node AS BOOTSTRAP";
+                ranges = computeHighlightRanges(content, 0, 17);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
+
+                ranges = computeHighlightRanges(content, 1, 17);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
+            });
+
             it("COPY", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=bootstrap /git/bin/app .";
                 // cursor in the FROM

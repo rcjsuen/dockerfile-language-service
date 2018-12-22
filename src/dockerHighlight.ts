@@ -75,20 +75,25 @@ export class DockerHighlight {
         } else {
             let document = TextDocument.create("", "", 0, content);
             let definition = document.getText().substring(document.offsetAt(definitionRange.start), document.offsetAt(definitionRange.end));
+            let isBuildStage = false;
             for (let from of dockerfile.getFROMs()) {
-                let range = from.getBuildStageRange();
-                if (range && range.start.line === definitionRange.start.line) {
-                    highlights.push(DocumentHighlight.create(definitionRange, DocumentHighlightKind.Write));
-                    for (let instruction of dockerfile.getCOPYs()) {
-                        let flag = instruction.getFromFlag();
-                        if (flag) {
-                            if (flag.getValue().toLowerCase() === definition.toLowerCase()) {
-                                highlights.push(DocumentHighlight.create(flag.getValueRange(), DocumentHighlightKind.Read));
-                            }
+                let stage = from.getBuildStage();
+                if (stage && definition.toLowerCase() === stage.toLowerCase()) {
+                    highlights.push(DocumentHighlight.create(from.getBuildStageRange(), DocumentHighlightKind.Write));
+                    isBuildStage = true;
+                }
+            }
+
+            if (isBuildStage) {
+                for (let instruction of dockerfile.getCOPYs()) {
+                    let flag = instruction.getFromFlag();
+                    if (flag) {
+                        if (flag.getValue().toLowerCase() === definition.toLowerCase()) {
+                            highlights.push(DocumentHighlight.create(flag.getValueRange(), DocumentHighlightKind.Read));
                         }
                     }
-                    return highlights;
                 }
+                return highlights;
             }
 
             for (let arg of image.getARGs()) {
