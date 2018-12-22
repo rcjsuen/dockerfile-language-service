@@ -149,6 +149,7 @@ describe("Dockerfile Document Highlight tests", function () {
                 assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 12, 1, 15);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 15);
 
+                // cursor in the second COPY
                 ranges = computeHighlightRanges(content, 2, 13);
                 assert.equal(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 12, 1, 15);
