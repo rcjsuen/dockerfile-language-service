@@ -28,9 +28,14 @@ export class DockerDefinition {
 
         for (let instruction of dockerfile.getFROMs()) {
             let range = instruction.getBuildStageRange();
-            if (range &&
-                ((range.start.line === position.line && range.start.character <= position.character && position.character <= range.end.character) || (instruction.getBuildStage() === source))) {
-                return range;
+            if (range) {
+                if (range.start.line === position.line && range.start.character <= position.character && position.character <= range.end.character) {
+                    // cursor in FROM's build stage itself
+                    return range;
+                } else if (source !== undefined && instruction.getBuildStage().toLowerCase() === source.toLowerCase()) {
+                    // FROM's build stage matches what's in COPY
+                    return range;
+                }
             }
         }
         return null;

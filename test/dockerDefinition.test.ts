@@ -48,6 +48,16 @@ describe("Dockerfile Document Definition tests", function () {
                 // cursor in the COPY
                 location = computeDefinition(document, Position.create(2, 16));
                 assertLocation(location, 0, 13, 0, 22);
+
+                document = "FROM node AS bootstrap\nFROM node\nCOPY --from=BOOTSTRAP /git/bin/app .";
+                // cursor in the COPY
+                location = computeDefinition(document, Position.create(2, 16));
+                assertLocation(location, 0, 13, 0, 22);
+
+                document = "FROM node AS BOOTSTRAP\nFROM node\nCOPY --from=bootstrap /git/bin/app .";
+                // cursor in the COPY
+                location = computeDefinition(document, Position.create(2, 16));
+                assertLocation(location, 0, 13, 0, 22);
             });
 
             it("COPY incomplete", function () {
@@ -56,6 +66,16 @@ describe("Dockerfile Document Definition tests", function () {
                 let location = computeDefinition(document, Position.create(0, 17));
                 assertLocation(location, 0, 13, 0, 22);
 
+                // cursor in the COPY
+                location = computeDefinition(document, Position.create(2, 16));
+                assertLocation(location, 0, 13, 0, 22);
+
+                document = "FROM node AS bootstrap\nFROM node\nCOPY --from=BOOTSTRAP";
+                // cursor in the COPY
+                location = computeDefinition(document, Position.create(2, 16));
+                assertLocation(location, 0, 13, 0, 22);
+
+                document = "FROM node AS BOOTSTRAP\nFROM node\nCOPY --from=bootstrap";
                 // cursor in the COPY
                 location = computeDefinition(document, Position.create(2, 16));
                 assertLocation(location, 0, 13, 0, 22);

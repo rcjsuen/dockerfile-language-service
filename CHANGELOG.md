@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - ignore variables when validating directories for ARGs and COPYs ([rcjsuen/dockerfile-utils#54](https://github.com/rcjsuen/dockerfile-utils/issues/54))
+- allow build stages to be case insensitive when looking up its definition ([#41](https://github.com/rcjsuen/dockerfile-language-service/issues/41))
 
 ## [0.0.6] - 2018-08-19
 ### Added
