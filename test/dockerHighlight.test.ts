@@ -60,7 +60,33 @@ describe("Dockerfile Document Highlight tests", function () {
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
+                content = "FROM node AS bootstrap\nFROM node\nCOPY --from=BOOTSTRAP /git/bin/app .";
+                // cursor in the FROM
+                ranges = computeHighlightRanges(content, 0, 17);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
+
+                // cursor in the COPY
+                ranges = computeHighlightRanges(content, 2, 16);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
+
                 content = "FROM node AS bootstrap\nFROM node AS bootstrap2\nCOPY --from=bootstrap2 /git/bin/app .";
+                // cursor in the FROM
+                ranges = computeHighlightRanges(content, 1, 17);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 13, 1, 23);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 22);
+
+                // cursor in the COPY
+                ranges = computeHighlightRanges(content, 2, 16);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 13, 1, 23);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 22);
+
+                content = "FROM node AS bootstrap\nFROM node AS bootstrap2\nCOPY --from=BOOTSTRAP2 /git/bin/app .";
                 // cursor in the FROM
                 ranges = computeHighlightRanges(content, 1, 17);
                 assert.equal(ranges.length, 2);
@@ -87,6 +113,19 @@ describe("Dockerfile Document Highlight tests", function () {
                 assert.equal(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
+
+                content = "FROM node AS bootstrap\nFROM node\nCOPY --from=BOOTSTRAP";
+                // cursor in the FROM
+                ranges = computeHighlightRanges(content, 0, 17);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
+
+                // cursor in the COPY
+                ranges = computeHighlightRanges(content, 2, 16);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
             });
 
             it("source mismatch", function () {
@@ -100,6 +139,20 @@ describe("Dockerfile Document Highlight tests", function () {
                 ranges = computeHighlightRanges(content, 3, 16);
                 assert.equal(ranges.length, 1);
                 assertHighlight(ranges[0], DocumentHighlightKind.Read, 3, 12, 3, 22);
+            });
+
+            it("no FROM but identical COPYs", function () {
+                let content = "FROM node\nCOPY --from=dev\nCOPY --from=dev /git/bin/app .";
+                // cursor in the first COPY
+                let ranges = computeHighlightRanges(content, 1, 13);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 12, 1, 15);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 15);
+
+                ranges = computeHighlightRanges(content, 2, 13);
+                assert.equal(ranges.length, 2);
+                assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 12, 1, 15);
+                assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 15);
             });
         });
 

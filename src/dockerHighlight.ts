@@ -29,7 +29,7 @@ export class DockerHighlight {
 
                         for (let other of dockerfile.getCOPYs()) {
                             let otherFlag = other.getFromFlag();
-                            if (otherFlag && otherFlag.getValue() === stage) {
+                            if (otherFlag && otherFlag.getValue().toLowerCase() === stage.toLowerCase()) {
                                 highlights.push(DocumentHighlight.create(otherFlag.getValueRange(), DocumentHighlightKind.Read));
                             }
                         }
@@ -82,7 +82,7 @@ export class DockerHighlight {
                     for (let instruction of dockerfile.getCOPYs()) {
                         let flag = instruction.getFromFlag();
                         if (flag) {
-                            if (flag.getValue() === definition) {
+                            if (flag.getValue().toLowerCase() === definition.toLowerCase()) {
                                 highlights.push(DocumentHighlight.create(flag.getValueRange(), DocumentHighlightKind.Read));
                             }
                         }
