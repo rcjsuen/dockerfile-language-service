@@ -75,6 +75,23 @@ describe("Dockerfile Document Rename tests", function () {
                 assert.equal(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
+
+                content = "FROM node AS bootstrap\nCOPY --from=BOOTSTRAP /git/bin/app .";
+                // cursor in the FROM
+                range  = prepareRename(content, 0, 17);
+                assertRange(range, 0, 13, 0, 22);
+                edits = rename(content, 0, 17, "renamed");
+                assert.equal(edits.length, 2);
+                assertEdit(edits[0], "renamed", 0, 13, 0, 22);
+                assertEdit(edits[1], "renamed", 1, 12, 1, 21);
+
+                // cursor in the COPY
+                range  = prepareRename(content, 1, 16);
+                assertRange(range, 1, 12, 1, 21);
+                edits = rename(content, 1, 16, "renamed");
+                assert.equal(edits.length, 2);
+                assertEdit(edits[0], "renamed", 0, 13, 0, 22);
+                assertEdit(edits[1], "renamed", 1, 12, 1, 21);
             });
 
             it("COPY incomplete", function () {
@@ -83,6 +100,23 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 let edits = rename(content, 0, 17, "renamed");
+                assert.equal(edits.length, 2);
+                assertEdit(edits[0], "renamed", 0, 13, 0, 22);
+                assertEdit(edits[1], "renamed", 2, 12, 2, 21);
+
+                // cursor in the COPY
+                range  = prepareRename(content, 2, 16);
+                assertRange(range, 2, 12, 2, 21);
+                edits = rename(content, 2, 16, "renamed");
+                assert.equal(edits.length, 2);
+                assertEdit(edits[0], "renamed", 0, 13, 0, 22);
+                assertEdit(edits[1], "renamed", 2, 12, 2, 21);
+
+                content = "FROM node AS bootstrap\nFROM node\nCOPY --from=BOOTSTRAP";
+                // cursor in the FROM
+                range  = prepareRename(content, 0, 17);
+                assertRange(range, 0, 13, 0, 22);
+                edits = rename(content, 0, 17, "renamed");
                 assert.equal(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
@@ -119,6 +153,25 @@ describe("Dockerfile Document Rename tests", function () {
                 edits = rename(content, 0, 17, "renamed");
                 assert.equal(edits.length, 1);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
+            });
+
+            it("no FROM but identical COPYs", function () {
+                let content = "FROM node\nCOPY --from=dev\nCOPY --from=dev /git/bin/app .";
+                // cursor in the first COPY
+                let range  = prepareRename(content, 1, 13);
+                assertRange(range, 1, 12, 1, 15);
+                let edits = rename(content, 1, 13, "renamed");
+                assert.equal(edits.length, 2);
+                assertEdit(edits[0], "renamed", 1, 12, 1, 15);
+                assertEdit(edits[1], "renamed", 2, 12, 2, 15);
+
+                // cursor in the second COPY
+                range  = prepareRename(content, 2, 13);
+                assertRange(range, 2, 12, 2, 15);
+                edits = rename(content, 1, 13, "renamed");
+                assert.equal(edits.length, 2);
+                assertEdit(edits[0], "renamed", 1, 12, 1, 15);
+                assertEdit(edits[1], "renamed", 2, 12, 2, 15);
             });
         });
 
