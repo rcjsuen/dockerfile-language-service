@@ -34,11 +34,19 @@ describe("Dockerfile folding", () => {
                 let content = "# comment\nFROM node";
                 let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
                 assert.strictEqual(ranges.length, 0);
+
+                content = "# comment\r\nFROM node";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                assert.strictEqual(ranges.length, 0);
             });
 
             it("single line ignores escaped newlines", () => {
                 let content = "# comment\n\\\n# comment2";
                 let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                assert.strictEqual(ranges.length, 0);
+
+                content = "# comment\r\n\\\r\n# comment2";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
                 assert.strictEqual(ranges.length, 0);
             });
 
@@ -51,11 +59,29 @@ describe("Dockerfile folding", () => {
                     assert.strictEqual(ranges.length, 1);
                     assertFoldingRange(lineFoldingOnly, ranges[0], 0, 9, 1, 10, FoldingRangeKind.Comment);
                 }
+
+                content = "# comment\r\n# comment2\r\nFROM node";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 9, 1, 10, FoldingRangeKind.Comment);
+                }
             });
 
             it("multiline 3 lines", () => {
                 let content = "# comment\n# comment2\n# comment3\nFROM node";
                 let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 9, 2, 10, FoldingRangeKind.Comment);
+                }
+
+                content = "# comment\r\n# comment2\r\n# comment3\r\nFROM node";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
                 if (rangeLimit < 1) {
                     assert.strictEqual(ranges.length, 0);
                 } else {
@@ -77,6 +103,19 @@ describe("Dockerfile folding", () => {
                     assertFoldingRange(lineFoldingOnly, ranges[0], 0, 9, 1, 10, FoldingRangeKind.Comment);
                     assertFoldingRange(lineFoldingOnly, ranges[1], 3, 10, 4, 10, FoldingRangeKind.Comment);
                 }
+
+                content = "# comment\r\n# comment2\r\n\r\n# comment3\r\n# comment4\r\nFROM node";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else if (rangeLimit == 1) {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 9, 1, 10, FoldingRangeKind.Comment);
+                } else {
+                    assert.strictEqual(ranges.length, 2);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 9, 1, 10, FoldingRangeKind.Comment);
+                    assertFoldingRange(lineFoldingOnly, ranges[1], 3, 10, 4, 10, FoldingRangeKind.Comment);
+                }
             });
 
             it("multiline ignores directive", () => {
@@ -88,11 +127,29 @@ describe("Dockerfile folding", () => {
                     assert.strictEqual(ranges.length, 1);
                     assertFoldingRange(lineFoldingOnly, ranges[0], 1, 9, 2, 10, FoldingRangeKind.Comment);
                 }
+
+                content = "#escape=`\r\n# comment\r\n# comment2\r\nFROM node";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 1, 9, 2, 10, FoldingRangeKind.Comment);
+                }
             });
 
             it("multiline false directive", () => {
                 let content = "\n#escape=`\n# comment\n# comment2\nFROM node";
                 let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 1, 9, 3, 10, FoldingRangeKind.Comment);
+                }
+
+                content = "\r\n#escape=`\r\n# comment\r\n# comment2\r\nFROM node";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
                 if (rangeLimit < 1) {
                     assert.strictEqual(ranges.length, 0);
                 } else {
