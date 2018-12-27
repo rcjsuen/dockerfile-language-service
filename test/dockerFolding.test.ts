@@ -9,7 +9,7 @@ import { DockerfileLanguageServiceFactory } from '../src/main';
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 
-function assertFoldingRange(lineFoldingOnly: boolean, range: FoldingRange, startLine: number, startCharacter: number, endLine: number, endCharacter: number, kind: FoldingRangeKind) {
+function assertFoldingRange(lineFoldingOnly: boolean, range: FoldingRange, startLine: number, startCharacter: number, endLine: number, endCharacter: number, kind?: FoldingRangeKind) {
     assert.strictEqual(range.kind, kind);
     assert.strictEqual(range.startLine, startLine);
     assert.strictEqual(range.startCharacter, lineFoldingOnly ? undefined : startCharacter);
@@ -37,7 +37,7 @@ describe("Dockerfile folding", () => {
             });
 
             it("single line ignores escaped newlines", () => {
-                let content = "FROM node\nENV a=b \\\n# comment\n\\\n# comment2\n c=d";
+                let content = "# comment\n\\\n# comment2";
                 let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
                 assert.strictEqual(ranges.length, 0);
             });
@@ -139,6 +139,124 @@ describe("Dockerfile folding", () => {
 
             describe("line folding only", () => {
                 createCommentsTests(true, 2);
+            });
+        });
+    });
+
+    describe("instructions", () => {
+        function createInstructionsTests(lineFoldingOnly: boolean, rangeLimit: number) {
+            it("single line", () => {
+                let content = "FROM node";
+                let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                assert.strictEqual(ranges.length, 0);
+            });
+
+            it("multiline escaped newline", () => {
+                let content = "FROM node\\\nAS setup";
+                let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 1, 8);
+                }
+
+                content = "FROM node\\\r\nAS setup";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 1, 8);
+                }
+            });
+
+            it("multiline with escaped empty newlines", () => {
+                let content = "FROM node\\\n\nAS setup";
+                let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 2, 8);
+                }
+
+                content = "FROM node\\\r\n\r\nAS setup";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 2, 8);
+                }
+            });
+
+            it("multiline space between", () => {
+                let content = "FROM node\\\nAS setup\n\nFROM alpine\\\nAS base";
+                let ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else if (rangeLimit == 1) {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 1, 8);
+                } else {
+                    assert.strictEqual(ranges.length, 2);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 1, 8);
+                    assertFoldingRange(lineFoldingOnly, ranges[1], 3, 12, 4, 7);
+                }
+
+                content = "FROM node\\\r\nAS setup\r\n\r\nFROM alpine\\\r\nAS base";
+                ranges = computeFoldingRanges(content, lineFoldingOnly, rangeLimit);
+                if (rangeLimit < 1) {
+                    assert.strictEqual(ranges.length, 0);
+                } else if (rangeLimit == 1) {
+                    assert.strictEqual(ranges.length, 1);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 1, 8);
+                } else {
+                    assert.strictEqual(ranges.length, 2);
+                    assertFoldingRange(lineFoldingOnly, ranges[0], 0, 10, 1, 8);
+                    assertFoldingRange(lineFoldingOnly, ranges[1], 3, 12, 4, 7);
+                }
+            });
+        }
+
+        describe("unlimited", () => {
+            describe("standard", () => {
+                createInstructionsTests(false, Number.MAX_VALUE);
+            });
+
+            describe("line folding only", () => {
+                createInstructionsTests(true, Number.MAX_VALUE);
+            });
+        });
+
+        describe("zero folding ranges", () => {
+            describe("standard", () => {
+                createInstructionsTests(false, 0);
+            });
+
+            describe("line folding only", () => {
+                createInstructionsTests(true, 0);
+            });
+        });
+
+        describe("one folding range", () => {
+            describe("standard", () => {
+                createInstructionsTests(false, 1);
+            });
+
+            describe("line folding only", () => {
+                createInstructionsTests(true, 1);
+            });
+        });
+
+        describe("two folding ranges", () => {
+            describe("standard", () => {
+                createInstructionsTests(false, 2);
+            });
+
+            describe("line folding only", () => {
+                createInstructionsTests(true, 2);
             });
         });
     });

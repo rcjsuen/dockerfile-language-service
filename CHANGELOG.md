@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - add support to test the validity of a rename at a given position ([#40](https://github.com/rcjsuen/dockerfile-language-service/issues/40))
+- support folding of instructions that span multiple lines ([#43](https://github.com/rcjsuen/dockerfile-language-service/issues/43))
 
 ### Fixed
 - ignore variables when validating directories for ARGs and COPYs ([rcjsuen/dockerfile-utils#54](https://github.com/rcjsuen/dockerfile-utils/issues/54))
