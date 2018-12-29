@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 - add support to test the validity of a rename at a given position ([#40](https://github.com/rcjsuen/dockerfile-language-service/issues/40))
 - support folding of instructions that span multiple lines ([#43](https://github.com/rcjsuen/dockerfile-language-service/issues/43))
 
+
+### Changed
+- upgraded example's dependencies to include fix to atob for [CVE-2018-3745](https://nvd.nist.gov/vuln/detail/CVE-2018-3745)
+  - anyone that was known to have used the example as a reference should ensure that they upgrade their dependency to atob
+
 ### Fixed
 - ignore variables when validating directories for ARGs and COPYs ([rcjsuen/dockerfile-utils#54](https://github.com/rcjsuen/dockerfile-utils/issues/54))
 - allow build stages to be case insensitive when looking up its definition ([#41](https://github.com/rcjsuen/dockerfile-language-service/issues/41))
