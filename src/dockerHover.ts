@@ -138,6 +138,8 @@ export class DockerHover {
                 return hover;
             }
         }
+
+        return null;
     }
 
     private getFlagsHover(position: Position, instruction: Instruction): string | null {
