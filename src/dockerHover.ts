@@ -96,11 +96,6 @@ export class DockerHover {
             }
         }
 
-        let property = DockerDefinition.findDefinition(dockerfile, position);
-        if (property && property.getValue() !== null) {
-            return { contents: property.getValue() };
-        }
-
         return null;
     }
 
