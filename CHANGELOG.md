@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- corrected a small typo for VOLUME ([#47](https://github.com/rcjsuen/dockerfile-language-service/issues/47))
+
 ## [0.0.7] - 2018-12-29
 ### Added
 - add support to test the validity of a rename at a given position ([#40](https://github.com/rcjsuen/dockerfile-language-service/issues/40))
@@ -231,6 +235,7 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.7...HEAD
 [0.0.7]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.4...v0.0.5
