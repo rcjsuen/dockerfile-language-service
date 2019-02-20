@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Changed
+- upgraded the dependency of `lodash` from 4.17.5 to 4.17.11 to prevent ourselves from being exposd to [CVE-2018-16487](https://nvd.nist.gov/vuln/detail/CVE-2018-16487)
+  - as `lodash` was only being used in the example, there is no reason to believe that consumers of the `dockerfile-language-service` module itself was affected by this vulnerability
+  - nonetheless, anyone that was using the example as a reference is encouraged to update themselves as well
+
 ### Fixed
 - corrected a small typo for VOLUME ([#47](https://github.com/rcjsuen/dockerfile-language-service/issues/47))
 
