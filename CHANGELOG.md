@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- allow Bash syntax for variable modifiers in RUNs ([rcjsuen/dockerfile-utils#56](https://github.com/rcjsuen/dockerfile-utils/issues/56))
+- warn if FROM has a variable for an image and it references nothing ([rcjsuen/dockerfile-utils#59](https://github.com/rcjsuen/dockerfile-utils/issues/59))
+
 ### Changed
 - upgraded the dependency of `lodash` from 4.17.5 to 4.17.11 to prevent ourselves from being exposd to [CVE-2018-16487](https://nvd.nist.gov/vuln/detail/CVE-2018-16487)
   - as `lodash` was only being used in the example, there is no reason to believe that consumers of the `dockerfile-language-service` module itself was affected by this vulnerability
@@ -9,6 +13,9 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - corrected a small typo for VOLUME ([#47](https://github.com/rcjsuen/dockerfile-language-service/issues/47))
+- allow quoted ARG variables in EXPOSE ([rcjsuen/dockerfile-utils#58](https://github.com/rcjsuen/dockerfile-utils/issues/58))
+- allow ENV variables that reference ARG variables in EXPOSE ([rcjsuen/dockerfile-utils#57](https://github.com/rcjsuen/dockerfile-utils/issues/57))
+- do not validate variable substitutions if found in RUN ([rcjsuen/dockerfile-utils#60](https://github.com/rcjsuen/dockerfile-utils/issues/60))
 
 ## [0.0.7] - 2018-12-29
 ### Added
