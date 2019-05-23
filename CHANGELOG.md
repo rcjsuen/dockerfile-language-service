@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - allow quoted ARG variables in EXPOSE ([rcjsuen/dockerfile-utils#58](https://github.com/rcjsuen/dockerfile-utils/issues/58))
 - allow ENV variables that reference ARG variables in EXPOSE ([rcjsuen/dockerfile-utils#57](https://github.com/rcjsuen/dockerfile-utils/issues/57))
 - do not validate variable substitutions if found in RUN ([rcjsuen/dockerfile-utils#60](https://github.com/rcjsuen/dockerfile-utils/issues/60))
+- only allow alphanumeric characters and underscores in variable names ([#49](https://github.com/rcjsuen/dockerfile-language-service/issues/49))
 
 ## [0.0.7] - 2018-12-29
 ### Added

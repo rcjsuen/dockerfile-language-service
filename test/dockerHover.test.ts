@@ -945,6 +945,11 @@ describe("Dockerfile hover", function () {
                     let content = instruction + " var" + delimiter + "value\nLABEL key=\"$var\t\"";
                     assertRawHover(content, 1, 14, "value");
                 });
+
+                it("$var followed by tab", function () {
+                    let content = instruction + " var" + delimiter + "value\nRUN echo $var:test";
+                    assertRawHover(content, 1, 11, "value");
+                });
             });
         }
 

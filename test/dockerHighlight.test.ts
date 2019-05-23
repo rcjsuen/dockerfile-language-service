@@ -719,6 +719,26 @@ describe("Dockerfile Document Highlight tests", function () {
                     ranges = computeHighlightRanges(document, 1, 14);
                     assertHighlightRanges(ranges, expected);
                 });
+
+                it("$var is alphanumeric", function() {
+                    let declaration = DocumentHighlight.create(Range.create(0, 4, 0, 7), DocumentHighlightKind.Write);
+                    let reference = DocumentHighlight.create(Range.create(1, 10, 1, 13), DocumentHighlightKind.Read);
+                    let document = instruction + " var" + delimiter + "value\nRUN echo $var:test";
+                    let ranges = computeHighlightRanges(document, 0, 5);
+                    assertHighlightRanges(ranges, [declaration, reference]);
+                    ranges = computeHighlightRanges(document, 1, 11);
+                    assertHighlightRanges(ranges, [declaration, reference]);
+                });
+
+                it("$var has underscore", function() {
+                    let declaration = DocumentHighlight.create(Range.create(0, 4, 0, 8), DocumentHighlightKind.Write);
+                    let reference = DocumentHighlight.create(Range.create(1, 10, 1, 14), DocumentHighlightKind.Read);
+                    let document = instruction + " var_" + delimiter + "value\nRUN echo $var_:test";
+                    let ranges = computeHighlightRanges(document, 0, 5);
+                    assertHighlightRanges(ranges, [declaration, reference]);
+                    ranges = computeHighlightRanges(document, 1, 11);
+                    assertHighlightRanges(ranges, [declaration, reference]);
+                })
             });
 
             describe("build stage", function () {
@@ -1371,6 +1391,28 @@ describe("Dockerfile Document Highlight tests", function () {
                     ranges = computeHighlightRanges(document, 2, 14);
                     assertHighlightRanges(ranges, expected);
                 });
+
+                it("$var is alphanumeric", function() {
+                    let declaration = DocumentHighlight.create(Range.create(1, 4, 1, 7), DocumentHighlightKind.Write);
+                    let reference = DocumentHighlight.create(Range.create(2, 10, 2, 13), DocumentHighlightKind.Read);
+                    let expected = [declaration, reference];
+                    let document = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN echo $var:test";
+                    let ranges = computeHighlightRanges(document, 1, 5);
+                    assertHighlightRanges(ranges, expected);
+                    ranges = computeHighlightRanges(document, 2, 11);
+                    assertHighlightRanges(ranges, expected);
+                });
+
+                it("$var has underscore", function() {
+                    let declaration = DocumentHighlight.create(Range.create(1, 4, 1, 8), DocumentHighlightKind.Write);
+                    let reference = DocumentHighlight.create(Range.create(2, 10, 2, 14), DocumentHighlightKind.Read);
+                    let expected = [declaration, reference];
+                    let document = "FROM alpine\n" + instruction + " var_" + delimiter + "value\nRUN echo $var_:test";
+                    let ranges = computeHighlightRanges(document, 1, 5);
+                    assertHighlightRanges(ranges, expected);
+                    ranges = computeHighlightRanges(document, 2, 11);
+                    assertHighlightRanges(ranges, expected);
+                })
             });
         });
     }

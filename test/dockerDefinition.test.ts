@@ -570,6 +570,18 @@ describe("Dockerfile Document Definition tests", function () {
                         let location = computeDefinition(document, Position.create(1, 14));
                         assertLocation(location, 0, 4, 0, 7);
                     });
+
+                    it("$var is alphanumeric", function() {
+                        let document = instruction + " var" + delimiter + "value\nRUN echo $var:test";
+                        let location = computeDefinition(document, Position.create(1, 11));
+                        assertLocation(location, 0, 4, 0, 7);
+                    })
+
+                    it("$var has underscore", function() {
+                        let document = instruction + " var_" + delimiter + "value\nRUN echo $var_:test";
+                        let location = computeDefinition(document, Position.create(1, 11));
+                        assertLocation(location, 0, 4, 0, 8);
+                    })
                 });
             });
 
@@ -1228,6 +1240,18 @@ describe("Dockerfile Document Definition tests", function () {
                         let location = computeDefinition(document, Position.create(2, 14));
                         assertLocation(location, 1, 4, 1, 7);
                     });
+
+                    it("$var is alphanumeric/underscore", function() {
+                        let document = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN echo $var:test";
+                        let location = computeDefinition(document, Position.create(2, 11));
+                        assertLocation(location, 1, 4, 1, 7);
+                    })
+
+                    it("$var has underscore", function() {
+                        let document = "FROM alpine\n" + instruction + " var_" + delimiter + "value\nRUN echo $var_:test";
+                        let location = computeDefinition(document, Position.create(2, 11));
+                        assertLocation(location, 1, 4, 1, 8);
+                    })
                 });
             });
         });

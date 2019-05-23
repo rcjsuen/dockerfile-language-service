@@ -997,6 +997,40 @@ describe("Dockerfile Document Rename tests", function () {
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                 });
+
+                it("$var is alphanumeric", function() {
+                    let content = instruction + " var" + delimiter + "value\nRUN echo $var:test";
+                    let range  = prepareRename(content, 0, 5);
+                    assertRange(range, 0, 4, 0, 7);
+                    let edits = rename(content, 0, 5, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 0, 4, 0, 7);
+                    assertEdit(edits[1], "renamed", 1, 10, 1, 13);
+
+                    range  = prepareRename(content, 1, 12);
+                    assertRange(range, 1, 10, 1, 13);
+                    edits = rename(content, 1, 12, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 0, 4, 0, 7);
+                    assertEdit(edits[1], "renamed", 1, 10, 1, 13);
+                });
+
+                it("$var has underscore", function() {
+                    let content = instruction + " var_" + delimiter + "value\nRUN echo $var_:test";
+                    let range  = prepareRename(content, 0, 5);
+                    assertRange(range, 0, 4, 0, 8);
+                    let edits = rename(content, 0, 5, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 0, 4, 0, 8);
+                    assertEdit(edits[1], "renamed", 1, 10, 1, 14);
+
+                    range  = prepareRename(content, 1, 12);
+                    assertRange(range, 1, 10, 1, 14);
+                    edits = rename(content, 1, 12, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 0, 4, 0, 8);
+                    assertEdit(edits[1], "renamed", 1, 10, 1, 14);
+                });
             });
 
             describe("build stage", function () {
@@ -1706,6 +1740,40 @@ describe("Dockerfile Document Rename tests", function () {
                     assert.equal(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 12, 2, 15);
+                });
+
+                it("$var is alphanumeric/underscore", function() {
+                    let content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN echo $var:test";
+                    let range  = prepareRename(content, 1, 5);
+                    assertRange(range, 1, 4, 1, 7);
+                    let edits = rename(content, 1, 5, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 1, 4, 1, 7);
+                    assertEdit(edits[1], "renamed", 2, 10, 2, 13);
+
+                    range  = prepareRename(content, 2, 12);
+                    assertRange(range, 2, 10, 2, 13);
+                    edits = rename(content, 2, 12, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 1, 4, 1, 7);
+                    assertEdit(edits[1], "renamed", 2, 10, 2, 13);
+                });
+
+                it("$var has underscore", function() {
+                    let content = "FROM alpine\n" + instruction + " var_" + delimiter + "value\nRUN echo $var_:test";
+                    let range  = prepareRename(content, 1, 5);
+                    assertRange(range, 1, 4, 1, 8);
+                    let edits = rename(content, 1, 5, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 1, 4, 1, 8);
+                    assertEdit(edits[1], "renamed", 2, 10, 2, 14);
+
+                    range  = prepareRename(content, 2, 12);
+                    assertRange(range, 2, 10, 2, 14);
+                    edits = rename(content, 2, 12, "renamed");
+                    assert.equal(edits.length, 2);
+                    assertEdit(edits[0], "renamed", 1, 4, 1, 8);
+                    assertEdit(edits[1], "renamed", 2, 10, 2, 14);
                 });
 
                 it("empty instruction", function () {
