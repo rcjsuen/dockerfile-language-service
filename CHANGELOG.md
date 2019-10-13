@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unrelease]
+## [Unreleased]
 ### Added
 - support completing of tags for published images on the Docker Store ([#50](https://github.com/rcjsuen/dockerfile-language-service/issues/50))
 
@@ -252,7 +252,7 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[0.0.9]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.8...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.8...HEAD
 [0.0.8]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.5...v0.0.6
