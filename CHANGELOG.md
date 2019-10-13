@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unrelease]
+### Added
+- support completing of tags for published images on the Docker Store ([#50](https://github.com/rcjsuen/dockerfile-language-service/issues/50))
+
 ## [0.0.8] - 2018-05-23
 ### Added
 - allow Bash syntax for variable modifiers in RUNs ([rcjsuen/dockerfile-utils#56](https://github.com/rcjsuen/dockerfile-utils/issues/56))
@@ -248,6 +252,7 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
+[0.0.9]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.8...HEAD
 [0.0.8]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.5...v0.0.6
