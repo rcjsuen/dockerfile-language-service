@@ -168,7 +168,7 @@ export class DockerAssist {
                     case "COPY":
                         return this.createCopyProposals(dockerfile, instruction as Copy, position, offset, prefix);
                     case "FROM":
-                        return this.createFromProposals(instruction as From, position, prefix);
+                        return this.createFromProposals(instruction as From, position, offset, prefix);
                     case "HEALTHCHECK":
                         let subcommand = (instruction as Healthcheck).getSubcommand();
                         if (subcommand && subcommand.isBefore(position)) {
@@ -338,7 +338,7 @@ export class DockerAssist {
         return [];
     }
 
-    private createFromProposals(from: From, position: Position, prefix: string): CompletionItem[] | PromiseLike<CompletionItem[]> {
+    private createFromProposals(from: From, position: Position, offset: number, prefix: string): CompletionItem[] | PromiseLike<CompletionItem[]> {
         // checks if the cursor is in the image's tag area
         if (Util.isInsideRange(position, from.getImageTagRange())) {
             const index = prefix.indexOf(':');
@@ -364,6 +364,13 @@ export class DockerAssist {
                 }
                 resolve(items);
             });
+        }
+        const args = from.getArguments();
+        if (args.length > 0 && args[0].isBefore(position)) {
+            return [];
+        }
+        if ("--platform".indexOf(prefix) === 0) {
+            return [this.createFROM_FlagPlatform(prefix.length, offset)];
         }
         return [];
     }
@@ -587,6 +594,13 @@ export class DockerAssist {
             return this.createFlagCompletionItem("--from=stage", prefixLength, offset, "--from=${1:stage}", "COPY_FlagFrom");
         }
         return this.createFlagCompletionItem("--from=", prefixLength, offset, "--from=", "COPY_FlagFrom");
+    }
+
+    private createFROM_FlagPlatform(prefixLength: number, offset: number): CompletionItem {
+        if (this.snippetSupport) {
+            return this.createFlagCompletionItem("--platform=arm64", prefixLength, offset, "--platform=${1:arm64}", "FROM_FlagPlatform");
+        }
+        return this.createFlagCompletionItem("--platform=", prefixLength, offset, "--platform=", "FROM_FlagPlatform");
     }
 
     private createHEALTHCHECK_FlagInterval(prefixLength: number, offset: number): CompletionItem {

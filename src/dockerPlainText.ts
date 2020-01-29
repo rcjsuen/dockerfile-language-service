@@ -29,6 +29,7 @@ export class PlainTextDocumentation {
         "hoverAddFlagChown": "The username, groupname, or UID/GID combination to own the added content.",
         "hoverCopyFlagChown": "The username, groupname, or UID/GID combination to own the copied content.",
         "hoverCopyFlagFrom": "The previous build stage to use as the source location instead of the build's context.\n\nSince Docker 17.05.0-ce.",
+        "hoverFromFlagPlatform": "The platform of the image if referencing a multi-platform image.\n\nSince Docker CE 18.04.",
         "hoverHealthcheckFlagInterval": "The seconds to wait for the health check to run after the container has started, and then again the number of seconds to wait before running again after the previous check has completed.",
         "hoverHealthcheckFlagRetries": "The number of consecutive failures of this health check before the container is considered to be `unhealthy`.",
         "hoverHealthcheckFlagStartPeriod": "The number of seconds to wait for the container to startup. Failures during this grace period will not count towards the maximum number of retries. However, should a health check succeed during this period then any subsequent failures will count towards the maximum number of retries.\n\nSince Docker 17.05.0-ce.",
@@ -165,6 +166,8 @@ export class PlainTextDocumentation {
                 "FROM baseImage:tag\n" +
                 "FROM baseImage@digest"
             ,
+
+            FROM_FlagPlatform: this.dockerMessages["hoverFromFlagPlatform"],
 
             HEALTHCHECK: this.dockerMessages["hoverHealthcheck"] +
                 "HEALTHCHECK --interval=10m --timeout=5s \\\n" +

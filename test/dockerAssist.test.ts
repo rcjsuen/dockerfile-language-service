@@ -85,21 +85,25 @@ function assertResolvedDocumentation(item: CompletionItem) {
     item.documentation = undefined;
     let service = DockerfileLanguageServiceFactory.createLanguageService();
     service.resolveCompletionItem(item);
+    assert.equal(typeof item.documentation, "string");
     assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [] } }});
     service.resolveCompletionItem(item);
+    assert.equal(typeof item.documentation, "string");
     assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ undefined ] } }});
     service.resolveCompletionItem(item);
+    assert.equal(typeof item.documentation, "string");
     assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ null ] } }});
     service.resolveCompletionItem(item);
+    assert.equal(typeof item.documentation, "string");
     assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
@@ -472,6 +476,30 @@ function assertCOPY_FlagFrom(item: CompletionItem, startLine: number, startChara
         assert.equal(item.textEdit.newText, "--from=");
     }
     assert.equal(item.data, "COPY_FlagFrom");
+    assert.equal(item.deprecated, undefined);
+    assert.equal(item.documentation, undefined);
+    assert.equal(item.textEdit.range.start.line, startLine);
+    assert.equal(item.textEdit.range.start.character, startCharacter);
+    assert.equal(item.textEdit.range.end.line, endLine);
+    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
+}
+
+function assertFROM_FlagPlatform(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
+    if (snippetSupport === undefined || snippetSupport) {
+        assert.equal(item.label, "--platform=arm64");
+    } else {
+        assert.equal(item.label, "--platform=");
+    }
+    assert.equal(item.kind, CompletionItemKind.Field);
+    if (snippetSupport === undefined || snippetSupport) {
+        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.equal(item.textEdit.newText, "--platform=${1:arm64}");
+    } else {
+        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.equal(item.textEdit.newText, "--platform=");
+    }
+    assert.equal(item.data, "FROM_FlagPlatform");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, startLine);
@@ -981,6 +1009,11 @@ function assertCopyFlags(items: CompletionItem[], startLine: number, startCharac
     assertCOPY_FlagFrom(items[1], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 }
 
+function assertFromFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
+    assert.equal(items.length, 1);
+    assertFROM_FlagPlatform(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+}
+
 function assertHealthcheckItems(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     assert.equal(items.length, 6);
     // CMD and NONE first
@@ -1242,6 +1275,9 @@ describe('Docker Content Assist Tests', function () {
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 0, lastLine, 0);
                     break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 0, lastLine, 0);
+                    break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 0, lastLine, 0);
                     break;
@@ -1260,6 +1296,9 @@ describe('Docker Content Assist Tests', function () {
                     break;
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 0, lastLine, 0);
+                    break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 0, lastLine, 0);
                     break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 0, lastLine, 0);
@@ -1280,6 +1319,9 @@ describe('Docker Content Assist Tests', function () {
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 0, lastLine, 0);
                     break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 0, lastLine, 0);
+                    break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 0, lastLine, 0);
                     break;
@@ -1298,6 +1340,9 @@ describe('Docker Content Assist Tests', function () {
                     break;
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 0, lastLine, 0);
+                    break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 0, lastLine, 0);
                     break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 0, lastLine, 0);
@@ -1318,6 +1363,9 @@ describe('Docker Content Assist Tests', function () {
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 1, lastLine, 1);
                     break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 1, lastLine, 1);
+                    break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 1, lastLine, 1);
                     break;
@@ -1336,6 +1384,9 @@ describe('Docker Content Assist Tests', function () {
                     break;
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 1, lastLine, 1);
+                    break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 1, lastLine, 1);
                     break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 1, lastLine, 1);
@@ -1356,6 +1407,9 @@ describe('Docker Content Assist Tests', function () {
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 1, lastLine, 1);
                     break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 1, lastLine, 1);
+                    break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 1, lastLine, 1);
                     break;
@@ -1374,6 +1428,9 @@ describe('Docker Content Assist Tests', function () {
                     break;
                 case "COPY":
                     assertCopyFlags(proposals, lastLine, 1, lastLine, 1);
+                    break;
+                case "FROM":
+                    assertFromFlags(proposals, lastLine, 1, lastLine, 1);
                     break;
                 case "HEALTHCHECK":
                     assertHealthcheckItems(proposals, lastLine, 1, lastLine, 1);
@@ -2152,6 +2209,67 @@ describe('Docker Content Assist Tests', function () {
         it("image names", function () {
             let items = compute("FROM node", 7);
             assert.equal(items.length, 0);
+        });
+
+        function testFlags(snippetSupport: boolean): void {
+            it("full", function() {
+                let items = computePosition("FROM ", 0, 5, snippetSupport);
+                assertFromFlags(items, 0, 5, 0, 5, snippetSupport);
+
+                items = computePosition("FROM  node", 0, 5, snippetSupport);
+                assertFromFlags(items, 0, 5, 0, 5, snippetSupport);
+
+                items = computePosition("FROM node", 0, 5, snippetSupport);
+                assertFromFlags(items, 0, 5, 0, 5, snippetSupport);
+
+                items = computePosition("FROM node:latest", 0, 5, snippetSupport);
+                assertFromFlags(items, 0, 5, 0, 5, snippetSupport);
+            });
+
+            it("prefix", function() {
+                let items = computePosition("FROM -", 0, 6, snippetSupport);
+                assertFromFlags(items, 0, 5, 0, 6, snippetSupport);
+
+                items = computePosition("FROM --", 0, 7, snippetSupport);
+                assertFromFlags(items, 0, 5, 0, 7, snippetSupport);
+
+                items = computePosition("FROM --plat", 0, 11, snippetSupport);
+                assertFromFlags(items, 0, 5, 0, 11, snippetSupport);
+            });
+
+            it("after image", function() {
+                let items = computePosition("FROM node ", 0, 10, snippetSupport);
+                assert.equal(0, items.length);
+
+                items = computePosition("FROM node:latest ", 0, 17, snippetSupport);
+                assert.equal(0, items.length);
+
+                items = computePosition("FROM node AS stage", 0, 10, snippetSupport);
+                assert.equal(0, items.length);
+
+                items = computePosition("FROM node AS stage", 0, 13, snippetSupport);
+                assert.equal(0, items.length);
+
+                items = computePosition("FROM node AS stage", 0, 18, snippetSupport);
+                assert.equal(0, items.length);
+
+                items = computePosition("FROM node  AS  stage ", 0, 10, snippetSupport);
+                assert.equal(0, items.length);
+
+                items = computePosition("FROM node  AS  stage ", 0, 14, snippetSupport);
+                assert.equal(0, items.length);
+
+                items = computePosition("FROM node  AS  stage ", 0, 21, snippetSupport);
+                assert.equal(0, items.length);
+            });
+        }
+
+        describe("snippet", function() {
+            testFlags(true);
+        });
+
+        describe("plain text", function() {
+            testFlags(false);
         });
     });
 
