@@ -168,6 +168,17 @@ export class DockerHover {
                     }
                 }
                 break;
+            case "FROM":
+                const fromFlags = (instruction as ModifiableInstruction).getFlags();
+                for (const flag of fromFlags) {
+                    if (Util.isInsideRange(position, flag.getNameRange())) {
+                        if (flag.getName() === "platform") {
+                            return "FROM_FlagPlatform";
+                        }
+                        return null;
+                    }
+                }
+                break;
             case "HEALTHCHECK":
                 let flags = (instruction as ModifiableInstruction).getFlags();
                 for (let flag of flags) {

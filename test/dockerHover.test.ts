@@ -182,32 +182,6 @@ describe("Dockerfile hover", function () {
     });
 
     describe("keywords", function () {
-        it("FROM", function () {
-            let content = "FROM node";
-            assertHover(content, 0, 2, "FROM");
-        });
-
-        it("froM", function () {
-            let content = "froM node";
-            assertHover(content, 0, 2, "FROM");
-        });
-
-        it("fr\\\\noM", function () {
-            let content = "fr\\\noM node";
-            assertHover(content, 0, 0, "FROM");
-            assertHover(content, 0, 1, "FROM");
-            assertHover(content, 1, 0, "FROM");
-            assertHover(content, 1, 1, "FROM");
-        });
-
-        it("fr\\\\r\\noM", function () {
-            let content = "fr\\\r\noM node";
-            assertHover(content, 0, 0, "FROM");
-            assertHover(content, 0, 1, "FROM");
-            assertHover(content, 1, 0, "FROM");
-            assertHover(content, 1, 1, "FROM");
-        });
-
         it("HEALTHCHECK NONE", function () {
             let content = "HEALTHCHECK NONE";
             assertNullHover(content, 0, 14);
@@ -1475,6 +1449,72 @@ describe("Dockerfile hover", function () {
                     content = "FROM node\nENV var=value \\\n# var2=value2";
                     assertRawHover(content, 1, 6, "value");
                     assertNullHover(content, 2, 4);
+                });
+            });
+        });
+
+        describe("FROM", function() {
+            it("FROM", function () {
+                let content = "FROM node";
+                assertHover(content, 0, 2, "FROM");
+            });
+    
+            it("froM", function () {
+                let content = "froM node";
+                assertHover(content, 0, 2, "FROM");
+            });
+    
+            it("fr\\\\noM", function () {
+                let content = "fr\\\noM node";
+                assertHover(content, 0, 0, "FROM");
+                assertHover(content, 0, 1, "FROM");
+                assertHover(content, 1, 0, "FROM");
+                assertHover(content, 1, 1, "FROM");
+            });
+    
+            it("fr\\\\r\\noM", function () {
+                let content = "fr\\\r\noM node";
+                assertHover(content, 0, 0, "FROM");
+                assertHover(content, 0, 1, "FROM");
+                assertHover(content, 1, 0, "FROM");
+                assertHover(content, 1, 1, "FROM");
+            });
+
+            describe("flags", function() {
+                it("--platform", function () {
+                    let content = "FROM --platform";
+                    assertHover(content, 0, 7, "FROM_FlagPlatform");
+                    assertHover(content, 0, 10, "FROM_FlagPlatform");
+                    assertHover(content, 0, 15, "FROM_FlagPlatform");
+
+                    // hover around the dashes
+                    assertNullHover(content, 0, 5);
+                    assertNullHover(content, 0, 6);
+
+                    content = "FROM --platform=arm64 node";
+                    assertHover(content, 0, 7, "FROM_FlagPlatform");
+                    assertHover(content, 0, 10, "FROM_FlagPlatform");
+                    assertHover(content, 0, 15, "FROM_FlagPlatform");
+
+                    // hover around the dashes
+                    assertNullHover(content, 0, 5);
+                    assertNullHover(content, 0, 6);
+                });
+
+                it("--PLATFORM", function () {
+                    let content = "FROM --PLATFORM";
+                    assertNullHover(content, 0, 5);
+                    assertNullHover(content, 0, 6);
+                    assertNullHover(content, 0, 7);
+                    assertNullHover(content, 0, 10);
+                    assertNullHover(content, 0, 15);
+
+                    content = "FROM --PLATFORM=arm64 node";
+                    assertNullHover(content, 0, 5);
+                    assertNullHover(content, 0, 6);
+                    assertNullHover(content, 0, 7);
+                    assertNullHover(content, 0, 10);
+                    assertNullHover(content, 0, 15);
                 });
             });
         });
