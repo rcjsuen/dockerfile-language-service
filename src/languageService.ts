@@ -22,6 +22,8 @@ import { DockerHover } from "./dockerHover";
 import { MarkdownDocumentation } from "./dockerMarkdown";
 import { DockerFormatter } from "./dockerFormatter";
 import { DockerCompletion } from "./dockerCompletion";
+import { SemanticTokens } from "vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed";
+import { DockerSemanticTokens } from "./dockerSemanticTokens";
 
 export class LanguageService implements DockerfileLanguageService {
 
@@ -122,6 +124,11 @@ export class LanguageService implements DockerfileLanguageService {
     public prepareRename(content: string, position: Position): Range | null {
         let dockerRename = new DockerRename();
         return dockerRename.prepareRename(content, position);
+    }
+
+    public computeSemanticTokens(content: string): SemanticTokens {
+        let dockerSemanticTokens = new DockerSemanticTokens();
+        return dockerSemanticTokens.computeSemanticTokens(content);
     }
 
     public validate(content: string, settings?: DockerfileUtils.ValidatorSettings): Diagnostic[] {

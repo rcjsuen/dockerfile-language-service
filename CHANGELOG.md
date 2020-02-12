@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - add validation of FROM's `--platform` flag introduced in Docker CE 18.04 ([rcjsuen/dockerfile-utils#68](https://github.com/rcjsuen/dockerfile-utils/issues/68))
   - `ValidationCode.UNKNOWN_FROM_FLAG`
 - warn if two escape parser directives are defined ([rcjsuen/dockerfile-utils#70](https://github.com/rcjsuen/dockerfile-utils/issues/70))
+- experimental work-in-progress support for retrieving the semantic tokens of a Dockerfile to support semantic highlighting ([#54](https://github.com/rcjsuen/dockerfile-language-service/issues/54))
+  - as the language server protocol design for this is not complete, this API is in flux and is subject to change or even outright removal
+  - please use this API with caution
 
 ### Fixed
 - allow paths to be quoted in WORKDIRs ([rcjsuen/dockerfile-utils#67](https://github.com/rcjsuen/dockerfile-utils/issues/67))

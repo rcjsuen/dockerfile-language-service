@@ -7,6 +7,7 @@ import {
 } from 'vscode-languageserver-types';
 import { ValidatorSettings } from 'dockerfile-utils';
 import { LanguageService } from './languageService';
+import { SemanticTokens } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
 
 /**
  * An interface for logging errors encountered in the language service.
@@ -122,6 +123,11 @@ export interface DockerfileLanguageService {
     computeLinks(content: string): DocumentLink[];
 
     resolveLink(link: DocumentLink): DocumentLink;
+
+    /**
+     * Experimental API subject to change.
+     */
+    computeSemanticTokens(content: string): SemanticTokens;
 
     validate(content: string, settings?: ValidatorSettings): Diagnostic[];
 
