@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 - support completing of tags for published images on the Docker Store ([#50](https://github.com/rcjsuen/dockerfile-language-service/issues/50))
 - support completion of the `--platform` flag for FROMs introduced in Docker CE 18.04 ([#52](https://github.com/rcjsuen/dockerfile-language-service/issues/52))
 - support hover documentation for the `--platform` flag for FROMs introduced in Docker CE 18.04 ([#53](https://github.com/rcjsuen/dockerfile-language-service/issues/53))
+- add validation of FROM's `--platform` flag introduced in Docker CE 18.04 ([rcjsuen/dockerfile-utils#68](https://github.com/rcjsuen/dockerfile-utils/issues/68))
+  - `ValidationCode.UNKNOWN_FROM_FLAG`
+- warn if two escape parser directives are defined ([rcjsuen/dockerfile-utils#70](https://github.com/rcjsuen/dockerfile-utils/issues/70))
+
+### Fixed
+- allow paths to be quoted in WORKDIRs ([rcjsuen/dockerfile-utils#67](https://github.com/rcjsuen/dockerfile-utils/issues/67))
+- do not calculate edits for lines that are already formatted correctly ([rcjsuen/dockerfile-utils#66](https://github.com/rcjsuen/dockerfile-utils/issues/66))
+- allow an instruction with an argument on the last line to be parsed if it has no leading whitespace and has a length of one ([rcjsuen/dockerfile-utils#69](https://github.com/rcjsuen/dockerfile-utils/issues/69))
 
 ## [0.0.8] - 2018-05-23
 ### Added
