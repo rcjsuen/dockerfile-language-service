@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
-import { TextDocument, Hover, Position, MarkupKind, MarkupContent } from 'vscode-languageserver-types';
+import { Hover, Position, MarkupKind, MarkupContent } from 'vscode-languageserver-types';
 import { MarkdownDocumentation } from '../src/dockerMarkdown';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 import { PlainTextDocumentation } from "../src/dockerPlainText";
