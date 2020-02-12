@@ -110,15 +110,16 @@ export class DockerHover {
      *         such a word
      */
     private computeHoverKey(dockerfile: Dockerfile, position: Position): string | null {
-        let directive = dockerfile.getDirective();
-        let image = dockerfile.getContainingImage(position);
-        if (position.line === 0 && directive !== null && directive.getDirective() === Directive.escape) {
-            let range = directive.getNameRange();
-            if (Util.isInsideRange(position, range)) {
-                return Directive.escape;
+        for (const directive of dockerfile.getDirectives()) {
+            if (directive.getDirective() === Directive.escape) {
+                const range = directive.getNameRange();
+                if (Util.isInsideRange(position, range)) {
+                    return Directive.escape;
+                }
             }
         }
 
+        const image = dockerfile.getContainingImage(position);
         for (let instruction of image.getInstructions()) {
             let instructionRange = instruction.getInstructionRange();
             if (Util.isInsideRange(position, instructionRange)) {

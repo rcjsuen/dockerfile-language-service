@@ -143,41 +143,55 @@ describe("Dockerfile hover", function () {
     });
 
     describe("directives", function () {
-        it("escape", function () {
-            let content = "#escape=`";
-            assertHover(content, 0, 4, "escape");
+        describe("escape", function() {
+            it("single directive", function () {
+                let content = "#escape=`";
+                assertHover(content, 0, 4, "escape");
 
-            content = "# escape=`";
-            assertNullHover(content, 0, 1);
-        });
+                content = "# escape=`";
+                assertNullHover(content, 0, 1);
 
-        it("invalid directive definition", function () {
-            let content = "#eskape=`";
-            assertNullHover(content, 0, 4);
+                content = "#escape=";
+                assertHover(content, 0, 4, "escape");
 
-            content = "#escape ";
-            assertNullHover(content, 0, 4);
+                content = "#escape=ab";
+                assertHover(content, 0, 4, "escape");
+            });
 
-            content = "#escape=";
-            assertHover(content, 0, 4, "escape");
+            it("multiple directives", function () {
+                let content = "#escape=`\n#escape=`";
+                assertHover(content, 0, 4, "escape");
+                assertHover(content, 1, 4, "escape");
 
-            content = "#escape=ab";
-            assertHover(content, 0, 4, "escape");
+                content = "#escape=`\n#syntax=docker/dockerfile:1:0";
+                assertHover(content, 0, 4, "escape");
 
-            content = "#escape\t";
-            assertNullHover(content, 0, 4);
+                content = "#syntax=docker/dockerfile:1:0\n#escape=`";
+                assertHover(content, 1, 4, "escape");
+            });
 
-            content = "#escape\r\n";
-            assertNullHover(content, 0, 4);
+            it("invalid directive definition", function () {
+                let content = "#eskape=`";
+                assertNullHover(content, 0, 4);
 
-            content = "#escape\n";
-            assertNullHover(content, 0, 4);
+                content = "#escape ";
+                assertNullHover(content, 0, 4);
 
-            content = "\n#escape";
-            assertNullHover(content, 1, 4);
+                content = "#escape\t";
+                assertNullHover(content, 0, 4);
 
-            content = "\r\n#escape";
-            assertNullHover(content, 1, 4);
+                content = "#escape\r\n";
+                assertNullHover(content, 0, 4);
+
+                content = "#escape\n";
+                assertNullHover(content, 0, 4);
+
+                content = "\n#escape";
+                assertNullHover(content, 1, 4);
+
+                content = "\r\n#escape";
+                assertNullHover(content, 1, 4);
+            });
         });
     });
 

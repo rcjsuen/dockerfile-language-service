@@ -160,7 +160,7 @@ describe("Dockerfile document symbols", function () {
             let symbols = computeSymbols("#\n#escape=`");
             assert.equal(symbols.length, 0);
 
-            symbols = computeSymbols("#\r#escape=`");
+            symbols = computeSymbols("#\r\n#escape=`");
             assert.equal(symbols.length, 0);
 
             symbols = computeSymbols("#comment\n#escape=`");
