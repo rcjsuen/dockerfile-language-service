@@ -235,6 +235,14 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4, [SemanticTokenModifiers.reference]);
             });
+
+            it("RUN $var $var", () => {
+                const tokens = computeSemanticTokens("RUN $var $var");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4, [SemanticTokenModifiers.reference]);
+            });
         });
 
         describe("${var}", () => {
@@ -243,6 +251,14 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(10, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
+            });
+
+            it("RUN ${var} ${var}", () => {
+                const tokens = computeSemanticTokens("RUN ${var} ${var}");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 6, [SemanticTokenModifiers.reference]);
             });
         });
     });

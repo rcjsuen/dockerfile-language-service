@@ -214,7 +214,7 @@ export class DockerSemanticTokens {
                                 )
                             );
                             this.currentRange = range;
-                            variables = variables.splice(0, 1);
+                            variables.slice(1);
                             break;
                         }
                     }
