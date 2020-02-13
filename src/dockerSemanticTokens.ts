@@ -64,6 +64,7 @@ export class DockerSemanticTokens {
         for (const directive of dockerfile.getDirectives()) {
             const directiveRange = directive.getRange();
             tokens = tokens.concat(this.createToken(directiveRange, SemanticTokenTypes.marco));
+            this.currentRange = directiveRange;
         }
 
         const escapeCharacter = dockerfile.getEscapeCharacter();

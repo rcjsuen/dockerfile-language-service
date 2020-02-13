@@ -174,6 +174,16 @@ describe("Dockerfile Semantic Token tests", () => {
             assert.equal(5, tokens.data.length);
             assertEdit(tokens.data, SemanticTokenTypes.marco, 0, 0, 0, 10);
         });
+
+        it("multiple", () => {
+            const tokens = computeSemanticTokens("# a=\n# a=\n# b\nFROM node")
+            assert.equal(25, tokens.data.length);
+            assertEdit(tokens.data, SemanticTokenTypes.marco, 0, 0, 0, 4);
+            assertEdit(tokens.data, SemanticTokenTypes.marco, 5, 1, 0, 4);
+            assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 3);
+            assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 1, 0, 4);
+            assertEdit(tokens.data, SemanticTokenTypes.class, 20, 0, 5, 4);
+        });
     });
 
     describe("file", () => {
