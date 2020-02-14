@@ -234,6 +234,13 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
             });
 
+            it("multiline instruction with comment", () => {
+                const tokens = computeSemanticTokens("RUN echo &&\\\necho\n# comment");
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 2, 0, 9);
+            });
+
             it("mixed", () => {
                 const tokens = computeSemanticTokens("FROM node\n# comment\nWORKDIR /opt/project\n# comment\nRUN echo");
                 assert.equal(30, tokens.data.length);
@@ -411,6 +418,12 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 9, 2);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 2, 2);
                 });
+            });
+
+            it("RUN echo \\", () => {
+                const tokens = computeSemanticTokens("RUN echo \\");
+                assert.equal(5, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
             });
         });
     });
