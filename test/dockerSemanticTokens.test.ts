@@ -133,6 +133,12 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 0, 12, 3);
             });
         });
+
+        describe("RUN", () => {
+            const tokens = computeSemanticTokens("RUN echo abc # def\\\n ghi");
+            assert.equal(5, tokens.data.length);
+            assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+        });
     });
 
     describe("comments", () => {
@@ -419,6 +425,140 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(10, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 3, 0, 3);
+            });
+        });
+
+        describe("inlined comments", () => {
+            it("multiple \\n", () => {
+                let content =
+                    "FROM alpine\n" +
+                    "RUN ls && \\\n" +
+                    "ls && \\\n" +
+                    "# Install\n" +
+                    "ls && \\\n" +
+                    "# Something '\n" +
+                    "ls";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 1, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 2, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 20, 2, 0, 13);
+
+                content =
+                    "FROM alpine\n" +
+                    "RUN ls && \\\n" +
+                    "ls && \\\n" +
+                    "# Install\n" +
+                    "ls && \\\n" +
+                    "# Something \"\n" +
+                    "ls";
+                tokens = computeSemanticTokens(content);
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 1, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 2, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 20, 2, 0, 13);
+            });
+
+            it("multiple \\r\\n", () => {
+                let content =
+                    "FROM alpine\r\n" +
+                    "RUN ls && \\\r\n" +
+                    "ls && \\\r\n" +
+                    "# Install\r\n" +
+                    "ls && \\\r\n" +
+                    "# Something '\r\n" +
+                    "ls";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 1, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 2, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 20, 2, 0, 13);
+
+                content =
+                    "FROM alpine\r\n" +
+                    "RUN ls && \\\r\n" +
+                    "ls && \\\r\n" +
+                    "# Install\r\n" +
+                    "ls && \\\r\n" +
+                    "# Something \"\r\n" +
+                    "ls";
+                tokens = computeSemanticTokens(content);
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 1, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 2, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 20, 2, 0, 13);
+            });
+
+            it("instruction has # in it", () => {
+                let content =
+                    "RUN ls && \\\n" +
+                    "# Install\n" +
+                    "ls && #abc \\\n" +
+                    "ls";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 0, 9);
+
+                content =
+                    "RUN ls && \\\n" +
+                    "# Install\n" +
+                    "# Install\n" +
+                    "ls && #abc \\\n" +
+                    "ls";
+                tokens = computeSemanticTokens(content);
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+            });
+
+            it("apostrophe in inlined comment", () => {
+                let content =
+                    "RUN ls \\\n" +
+                    "    # It's\n" +
+                    "    echo && echo";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 4, 6);
+
+                content =
+                    "RUN ls \\\n" +
+                    "\t# It's\n" +
+                    "\techo && echo";
+                tokens = computeSemanticTokens(content);
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 1, 6);
+            });
+
+            it("quotation mark in inlined comment", () => {
+                let content =
+                    "RUN ls \\\n" +
+                    "    # It\"s\n" +
+                    "    echo && echo";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 4, 6);
+
+                content =
+                    "RUN ls \\\n" +
+                    "\t# It\"s\n" +
+                    "\techo && echo";
+                tokens = computeSemanticTokens(content);
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 1, 6);
             });
         });
     });

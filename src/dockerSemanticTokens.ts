@@ -55,7 +55,21 @@ export class DockerSemanticTokens {
         const document = TextDocument.create("", "", 0, content);
         const dockerfile = DockerfileParser.parse(content);
         let tokens: number[] = [];
-        let lines: Line[] = dockerfile.getComments()
+        let lines: Line[] = dockerfile.getComments();
+        let instructions = dockerfile.getInstructions();
+        for (let instruction of instructions) {
+            let range = instruction.getRange();
+            if (range.start.line !== range.end.line) {
+                for (let i = 0; i < lines.length; i++) {
+                    let commentRange = lines[i].getRange();
+                    if (range.start.line < commentRange.start.line && commentRange.start.line < range.end.line) {
+                        // this is an embedded comment, remove it
+                        lines.splice(i, 1);
+                        i--;
+                    }
+                }
+            }
+        }
         lines = lines.concat(dockerfile.getInstructions());
         lines.sort((a: Line, b: Line): number => {
             return a.getRange().start.line - b.getRange().start.line;
@@ -163,13 +177,40 @@ export class DockerSemanticTokens {
         let variables = instruction.getVariables();
         let quote = null;
         let offset = -1;
+        let escapedNewline = false;
         argsLoop: for (let i = 0; i < argsContent.length; i++) {
             const ch = argsContent.charAt(i);
             switch (ch) {
+                case ' ':
+                case '\t':
+                    break;
+                case '#':
+                    if (escapedNewline) {
+                        for (let j = i + 1; j < argsContent.length; j++) {
+                            if (argsContent.charAt(j) === '\n' || argsContent.charAt(j) === '\r') {
+                                let range = {
+                                    start: document.positionAt(startOffset + i),
+                                    end: document.positionAt(startOffset + j)
+                                };
+                                tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.comment));
+                                this.currentRange = range;
+                                i = j;
+                                continue argsLoop;
+                            }
+                        }
+                    }
                 case escapeCharacter:
                     for (let j = i + 1; j < argsContent.length; j++) {
                         const escapedChar = argsContent.charAt(j);
                         switch (escapedChar) {
+                            case '\r':
+                                escapedNewline = true;
+                                i = j + 1;
+                                continue argsLoop;
+                            case '\n':
+                                escapedNewline = true;
+                                i = j;
+                                continue argsLoop;
                             case '\"':
                             case '\'':
                                 if (quote === null) {
@@ -205,6 +246,7 @@ export class DockerSemanticTokens {
                     }
                     break;
                 case '$':
+                    escapedNewline = false;
                     for (let variable of variables) {
                         const range = variable.getRange();
                         if (startOffset + i === document.offsetAt(range.start)) {
@@ -221,6 +263,7 @@ export class DockerSemanticTokens {
                     break;
                 case '\"':
                 case '\'':
+                    escapedNewline = false;
                     if (quote === null) {
                         quote = ch;
                         offset = i;
@@ -235,6 +278,9 @@ export class DockerSemanticTokens {
                         quote = null;
                         offset = -1;
                     }
+                    break;
+                default:
+                    escapedNewline = false;
                     break;
             }
         }
