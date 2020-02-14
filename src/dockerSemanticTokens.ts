@@ -183,6 +183,8 @@ export class DockerSemanticTokens {
             switch (ch) {
                 case ' ':
                 case '\t':
+                case '\n':
+                case '\r':
                     break;
                 case '#':
                     if (escapedNewline) {

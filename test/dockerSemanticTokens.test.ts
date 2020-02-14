@@ -521,6 +521,32 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
             });
 
+            it("inlined comment with space in between", () => {
+                let content =
+                    "RUN ls \\\n" +
+                    "# comment\n" +
+                    "\n" +
+                    "# comment\n" +
+                    "pwd";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 2, 0, 9);
+
+                content =
+                    "RUN ls \\\r\n" +
+                    "# comment\r\n" +
+                    "\r\n" +
+                    "# comment\r\n" +
+                    "pwd";
+                tokens = computeSemanticTokens(content);
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 5, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 2, 0, 9);
+            });
+
             it("apostrophe in inlined comment", () => {
                 let content =
                     "RUN ls \\\n" +
