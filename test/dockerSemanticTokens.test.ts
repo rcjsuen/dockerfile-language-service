@@ -429,17 +429,48 @@ describe("Dockerfile Semantic Token tests", () => {
     });
 
     describe("multiline", () => {
-        // it("FR\\\nOM", () => {
-            // let tokens = computeSemanticTokens("FR\\\nOM");
-            // assert.equal(10, tokens.data.length);
-            // assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
-            // assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 1, 0, 2);
+        describe("split keyword", () => {
+            it("keyword split by \\\\n", () => {
+                let tokens = computeSemanticTokens("FR\\\nOM");
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 1, 0, 2);
 
-            // tokens = computeSemanticTokens(" FROM");
-            // assert.equal(10, tokens.data.length);
-            // assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 1, 2);
-            // assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 1, 0, 2);
-        // });
+                tokens = computeSemanticTokens("FR\\\n\nOM");
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 2, 0, 2);
+            });
+
+            it("keyword split by \\\\r\\n", () => {
+                let tokens = computeSemanticTokens("FR\\\r\nOM");
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 1, 0, 2);
+
+                tokens = computeSemanticTokens("FR\\\r\n\r\nOM");
+                assert.equal(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 2, 0, 2);
+            });
+
+            it("FR\\\\nOM alpine", () => {
+                const tokens = computeSemanticTokens("FR\\\nOM alpine");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 1, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 10, 0, 3, 6);
+            });
+
+            it("FR\\\\r\\nOM", () => {
+                const tokens = computeSemanticTokens("FR\\\r\nOM alpine");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 1, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 10, 0, 3, 6);
+            });
+        });
+
         /**
          * RUN echo && \
          * 

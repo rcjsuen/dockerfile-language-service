@@ -127,8 +127,8 @@ export class LanguageService implements DockerfileLanguageService {
     }
 
     public computeSemanticTokens(content: string): SemanticTokens {
-        let dockerSemanticTokens = new DockerSemanticTokens();
-        return dockerSemanticTokens.computeSemanticTokens(content);
+        let dockerSemanticTokens = new DockerSemanticTokens(content);
+        return dockerSemanticTokens.computeSemanticTokens();
     }
 
     public validate(content: string, settings?: DockerfileUtils.ValidatorSettings): Diagnostic[] {

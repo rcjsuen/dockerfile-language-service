@@ -7,6 +7,7 @@
 import { SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
 import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild } from 'dockerfile-ast';
 import { Range, TextDocument } from 'vscode-languageserver-types';
+import { Dockerfile } from 'dockerfile-ast';
 
 export class TokensLegend {
 
@@ -51,12 +52,20 @@ export class DockerSemanticTokens {
 
     private currentRange: Range | null = null;
 
-    public computeSemanticTokens(content: string): SemanticTokens {
-        const document = TextDocument.create("", "", 0, content);
-        const dockerfile = DockerfileParser.parse(content);
-        let tokens: number[] = [];
-        let lines: Line[] = dockerfile.getComments();
-        let instructions = dockerfile.getInstructions();
+    private content: string;
+    private document: TextDocument;
+    private dockerfile: Dockerfile;
+    private tokens = [];
+
+    constructor(content: string) {
+        this.content = content;
+        this.document = TextDocument.create("", "", 0, content);
+        this.dockerfile = DockerfileParser.parse(content);
+    }
+
+    public computeSemanticTokens(): SemanticTokens {
+        let lines: Line[] = this.dockerfile.getComments();
+        let instructions = this.dockerfile.getInstructions();
         for (let instruction of instructions) {
             let range = instruction.getRange();
             if (range.start.line !== range.end.line) {
@@ -70,36 +79,33 @@ export class DockerSemanticTokens {
                 }
             }
         }
-        lines = lines.concat(dockerfile.getInstructions());
+        lines = lines.concat(this.dockerfile.getInstructions());
         lines.sort((a: Line, b: Line): number => {
             return a.getRange().start.line - b.getRange().start.line;
         });
 
-        for (const directive of dockerfile.getDirectives()) {
+        for (const directive of this.dockerfile.getDirectives()) {
             const directiveRange = directive.getRange();
-            tokens = tokens.concat(this.createToken(directiveRange, SemanticTokenTypes.marco));
-            this.currentRange = directiveRange;
+            this.createToken(directiveRange, SemanticTokenTypes.marco);
         }
 
-        const escapeCharacter = dockerfile.getEscapeCharacter();
+        const escapeCharacter = this.dockerfile.getEscapeCharacter();
         for (let i = 0; i < lines.length; i++) {
             if (lines[i] instanceof Comment) {
                 const range = lines[i].getRange();
-                tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.comment));
-                this.currentRange = range;
+                this.createToken(range, SemanticTokenTypes.comment);
             } else {
-                tokens = this.createTokensForInstruction(document, escapeCharacter, lines[i] as Instruction, tokens);
+                this.createTokensForInstruction(escapeCharacter, lines[i] as Instruction);
             }
         }
         return {
-            data: tokens
+            data: this.tokens
         }
     }
 
-    private createTokensForInstruction(document: TextDocument, escapeCharacter: string, instruction: Instruction, tokens: number[]): number[] {
+    private createTokensForInstruction(escapeCharacter: string, instruction: Instruction): number[] {
         const instructionRange = instruction.getInstructionRange();
-        tokens = tokens.concat(this.createToken(instructionRange, SemanticTokenTypes.keyword));
-        this.currentRange = instructionRange;
+        this.createToken(instructionRange, SemanticTokenTypes.keyword);
 
         if (instruction instanceof ModifiableInstruction) {
             for (const flag of instruction.getFlags()) {
@@ -109,13 +115,11 @@ export class DockerSemanticTokens {
                     start: { line: flagRange.start.line, character: flagRange.start.character },
                     end: { line: nameRange.end.line, character: nameRange.end.character }
                 };
-                tokens = tokens.concat(this.createToken(mergedRange, SemanticTokenTypes.parameter));
-                this.currentRange = flagRange;
+                this.createToken(mergedRange, SemanticTokenTypes.parameter);
                 const flagValue = flag.getValue();
                 if (flagValue !== null && flagValue !== "") {
                     const valueRange = flag.getValueRange();
-                    tokens = tokens.concat(this.createToken(valueRange, SemanticTokenTypes.property));
-                    this.currentRange = valueRange;
+                    this.createToken(valueRange, SemanticTokenTypes.property);
                 }
             }
         }
@@ -125,27 +129,23 @@ export class DockerSemanticTokens {
                 const from = instruction as From;
                 const nameRange = from.getImageNameRange();
                 if (nameRange !== null) {
-                    tokens = tokens.concat(this.createToken(nameRange, SemanticTokenTypes.class));
-                    this.currentRange = nameRange;
+                    this.createToken(nameRange, SemanticTokenTypes.class);
                 }
                 const tagRange = from.getImageTagRange();
                 if (tagRange !== null) {
-                    tokens = tokens.concat(this.createToken(tagRange, SemanticTokenTypes.label));
-                    this.currentRange = tagRange;
+                    this.createToken(tagRange, SemanticTokenTypes.label);
                 }
                 const digestRange = from.getImageDigestRange();
                 if (digestRange !== null) {
-                    tokens = tokens.concat(this.createToken(digestRange, SemanticTokenTypes.label));
-                    this.currentRange = digestRange;
+                    this.createToken(digestRange, SemanticTokenTypes.label);
                 }
                 const fromArgs = instruction.getArguments();
                 if (fromArgs.length > 1 && fromArgs[1].getValue().toUpperCase() === "AS") {
                     let range = fromArgs[1].getRange();
-                    tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.keyword));
-                    this.currentRange = range;
+                    this.createToken(range, SemanticTokenTypes.keyword);
                     range = from.getBuildStageRange();
                     if (range !== null) {
-                        tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.label));
+                        this.createToken(range, SemanticTokenTypes.label);
                     }
                 }
                 break;
@@ -154,25 +154,25 @@ export class DockerSemanticTokens {
                 const subcommand = healthcheck.getSubcommand();
                 if (subcommand !== null) {
                     const range = subcommand.getRange();
-                    tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.keyword));
+                    this.createToken(range, SemanticTokenTypes.keyword);
                 }
                 break;
             case Keyword.ONBUILD:
                 const onbuild = instruction as Onbuild;
                 const range = onbuild.getTriggerRange()
                 if (range !== null) {
-                    tokens = this.createTokensForInstruction(document, escapeCharacter, onbuild.getTriggerInstruction(), tokens);
+                    this.createTokensForInstruction(escapeCharacter, onbuild.getTriggerInstruction());
                 }
                 break;
         }
 
         const args = instruction.getArguments();
         if (args.length === 0) {
-            return tokens;
+            return this.tokens;
         }
 
         const start = args[0].getRange().start;
-        const startOffset = document.offsetAt(start);
+        const startOffset = this.document.offsetAt(start);
         const argsContent = instruction.getRawArgumentsContent();
         let variables = instruction.getVariables();
         let quote = null;
@@ -191,11 +191,10 @@ export class DockerSemanticTokens {
                         for (let j = i + 1; j < argsContent.length; j++) {
                             if (argsContent.charAt(j) === '\n' || argsContent.charAt(j) === '\r') {
                                 let range = {
-                                    start: document.positionAt(startOffset + i),
-                                    end: document.positionAt(startOffset + j)
+                                    start: this.document.positionAt(startOffset + i),
+                                    end: this.document.positionAt(startOffset + j)
                                 };
-                                tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.comment));
-                                this.currentRange = range;
+                                this.createToken(range, SemanticTokenTypes.comment);
                                 i = j;
                                 continue argsLoop;
                             }
@@ -217,26 +216,23 @@ export class DockerSemanticTokens {
                             case '\'':
                                 if (quote === null) {
                                     let range = {
-                                        start: document.positionAt(startOffset + i),
-                                        end: document.positionAt(startOffset + j + 1)
+                                        start: this.document.positionAt(startOffset + i),
+                                        end: this.document.positionAt(startOffset + j + 1)
                                     };
-                                    tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.string));
-                                    this.currentRange = range;
+                                    this.createToken(range, SemanticTokenTypes.string);
                                     i = j;
                                     continue argsLoop;
                                 } else {
                                     let range = {
-                                        start: document.positionAt(startOffset + offset),
-                                        end: document.positionAt(startOffset + i)
+                                        start: this.document.positionAt(startOffset + offset),
+                                        end: this.document.positionAt(startOffset + i)
                                     };
-                                    tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.string));
-                                    this.currentRange = range;
+                                    this.createToken(range, SemanticTokenTypes.string);
                                     range = {
-                                        start: document.positionAt(startOffset + i),
-                                        end: document.positionAt(startOffset + j + 1)
+                                        start: this.document.positionAt(startOffset + i),
+                                        end: this.document.positionAt(startOffset + j + 1)
                                     };
-                                    tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.string));
-                                    this.currentRange = range;
+                                    this.createToken(range, SemanticTokenTypes.string);
                                     // reset as the string has been cut off part ways
                                     quote = null;
                                     offset = -1;
@@ -251,13 +247,10 @@ export class DockerSemanticTokens {
                     escapedNewline = false;
                     for (let variable of variables) {
                         const range = variable.getRange();
-                        if (startOffset + i === document.offsetAt(range.start)) {
-                            tokens = tokens.concat(
-                                this.createToken(
-                                    range, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference]
-                                )
+                        if (startOffset + i === this.document.offsetAt(range.start)) {
+                            this.createToken(
+                                range, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference]
                             );
-                            this.currentRange = range;
                             variables.slice(1);
                             break;
                         }
@@ -272,11 +265,10 @@ export class DockerSemanticTokens {
                     } else if (quote === ch) {
                         // ensure that quotes match
                         const range = {
-                            start: document.positionAt(startOffset + offset),
-                            end: document.positionAt(startOffset + i + 1)
+                            start: this.document.positionAt(startOffset + offset),
+                            end: this.document.positionAt(startOffset + i + 1)
                         };
-                        tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.string));
-                        this.currentRange = range;
+                        this.createToken(range, SemanticTokenTypes.string);
                         quote = null;
                         offset = -1;
                     }
@@ -290,41 +282,72 @@ export class DockerSemanticTokens {
         if (quote !== null) {
             // trailing string token
             const range = {
-                start: document.positionAt(startOffset + offset),
-                end: document.positionAt(startOffset + argsContent.length)
+                start: this.document.positionAt(startOffset + offset),
+                end: this.document.positionAt(startOffset + argsContent.length)
             };
-            tokens = tokens.concat(this.createToken(range, SemanticTokenTypes.string));
-            this.currentRange = range;
+            this.createToken(range, SemanticTokenTypes.string);
         }
-
-        return tokens;
     }
 
-    private createToken(range: Range, tokenType: string, tokenModifiers: string[] = []): number[] {
+    private createToken(range: Range, tokenType: string, tokenModifiers: string[] = []): void {
+        if (range.start.line !== range.end.line) {
+            let offset = -1;
+            let startOffset = this.document.offsetAt(range.start);
+            const endOffset = this.document.offsetAt(range.end);
+            const escapeCharacter = this.dockerfile.getEscapeCharacter();
+            rangeLoop: for (let i = startOffset; i < endOffset; i++) {
+                let ch = this.content.charAt(i);
+                switch (ch) {
+                    case escapeCharacter:
+                        const intermediateRange = {
+                            start: this.document.positionAt(startOffset),
+                            end: this.document.positionAt(startOffset + i),
+                        }
+                        this.createToken(intermediateRange, tokenType, tokenModifiers);
+                        for (let j = i + 1; j < endOffset; j++) {
+                            switch (this.content.charAt(j)) {
+                                case '\n':
+                                    i = j;
+                                    offset = j + 1;
+                                    continue rangeLoop;
+                            }
+                        }
+                }
+            }
+            const intermediateRange = {
+                start: this.document.positionAt(startOffset + offset),
+                end: this.document.positionAt(endOffset),
+            }
+            this.createToken(intermediateRange, tokenType, tokenModifiers);
+            return;
+        }
+
         if (this.currentRange === null) {
-            return [
+            this.tokens = this.tokens.concat([
                 range.start.line,
                 range.start.character,
                 range.end.character - range.start.character,
                 TokensLegend.getTokenType(tokenType),
                 TokensLegend.getTokenModifiers(tokenModifiers)
-            ];
+            ]);
         } else if (this.currentRange.end.line !== range.start.line) {
-            return [
+            this.tokens = this.tokens.concat([
                 range.start.line - this.currentRange.end.line,
                 range.start.character,
                 range.end.character - range.start.character,
                 TokensLegend.getTokenType(tokenType),
                 TokensLegend.getTokenModifiers(tokenModifiers)
-            ];
+            ]);
+        } else {
+            this.tokens = this.tokens.concat([
+                range.start.line - this.currentRange.start.line,
+                range.start.character - this.currentRange.start.character,
+                range.end.character - range.start.character,
+                TokensLegend.getTokenType(tokenType),
+                TokensLegend.getTokenModifiers(tokenModifiers)
+            ]);
         }
-        return [
-            range.start.line - this.currentRange.start.line,
-            range.start.character - this.currentRange.start.character,
-            range.end.character - range.start.character,
-            TokensLegend.getTokenType(tokenType),
-            TokensLegend.getTokenModifiers(tokenModifiers)
-        ];
+        this.currentRange = range;
     }
 
 }
