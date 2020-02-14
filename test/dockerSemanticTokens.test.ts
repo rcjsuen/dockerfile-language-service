@@ -60,6 +60,14 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.label, 10, 0, 5, 71);
             });
 
+            it("FROM node AS", () => {
+                const tokens = computeSemanticTokens("FROM node AS");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 0, 5, 2);
+            });
+
             it("FROM node AS build", () => {
                 const tokens = computeSemanticTokens("FROM node AS build");
                 assert.equal(20, tokens.data.length);
@@ -118,6 +126,12 @@ describe("Dockerfile Semantic Token tests", () => {
         });
 
         describe("ONBUILD", () => {
+            it("no trigger instruction", () => {
+                const tokens = computeSemanticTokens("ONBUILD");
+                assert.equal(5, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 7);
+            });
+
             it("ONBUILD ADD", () => {
                 const tokens = computeSemanticTokens("ONBUILD ADD . /app/src");
                 assert.equal(10, tokens.data.length);
