@@ -361,6 +361,14 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 9, 12);
                 });
+
+                it("RUN '\\\\ng", () => {
+                    const tokens = computeSemanticTokens("RUN '\\\ng");
+                    assert.equal(15, tokens.data.length);
+                    assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                    assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 4, 1);
+                    assertEdit(tokens.data, SemanticTokenTypes.string, 10, 1, 0, 1);
+                });
             });
 
             describe("double quotes", () => {
@@ -376,6 +384,14 @@ describe("Dockerfile Semantic Token tests", () => {
                     assert.equal(10, tokens.data.length);
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 9, 12);
+                });
+
+                it("RUN \"\\\\ng", () => {
+                    const tokens = computeSemanticTokens("RUN \"\\\ng");
+                    assert.equal(15, tokens.data.length);
+                    assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                    assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 4, 1);
+                    assertEdit(tokens.data, SemanticTokenTypes.string, 10, 1, 0, 1);
                 });
             });
 

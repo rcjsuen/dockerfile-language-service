@@ -309,7 +309,7 @@ export class DockerSemanticTokens {
                     case escapeCharacter:
                         const intermediateRange = {
                             start: this.document.positionAt(startOffset),
-                            end: this.document.positionAt(startOffset + i),
+                            end: this.document.positionAt(i),
                         }
                         this.createToken(intermediateRange, tokenType, tokenModifiers);
                         for (let j = i + 1; j < endOffset; j++) {
@@ -323,7 +323,7 @@ export class DockerSemanticTokens {
                 }
             }
             const intermediateRange = {
-                start: this.document.positionAt(startOffset + offset),
+                start: this.document.positionAt(offset),
                 end: this.document.positionAt(endOffset),
             }
             this.createToken(intermediateRange, tokenType, tokenModifiers);
