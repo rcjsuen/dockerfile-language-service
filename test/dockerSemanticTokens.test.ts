@@ -144,6 +144,14 @@ describe("Dockerfile Semantic Token tests", () => {
             });
         });
 
+        describe("MAINTAINER", () => {
+            it("MAINTAINER name", () => {
+                const tokens = computeSemanticTokens("MAINTAINER name");
+                assert.equal(5, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 10, [SemanticTokenModifiers.deprecated]);
+            });
+        });
+
         describe("ONBUILD", () => {
             it("no trigger instruction", () => {
                 const tokens = computeSemanticTokens("ONBUILD");

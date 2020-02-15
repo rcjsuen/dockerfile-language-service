@@ -105,7 +105,11 @@ export class DockerSemanticTokens {
 
     private createTokensForInstruction(escapeCharacter: string, instruction: Instruction): number[] {
         const instructionRange = instruction.getInstructionRange();
-        this.createToken(instructionRange, SemanticTokenTypes.keyword);
+        let modifiers = [];
+        if (instruction.getKeyword() === Keyword.MAINTAINER) {
+            modifiers = [SemanticTokenModifiers.deprecated];
+        }
+        this.createToken(instructionRange, SemanticTokenTypes.keyword, modifiers);
 
         if (instruction instanceof ModifiableInstruction) {
             for (const flag of instruction.getFlags()) {
