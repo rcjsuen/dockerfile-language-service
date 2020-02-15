@@ -27,6 +27,25 @@ function assertEdit(data: number[], tokenType: string, index: number, line: numb
 describe("Dockerfile Semantic Token tests", () => {
     describe("keywords", () => {
         describe("FROM", () => {
+            function createVariableDeclarationTests(keyword: string) {
+                describe(keyword, () => {
+                    it(keyword, () => {
+                        const tokens = computeSemanticTokens(keyword);
+                        assert.equal(5, tokens.data.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
+                    });
+
+                    it(keyword + " var", () => {
+                        const tokens = computeSemanticTokens(keyword + " var");
+                        assert.equal(10, tokens.data.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 3, [SemanticTokenModifiers.declaration]);
+                    });
+                });
+            }
+            createVariableDeclarationTests("ARG");
+            createVariableDeclarationTests("ENV");
+
             it("FROM", () => {
                 let tokens = computeSemanticTokens("FROM");
                 assert.equal(5, tokens.data.length);

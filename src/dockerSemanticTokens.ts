@@ -5,7 +5,7 @@
 'use strict';
 
 import { SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
-import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild } from 'dockerfile-ast';
+import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild, PropertyInstruction } from 'dockerfile-ast';
 import { Range, TextDocument } from 'vscode-languageserver-types';
 import { Dockerfile } from 'dockerfile-ast';
 
@@ -125,6 +125,14 @@ export class DockerSemanticTokens {
         }
 
         switch (instruction.getKeyword()) {
+            case Keyword.ARG:
+            case Keyword.ENV:
+                const propertyInstruction = instruction as PropertyInstruction;
+                for (const property of propertyInstruction.getProperties()) {
+                    const nameRange = property.getNameRange();
+                    this.createToken(nameRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.declaration]);
+                }
+                break;
             case Keyword.FROM:
                 const from = instruction as From;
                 const nameRange = from.getImageNameRange();
