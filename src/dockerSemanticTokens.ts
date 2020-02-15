@@ -175,7 +175,7 @@ export class DockerSemanticTokens {
                 if (range !== null) {
                     this.createTokensForInstruction(escapeCharacter, onbuild.getTriggerInstruction());
                 }
-                break;
+                return;
         }
 
         const args = instruction.getArguments();
