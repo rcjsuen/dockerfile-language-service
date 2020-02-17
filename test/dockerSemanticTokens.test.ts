@@ -15,13 +15,13 @@ function computeSemanticTokens(content: string): SemanticTokens {
 }
 
 function assertEdit(data: number[], tokenType: string, index: number, line: number, startCharacter: number, length: number, tokenModifiers: string[] = []) {
-    assert.equal(line, data[index]);
-    assert.equal(startCharacter, data[index + 1]);
-    assert.equal(length, data[index + 2]);
-    assert.notEqual(TokensLegend.getTokenType(tokenType), undefined);
-    assert.notEqual(TokensLegend.getTokenType(tokenType), null);
-    assert.equal(TokensLegend.getTokenType(tokenType), data[index + 3]);
-    assert.equal(TokensLegend.getTokenModifiers(tokenModifiers), data[index + 4]);
+    assert.equal(data[index], line);
+    assert.equal(data[index + 1], startCharacter);
+    assert.equal(data[index + 2], length);
+    assert.notEqual(undefined, TokensLegend.getTokenType(tokenType));
+    assert.notEqual(null, TokensLegend.getTokenType(tokenType));
+    assert.equal(data[index + 3], TokensLegend.getTokenType(tokenType));
+    assert.equal(data[index + 4], TokensLegend.getTokenModifiers(tokenModifiers));
 }
 
 describe("Dockerfile Semantic Token tests", () => {
@@ -296,6 +296,15 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4, [SemanticTokenModifiers.reference]);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4, [SemanticTokenModifiers.reference]);
+            });
+
+            it("FROM golang:$GO_VERSION AS", () => {
+                const tokens = computeSemanticTokens("FROM golang:$GO_VERSION AS");
+                assert.equal(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 11, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 0, 12, 2);
             });
         });
 
