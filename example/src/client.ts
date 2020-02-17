@@ -3,8 +3,9 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageServiceFactory } from 'dockerfile-language-service';
-import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient';
+import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation } from 'vscode-languageserver-types';
 
+declare var monaco: any
 const LANGUAGE_ID = 'dockerfile';
 const MODEL_URI = 'inmemory://model.json'
 const MONACO_URI = monaco.Uri.parse(MODEL_URI);
@@ -22,9 +23,10 @@ RUN npm install --production && \\
 ENTRYPOINT [ "/docker-langserver/bin/docker-langserver" ]`;
 
 // create the Monaco editor
-const editor = monaco.editor.create(document.getElementById("container")!, {
+const monacoModel = monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI);
+monaco.editor.create(document.getElementById("container")!, {
     language: LANGUAGE_ID,
-    model: monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI),
+    model: monacoModel,
     lightbulb: {
         enabled: true
     },
@@ -32,137 +34,290 @@ const editor = monaco.editor.create(document.getElementById("container")!, {
     theme: "vs-dark"
 });
 
-const monacoModel = monaco.editor.getModel(MONACO_URI);
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 service.setCapabilities({ completion: { completionItem: { snippetSupport: true }}});
-const m2p = new MonacoToProtocolConverter();
-const p2m = new ProtocolToMonacoConverter();
 
-monacoModel.onDidChangeContent((event) => {
+function convertFormattingOptions(options: any): FormattingOptions {
+    return {
+        tabSize: options.tabSize,
+        insertSpaces: options.insertSpaces
+    }
+}
+
+function convertHover(hover: Hover) {
+    return {
+        contents: [
+            {
+                value: hover.contents
+            }
+        ],
+        range: hover.range === undefined ? undefined : convertProtocolRange(hover.range as Range)
+    }
+}
+
+function convertMonacoRange(range: any): Range {
+    return {
+        start: {
+            line: range.startLineNumber - 1,
+            character: range.startColumn - 1
+        },
+        end: {
+            line: range.endLineNumber - 1,
+            character: range.endColumn - 1
+        }
+    }
+}
+
+function convertPosition(line: number, character: number) {
+    return {
+        line: line - 1,
+        character: character - 1
+    }
+}
+
+function convertProtocolRange(range: Range) {
+    return {
+        startLineNumber: range.start.line + 1,
+        startColumn: range.start.character + 1,
+        endLineNumber: range.end.line + 1,
+        endColumn: range.end.character + 1,
+    }
+}
+
+function convertLink(link: DocumentLink) {
+    return {
+        range: convertProtocolRange(link.range),
+        url: link.target,
+    }
+}
+
+function convertTextEdit(edit: TextEdit) {
+    return {
+        range: convertProtocolRange(edit.range),
+        text: edit.newText
+    }
+}
+
+function convertTextEdits(edits: TextEdit[]) {
+    return edits.map(convertTextEdit);
+}
+
+function convertParameter(parameter: ParameterInformation) {
+    return {
+        label: parameter.label,
+        documentation: {
+            value: parameter.documentation
+        }
+    }
+}
+
+function convertSignature(signature: SignatureInformation) {
+    return {
+        documentation: {
+            value: signature.documentation
+        },
+        label: signature.label,
+        parameters: signature.parameters ? signature.parameters.map(convertParameter) : []
+    }
+}
+
+function convertToWorkspaceEdit(monacoEdits: any) {
+    const workspaceEdits = monacoEdits.map((edit: any) => {
+        return {
+            edit: edit,
+            resource: MONACO_URI
+        }
+    });
+    return {
+        edits: workspaceEdits
+    };
+}
+
+function convertCompletionItem(item: CompletionItem) {
+    item = service.resolveCompletionItem(item);
+    return {
+        label: item.label,
+        documentation: {
+            value: item.documentation
+        },
+        range: item.textEdit ? convertProtocolRange(item.textEdit.range) : undefined,
+        kind: item.kind as number + 1,
+        insertText: item.textEdit ? item.textEdit.newText : item.insertText,
+        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+
+    }
+}
+
+function convertMonacoCodeActionContext(context: any) {
+    return {
+        diagnostics: context.markers.map((marker: any) => {
+            const range = convertMonacoRange(marker);
+            return {
+                code: Number(marker.code),
+                range: range
+            }
+        })
+    }
+}
+
+monacoModel.onDidChangeContent(() => {
     const diagnostics = service.validate(monacoModel.getValue());
-    const markers = diagnostics.map(diagnostic => p2m.asMarker(diagnostic));
+    const markers = diagnostics.map((diagnostic) => {
+        const range = convertProtocolRange(diagnostic.range);
+        return {
+            code: diagnostic.code !== undefined ? diagnostic.code.toString() : undefined,
+            severity: diagnostic.severity === 1 ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
+            startLineNumber: range.startLineNumber,
+            startColumn: range.startColumn,
+            endLineNumber: range.endLineNumber,
+            endColumn: range.endColumn,
+            message: diagnostic.message,
+            source: diagnostic.source,
+        }
+    });
     monaco.editor.setModelMarkers(monacoModel, LANGUAGE_ID, markers);
 });
 
 monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
-    provideCodeActions(model, range, context, token): monaco.languages.CodeAction[] {
-        const commands = service.computeCodeActions(LSP_URI, m2p.asRange(range), m2p.asCodeActionContext(context));
+    provideCodeActions(_model: any, range: any, context: any) {
+        const commands = service.computeCodeActions(LSP_URI, convertMonacoRange(range), convertMonacoCodeActionContext(context));
+        const codeActions = [];
         for (let command of commands) {
-            (editor as any)._commandService.addCommand({
-                id: command.command,
-                handler: () => {
-                    const args = command.arguments as any[];
-                    const edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
-                    if (edits) {
-                        const ops = edits.map((edit): monaco.editor.IIdentifiedSingleEditOperation => {
-                            return {
-                                range: p2m.asRange(edit.range),
-                                text: edit.newText
-                            }
-                        });
-                        monacoModel.pushEditOperations([], ops, () => []);
-                    }
+            let args = command.arguments ? command.arguments : []
+            let edits = service.computeCommandEdits(monacoModel.getValue(), command.command, args);
+            codeActions.push(
+                {
+                    title: command.title,
+                    edit: convertToWorkspaceEdit(convertTextEdits(edits))
                 }
-            });
+            );
         }
-        return p2m.asCodeActions(commands);
+        return {
+            actions: codeActions,
+            dispose: () => {}
+        } as any;
     }
 });
 
 monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
     triggerCharacters: ['=', ' ', '$', '-'],
 
-    provideCompletionItems(model, position, token): monaco.languages.CompletionItem[] | Thenable<monaco.languages.CompletionItem[]> | monaco.languages.CompletionList | Thenable<monaco.languages.CompletionList> {
-        const lspPosition = m2p.asPosition(position.lineNumber, position.column);
+    provideCompletionItems(model: any, position: any) {
+        const lspPosition = convertPosition(position.lineNumber, position.column);
         const items = service.computeCompletionItems(model.getValue(), lspPosition);
         if ((items as any).then) {
             return (items as any).then((result: any) => {
-                return p2m.asCompletionResult(result);
+                return {
+                    incomplete: false,
+                    suggestions: result.map(convertCompletionItem)
+                }
             });
         }
-        const completionItems = items as any;
-        return p2m.asCompletionResult(completionItems);
+        return {
+            incomplete: false,
+            suggestions: (items as any).map(convertCompletionItem)
+        }
     },
-
-    resolveCompletionItem(completionItem, token): monaco.languages.CompletionItem {
-        return p2m.asCompletionItem(service.resolveCompletionItem(m2p.asCompletionItem(completionItem)));
-    }
 });
 
 monaco.languages.registerDefinitionProvider(LANGUAGE_ID, {
-    provideDefinition(model, position, token): monaco.languages.Definition {
-        const definition = service.computeDefinition(LSP_URI, model.getValue(), m2p.asPosition(position.lineNumber, position.column));
-        return p2m.asDefinitionResult(definition);
+    provideDefinition(model: any, position: any) {
+        const definition = service.computeDefinition(LSP_URI, model.getValue(), convertPosition(position.lineNumber, position.column));
+        if (definition) {
+            return {
+                range: convertProtocolRange(definition.range),
+                uri: MONACO_URI
+            }
+        }
+        return null;
     }
 });
 
 monaco.languages.registerDocumentHighlightProvider(LANGUAGE_ID, {
-    provideDocumentHighlights(model, position, token): monaco.languages.DocumentHighlight[] {
-        const highlightRanges = service.computeHighlightRanges(model.getValue(), m2p.asPosition(position.lineNumber, position.column));
-        return p2m.asDocumentHighlights(highlightRanges);
+    provideDocumentHighlights(model: any, position: any) {
+        const highlightRanges = service.computeHighlightRanges(model.getValue(), convertPosition(position.lineNumber, position.column));
+        return highlightRanges.map((highlightRange) => {
+            return {
+                kind: highlightRange.kind ? highlightRange.kind - 1 : undefined,
+                range: convertProtocolRange(highlightRange.range)
+            }
+        });
     }
 });
 
 monaco.languages.registerHoverProvider(LANGUAGE_ID, {
-    provideHover(model, position, token): monaco.languages.Hover {
-        const hover = service.computeHover(model.getValue(), m2p.asPosition(position.lineNumber, position.column));
-        return p2m.asHover(hover) as monaco.languages.Hover;
+    provideHover(model: any, position: any) {
+        const hover = service.computeHover(model.getValue(), convertPosition(position.lineNumber, position.column));
+        return hover === null ? null : convertHover(hover);
     }
 });
 
 monaco.languages.registerDocumentSymbolProvider(LANGUAGE_ID, {
-    provideDocumentSymbols(model, token): monaco.languages.SymbolInformation[] {
+    provideDocumentSymbols(model: any) {
         const symbols = service.computeSymbols(LSP_URI, model.getValue());
-        return p2m.asSymbolInformations(symbols);
+        return symbols.map((symbol) => {
+            return {
+                name: symbol.name,
+                range: convertProtocolRange(symbol.location.range),
+                kind: symbol.kind - 1
+            }
+        });
     }
 });
 
 monaco.languages.registerSignatureHelpProvider(LANGUAGE_ID, {
     signatureHelpTriggerCharacters: [' ', '-', '=', '[', ','],
 
-    provideSignatureHelp(model, position, token): monaco.languages.SignatureHelp {
-        const symbols = service.computeSignatureHelp(model.getValue(), m2p.asPosition(position.lineNumber, position.column));
-        return p2m.asSignatureHelp(symbols);
+    provideSignatureHelp(model: any, position: any) {
+        const signatureHelp = service.computeSignatureHelp(model.getValue(), convertPosition(position.lineNumber, position.column));
+        return {
+            value: {
+                activeParameter: signatureHelp.activeParameter !== undefined ? signatureHelp.activeParameter : undefined,
+                activeSignature: signatureHelp.activeSignature !== undefined ? signatureHelp.activeSignature : undefined,
+                signatures: signatureHelp.signatures.map(convertSignature)
+            }
+        }
     }
 });
 
 monaco.languages.registerRenameProvider(LANGUAGE_ID, {
-    provideRenameEdits(model, position, newName): monaco.languages.WorkspaceEdit {
-        const edits = service.computeRename(LSP_URI, model.getValue(), m2p.asPosition(position.lineNumber, position.column), newName);
-        return p2m.asWorkspaceEdit({
-            changes: {
-                [MODEL_URI]: edits
-            }
-        });
+    provideRenameEdits(model: any, position: any, newName: string) {
+        const edits = service.computeRename(LSP_URI, model.getValue(), convertPosition(position.lineNumber, position.column), newName);
+        const monacoEdits = convertTextEdits(edits);
+        return convertToWorkspaceEdit(monacoEdits);
     }
 });
 
 monaco.languages.registerLinkProvider(LANGUAGE_ID, {
-    provideLinks(model, token): monaco.languages.ILink[] {
+    provideLinks(model: any) {
         const links = service.computeLinks(model.getValue());
-        return p2m.asILinks(links);
+        return {
+            links: links.map((link) => {
+                return convertLink(service.resolveLink(link));
+            })
+        };
     }
 });
 
 monaco.languages.registerDocumentFormattingEditProvider(LANGUAGE_ID, {
-    provideDocumentFormattingEdits(model, options, token): monaco.languages.TextEdit[] {
-        const edits = service.format(model.getValue(), m2p.asFormattingOptions(options));
-        return p2m.asTextEdits(edits);
+    provideDocumentFormattingEdits(model: any, options: any) {
+        const edits = service.format(model.getValue(), convertFormattingOptions(options));
+        return convertTextEdits(edits);
     }
 });
 
 monaco.languages.registerDocumentRangeFormattingEditProvider(LANGUAGE_ID, {
-    provideDocumentRangeFormattingEdits(model, range, options, token): monaco.languages.TextEdit[] {
-        const edits = service.formatRange(model.getValue(), m2p.asRange(range), m2p.asFormattingOptions(options));
-        return p2m.asTextEdits(edits);
+    provideDocumentRangeFormattingEdits(model: any, range: any, options: any) {
+        const edits = service.formatRange(model.getValue(), convertMonacoRange(range), convertFormattingOptions(options));
+        return convertTextEdits(edits);
     }
 });
 
 monaco.languages.registerOnTypeFormattingEditProvider(LANGUAGE_ID, {
     autoFormatTriggerCharacters: ['`', '\\'],
 
-    provideOnTypeFormattingEdits(model, position, ch, options, token): monaco.languages.TextEdit[] {
-        const edits = service.formatOnType(model.getValue(), m2p.asPosition(position.lineNumber, position.column), ch, m2p.asFormattingOptions(options));
-        return p2m.asTextEdits(edits);
+    provideOnTypeFormattingEdits(model: any, position: any, ch: any, options: any) {
+        const edits = service.formatOnType(model.getValue(), convertPosition(position.lineNumber, position.column), ch, convertFormattingOptions(options));
+        return convertTextEdits(edits);
     }
 });
