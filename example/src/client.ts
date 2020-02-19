@@ -4,12 +4,10 @@
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageServiceFactory } from 'dockerfile-language-service';
 import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation } from 'vscode-languageserver-types';
+import { SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
 
 declare var monaco: any
 const LANGUAGE_ID = 'dockerfile';
-const MODEL_URI = 'inmemory://model.json'
-const MONACO_URI = monaco.Uri.parse(MODEL_URI);
-const LSP_URI = { uri: MODEL_URI };
 
 // content to initialize the editor with
 const content = 
@@ -23,16 +21,90 @@ RUN npm install --production && \\
 ENTRYPOINT [ "/docker-langserver/bin/docker-langserver" ]`;
 
 // create the Monaco editor
-const monacoModel = monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI);
-monaco.editor.create(document.getElementById("container")!, {
+const editor = monaco.editor.create(document.getElementById("container")!, {
     language: LANGUAGE_ID,
-    model: monacoModel,
+    value: content,
     lightbulb: {
         enabled: true
     },
+    'semanticHighlighting.enabled': true,
     formatOnType: true,
-    theme: "vs-dark"
+    theme: "vs"
 });
+const monacoModel = editor.getModel();
+const MONACO_URI = monacoModel.uri;
+const MODEL_URI = MONACO_URI.toString();
+const LSP_URI = { uri: MODEL_URI };
+
+const darkThemeMap = {
+    "keyword": 0,
+    "comment": 7,
+    "parameter": 10,
+    "property": 3,
+    "label": 11,
+    "class": 5,
+    "marco": 6,
+    "string": 5,
+    "variable": {
+        "declaration": 8,
+        "definition": 8,
+        "deprecated": 8,
+        "reference": 4,
+    }
+}
+function getStyleMetadataDark(type: string, modifiers: string[]) {
+    let color = (darkThemeMap as any)[type];
+    if (type === "variable") {
+        color = (darkThemeMap[type] as any)[modifiers[0]];
+    }
+    const style = {
+        foreground: color,
+        bold: false,
+        underline: false,
+        italic: false
+    };
+    if (true) {
+        return style;
+    }
+};
+
+const lightThemeMap = {
+    "keyword": 0,
+    "comment": 7,
+    "parameter": 5,
+    "property": 4,
+    "label": 11,
+    "class": 5,
+    "marco": 3,
+    "string": 11,
+    "variable": {
+        "declaration": 12,
+        "definition": 12,
+        "deprecated": 12,
+        "reference": 13,
+    }
+}
+function getStyleMetadataLight(type: string, modifiers: string[]) {
+    let color = (lightThemeMap as any)[type];
+    if (type === "variable") {
+        color = (lightThemeMap[type] as any)[modifiers[0]];
+    }
+    const style = {
+        foreground: color,
+        bold: false,
+        underline: false,
+        italic: false
+    };
+    if (true) {
+        return style;
+    }
+};
+
+monaco.editor.setTheme('vs');
+editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataLight;
+
+monaco.editor.setTheme('vs-dark');
+editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataDark
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 service.setCapabilities({ completion: { completionItem: { snippetSupport: true }}});
@@ -176,6 +248,39 @@ monacoModel.onDidChangeContent(() => {
         }
     });
     monaco.editor.setModelMarkers(monacoModel, LANGUAGE_ID, markers);
+});
+
+monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
+    getLegend() {
+        let tokenTypes = [];
+        let tokenModifiers = [];
+        tokenTypes.push(SemanticTokenTypes.keyword);
+        tokenTypes.push(SemanticTokenTypes.comment);
+        tokenTypes.push(SemanticTokenTypes.parameter);
+        tokenTypes.push(SemanticTokenTypes.property);
+        tokenTypes.push(SemanticTokenTypes.label);
+        tokenTypes.push(SemanticTokenTypes.class);
+        tokenTypes.push(SemanticTokenTypes.marco);
+        tokenTypes.push(SemanticTokenTypes.string);
+        tokenTypes.push(SemanticTokenTypes.variable);
+
+        tokenModifiers.push(SemanticTokenModifiers.declaration);
+        tokenModifiers.push(SemanticTokenModifiers.definition);
+        tokenModifiers.push(SemanticTokenModifiers.deprecated);
+        tokenModifiers.push(SemanticTokenModifiers.reference);
+        return {
+            tokenModifiers,
+            tokenTypes
+        };
+    },
+
+    provideDocumentSemanticTokens(model: any) {
+        return service.computeSemanticTokens(model.getValue());
+    },
+
+    releaseDocumentSemanticTokens() {
+        // nothing to do
+    }
 });
 
 monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
