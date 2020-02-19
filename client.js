@@ -5,23 +5,93 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var dockerfile_language_service_1 = require("dockerfile-language-service");
+var protocol_sematicTokens_proposed_1 = require("vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed");
 var LANGUAGE_ID = 'dockerfile';
-var MODEL_URI = 'inmemory://model.json';
-var MONACO_URI = monaco.Uri.parse(MODEL_URI);
-var LSP_URI = { uri: MODEL_URI };
 // content to initialize the editor with
 var content = "FROM node:alpine\nCOPY lib /docker-langserver/lib\nCOPY bin /docker-langserver/bin\nCOPY package.json /docker-langserver/package.json\nWORKDIR /docker-langserver/\nRUN npm install --production && \\\n    chmod +x /docker-langserver/bin/docker-langserver\nENTRYPOINT [ \"/docker-langserver/bin/docker-langserver\" ]";
 // create the Monaco editor
-var monacoModel = monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI);
-monaco.editor.create(document.getElementById("container"), {
+var editor = monaco.editor.create(document.getElementById("container"), {
     language: LANGUAGE_ID,
-    model: monacoModel,
+    value: content,
     lightbulb: {
         enabled: true
     },
+    'semanticHighlighting.enabled': true,
     formatOnType: true,
-    theme: "vs-dark"
+    theme: "vs"
 });
+var monacoModel = editor.getModel();
+var MONACO_URI = monacoModel.uri;
+var MODEL_URI = MONACO_URI.toString();
+var LSP_URI = { uri: MODEL_URI };
+var darkThemeMap = {
+    "keyword": 0,
+    "comment": 7,
+    "parameter": 10,
+    "property": 3,
+    "label": 11,
+    "class": 5,
+    "marco": 6,
+    "string": 5,
+    "variable": {
+        "declaration": 8,
+        "definition": 8,
+        "deprecated": 8,
+        "reference": 4,
+    }
+};
+function getStyleMetadataDark(type, modifiers) {
+    var color = darkThemeMap[type];
+    if (type === "variable") {
+        color = darkThemeMap[type][modifiers[0]];
+    }
+    var style = {
+        foreground: color,
+        bold: false,
+        underline: false,
+        italic: false
+    };
+    if (true) {
+        return style;
+    }
+}
+;
+var lightThemeMap = {
+    "keyword": 0,
+    "comment": 7,
+    "parameter": 5,
+    "property": 4,
+    "label": 11,
+    "class": 5,
+    "marco": 3,
+    "string": 11,
+    "variable": {
+        "declaration": 12,
+        "definition": 12,
+        "deprecated": 12,
+        "reference": 13,
+    }
+};
+function getStyleMetadataLight(type, modifiers) {
+    var color = lightThemeMap[type];
+    if (type === "variable") {
+        color = lightThemeMap[type][modifiers[0]];
+    }
+    var style = {
+        foreground: color,
+        bold: false,
+        underline: false,
+        italic: false
+    };
+    if (true) {
+        return style;
+    }
+}
+;
+monaco.editor.setTheme('vs');
+editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataLight;
+monaco.editor.setTheme('vs-dark');
+editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataDark;
 var service = dockerfile_language_service_1.DockerfileLanguageServiceFactory.createLanguageService();
 service.setCapabilities({ completion: { completionItem: { snippetSupport: true } } });
 function convertFormattingOptions(options) {
@@ -149,6 +219,35 @@ monacoModel.onDidChangeContent(function () {
         };
     });
     monaco.editor.setModelMarkers(monacoModel, LANGUAGE_ID, markers);
+});
+monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
+    getLegend: function () {
+        var tokenTypes = [];
+        var tokenModifiers = [];
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.keyword);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.comment);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.parameter);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.property);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.label);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.class);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.marco);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.string);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.variable);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.declaration);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.definition);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.deprecated);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.reference);
+        return {
+            tokenModifiers: tokenModifiers,
+            tokenTypes: tokenTypes
+        };
+    },
+    provideDocumentSemanticTokens: function (model) {
+        return service.computeSemanticTokens(model.getValue());
+    },
+    releaseDocumentSemanticTokens: function () {
+        // nothing to do
+    }
 });
 monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
     provideCodeActions: function (_model, range, context) {

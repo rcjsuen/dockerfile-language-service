@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 66);
+/******/ 	return __webpack_require__(__webpack_require__.s = 67);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -2747,8 +2747,8 @@ process.umask = function() { return 0; };
 
 
 
-var base64 = __webpack_require__(67)
-var ieee754 = __webpack_require__(74)
+var base64 = __webpack_require__(68)
+var ieee754 = __webpack_require__(75)
 var isArray = __webpack_require__(49)
 
 exports.Buffer = Buffer
@@ -6464,8 +6464,8 @@ exports.Property = Property;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(32);
-const dockerFormatter_1 = __webpack_require__(71);
-const dockerValidator_1 = __webpack_require__(72);
+const dockerFormatter_1 = __webpack_require__(72);
+const dockerValidator_1 = __webpack_require__(73);
 /**
  * Error codes that correspond to a given validation error. These
  * values are exposed for the purpose of allowing clients to identify
@@ -8651,7 +8651,7 @@ const stopsignal_1 = __webpack_require__(40);
 const workdir_1 = __webpack_require__(43);
 const user_1 = __webpack_require__(41);
 const volume_1 = __webpack_require__(42);
-const dockerfile_1 = __webpack_require__(69);
+const dockerfile_1 = __webpack_require__(70);
 class Parser {
     constructor() {
         this.escapeChar = null;
@@ -9543,7 +9543,7 @@ if (debugUtil && debugUtil.debuglog) {
 }
 /*</replacement>*/
 
-var BufferList = __webpack_require__(82);
+var BufferList = __webpack_require__(83);
 var destroyImpl = __webpack_require__(53);
 var StringDecoder;
 
@@ -10777,7 +10777,7 @@ util.inherits = __webpack_require__(8);
 
 /*<replacement>*/
 var internalUtil = {
-  deprecate: __webpack_require__(101)
+  deprecate: __webpack_require__(102)
 };
 /*</replacement>*/
 
@@ -11481,7 +11481,7 @@ exports.Readable = exports;
 exports.Writable = __webpack_require__(52);
 exports.Duplex = __webpack_require__(9);
 exports.Transform = __webpack_require__(51);
-exports.PassThrough = __webpack_require__(81);
+exports.PassThrough = __webpack_require__(82);
 
 
 /***/ }),
@@ -12120,7 +12120,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(83);
+__webpack_require__(84);
 // On some exotic environments, it's not clear which object `setimmeidate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -12716,7 +12716,7 @@ exports.MarkdownDocumentation = MarkdownDocumentation;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var languageService_1 = __webpack_require__(99);
+var languageService_1 = __webpack_require__(100);
 var CommandIds;
 (function (CommandIds) {
     CommandIds["LOWERCASE"] = "docker.command.convertToLowercase";
@@ -12770,8 +12770,8 @@ var DockerfileLanguageServiceFactory;
 
 
 
-var punycode = __webpack_require__(77);
-var util = __webpack_require__(100);
+var punycode = __webpack_require__(78);
+var util = __webpack_require__(101);
 
 exports.parse = urlParse;
 exports.resolve = urlResolve;
@@ -12846,7 +12846,7 @@ var protocolPattern = /^([a-z0-9.+-]+:)/i,
       'gopher:': true,
       'file:': true
     },
-    querystring = __webpack_require__(80);
+    querystring = __webpack_require__(81);
 
 function urlParse(url, parseQueryString, slashesDenoteHost) {
   if (url && util.isObject(url) && url instanceof Url) return url;
@@ -13486,6 +13486,106 @@ Url.prototype.parseHost = function() {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const messages_1 = __webpack_require__(109);
+/**
+ * A set of predefined token types. This set is not fixed
+ * an clients can specify additional token types via the
+ * corresponding client capabilities.
+ *
+ * @since 3.16.0 - Proposed state
+ */
+var SemanticTokenTypes;
+(function (SemanticTokenTypes) {
+    SemanticTokenTypes["comment"] = "comment";
+    SemanticTokenTypes["keyword"] = "keyword";
+    SemanticTokenTypes["string"] = "string";
+    SemanticTokenTypes["number"] = "number";
+    SemanticTokenTypes["regexp"] = "regexp";
+    SemanticTokenTypes["operator"] = "operator";
+    SemanticTokenTypes["namespace"] = "namespace";
+    SemanticTokenTypes["type"] = "type";
+    SemanticTokenTypes["struct"] = "struct";
+    SemanticTokenTypes["class"] = "class";
+    SemanticTokenTypes["interface"] = "interface";
+    SemanticTokenTypes["enum"] = "enum";
+    SemanticTokenTypes["typeParameter"] = "typeParameter";
+    SemanticTokenTypes["function"] = "function";
+    SemanticTokenTypes["member"] = "member";
+    SemanticTokenTypes["property"] = "property";
+    SemanticTokenTypes["marco"] = "marco";
+    SemanticTokenTypes["variable"] = "variable";
+    SemanticTokenTypes["parameter"] = "parameter";
+    SemanticTokenTypes["label"] = "label";
+})(SemanticTokenTypes = exports.SemanticTokenTypes || (exports.SemanticTokenTypes = {}));
+/**
+ * A set of predefined token modifiers. This set is not fixed
+ * an clients can specify additional token types via the
+ * corresponding client capabilities.
+ *
+ * @since 3.16.0 - Proposed state
+ */
+var SemanticTokenModifiers;
+(function (SemanticTokenModifiers) {
+    SemanticTokenModifiers["documentation"] = "documentation";
+    SemanticTokenModifiers["declaration"] = "declaration";
+    SemanticTokenModifiers["definition"] = "definition";
+    SemanticTokenModifiers["reference"] = "reference";
+    SemanticTokenModifiers["static"] = "static";
+    SemanticTokenModifiers["abstract"] = "abstract";
+    SemanticTokenModifiers["deprecated"] = "deprected";
+    SemanticTokenModifiers["async"] = "async";
+    SemanticTokenModifiers["volatile"] = "volatile";
+    SemanticTokenModifiers["final"] = "final";
+})(SemanticTokenModifiers = exports.SemanticTokenModifiers || (exports.SemanticTokenModifiers = {}));
+/**
+ * @since 3.16.0 - Proposed state
+ */
+var SemanticTokens;
+(function (SemanticTokens) {
+    function is(value) {
+        const candidate = value;
+        return candidate !== undefined && (candidate.resultId === undefined || typeof candidate.resultId === 'string') &&
+            Array.isArray(candidate.data) && (candidate.data.length === 0 || typeof candidate.data[0] === 'number');
+    }
+    SemanticTokens.is = is;
+})(SemanticTokens = exports.SemanticTokens || (exports.SemanticTokens = {}));
+/**
+ * @since 3.16.0 - Proposed state
+ */
+var SemanticTokensRequest;
+(function (SemanticTokensRequest) {
+    SemanticTokensRequest.method = 'textDocument/semanticTokens';
+    SemanticTokensRequest.type = new messages_1.ProtocolRequestType(SemanticTokensRequest.method);
+})(SemanticTokensRequest = exports.SemanticTokensRequest || (exports.SemanticTokensRequest = {}));
+/**
+ * @since 3.16.0 - Proposed state
+ */
+var SemanticTokensEditsRequest;
+(function (SemanticTokensEditsRequest) {
+    SemanticTokensEditsRequest.method = 'textDocument/semanticTokens/edits';
+    SemanticTokensEditsRequest.type = new messages_1.ProtocolRequestType(SemanticTokensEditsRequest.method);
+})(SemanticTokensEditsRequest = exports.SemanticTokensEditsRequest || (exports.SemanticTokensEditsRequest = {}));
+/**
+ * @since 3.16.0 - Proposed state
+ */
+var SemanticTokensRangeRequest;
+(function (SemanticTokensRangeRequest) {
+    SemanticTokensRangeRequest.method = 'textDocument/semanticTokens/range';
+    SemanticTokensRangeRequest.type = new messages_1.ProtocolRequestType(SemanticTokensRangeRequest.method);
+})(SemanticTokensRangeRequest = exports.SemanticTokensRangeRequest || (exports.SemanticTokensRangeRequest = {}));
+
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 /* --------------------------------------------------------------------------------------------
@@ -13493,23 +13593,93 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var dockerfile_language_service_1 = __webpack_require__(63);
+var protocol_sematicTokens_proposed_1 = __webpack_require__(65);
 var LANGUAGE_ID = 'dockerfile';
-var MODEL_URI = 'inmemory://model.json';
-var MONACO_URI = monaco.Uri.parse(MODEL_URI);
-var LSP_URI = { uri: MODEL_URI };
 // content to initialize the editor with
 var content = "FROM node:alpine\nCOPY lib /docker-langserver/lib\nCOPY bin /docker-langserver/bin\nCOPY package.json /docker-langserver/package.json\nWORKDIR /docker-langserver/\nRUN npm install --production && \\\n    chmod +x /docker-langserver/bin/docker-langserver\nENTRYPOINT [ \"/docker-langserver/bin/docker-langserver\" ]";
 // create the Monaco editor
-var monacoModel = monaco.editor.createModel(content, LANGUAGE_ID, MONACO_URI);
-monaco.editor.create(document.getElementById("container"), {
+var editor = monaco.editor.create(document.getElementById("container"), {
     language: LANGUAGE_ID,
-    model: monacoModel,
+    value: content,
     lightbulb: {
         enabled: true
     },
+    'semanticHighlighting.enabled': true,
     formatOnType: true,
-    theme: "vs-dark"
+    theme: "vs"
 });
+var monacoModel = editor.getModel();
+var MONACO_URI = monacoModel.uri;
+var MODEL_URI = MONACO_URI.toString();
+var LSP_URI = { uri: MODEL_URI };
+var darkThemeMap = {
+    "keyword": 0,
+    "comment": 7,
+    "parameter": 10,
+    "property": 3,
+    "label": 11,
+    "class": 5,
+    "marco": 6,
+    "string": 5,
+    "variable": {
+        "declaration": 8,
+        "definition": 8,
+        "deprecated": 8,
+        "reference": 4,
+    }
+};
+function getStyleMetadataDark(type, modifiers) {
+    var color = darkThemeMap[type];
+    if (type === "variable") {
+        color = darkThemeMap[type][modifiers[0]];
+    }
+    var style = {
+        foreground: color,
+        bold: false,
+        underline: false,
+        italic: false
+    };
+    if (true) {
+        return style;
+    }
+}
+;
+var lightThemeMap = {
+    "keyword": 0,
+    "comment": 7,
+    "parameter": 5,
+    "property": 4,
+    "label": 11,
+    "class": 5,
+    "marco": 3,
+    "string": 11,
+    "variable": {
+        "declaration": 12,
+        "definition": 12,
+        "deprecated": 12,
+        "reference": 13,
+    }
+};
+function getStyleMetadataLight(type, modifiers) {
+    var color = lightThemeMap[type];
+    if (type === "variable") {
+        color = lightThemeMap[type][modifiers[0]];
+    }
+    var style = {
+        foreground: color,
+        bold: false,
+        underline: false,
+        italic: false
+    };
+    if (true) {
+        return style;
+    }
+}
+;
+monaco.editor.setTheme('vs');
+editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataLight;
+monaco.editor.setTheme('vs-dark');
+editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataDark;
 var service = dockerfile_language_service_1.DockerfileLanguageServiceFactory.createLanguageService();
 service.setCapabilities({ completion: { completionItem: { snippetSupport: true } } });
 function convertFormattingOptions(options) {
@@ -13637,6 +13807,35 @@ monacoModel.onDidChangeContent(function () {
         };
     });
     monaco.editor.setModelMarkers(monacoModel, LANGUAGE_ID, markers);
+});
+monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
+    getLegend: function () {
+        var tokenTypes = [];
+        var tokenModifiers = [];
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.keyword);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.comment);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.parameter);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.property);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.label);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.class);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.marco);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.string);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.variable);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.declaration);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.definition);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.deprecated);
+        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.reference);
+        return {
+            tokenModifiers: tokenModifiers,
+            tokenTypes: tokenTypes
+        };
+    },
+    provideDocumentSemanticTokens: function (model) {
+        return service.computeSemanticTokens(model.getValue());
+    },
+    releaseDocumentSemanticTokens: function () {
+        // nothing to do
+    }
 });
 monaco.languages.registerCodeActionProvider(LANGUAGE_ID, {
     provideCodeActions: function (_model, range, context) {
@@ -13769,7 +13968,7 @@ monaco.languages.registerOnTypeFormattingEditProvider(LANGUAGE_ID, {
 //# sourceMappingURL=client.js.map
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* --------------------------------------------------------------------------------------------
@@ -13781,13 +13980,13 @@ window.onload = function () {
     // load Monaco code
     w.require(['vs/editor/editor.main'], function () {
         // load client code
-        __webpack_require__(65);
+        __webpack_require__(66);
     });
 };
 //# sourceMappingURL=main.js.map
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13910,7 +14109,7 @@ function fromByteArray (uint8) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -13980,7 +14179,7 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13992,7 +14191,7 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_types_1 = __webpack_require__(0);
 const ast = __webpack_require__(1);
-const imageTemplate_1 = __webpack_require__(70);
+const imageTemplate_1 = __webpack_require__(71);
 const from_1 = __webpack_require__(14);
 const util_1 = __webpack_require__(7);
 const main_1 = __webpack_require__(1);
@@ -14170,7 +14369,7 @@ exports.Dockerfile = Dockerfile;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14395,7 +14594,7 @@ exports.ImageTemplate = ImageTemplate;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14573,7 +14772,7 @@ exports.DockerFormatter = DockerFormatter;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16133,10 +16332,10 @@ Validator.dockerProblems = {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var http = __webpack_require__(84)
+var http = __webpack_require__(85)
 var url = __webpack_require__(64)
 
 var https = module.exports
@@ -16170,7 +16369,7 @@ function validateParams (params) {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -16260,7 +16459,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -16315,7 +16514,7 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -16546,7 +16745,7 @@ var substr = 'ab'.substr(-1) === 'b'
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/punycode v1.4.1 by @mathias */
@@ -17085,7 +17284,7 @@ var substr = 'ab'.substr(-1) === 'b'
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(110)(module), __webpack_require__(2)))
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17176,7 +17375,7 @@ var isArray = Array.isArray || function (xs) {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17268,18 +17467,18 @@ var objectKeys = Object.keys || function (obj) {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.decode = exports.parse = __webpack_require__(78);
-exports.encode = exports.stringify = __webpack_require__(79);
+exports.decode = exports.parse = __webpack_require__(79);
+exports.encode = exports.stringify = __webpack_require__(80);
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17332,7 +17531,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
 };
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17417,7 +17616,7 @@ if (util && util.inspect && util.inspect.custom) {
 }
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -17610,13 +17809,13 @@ if (util && util.inspect && util.inspect.custom) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(5)))
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(85)
+/* WEBPACK VAR INJECTION */(function(global) {var ClientRequest = __webpack_require__(86)
 var IncomingMessage = __webpack_require__(57)
 var extend = __webpack_require__(111)
-var statusCodes = __webpack_require__(68)
+var statusCodes = __webpack_require__(69)
 var url = __webpack_require__(64)
 
 var http = exports
@@ -17699,14 +17898,14 @@ http.METHODS = [
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(Buffer, global, process) {var capability = __webpack_require__(56)
 var inherits = __webpack_require__(8)
 var response = __webpack_require__(57)
 var stream = __webpack_require__(55)
-var toArrayBuffer = __webpack_require__(86)
+var toArrayBuffer = __webpack_require__(87)
 
 var IncomingMessage = response.IncomingMessage
 var rStates = response.readyStates
@@ -18029,7 +18228,7 @@ var unsafeHeaders = [
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6).Buffer, __webpack_require__(2), __webpack_require__(5)))
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var Buffer = __webpack_require__(6).Buffer
@@ -18062,7 +18261,7 @@ module.exports = function (buf) {
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -18803,7 +19002,7 @@ exports.DockerAssist = DockerAssist;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18995,7 +19194,7 @@ exports.DockerCommands = DockerCommands;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19048,7 +19247,7 @@ exports.DockerCompletion = DockerCompletion;
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19145,7 +19344,7 @@ exports.DockerFolding = DockerFolding;
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19313,7 +19512,7 @@ exports.DockerFormatter = DockerFormatter;
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19523,7 +19722,7 @@ exports.DockerHover = DockerHover;
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19572,7 +19771,7 @@ exports.DockerLinks = DockerLinks;
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19582,7 +19781,7 @@ exports.DockerLinks = DockerLinks;
 * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var https = __webpack_require__(73);
+var https = __webpack_require__(74);
 /**
  * The DockerRegistryClient provides a way to communicate with the
  * official Docker registry hosted on Docker Hub.
@@ -19705,7 +19904,7 @@ exports.DockerRegistryClient = DockerRegistryClient;
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19784,7 +19983,7 @@ exports.DockerRename = DockerRename;
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19794,7 +19993,7 @@ exports.DockerRename = DockerRename;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var protocol_sematicTokens_proposed_1 = __webpack_require__(109);
+var protocol_sematicTokens_proposed_1 = __webpack_require__(65);
 var dockerfile_ast_1 = __webpack_require__(1);
 var vscode_languageserver_types_1 = __webpack_require__(0);
 var TokensLegend = /** @class */ (function () {
@@ -20063,7 +20262,7 @@ exports.DockerSemanticTokens = DockerSemanticTokens;
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21416,7 +21615,7 @@ exports.DockerSignatures = DockerSignatures;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21472,7 +21671,7 @@ exports.DockerSymbols = DockerSymbols;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21480,22 +21679,22 @@ exports.DockerSymbols = DockerSymbols;
 Object.defineProperty(exports, "__esModule", { value: true });
 var vscode_languageserver_types_1 = __webpack_require__(0);
 var DockerfileUtils = __webpack_require__(29);
-var dockerAssist_1 = __webpack_require__(87);
-var dockerRegistryClient_1 = __webpack_require__(94);
-var dockerCommands_1 = __webpack_require__(88);
-var dockerFolding_1 = __webpack_require__(90);
+var dockerAssist_1 = __webpack_require__(88);
+var dockerRegistryClient_1 = __webpack_require__(95);
+var dockerCommands_1 = __webpack_require__(89);
+var dockerFolding_1 = __webpack_require__(91);
 var dockerDefinition_1 = __webpack_require__(60);
 var dockerHighlight_1 = __webpack_require__(61);
-var dockerSymbols_1 = __webpack_require__(98);
-var dockerSignatures_1 = __webpack_require__(97);
-var dockerLinks_1 = __webpack_require__(93);
+var dockerSymbols_1 = __webpack_require__(99);
+var dockerSignatures_1 = __webpack_require__(98);
+var dockerLinks_1 = __webpack_require__(94);
 var dockerPlainText_1 = __webpack_require__(31);
-var dockerRename_1 = __webpack_require__(95);
-var dockerHover_1 = __webpack_require__(92);
+var dockerRename_1 = __webpack_require__(96);
+var dockerHover_1 = __webpack_require__(93);
 var dockerMarkdown_1 = __webpack_require__(62);
-var dockerFormatter_1 = __webpack_require__(91);
-var dockerCompletion_1 = __webpack_require__(89);
-var dockerSemanticTokens_1 = __webpack_require__(96);
+var dockerFormatter_1 = __webpack_require__(92);
+var dockerCompletion_1 = __webpack_require__(90);
+var dockerSemanticTokens_1 = __webpack_require__(97);
 var LanguageService = /** @class */ (function () {
     function LanguageService() {
         this.markdownDocumentation = new dockerMarkdown_1.MarkdownDocumentation();
@@ -21600,7 +21799,7 @@ exports.LanguageService = LanguageService;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21623,7 +21822,7 @@ module.exports = {
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {
@@ -21697,7 +21896,7 @@ function config (name) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21798,7 +21997,7 @@ exports.CancellationTokenSource = CancellationTokenSource;
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22084,7 +22283,7 @@ exports.LinkedMap = LinkedMap;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22099,7 +22298,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 const Is = __webpack_require__(13);
-const messages_1 = __webpack_require__(105);
+const messages_1 = __webpack_require__(106);
 exports.RequestType = messages_1.RequestType;
 exports.RequestType0 = messages_1.RequestType0;
 exports.RequestType1 = messages_1.RequestType1;
@@ -22138,12 +22337,12 @@ const events_1 = __webpack_require__(20);
 exports.Disposable = events_1.Disposable;
 exports.Event = events_1.Event;
 exports.Emitter = events_1.Emitter;
-const cancellation_1 = __webpack_require__(102);
+const cancellation_1 = __webpack_require__(103);
 exports.CancellationTokenSource = cancellation_1.CancellationTokenSource;
 exports.CancellationToken = cancellation_1.CancellationToken;
-const linkedMap_1 = __webpack_require__(103);
-__export(__webpack_require__(106));
+const linkedMap_1 = __webpack_require__(104);
 __export(__webpack_require__(107));
+__export(__webpack_require__(108));
 var CancelNotification;
 (function (CancelNotification) {
     CancelNotification.type = new messages_1.NotificationType('$/cancelRequest');
@@ -23053,7 +23252,7 @@ exports.createMessageConnection = createMessageConnection;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(59).setImmediate))
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23294,7 +23493,7 @@ exports.isResponseMessage = isResponseMessage;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23304,8 +23503,8 @@ exports.isResponseMessage = isResponseMessage;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = __webpack_require__(76);
-const os_1 = __webpack_require__(75);
+const path_1 = __webpack_require__(77);
+const os_1 = __webpack_require__(76);
 const crypto_1 = __webpack_require__(30);
 const net_1 = __webpack_require__(30);
 const messageReader_1 = __webpack_require__(33);
@@ -23356,7 +23555,7 @@ exports.createServerPipeTransport = createServerPipeTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23403,7 +23602,7 @@ exports.createServerSocketTransport = createServerSocketTransport;
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23413,7 +23612,7 @@ exports.createServerSocketTransport = createServerSocketTransport;
  * ------------------------------------------------------------------------------------------ */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const vscode_jsonrpc_1 = __webpack_require__(104);
+const vscode_jsonrpc_1 = __webpack_require__(105);
 class ProtocolRequestType0 extends vscode_jsonrpc_1.RequestType0 {
     constructor(method) {
         super(method);
@@ -23438,106 +23637,6 @@ class ProtocolNotificationType0 extends vscode_jsonrpc_1.NotificationType0 {
     }
 }
 exports.ProtocolNotificationType0 = ProtocolNotificationType0;
-
-
-/***/ }),
-/* 109 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const messages_1 = __webpack_require__(108);
-/**
- * A set of predefined token types. This set is not fixed
- * an clients can specify additional token types via the
- * corresponding client capabilities.
- *
- * @since 3.16.0 - Proposed state
- */
-var SemanticTokenTypes;
-(function (SemanticTokenTypes) {
-    SemanticTokenTypes["comment"] = "comment";
-    SemanticTokenTypes["keyword"] = "keyword";
-    SemanticTokenTypes["string"] = "string";
-    SemanticTokenTypes["number"] = "number";
-    SemanticTokenTypes["regexp"] = "regexp";
-    SemanticTokenTypes["operator"] = "operator";
-    SemanticTokenTypes["namespace"] = "namespace";
-    SemanticTokenTypes["type"] = "type";
-    SemanticTokenTypes["struct"] = "struct";
-    SemanticTokenTypes["class"] = "class";
-    SemanticTokenTypes["interface"] = "interface";
-    SemanticTokenTypes["enum"] = "enum";
-    SemanticTokenTypes["typeParameter"] = "typeParameter";
-    SemanticTokenTypes["function"] = "function";
-    SemanticTokenTypes["member"] = "member";
-    SemanticTokenTypes["property"] = "property";
-    SemanticTokenTypes["marco"] = "marco";
-    SemanticTokenTypes["variable"] = "variable";
-    SemanticTokenTypes["parameter"] = "parameter";
-    SemanticTokenTypes["label"] = "label";
-})(SemanticTokenTypes = exports.SemanticTokenTypes || (exports.SemanticTokenTypes = {}));
-/**
- * A set of predefined token modifiers. This set is not fixed
- * an clients can specify additional token types via the
- * corresponding client capabilities.
- *
- * @since 3.16.0 - Proposed state
- */
-var SemanticTokenModifiers;
-(function (SemanticTokenModifiers) {
-    SemanticTokenModifiers["documentation"] = "documentation";
-    SemanticTokenModifiers["declaration"] = "declaration";
-    SemanticTokenModifiers["definition"] = "definition";
-    SemanticTokenModifiers["reference"] = "reference";
-    SemanticTokenModifiers["static"] = "static";
-    SemanticTokenModifiers["abstract"] = "abstract";
-    SemanticTokenModifiers["deprecated"] = "deprected";
-    SemanticTokenModifiers["async"] = "async";
-    SemanticTokenModifiers["volatile"] = "volatile";
-    SemanticTokenModifiers["final"] = "final";
-})(SemanticTokenModifiers = exports.SemanticTokenModifiers || (exports.SemanticTokenModifiers = {}));
-/**
- * @since 3.16.0 - Proposed state
- */
-var SemanticTokens;
-(function (SemanticTokens) {
-    function is(value) {
-        const candidate = value;
-        return candidate !== undefined && (candidate.resultId === undefined || typeof candidate.resultId === 'string') &&
-            Array.isArray(candidate.data) && (candidate.data.length === 0 || typeof candidate.data[0] === 'number');
-    }
-    SemanticTokens.is = is;
-})(SemanticTokens = exports.SemanticTokens || (exports.SemanticTokens = {}));
-/**
- * @since 3.16.0 - Proposed state
- */
-var SemanticTokensRequest;
-(function (SemanticTokensRequest) {
-    SemanticTokensRequest.method = 'textDocument/semanticTokens';
-    SemanticTokensRequest.type = new messages_1.ProtocolRequestType(SemanticTokensRequest.method);
-})(SemanticTokensRequest = exports.SemanticTokensRequest || (exports.SemanticTokensRequest = {}));
-/**
- * @since 3.16.0 - Proposed state
- */
-var SemanticTokensEditsRequest;
-(function (SemanticTokensEditsRequest) {
-    SemanticTokensEditsRequest.method = 'textDocument/semanticTokens/edits';
-    SemanticTokensEditsRequest.type = new messages_1.ProtocolRequestType(SemanticTokensEditsRequest.method);
-})(SemanticTokensEditsRequest = exports.SemanticTokensEditsRequest || (exports.SemanticTokensEditsRequest = {}));
-/**
- * @since 3.16.0 - Proposed state
- */
-var SemanticTokensRangeRequest;
-(function (SemanticTokensRangeRequest) {
-    SemanticTokensRangeRequest.method = 'textDocument/semanticTokens/range';
-    SemanticTokensRangeRequest.type = new messages_1.ProtocolRequestType(SemanticTokensRangeRequest.method);
-})(SemanticTokensRangeRequest = exports.SemanticTokensRangeRequest || (exports.SemanticTokensRangeRequest = {}));
 
 
 /***/ }),
