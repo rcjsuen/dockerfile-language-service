@@ -111,11 +111,18 @@ export class DockerHover {
      */
     private computeHoverKey(dockerfile: Dockerfile, position: Position): string | null {
         for (const directive of dockerfile.getDirectives()) {
-            if (directive.getDirective() === Directive.escape) {
-                const range = directive.getNameRange();
-                if (Util.isInsideRange(position, range)) {
-                    return Directive.escape;
-                }
+            const range = directive.getNameRange();
+            switch (directive.getDirective()) {
+                case Directive.escape:
+                    if (Util.isInsideRange(position, range)) {
+                        return Directive.escape;
+                    }
+                    break;
+                case Directive.syntax:
+                    if (Util.isInsideRange(position, range)) {
+                        return Directive.syntax;
+                    }
+                    break;
             }
         }
 

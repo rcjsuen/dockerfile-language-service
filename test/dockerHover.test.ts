@@ -143,8 +143,22 @@ describe("Dockerfile hover", function () {
     });
 
     describe("directives", function () {
+        it("multiple directives", function () {
+            let content = "#escape=`\n#escape=`";
+            assertHover(content, 0, 4, "escape");
+            assertHover(content, 1, 4, "escape");
+
+            content = "#escape=`\n#syntax=docker/dockerfile:1:0";
+            assertHover(content, 0, 4, "escape");
+            assertHover(content, 1, 4, "syntax");
+
+            content = "#syntax=docker/dockerfile:1:0\n#escape=`";
+            assertHover(content, 0, 4, "syntax");
+            assertHover(content, 1, 4, "escape");
+        });
+
         describe("escape", function() {
-            it("single directive", function () {
+            it("ok", function () {
                 let content = "#escape=`";
                 assertHover(content, 0, 4, "escape");
 
@@ -156,18 +170,6 @@ describe("Dockerfile hover", function () {
 
                 content = "#escape=ab";
                 assertHover(content, 0, 4, "escape");
-            });
-
-            it("multiple directives", function () {
-                let content = "#escape=`\n#escape=`";
-                assertHover(content, 0, 4, "escape");
-                assertHover(content, 1, 4, "escape");
-
-                content = "#escape=`\n#syntax=docker/dockerfile:1:0";
-                assertHover(content, 0, 4, "escape");
-
-                content = "#syntax=docker/dockerfile:1:0\n#escape=`";
-                assertHover(content, 1, 4, "escape");
             });
 
             it("invalid directive definition", function () {
@@ -190,6 +192,45 @@ describe("Dockerfile hover", function () {
                 assertNullHover(content, 1, 4);
 
                 content = "\r\n#escape";
+                assertNullHover(content, 1, 4);
+            });
+        });
+
+        describe("syntax", function() {
+            it("ok", function () {
+                let content = "#syntax=docker/dockerfile";
+                assertHover(content, 0, 4, "syntax");
+
+                content = "# syntax=docker/dockerfile";
+                assertNullHover(content, 0, 1);
+
+                content = "#syntax=docker/dockerfile";
+                assertHover(content, 0, 4, "syntax");
+
+                content = "#syntax=abc";
+                assertHover(content, 0, 4, "syntax");
+            });
+
+            it("invalid directive definition", function () {
+                let content = "#sintax=`";
+                assertNullHover(content, 0, 4);
+
+                content = "#syntax ";
+                assertNullHover(content, 0, 4);
+
+                content = "#syntax\t";
+                assertNullHover(content, 0, 4);
+
+                content = "#syntax\r\n";
+                assertNullHover(content, 0, 4);
+
+                content = "#syntax\n";
+                assertNullHover(content, 0, 4);
+
+                content = "\n#syntax";
+                assertNullHover(content, 1, 4);
+
+                content = "\r\n#syntax";
                 assertNullHover(content, 1, 4);
             });
         });

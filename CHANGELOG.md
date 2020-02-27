@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - support completion of the `syntax` parser directive ([#57](https://github.com/rcjsuen/dockerfile-language-service/issues/57))
+- add hover support for the `syntax` parser directive ([#58](https://github.com/rcjsuen/dockerfile-language-service/issues/58))
 
 ## [0.0.9] - 2020-02-12
 ### Added
