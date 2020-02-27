@@ -48,32 +48,47 @@ export class DockerAssist {
         let dockerfile = DockerfileParser.parse(buffer);
         let escapeCharacter = dockerfile.getEscapeCharacter();
 
-        let directive = dockerfile.getDirective();
-        if (directive !== null && position.line === 0) {
-            let range = directive.getNameRange();
-            if (position.character <= range.start.character) {
-                // in whitespace before the directive's name
-                return [this.createEscape(0, offset, Directive.escape)];
-            } else if (position.character <= range.end.character) {
-                // in the name
-                return [this.createEscape(position.character - range.start.character, offset, Directive.escape)];
+        let lastDirectiveLine = -1;
+        for (const directive of dockerfile.getDirectives()) {
+            const range = directive.getNameRange();
+            lastDirectiveLine = range.start.line;
+            if (position.line === lastDirectiveLine) {
+                if (position.character <= range.start.character) {
+                    // in whitespace before the directive's name
+                    return [
+                        this.createEscape(0, offset, Directive.escape),
+                        this.createSyntax(0, offset, Directive.syntax)
+                    ];
+                } else if (position.character <= range.end.character) {
+                    // in the name
+                    let prefix = directive.getName().substring(0, position.character - range.start.character);
+                    prefix = prefix.toLowerCase();
+                    if (Directive.escape.indexOf(prefix) === 0) {
+                        return [this.createEscape(prefix.length, offset, Directive.escape)];
+                    } else if (Directive.syntax.indexOf(prefix) === 0) {
+                        return [this.createSyntax(prefix.length, offset, Directive.syntax)];
+                    }
+                }
+                return [];
             }
-            return [];
         }
 
         // directive only possible on the first line
         let comments = dockerfile.getComments();
         if (comments.length !== 0) {
-            if (position.line === 0) {
+            if (position.line === lastDirectiveLine + 1) {
                 let commentRange = comments[0].getRange();
                 // check if the first comment is on the first line
-                if (commentRange.start.line === 0) {
+                if (commentRange.start.line === position.line) {
                     // is the user inside the comment
                     if (commentRange.start.character < position.character) {
                         let range = comments[0].getContentRange();
                         if (range === null || position.character <= range.start.character) {
                             // in whitespace
-                            return [this.createEscape(0, offset, Directive.escape)];
+                            return [
+                                this.createEscape(0, offset, Directive.escape),
+                                this.createSyntax(0, offset, Directive.syntax),
+                            ];
                         }
                         let comment = comments[0].getContent();
                         if (position.character <= range.end.character) {
@@ -82,6 +97,8 @@ export class DockerAssist {
                             // substring check
                             if (Directive.escape.indexOf(prefix.toLowerCase()) === 0) {
                                 return [this.createEscape(prefix.length, offset, Directive.escape)];
+                            } else if (Directive.syntax.indexOf(prefix.toLowerCase()) === 0) {
+                                return [this.createSyntax(prefix.length, offset, Directive.syntax)];
                             }
                         }
                         return [];
@@ -681,6 +698,10 @@ export class DockerAssist {
 
     createEscape(prefixLength: number, offset: number, markdown: string): CompletionItem {
         return this.createKeywordCompletionItem(Directive.escape, "escape=`", prefixLength, offset, "escape=${1:`}", markdown);
+    }
+
+    private createSyntax(prefixLength: number, offset: number, markdown: string): CompletionItem {
+        return this.createKeywordCompletionItem(Directive.syntax, "syntax=docker/dockerfile:experimental", prefixLength, offset, "syntax=${1:docker/dockerfile:experimental}", markdown);
     }
 
     createKeywordCompletionItem(keyword: string, label: string, prefixLength: number, offset: number, insertText: string, markdown: string): CompletionItem {

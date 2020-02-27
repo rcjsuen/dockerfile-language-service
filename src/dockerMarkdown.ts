@@ -29,6 +29,7 @@ export class MarkdownDocumentation {
         "hoverWorkdir": "Set the working directory for any subsequent `ADD`, `COPY`, `CMD`, `ENTRYPOINT`, or `RUN` instructions that follow it in the `Dockerfile`.\n\n",
 
         "hoverEscape": "Sets the character to use to escape characters and newlines in this Dockerfile. If unspecified, the default escape character is `\\`.\n\n",
+        "hoverSyntax": "Set the location of the Dockerfile builder to use for building the current Dockerfile.\n\n",
 
         "hoverOnlineDocumentationFooter": "\n\n[Online documentation](${0})",
 
@@ -277,6 +278,15 @@ export class MarkdownDocumentation {
                     "# escape=`\n" +
                     "```" +
                     this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#escape")
+            },
+
+            syntax: {
+                contents: this.dockerMessages["hoverSyntax"] +
+                    "```\n" +
+                    "# syntax=docker/dockerfile:1.0\n" +
+                    "# syntax=docker/dockerfile:1.0.0-experimental\n" +
+                    "```" +
+                    this.formatMessage(this.dockerMessages["hoverOnlineDocumentationFooter"], "https://docs.docker.com/engine/reference/builder/#syntax")
             }
         };
     }

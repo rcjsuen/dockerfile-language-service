@@ -36,6 +36,7 @@ export class PlainTextDocumentation {
         "hoverHealthcheckFlagTimeout": "The number of seconds to wait for the check to complete before considering it to have failed.",
 
         "hoverEscape": "Sets the character to use to escape characters and newlines in this Dockerfile. If unspecified, the default escape character is `\\`.\n\n",
+        "hoverSyntax": "Set the location of the Dockerfile builder to use for building the current Dockerfile.\n\n",
 
         "signatureEscape": "Sets this Dockerfile's escape character. If unspecified, the default escape character is `\\`.",
         "signatureEscape_Param": "The character to use to escape characters and newlines in this Dockerfile.",
@@ -230,6 +231,11 @@ export class PlainTextDocumentation {
 
             escape: this.dockerMessages["hoverEscape"] +
                 "# escape=`",
+
+            syntax: this.dockerMessages["hoverSyntax"] +
+                "# syntax=docker/dockerfile:1.0\n" +
+                "# syntax=docker/dockerfile:1.0.0-experimental"
+            ,
 
             signatureEscape: this.dockerMessages["signatureEscape"],
             signatureEscape_Param: this.dockerMessages["signatureEscape_Param"],

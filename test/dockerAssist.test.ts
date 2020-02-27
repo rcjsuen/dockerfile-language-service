@@ -871,9 +871,10 @@ function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex
     assertRawDocumentation(item, documentation);
 }
 
-function assertOnlyDirectiveEscape(items: CompletionItem[], line: number, character: number, prefixLength: number) {
-    assert.equal(items.length, 1);
+function assertDirectiveItems(items: CompletionItem[], line: number, character: number, prefixLength: number) {
+    assert.equal(items.length, 2);
     assertDirectiveEscape(items[0], line, character, prefixLength);
+    assertDirectiveSyntax(items[1], line, character, prefixLength);
 }
 
 function assertDirectiveEscape(item: CompletionItem, line: number, character: number, prefixLength: number) {
@@ -888,6 +889,21 @@ function assertDirectiveEscape(item: CompletionItem, line: number, character: nu
     assert.equal(item.textEdit.range.start.character, character);
     assert.equal(item.textEdit.range.end.line, line);
     assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assertResolvedDocumentation(item);
+}
+
+function assertDirectiveSyntax(item: CompletionItem, line: number, character: number, prefixLength: number) {
+    assert.strictEqual(item.label, "syntax=docker/dockerfile:experimental");
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+    assert.strictEqual(item.textEdit.newText, "syntax=${1:docker/dockerfile:experimental}");
+    assert.strictEqual(item.data, "syntax");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual(item.textEdit.range.start.line, line);
+    assert.strictEqual(item.textEdit.range.start.character, character);
+    assert.strictEqual(item.textEdit.range.end.line, line);
+    assert.strictEqual(item.textEdit.range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -1892,85 +1908,153 @@ describe('Docker Content Assist Tests', function () {
     });
 
     describe("directives", function () {
-        describe("escape", function () {
+        describe("all directives", function() {
             it("#", function () {
-                var proposals = compute("#", 1);
-                assertOnlyDirectiveEscape(proposals, 0, 1, 0);
+                const proposals = compute("#", 1);
+                assertDirectiveItems(proposals, 0, 1, 0);
             });
 
             it("# ", function () {
-                var proposals = compute("# ", 2);
-                assertOnlyDirectiveEscape(proposals, 0, 2, 0);
+                const proposals = compute("# ", 2);
+                assertDirectiveItems(proposals, 0, 2, 0);
             });
 
             it("##", function () {
-                var proposals = compute("##", 1);
-                assertOnlyDirectiveEscape(proposals, 0, 1, 0);
+                const proposals = compute("##", 1);
+                assertDirectiveItems(proposals, 0, 1, 0);
             });
 
             it("# #", function () {
-                var proposals = compute("# #", 1);
-                assertOnlyDirectiveEscape(proposals, 0, 1, 0);
+                const proposals = compute("# #", 1);
+                assertDirectiveItems(proposals, 0, 1, 0);
             });
 
             it("# #", function () {
-                var proposals = compute("# #", 2);
-                assertOnlyDirectiveEscape(proposals, 0, 2, 0);
-            });
-
-            it("#e", function () {
-                var proposals = compute("#e", 2);
-                assertOnlyDirectiveEscape(proposals, 0, 1, 1);
-            });
-
-            it("# e", function () {
-                var proposals = compute("# e", 3);
-                assertOnlyDirectiveEscape(proposals, 0, 2, 1);
-            });
-
-            it("#E", function () {
-                var proposals = compute("#E", 2);
-                assertOnlyDirectiveEscape(proposals, 0, 1, 1);
-            });
-
-            it("#eS", function () {
-                var proposals = compute("#eS", 3);
-                assertOnlyDirectiveEscape(proposals, 0, 1, 2);
-            });
-
-            it("#e ", function () {
-                var proposals = compute("#e ", 3);
-                assert.equal(proposals.length, 0);
-            });
-
-            it("# escape=", function () {
-                let items = compute("# escape=", 2);
-                assertOnlyDirectiveEscape(items, 0, 2, 0);
-            });
-
-            it("# escape=`", function () {
-                let items = compute("# escape=`", 4);
-                assertOnlyDirectiveEscape(items, 0, 2, 2);
-            });
-
-            it("# escape=` ", function () {
-                let items = compute("# escape=` ", 11);
-                assert.equal(items.length, 0);
+                const proposals = compute("# #", 2);
+                assertDirectiveItems(proposals, 0, 2, 0);
             });
 
             it("#\\n", function () {
-                let items = compute("#\n#", 1);
-                assertOnlyDirectiveEscape(items, 0, 1, 0);
+                const items = compute("#\n#", 1);
+                assertDirectiveItems(items, 0, 1, 0);
             });
 
+            it("# escape=", function () {
+                const items = compute("# escape=", 2);
+                assertDirectiveItems(items, 0, 2, 0);
+            });
+
+            it("# escape=\\n#", function () {
+                const items = computePosition("# escape=\n#", 1, 1); 
+                assertDirectiveItems(items, 1, 1, 0);
+            });
+
+            it("# syntax=docker/dockerfile\\n#", function () {
+                const items = computePosition("# syntax=docker/dockerfile\n#", 1, 1); 
+                assertDirectiveItems(items, 1, 1, 0);
+            });
+
+            it("# escape=\\n# syntax=docker/dockerfile\\n#", function () {
+                const items = computePosition("# escape=\n# syntax=docker/dockerfile\n#", 2, 1); 
+                assertDirectiveItems(items, 2, 1, 0);
+            });
+
+            it("# syntax=docker/dockerfile\\n# escape=\\n#", function () {
+                const items = computePosition("# syntax=docker/dockerfile\n# escape=\n#", 2, 1); 
+                assertDirectiveItems(items, 2, 1, 0);
+            });
+        });
+
+        describe("escape", function () {
+            describe("ok", function() {
+                it("#e", function () {
+                    const proposals = compute("#e", 2);
+                    assert.equal(1, proposals.length);
+                    assertDirectiveEscape(proposals[0], 0, 1, 1);
+                });
+    
+                it("# e", function () {
+                    const proposals = compute("# e", 3);
+                    assert.equal(1, proposals.length);
+                    assertDirectiveEscape(proposals[0], 0, 2, 1);
+                });
+    
+                it("#E", function () {
+                    const proposals = compute("#E", 2);
+                    assert.equal(1, proposals.length);
+                    assertDirectiveEscape(proposals[0], 0, 1, 1);
+                });
+    
+                it("#eS", function () {
+                    const proposals = compute("#eS", 3);
+                    assert.equal(1, proposals.length);
+                    assertDirectiveEscape(proposals[0], 0, 1, 2);
+                });
+    
+                it("# escape=`", function () {
+                    const items = compute("# escape=`", 4);
+                    assert.equal(1, items.length);
+                    assertDirectiveEscape(items[0], 0, 2, 2);
+                });
+            });
+
+            describe("invalid", function() {
+                it("# escape=` ", function () {
+                    const items = compute("# escape=` ", 11);
+                    assert.equal(items.length, 0);
+                });
+
+                it("#e ", function () {
+                    const proposals = compute("#e ", 3);
+                    assert.equal(proposals.length, 0);
+                });
+            });
+        });
+
+        describe("syntax", function () {
+            it("#s", function () {
+                const proposals = compute("#s", 2);
+                assert.equal(1, proposals.length);
+                assertDirectiveSyntax(proposals[0], 0, 1, 1);
+            });
+
+            it("#synta", function () {
+                const proposals = compute("#synta", 6);
+                assert.equal(1, proposals.length);
+                assertDirectiveSyntax(proposals[0], 0, 1, 5);
+            });
+
+            it("#syntax=docker/dockerfile", function () {
+                const proposals = compute("#syntax=docker/dockerfile", 6);
+                assert.equal(1, proposals.length);
+                assertDirectiveSyntax(proposals[0], 0, 1, 5);
+            });
+
+            it("# syntax=docker/dockerfile\\n#", function () {
+                const items = computePosition("# syntax=docker/dockerfile\n#", 1, 1); 
+                assertDirectiveItems(items, 1, 1, 0);
+            });
+        });
+
+        describe("invalid", function() {
             it("#\\n#", function () {
-                var proposals = compute("#\n#", 3);
+                const proposals = compute("#\n#", 3);
                 assert.equal(proposals.length, 0);
             });
 
             it("#\\n#e", function () {
-                var proposals = compute("#\n#e", 4);
+                const proposals = compute("#\n#e", 4);
                 assert.equal(proposals.length, 0);
+            });
+
+            it("# escape=\\n# syntax=docker/dockerfile\\n#\\n#", function () {
+                const items = computePosition("# escape=\n# syntax=docker/dockerfile\n#\n#", 3, 1); 
+                assert.equal(items.length, 0);
+            });
+
+            it("# a", function () {
+                const items = computePosition("# a=b", 0, 3);
+                assert.equal(items.length, 0);
             });
         });
     })
