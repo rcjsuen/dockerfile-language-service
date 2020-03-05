@@ -22,7 +22,7 @@
   "dependencies": {
     "dockerfile-ast": "0.0.20",
     "dockerfile-utils": "0.0.14",
-    "vscode-languageserver-protocol": "^3.15.1",
+    "vscode-languageserver-protocol": "^3.15.3",
     "vscode-languageserver-types": "^3.15.1"
   },
   "main": "./lib/main.js",
