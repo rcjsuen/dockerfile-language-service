@@ -1535,6 +1535,14 @@ describe("Dockerfile hover", function () {
                 assertHover(content, 1, 1, "FROM");
             });
 
+            it("FR\\\\n\\nOM", function() {
+                let content = "FR\\\n\nOM";
+                assertHover(content, 0, 0, "FROM");
+                assertHover(content, 0, 1, "FROM");
+                assertHover(content, 2, 0, "FROM");
+                assertHover(content, 2, 1, "FROM");
+            });
+
             describe("flags", function() {
                 it("--platform", function () {
                     let content = "FROM --platform";

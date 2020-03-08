@@ -99,9 +99,9 @@ describe("Docker Content Assist Registry Tests", () => {
 
             it("issue #39", async function () {
                 this.timeout(10000);
-                const tags = await dockerRegistryClient.getTags("microsoft/dotnet", "2.1-s");
-                const items = await computePromise("FROM microsoft/dotnet:2.1-s", 0, 27);
-                assertImageTags(tags, items, 27, 5);
+                const tags = await dockerRegistryClient.getTags("python", "3.8-b");
+                const items = await computePromise("FROM python:3.8-b", 0, 17);
+                assertImageTags(tags, items, 17, 5);
             });
         });
 

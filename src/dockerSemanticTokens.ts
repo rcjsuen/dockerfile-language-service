@@ -319,9 +319,12 @@ export class DockerSemanticTokens {
                         this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
                         for (let j = i + 1; j < endOffset; j++) {
                             switch (this.content.charAt(j)) {
+                                case '\r':
                                 case '\n':
                                     i = j;
                                     offset = j + 1;
+                                    break;
+                                default:
                                     continue rangeLoop;
                             }
                         }

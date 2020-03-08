@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 - support completion of the `syntax` parser directive ([#57](https://github.com/rcjsuen/dockerfile-language-service/issues/57))
 - add hover support for the `syntax` parser directive ([#58](https://github.com/rcjsuen/dockerfile-language-service/issues/58))
 
+### Fixed
+- allow hovers to be displayed for instruction keywords that span multiple lines ([#59](https://github.com/rcjsuen/dockerfile-language-service/issues/59))
+
 ## [0.0.9] - 2020-02-12
 ### Added
 - support completing of tags for published images on the Docker Store ([#50](https://github.com/rcjsuen/dockerfile-language-service/issues/50))
