@@ -26,6 +26,7 @@ export class TokensLegend {
         this.tokenTypes[SemanticTokenTypes.macro] = 6;
         this.tokenTypes[SemanticTokenTypes.string] = 7;
         this.tokenTypes[SemanticTokenTypes.variable] = 8;
+        this.tokenTypes[SemanticTokenTypes.operator] = 9;
 
         this.tokenModifiers[SemanticTokenModifiers.declaration] = 1;
         this.tokenModifiers[SemanticTokenModifiers.definition] = 2;
@@ -58,6 +59,9 @@ export class DockerSemanticTokens {
     private dockerfile: Dockerfile;
     private tokens = [];
 
+    private quote: string = null;
+    private escapedQuote: string = null;
+
     constructor(content: string) {
         this.content = content;
         this.document = TextDocument.create("", "", 0, content);
@@ -86,8 +90,21 @@ export class DockerSemanticTokens {
         });
 
         for (const directive of this.dockerfile.getDirectives()) {
-            const directiveRange = directive.getRange();
-            this.createToken(null, directiveRange, SemanticTokenTypes.macro, [], false);
+            const range = directive.getRange();
+            const nameRange = directive.getNameRange();
+            const prefixRange = { start: range.start, end: nameRange.start };
+            this.createToken(null, prefixRange, SemanticTokenTypes.comment, [], false);
+            this.createToken(null, nameRange, SemanticTokenTypes.property, [], false);
+
+            const valueRange = directive.getValueRange();
+            const operatorRange = {
+                start: { character: valueRange.start.character - 1, line: valueRange.start.line },
+                end: { character: valueRange.start.character, line: valueRange.start.line },
+            }
+            this.createToken(null, operatorRange, SemanticTokenTypes.operator, [], false);
+            if (valueRange.start.character !== valueRange.end.character) {
+                this.createToken(null, valueRange, SemanticTokenTypes.parameter, [], false);
+            }
         }
 
         const escapeCharacter = this.dockerfile.getEscapeCharacter();
@@ -137,7 +154,7 @@ export class DockerSemanticTokens {
                     const nameRange = property.getNameRange();
                     this.createToken(instruction, nameRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.declaration], false);
                 }
-                break;
+                return;
             case Keyword.FROM:
                 const from = instruction as From;
                 const nameRange = from.getImageNameRange();
@@ -168,8 +185,15 @@ export class DockerSemanticTokens {
                 if (subcommand !== null) {
                     const range = subcommand.getRange();
                     this.createToken(instruction, range, SemanticTokenTypes.keyword);
+
+                    const args = instruction.getArguments();
+                    if (args.length > 1) {
+                        for (let i = 1; i < args.length; i++) {
+                            this.createToken(instruction, args[i].getRange(), SemanticTokenTypes.parameter, [], true);
+                        }
+                    }
                 }
-                break;
+                return;
             case Keyword.ONBUILD:
                 const onbuild = instruction as Onbuild;
                 const range = onbuild.getTriggerRange()
@@ -180,129 +204,129 @@ export class DockerSemanticTokens {
         }
 
         const args = instruction.getArguments();
-        if (args.length === 0) {
-            return this.tokens;
-        }
-
-        const start = args[0].getRange().start;
-        const startOffset = this.document.offsetAt(start);
-        const argsContent = instruction.getRawArgumentsContent();
-        let variables = instruction.getVariables();
-        let quote = null;
-        let offset = -1;
-        let escapedNewline = false;
-        argsLoop: for (let i = 0; i < argsContent.length; i++) {
-            const ch = argsContent.charAt(i);
-            switch (ch) {
-                case ' ':
-                case '\t':
-                case '\n':
-                case '\r':
-                    break;
-                case '#':
-                    if (escapedNewline) {
-                        for (let j = i + 1; j < argsContent.length; j++) {
-                            if (argsContent.charAt(j) === '\n' || argsContent.charAt(j) === '\r') {
-                                let range = {
-                                    start: this.document.positionAt(startOffset + i),
-                                    end: this.document.positionAt(startOffset + j)
+        let lastRange: Position = null;
+        for (let i = 0; i < args.length; i++) {
+            const argsRange = args[i].getRange();
+            if (lastRange !== null && lastRange.line !== argsRange.start.line) {
+                // this implies that there's been a line change between one arg and the next
+                let k = this.document.offsetAt(argsRange.start);
+                let comment = -1;
+                for (let j = this.document.offsetAt(lastRange); j < k; j++) {
+                    switch (this.content.charAt(j)) {
+                        case escapeCharacter:
+                            if (comment !== -1) {
+                                const commentRange = {
+                                    start: this.document.positionAt(comment),
+                                    end: this.document.positionAt(j)
                                 };
-                                this.createToken(instruction, range, SemanticTokenTypes.comment);
-                                i = j;
-                                continue argsLoop;
+                                this.createToken(null, commentRange, SemanticTokenTypes.comment, [], false);
+                                comment = -1;
                             }
-                        }
-                    }
-                case escapeCharacter:
-                    for (let j = i + 1; j < argsContent.length; j++) {
-                        const escapedChar = argsContent.charAt(j);
-                        switch (escapedChar) {
-                            case '\r':
-                                escapedNewline = true;
-                                i = j + 1;
-                                continue argsLoop;
-                            case '\n':
-                                escapedNewline = true;
-                                i = j;
-                                continue argsLoop;
-                            case '\"':
-                            case '\'':
-                                if (quote === null) {
-                                    let range = {
-                                        start: this.document.positionAt(startOffset + i),
-                                        end: this.document.positionAt(startOffset + j + 1)
-                                    };
-                                    this.createToken(instruction, range, SemanticTokenTypes.string);
-                                    i = j;
-                                    continue argsLoop;
-                                } else {
-                                    let range = {
-                                        start: this.document.positionAt(startOffset + offset),
-                                        end: this.document.positionAt(startOffset + i)
-                                    };
-                                    this.createToken(instruction, range, SemanticTokenTypes.string);
-                                    range = {
-                                        start: this.document.positionAt(startOffset + i),
-                                        end: this.document.positionAt(startOffset + j + 1)
-                                    };
-                                    this.createToken(instruction, range, SemanticTokenTypes.string);
-                                    // reset as the string has been cut off part ways
-                                    quote = null;
-                                    offset = -1;
-                                }
-                            default:
-                                i = j;
-                                continue argsLoop;
-                        }
-                    }
-                    break;
-                case '$':
-                    escapedNewline = false;
-                    for (let variable of variables) {
-                        const range = variable.getRange();
-                        if (startOffset + i === this.document.offsetAt(range.start)) {
-                            this.createToken(instruction, 
-                                range, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
-                            );
-                            variables.slice(1);
+                            this.createEscapeToken(instruction, j);
                             break;
-                        }
+                        case '\r':
+                        case '\n':
+                            if (comment !== -1) {
+                                const commentRange = {
+                                    start: this.document.positionAt(comment),
+                                    end: this.document.positionAt(j)
+                                };
+                                this.createToken(null, commentRange, SemanticTokenTypes.comment, [], false);
+                                comment = -1;
+                            }
+                            break;
+                        case '#':
+                            if (comment === -1) {
+                                comment = j;
+                            }
+                            break;
                     }
-                    break;
-                case '\"':
-                case '\'':
-                    escapedNewline = false;
-                    if (quote === null) {
-                        quote = ch;
-                        offset = i;
-                    } else if (quote === ch) {
-                        // ensure that quotes match
-                        const range = {
-                            start: this.document.positionAt(startOffset + offset),
-                            end: this.document.positionAt(startOffset + i + 1)
-                        };
-                        this.createToken(instruction, range, SemanticTokenTypes.string);
-                        quote = null;
-                        offset = -1;
-                    }
-                    break;
-                default:
-                    escapedNewline = false;
-                    break;
+                }
             }
-        }
-
-        if (quote !== null) {
-            // trailing string token
-            const range = {
-                start: this.document.positionAt(startOffset + offset),
-                end: this.document.positionAt(startOffset + argsContent.length)
-            };
-            this.createToken(instruction, range, SemanticTokenTypes.string);
+            this.createToken(instruction, argsRange, SemanticTokenTypes.parameter, [], true, true);
+            lastRange = argsRange.end;
         }
     }
 
-    private createToken(instruction: Instruction, range: Range, tokenType: string, tokenModifiers: string[] = [], checkVariables: boolean = true): void {
+    private createEscapeToken(instruction: Instruction, offset: number): void {
+        const escapeRange = {
+            start: this.document.positionAt(offset),
+            end: this.document.positionAt(offset + 1),
+        }
+        this.createToken(instruction, escapeRange, SemanticTokenTypes.macro, [], false);
+    }
+
+    private createToken(instruction: Instruction, range: Range, tokenType: string, tokenModifiers: string[] = [], checkVariables: boolean = true, checkStrings: boolean = false): void {
+        if (checkStrings) {
+            let quoteStart = -1;
+            let startOffset = this.document.offsetAt(range.start);
+            let newOffset = -1;
+            const endOffset = this.document.offsetAt(range.end);
+            for (let i = startOffset; i < endOffset; i++) {
+                let ch = this.content.charAt(i);
+                switch (ch) {
+                    case '\\':
+                        const next = this.content.charAt(i + 1);
+                        if (next === '\'' || next === '"') {
+                            if (this.quote === null) {
+                                if (this.escapedQuote === null) {
+                                    quoteStart = i;
+                                    this.escapedQuote = next;
+                                    i++;
+                                } else {
+                                    const quoteRange = {
+                                        start: this.document.positionAt(quoteStart),
+                                        end: this.document.positionAt(i + 2),
+                                    };
+                                    this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], false, false);
+                                    newOffset = i + 2;
+                                    this.escapedQuote = null;
+                                }
+                            } else {
+                                i++;
+                            }
+                        }
+                        break;
+                    case '\'':
+                    case '"':
+                        if (this.quote === null) {
+                            if (this.escapedQuote === null) {
+                                this.quote = ch;
+                                quoteStart = i;
+                            }
+                        } else if (this.quote === ch) {
+                            if (startOffset !== quoteStart) {
+                                const intermediateRange = {
+                                    start: this.document.positionAt(startOffset),
+                                    end: this.document.positionAt(i),
+                                }
+                                this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
+                            }
+                            const quoteRange = {
+                                start: this.document.positionAt(quoteStart),
+                                end: this.document.positionAt(i + 1),
+                            };
+                            this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], false, false);
+                            newOffset = i + 1;
+                            this.quote = null;
+                        }
+                        break;
+                }
+            }
+
+            if (newOffset !== -1) {
+                if (newOffset !== endOffset) {
+                    const intermediateRange = {
+                        start: this.document.positionAt(newOffset),
+                        end: this.document.positionAt(endOffset),
+                    }
+                    this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
+                }
+                return;
+            } else if (this.quote !== null || this.escapedQuote !== null) {
+                tokenType = SemanticTokenTypes.string;
+            }
+        }
         if (range.start.line !== range.end.line) {
             let offset = -1;
             let startOffset = this.document.offsetAt(range.start);
@@ -312,20 +336,29 @@ export class DockerSemanticTokens {
                 let ch = this.content.charAt(i);
                 switch (ch) {
                     case escapeCharacter:
-                        const intermediateRange = {
-                            start: this.document.positionAt(startOffset),
-                            end: this.document.positionAt(i),
-                        }
-                        this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
-                        for (let j = i + 1; j < endOffset; j++) {
+                        // note whether the intermediate token has been added or not
+                        let added = false;
+                        escapeCheck: for (let j = i + 1; j < endOffset; j++) {
                             switch (this.content.charAt(j)) {
+                                case ' ':
+                                case '\t':
                                 case '\r':
+                                    break;
                                 case '\n':
+                                    if (!added) {
+                                        const intermediateRange = {
+                                            start: this.document.positionAt(startOffset),
+                                            end: this.document.positionAt(i),
+                                        }
+                                        this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
+                                        this.createEscapeToken(instruction, i);
+                                    }
+                                    added = true;
                                     i = j;
                                     offset = j + 1;
                                     break;
                                 default:
-                                    continue rangeLoop;
+                                    break escapeCheck;
                             }
                         }
                 }
