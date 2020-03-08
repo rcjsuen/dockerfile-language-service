@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - allow hovers to be displayed for instruction keywords that span multiple lines ([#59](https://github.com/rcjsuen/dockerfile-language-service/issues/59))
 - correct hover resolution of a variable if it comes after a false comment in a multiline instruction ([#61](https://github.com/rcjsuen/dockerfile-language-service/issues/61))
+- correct hover resolution of a variable that comes after an embedded comment with a trailing escape character in a multiline instruction ([#62](https://github.com/rcjsuen/dockerfile-language-service/issues/62))
 
 ## [0.0.9] - 2020-02-12
 ### Added

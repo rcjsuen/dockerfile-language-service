@@ -562,6 +562,12 @@ describe("Dockerfile hover", function () {
 
                     content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN a \\\nb #c \\\n${var}";
                     assertRawHover(content, 4, 3, "value");
+
+                    content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN a \\\n#c \n${var}";
+                    assertRawHover(content, 4, 3, "value");
+
+                    content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN a \\\n#c \\\n${var}";
+                    assertRawHover(content, 4, 3, "value");
                 });
 
                 it("referenced variable ${var} no value", function () {
@@ -714,6 +720,12 @@ describe("Dockerfile hover", function () {
                     assertRawHover(content, 11, 15, "value4");
 
                     content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN a \\\nb #c \\\n$var";
+                    assertRawHover(content, 4, 3, "value");
+
+                    content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN a \\\n#c \n$var";
+                    assertRawHover(content, 4, 3, "value");
+
+                    content = "FROM alpine\n" + instruction + " var" + delimiter + "value\nRUN a \\\n#c \\\n$var";
                     assertRawHover(content, 4, 3, "value");
                 });
 
