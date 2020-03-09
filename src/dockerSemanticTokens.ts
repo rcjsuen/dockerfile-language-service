@@ -218,15 +218,10 @@ export class DockerSemanticTokens {
                 for (let j = this.document.offsetAt(lastRange); j < k; j++) {
                     switch (this.content.charAt(j)) {
                         case escapeCharacter:
-                            if (comment !== -1) {
-                                const commentRange = {
-                                    start: this.document.positionAt(comment),
-                                    end: this.document.positionAt(j)
-                                };
-                                this.createToken(null, commentRange, SemanticTokenTypes.comment, [], false);
-                                comment = -1;
+                            // mark the escape character if it's not in a comment 
+                            if (comment === -1) {
+                                this.createEscapeToken(instruction, j);
                             }
-                            this.createEscapeToken(instruction, j);
                             break;
                         case '\r':
                         case '\n':

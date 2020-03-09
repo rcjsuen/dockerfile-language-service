@@ -257,13 +257,22 @@ describe("Dockerfile Semantic Token tests", () => {
 
             it("RUN a \\\\n#\\\\nb", () => {
                 const tokens = computeSemanticTokens("RUN a \\\n#\\\nb");
-                assert.equal(30, tokens.data.length);
+                assert.equal(25, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 2, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 1, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 1, 0, 1);
+            });
+
+            it("RUN a \\\\n#\\ a\\nb", () => {
+                const tokens = computeSemanticTokens("RUN a \\\n#\\ a\nb");
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 1, 0, 1);
             });
 
             it("argument spans multiple lines", () => {
