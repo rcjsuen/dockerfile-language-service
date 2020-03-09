@@ -113,6 +113,9 @@ export class DockerSemanticTokens {
                 const range = lines[i].getRange();
                 this.createToken(null, range, SemanticTokenTypes.comment, [], false);
             } else {
+                // trailing open quotes should not cause subsequent argument parameters to be flagged as strings
+                this.quote = null;
+                this.escapedQuote = null;
                 this.createTokensForInstruction(escapeCharacter, lines[i] as Instruction);
             }
         }
