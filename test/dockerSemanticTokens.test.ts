@@ -104,12 +104,21 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
             });
 
-            it("HEALTHCHECK CMD", () => {
+            it("HEALTHCHECK CMD ls", () => {
                 const tokens = computeSemanticTokens("HEALTHCHECK CMD ls");
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 0, 12, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 4, 2);
+            });
+
+            it("HEALTHCHECK CMD ls ''", () => {
+                const tokens = computeSemanticTokens("HEALTHCHECK CMD ls ''");
+                assert.equal(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 0, 12, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 4, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 15, 0, 3, 2);
             });
 
             it("--interval flag", () => {

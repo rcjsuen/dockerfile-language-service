@@ -5,7 +5,7 @@
 'use strict';
 
 import { SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
-import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild, PropertyInstruction } from 'dockerfile-ast';
+import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild, PropertyInstruction, Argument } from 'dockerfile-ast';
 import { Range, TextDocument, Position } from 'vscode-languageserver-types';
 import { Dockerfile } from 'dockerfile-ast';
 import { Util } from './docker';
@@ -191,9 +191,7 @@ export class DockerSemanticTokens {
 
                     const args = instruction.getArguments();
                     if (args.length > 1) {
-                        for (let i = 1; i < args.length; i++) {
-                            this.createToken(instruction, args[i].getRange(), SemanticTokenTypes.parameter, [], true);
-                        }
+                        this.createArgumentTokens(instruction, escapeCharacter, args.slice(1));
                     }
                 }
                 return;
@@ -206,7 +204,10 @@ export class DockerSemanticTokens {
                 return;
         }
 
-        const args = instruction.getArguments();
+        this.createArgumentTokens(instruction, escapeCharacter, instruction.getArguments());
+    }
+
+    private createArgumentTokens(instruction: Instruction, escapeCharacter: string, args: Argument[]): void {
         let lastRange: Position = null;
         for (let i = 0; i < args.length; i++) {
             const argsRange = args[i].getRange();
