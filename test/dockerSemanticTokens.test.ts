@@ -838,6 +838,18 @@ describe("Dockerfile Semantic Token tests", () => {
             });
         });
 
+        describe("multi word strings", () => {
+            it("FROM node\nRUN 'and now'", () => {
+                let tokens = computeSemanticTokens("FROM node\nRUN 'and now'");
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 1, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 15, 0, 4, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 20, 0, 5, 4);
+            });
+        });
+
         describe("inlined comments", () => {
             it("multiple \\n", () => {
                 let content =

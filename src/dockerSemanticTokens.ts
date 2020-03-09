@@ -257,8 +257,8 @@ export class DockerSemanticTokens {
 
     private createToken(instruction: Instruction, range: Range, tokenType: string, tokenModifiers: string[] = [], checkVariables: boolean = true, checkStrings: boolean = false): void {
         if (checkStrings) {
-            let quoteStart = -1;
             let startOffset = this.document.offsetAt(range.start);
+            let quoteStart = startOffset;
             let newOffset = -1;
             const endOffset = this.document.offsetAt(range.end);
             for (let i = startOffset; i < endOffset; i++) {
@@ -312,9 +312,6 @@ export class DockerSemanticTokens {
             }
 
             if (this.quote !== null) {
-                if (quoteStart === -1) {
-                    quoteStart = startOffset;
-                }
                 const quoteRange = {
                     start: this.document.positionAt(quoteStart),
                     end: this.document.positionAt(endOffset),
