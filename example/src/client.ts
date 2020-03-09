@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageServiceFactory } from 'dockerfile-language-service';
-import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation } from 'vscode-languageserver-types';
+import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation, InsertTextFormat } from 'vscode-languageserver-types';
 import { SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
 
 declare var monaco: any
