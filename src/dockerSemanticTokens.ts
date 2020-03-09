@@ -272,7 +272,6 @@ export class DockerSemanticTokens {
                                 if (this.escapedQuote === null) {
                                     quoteStart = i;
                                     this.escapedQuote = next;
-                                    i++;
                                 } else {
                                     const quoteRange = {
                                         start: this.document.positionAt(quoteStart),
@@ -282,9 +281,8 @@ export class DockerSemanticTokens {
                                     newOffset = i + 2;
                                     this.escapedQuote = null;
                                 }
-                            } else {
-                                i++;
                             }
+                            i++;
                         }
                         break;
                     case '\'':
@@ -293,15 +291,15 @@ export class DockerSemanticTokens {
                             if (this.escapedQuote === null) {
                                 this.quote = ch;
                                 quoteStart = i;
+                                if (startOffset !== quoteStart) {
+                                    const intermediateRange = {
+                                        start: this.document.positionAt(startOffset),
+                                        end: this.document.positionAt(quoteStart),
+                                    }
+                                    this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
+                                }
                             }
                         } else if (this.quote === ch) {
-                            if (startOffset !== quoteStart) {
-                                const intermediateRange = {
-                                    start: this.document.positionAt(startOffset),
-                                    end: this.document.positionAt(quoteStart),
-                                }
-                                this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
-                            }
                             const quoteRange = {
                                 start: this.document.positionAt(quoteStart),
                                 end: this.document.positionAt(i + 1),
@@ -314,7 +312,17 @@ export class DockerSemanticTokens {
                 }
             }
 
-            if (newOffset !== -1) {
+            if (this.quote !== null) {
+                if (quoteStart === -1) {
+                    quoteStart = startOffset;
+                }
+                const quoteRange = {
+                    start: this.document.positionAt(quoteStart),
+                    end: this.document.positionAt(endOffset),
+                };
+                this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], false, false);
+                return;
+            } else if (newOffset !== -1) {
                 if (newOffset !== endOffset) {
                     const intermediateRange = {
                         start: this.document.positionAt(newOffset),
