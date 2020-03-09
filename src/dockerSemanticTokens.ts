@@ -396,6 +396,9 @@ export class DockerSemanticTokens {
                         this.createToken(
                             instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
                         );
+                        if (Util.positionEquals(range.end, variableRange.end)) {
+                            return;
+                        }
                     } else if (Util.positionEquals(startPosition, variableRange.start)) {
                         this.createToken(
                             instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
