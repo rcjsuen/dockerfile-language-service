@@ -438,12 +438,21 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
             });
 
-            it("RUN a${var}", () => {
-                const tokens = computeSemanticTokens("RUN a${var}");
-                assert.equal(15, tokens.data.length);
+            it("RUN a${var}b", () => {
+                const tokens = computeSemanticTokens("RUN a${var}b");
+                assert.equal(20, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 1, 6, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 6, 1);
+            });
+
+            it("RUN ${var}b", () => {
+                const tokens = computeSemanticTokens("RUN ${var}b");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 6, 1);
             });
 
             it("RUN ${var} ${var}", () => {

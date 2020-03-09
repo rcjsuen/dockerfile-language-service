@@ -381,6 +381,7 @@ export class DockerSemanticTokens {
 
         if (checkVariables) {
             let startPosition = range.start;
+            let lastVariableRange = null;
             for (const variable of instruction.getVariables()) {
                 const variableRange = variable.getRange();
                 if (Util.isInsideRange(variableRange.start, range)) {
@@ -396,20 +397,24 @@ export class DockerSemanticTokens {
                         this.createToken(
                             instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
                         );
-                        if (Util.positionEquals(range.end, variableRange.end)) {
-                            return;
-                        }
+                        lastVariableRange = variableRange;
                     } else if (Util.positionEquals(startPosition, variableRange.start)) {
                         this.createToken(
                             instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
                         );
+                        lastVariableRange = variableRange;
                         if (Util.positionEquals(range.end, variableRange.end)) {
                             return;
                         }
                     }
-                } else if (Util.positionBefore(range.end, variableRange.start)) {
-                    break;
                 }
+            }
+
+            if (lastVariableRange !== null) {
+                if (Util.positionEquals(range.end, lastVariableRange.end)) {
+                    return;
+                }
+                range = { start: lastVariableRange.end, end: range.end };
             }
         }
         if (this.currentRange === null) {
