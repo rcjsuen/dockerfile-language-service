@@ -298,7 +298,7 @@ export class DockerSemanticTokens {
                             if (startOffset !== quoteStart) {
                                 const intermediateRange = {
                                     start: this.document.positionAt(startOffset),
-                                    end: this.document.positionAt(i),
+                                    end: this.document.positionAt(quoteStart),
                                 }
                                 this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
                             }
