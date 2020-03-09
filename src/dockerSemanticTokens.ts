@@ -390,6 +390,8 @@ export class DockerSemanticTokens {
                 const variableRange = variable.getRange();
                 if (Util.isInsideRange(variableRange.start, range)) {
                     if (Util.positionBefore(startPosition, variableRange.start)) {
+                        // create a parameter token for the characters
+                        // before the variable
                         this.createToken(
                             instruction,
                             {
@@ -398,26 +400,21 @@ export class DockerSemanticTokens {
                             },
                             tokenType, tokenModifiers, false
                         );
-                        this.createToken(
-                            instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
-                        );
-                        lastVariableRange = variableRange;
-                    } else {
-                        this.createToken(
-                            instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
-                        );
-                        lastVariableRange = variableRange;
-                        if (Util.positionEquals(range.end, variableRange.end)) {
-                            return;
-                        }
+                    }
+
+                    this.createToken(
+                        instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
+                    );
+                    lastVariableRange = variableRange;
+                    if (Util.positionEquals(range.end, variableRange.end)) {
+                        return;
                     }
                 }
             }
 
             if (lastVariableRange !== null) {
-                if (Util.positionEquals(range.end, lastVariableRange.end)) {
-                    return;
-                }
+                // alter the range so it is the characters that comes
+                // after the last matched variable
                 range = { start: lastVariableRange.end, end: range.end };
             }
         }
