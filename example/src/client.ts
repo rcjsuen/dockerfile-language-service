@@ -215,8 +215,7 @@ function convertCompletionItem(item: CompletionItem) {
         range: item.textEdit ? convertProtocolRange(item.textEdit.range) : undefined,
         kind: item.kind as number + 1,
         insertText: item.textEdit ? item.textEdit.newText : item.insertText,
-        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-
+        insertTextRules: item.insertTextFormat === InsertTextFormat.Snippet ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet : undefined,
     }
 }
 
