@@ -95,6 +95,24 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 0, 5, 2);
                 assertEdit(tokens.data, SemanticTokenTypes.label, 15, 0, 3, 5);
             });
+
+            it("FROM node abc", () => {
+                const tokens = computeSemanticTokens("FROM node abc");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 5, 3);
+            });
+
+            it("FROM node AS build abc", () => {
+                const tokens = computeSemanticTokens("FROM node AS build abc");
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 0, 5, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.label, 15, 0, 3, 5);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 0, 6, 3);
+            });
         });
 
         describe("HEALTHCHECK", () => {

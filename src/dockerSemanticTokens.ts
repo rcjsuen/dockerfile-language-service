@@ -173,12 +173,18 @@ export class DockerSemanticTokens {
                     this.createToken(instruction, digestRange, SemanticTokenTypes.label);
                 }
                 const fromArgs = instruction.getArguments();
-                if (fromArgs.length > 1 && fromArgs[1].getValue().toUpperCase() === "AS") {
-                    let range = fromArgs[1].getRange();
-                    this.createToken(instruction, range, SemanticTokenTypes.keyword);
-                    range = from.getBuildStageRange();
-                    if (range !== null) {
-                        this.createToken(instruction, range, SemanticTokenTypes.label);
+                if (fromArgs.length > 1) {
+                    if (fromArgs[1].getValue().toUpperCase() === "AS") {
+                        let range = fromArgs[1].getRange();
+                        this.createToken(instruction, range, SemanticTokenTypes.keyword);
+                        if (fromArgs.length > 2) {
+                            this.createToken(instruction, fromArgs[2].getRange(), SemanticTokenTypes.label);
+                            if (fromArgs.length > 3) {
+                                this.createArgumentTokens(instruction, escapeCharacter, fromArgs.slice(3));
+                            }
+                        }
+                    } else {
+                        this.createArgumentTokens(instruction, escapeCharacter, fromArgs.slice(1));
                     }
                 }
                 return;
