@@ -50,6 +50,26 @@ describe("Dockerfile Semantic Token tests", () => {
                         assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 3, 1);
                         assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 1, 5);
                     });
+
+                    it(keyword + " var=$var", () => {
+                        const tokens = computeSemanticTokens(keyword + " var=$var");
+                        assert.equal(20, tokens.data.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 3, [SemanticTokenModifiers.declaration]);
+                        assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 3, 1);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                    });
+
+                    it(keyword + " PATH=$GOPATH/bin:/usr/local/go/bin:$PATH", () => {
+                        const tokens = computeSemanticTokens(keyword + " PATH=$GOPATH/bin:/usr/local/go/bin:$PATH");
+                        assert.equal(30, tokens.data.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 4, [SemanticTokenModifiers.declaration]);
+                        assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 4, 1);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 7, [SemanticTokenModifiers.reference]);
+                        assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 0, 7, 23);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 25, 0, 23, 5, [SemanticTokenModifiers.reference]);
+                    });
                 });
             }
             createVariableDeclarationTests("ARG");

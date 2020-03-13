@@ -169,8 +169,8 @@ export class DockerSemanticTokens {
                             start: nameRange.end,
                             end: valueRange.start
                         }
-                        this.createToken(instruction, operatorRange, SemanticTokenTypes.operator);
-                        this.createToken(instruction, valueRange, SemanticTokenTypes.parameter, [], false, false);
+                        this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
+                        this.createToken(instruction, valueRange, SemanticTokenTypes.parameter, []);
                     }
                 }
                 return;
@@ -423,6 +423,7 @@ export class DockerSemanticTokens {
                     if (Util.positionEquals(range.end, variableRange.end)) {
                         return;
                     }
+                    startPosition = variableRange.end;
                 }
             }
 
