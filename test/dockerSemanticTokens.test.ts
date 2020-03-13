@@ -495,6 +495,17 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 11, [SemanticTokenModifiers.reference]);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 0, 12, 2);
             });
+
+            it("HEALTHCHECK --timeout=$a CMD ls", () => {
+                const tokens = computeSemanticTokens("HEALTHCHECK --timeout=$a CMD ls");
+                assert.equal(30, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 9, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 2, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 20, 0, 3, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 4, 2);
+            });
         });
 
         describe("${var}", () => {
@@ -528,6 +539,17 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 6, [SemanticTokenModifiers.reference]);
+            });
+
+            it("HEALTHCHECK --timeout=${a} CMD ls", () => {
+                const tokens = computeSemanticTokens("HEALTHCHECK --timeout=${a} CMD ls");
+                assert.equal(30, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 9, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 20, 0, 5, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 4, 2);
             });
         });
     });

@@ -148,7 +148,7 @@ export class DockerSemanticTokens {
                         start: mergedRange.end,
                         end: valueRange.start
                     }
-                    this.createToken(instruction, operatorRange, SemanticTokenTypes.operator);
+                    this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
                     if (flagValue !== "") {
                         this.createToken(instruction, valueRange, SemanticTokenTypes.property);
                     }
