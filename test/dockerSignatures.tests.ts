@@ -125,7 +125,7 @@ function assertEscape(signatureHelp: SignatureHelp) {
     assert.equal(signatureHelp.activeSignature, 0);
     assert.equal(signatureHelp.activeParameter, 0);
     assert.equal(signatureHelp.signatures.length, 1);
-    assert.equal(signatureHelp.signatures[0].label, "escape=`\\`");
+    assert.equal(signatureHelp.signatures[0].label, "escape=\\");
     assert.notEqual(signatureHelp.signatures[0].documentation, null);
     assert.equal(signatureHelp.signatures[0].documentation, docs.getDocumentation("signatureEscape"));
     assert.equal(signatureHelp.signatures[0].parameters.length, 1);

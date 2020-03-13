@@ -25,7 +25,7 @@ export class DockerSignatures {
                 return {
                     signatures: [
                         {
-                            label: "escape=`\\`",
+                            label: "escape=\\",
                             documentation: this.documentation.getDocumentation("signatureEscape"),
                             parameters: [
                                 {
