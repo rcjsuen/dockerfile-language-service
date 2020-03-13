@@ -41,6 +41,15 @@ describe("Dockerfile Semantic Token tests", () => {
                         assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
                         assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 3, [SemanticTokenModifiers.declaration]);
                     });
+
+                    it(keyword + " var=value", () => {
+                        const tokens = computeSemanticTokens(keyword + " var=value");
+                        assert.equal(20, tokens.data.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 3, [SemanticTokenModifiers.declaration]);
+                        assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 3, 1);
+                        assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 1, 5);
+                    });
                 });
             }
             createVariableDeclarationTests("ARG");
@@ -141,21 +150,23 @@ describe("Dockerfile Semantic Token tests", () => {
 
             it("--interval flag", () => {
                 const tokens = computeSemanticTokens("HEALTHCHECK --interval=30s CMD ls");
-                assert.equal(25, tokens.data.length);
+                assert.equal(30, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 10);
-                assertEdit(tokens.data, SemanticTokenTypes.property, 10, 0, 11, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 0, 4, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 0, 4, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 10, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 15, 0, 1, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 20, 0, 4, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 4, 2);
             });
 
             it("flag with empty string value", () => {
                 const tokens = computeSemanticTokens("HEALTHCHECK --interval= CMD ls");
-                assert.equal(20, tokens.data.length);
+                assert.equal(25, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 10);
-                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 0, 12, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 4, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 10, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 0, 2, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 0, 4, 2);
             });
 
             it("incomplete flag", () => {

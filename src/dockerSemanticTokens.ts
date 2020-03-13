@@ -142,9 +142,16 @@ export class DockerSemanticTokens {
                 };
                 this.createToken(instruction, mergedRange, SemanticTokenTypes.parameter);
                 const flagValue = flag.getValue();
-                if (flagValue !== null && flagValue !== "") {
+                if (flagValue !== null) {
                     const valueRange = flag.getValueRange();
-                    this.createToken(instruction, valueRange, SemanticTokenTypes.property);
+                    const operatorRange = {
+                        start: mergedRange.end,
+                        end: valueRange.start
+                    }
+                    this.createToken(instruction, operatorRange, SemanticTokenTypes.operator);
+                    if (flagValue !== "") {
+                        this.createToken(instruction, valueRange, SemanticTokenTypes.property);
+                    }
                 }
             }
         }
@@ -156,6 +163,15 @@ export class DockerSemanticTokens {
                 for (const property of propertyInstruction.getProperties()) {
                     const nameRange = property.getNameRange();
                     this.createToken(instruction, nameRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.declaration], false);
+                    const valueRange = property.getValueRange();
+                    if (valueRange !== null) {
+                        const operatorRange = {
+                            start: nameRange.end,
+                            end: valueRange.start
+                        }
+                        this.createToken(instruction, operatorRange, SemanticTokenTypes.operator);
+                        this.createToken(instruction, valueRange, SemanticTokenTypes.parameter, [], false, false);
+                    }
                 }
                 return;
             case Keyword.FROM:
