@@ -37,13 +37,14 @@ const MODEL_URI = MONACO_URI.toString();
 const LSP_URI = { uri: MODEL_URI };
 
 const darkThemeMap = {
-    "keyword": 0,
+    "keyword": 12,
     "comment": 7,
-    "parameter": 10,
-    "property": 3,
-    "label": 11,
-    "class": 5,
-    "marco": 6,
+    "parameter": 6,
+    "property": 14,
+    "operator": 1,
+    "label": 16,
+    "class": 3,
+    "macro": 11,
     "string": 5,
     "variable": {
         "declaration": 8,
@@ -73,9 +74,10 @@ const lightThemeMap = {
     "comment": 7,
     "parameter": 5,
     "property": 4,
+    "operator": 1,
     "label": 11,
     "class": 5,
-    "marco": 3,
+    "macro": 3,
     "string": 11,
     "variable": {
         "declaration": 12,
@@ -259,7 +261,7 @@ monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
         tokenTypes.push(SemanticTokenTypes.property);
         tokenTypes.push(SemanticTokenTypes.label);
         tokenTypes.push(SemanticTokenTypes.class);
-        tokenTypes.push(SemanticTokenTypes.marco);
+        tokenTypes.push(SemanticTokenTypes.macro);
         tokenTypes.push(SemanticTokenTypes.string);
         tokenTypes.push(SemanticTokenTypes.variable);
 
