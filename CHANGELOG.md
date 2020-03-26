@@ -3,10 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 ### Added
+- all tokens are now assigned a semantic meaning for the experimental support of semantic tokens ([#54](https://github.com/rcjsuen/dockerfile-language-service/issues/54))
 - support completion of the `syntax` parser directive ([#57](https://github.com/rcjsuen/dockerfile-language-service/issues/57))
 - add hover support for the `syntax` parser directive ([#58](https://github.com/rcjsuen/dockerfile-language-service/issues/58))
 
 ### Fixed
+- significantly improved the experimental support for semantic tokens with various fixes ([#54](https://github.com/rcjsuen/dockerfile-language-service/issues/54))
 - allow hovers to be displayed for instruction keywords that span multiple lines ([#59](https://github.com/rcjsuen/dockerfile-language-service/issues/59))
 - correct hover resolution of a variable if it comes after a false comment in a multiline instruction ([#61](https://github.com/rcjsuen/dockerfile-language-service/issues/61))
 - correct hover resolution of a variable that comes after an embedded comment with a trailing escape character in a multiline instruction ([#62](https://github.com/rcjsuen/dockerfile-language-service/issues/62))
