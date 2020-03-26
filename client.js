@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 var dockerfile_language_service_1 = require("dockerfile-language-service");
+var vscode_languageserver_types_1 = require("vscode-languageserver-types");
 var protocol_sematicTokens_proposed_1 = require("vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed");
 var LANGUAGE_ID = 'dockerfile';
 // content to initialize the editor with
@@ -25,13 +26,14 @@ var MONACO_URI = monacoModel.uri;
 var MODEL_URI = MONACO_URI.toString();
 var LSP_URI = { uri: MODEL_URI };
 var darkThemeMap = {
-    "keyword": 0,
+    "keyword": 12,
     "comment": 7,
-    "parameter": 10,
-    "property": 3,
-    "label": 11,
-    "class": 5,
-    "marco": 6,
+    "parameter": 6,
+    "property": 14,
+    "operator": 1,
+    "label": 16,
+    "class": 3,
+    "macro": 11,
     "string": 5,
     "variable": {
         "declaration": 8,
@@ -61,9 +63,10 @@ var lightThemeMap = {
     "comment": 7,
     "parameter": 5,
     "property": 4,
+    "operator": 1,
     "label": 11,
     "class": 5,
-    "marco": 3,
+    "macro": 3,
     "string": 11,
     "variable": {
         "declaration": 12,
@@ -189,7 +192,7 @@ function convertCompletionItem(item) {
         range: item.textEdit ? convertProtocolRange(item.textEdit.range) : undefined,
         kind: item.kind + 1,
         insertText: item.textEdit ? item.textEdit.newText : item.insertText,
-        insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        insertTextRules: item.insertTextFormat === vscode_languageserver_types_1.InsertTextFormat.Snippet ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet : undefined,
     };
 }
 function convertMonacoCodeActionContext(context) {
@@ -230,7 +233,7 @@ monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.property);
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.label);
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.class);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.marco);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.macro);
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.string);
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.variable);
         tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.declaration);
