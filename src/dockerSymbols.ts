@@ -33,9 +33,8 @@ export class DockerSymbols {
 
     public parseSymbolInformation(textDocument: TextDocumentIdentifier, content: string): SymbolInformation[] {
         let dockerfile = DockerfileParser.parse(content);
-        let directive = dockerfile.getDirective();
         let symbols: SymbolInformation[] = [];
-        if (directive !== null) {
+        for (const directive of dockerfile.getDirectives()) {
             symbols.push(this.createSymbolInformation(directive.getName(), textDocument.uri, directive.getNameRange(), SymbolKind.Property, false));
         }
         for (let instruction of dockerfile.getInstructions()) {

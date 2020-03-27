@@ -31,192 +31,235 @@ describe("Dockerfile document symbols", function () {
     });
 
     describe("directives", function () {
-        it("escape directive", function () {
-            let symbols = computeSymbols("#escape=`");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 1);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 7);
+        describe("escape", function () {
+            it("no space", function () {
+                let symbols = computeSymbols("#escape=`");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 1);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 7);
+            });
+
+            it("space", function () {
+                let symbols = computeSymbols("# escape=`");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+
+                symbols = computeSymbols("#\tescape=`");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+
+                symbols = computeSymbols("# escape= `");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+
+                symbols = computeSymbols("# escape=\t`");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+
+                symbols = computeSymbols("# escape=` ");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+            });
+
+            it("leading whitespace", function () {
+                let symbols = computeSymbols(" #escape=`");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+
+                symbols = computeSymbols("\t#escape=`");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+
+                symbols = computeSymbols("# escape\t=\t` ");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 2);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 8);
+            });
+
+            it("directive becomes a comment if not at the top", function () {
+                let symbols = computeSymbols("\r#escape=`");
+                assert.equal(symbols.length, 0);
+
+                symbols = computeSymbols("\n#escape=`");
+                assert.equal(symbols.length, 0);
+
+                symbols = computeSymbols("\r\n#escape=`");
+                assert.equal(symbols.length, 0);
+            });
+
+            it("invalid directive definition with leading comment", function () {
+                let symbols = computeSymbols("#\n#escape=`");
+                assert.equal(symbols.length, 0);
+
+                symbols = computeSymbols("#\r\n#escape=`");
+                assert.equal(symbols.length, 0);
+
+                symbols = computeSymbols("#comment\n#escape=`");
+                assert.equal(symbols.length, 0);
+            });
+
+            it("invalid directive definition with nothing", function () {
+                let symbols = computeSymbols("#escape=");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 1);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 7);
+
+                symbols = computeSymbols("#escape=\r");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 1);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 7);
+
+                symbols = computeSymbols("#escape=\n");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 1);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 7);
+            });
+
+            it("invalid directive name", function () {
+                let symbols = computeSymbols("#eskape=`");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "eskape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 1);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 7);
+            });
         });
 
-        it("space", function () {
-            let symbols = computeSymbols("# escape=`");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
-
-            symbols = computeSymbols("#\tescape=`");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
-
-            symbols = computeSymbols("# escape= `");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
-
-            symbols = computeSymbols("# escape=\t`");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
-
-            symbols = computeSymbols("# escape=` ");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
+        describe("syntax", function () {
+            it("no space", function () {
+                let symbols = computeSymbols("#syntax=docker/dockerfile:experimental");
+                assert.equal(symbols.length, 1);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "syntax");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 1);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 7);
+            });
         });
 
-        it("leading whitespace", function () {
-            let symbols = computeSymbols(" #escape=`");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
-
-            symbols = computeSymbols("\t#escape=`");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
-
-            symbols = computeSymbols("# escape\t=\t` ");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 2);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 8);
-        });
-
-        it("directive becomes a comment if not at the top", function () {
-            let symbols = computeSymbols("\r#escape=`");
-            assert.equal(symbols.length, 0);
-
-            symbols = computeSymbols("\n#escape=`");
-            assert.equal(symbols.length, 0);
-
-            symbols = computeSymbols("\r\n#escape=`");
-            assert.equal(symbols.length, 0);
-        });
-
-        it("invalid directive definition with leading comment", function () {
-            let symbols = computeSymbols("#\n#escape=`");
-            assert.equal(symbols.length, 0);
-
-            symbols = computeSymbols("#\r\n#escape=`");
-            assert.equal(symbols.length, 0);
-
-            symbols = computeSymbols("#comment\n#escape=`");
-            assert.equal(symbols.length, 0);
-        });
-
-        it("invalid directive definition with nothing", function () {
-            let symbols = computeSymbols("#escape=");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 1);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 7);
-
-            symbols = computeSymbols("#escape=\r");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 1);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 7);
-
-            symbols = computeSymbols("#escape=\n");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "escape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 1);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 7);
-        });
-
-        it("invalid directive name", function () {
-            let symbols = computeSymbols("#eskape=`");
-            assert.equal(symbols.length, 1);
-            assert.equal(symbols[0].containerName, undefined);
-            assert.equal(symbols[0].deprecated, undefined);
-            assert.equal(symbols[0].name, "eskape");
-            assert.equal(symbols[0].kind, SymbolKind.Property);
-            assert.equal(symbols[0].location.uri, uri);
-            assert.equal(symbols[0].location.range.start.line, 0);
-            assert.equal(symbols[0].location.range.start.character, 1);
-            assert.equal(symbols[0].location.range.end.line, 0);
-            assert.equal(symbols[0].location.range.end.character, 7);
+        describe("multiple directives", function () {
+            it("escape and syntax", function () {
+                let symbols = computeSymbols("#escape=`\n#syntax=docker/dockerfile:experimental");
+                assert.equal(symbols.length, 2);
+                assert.equal(symbols[0].containerName, undefined);
+                assert.equal(symbols[0].deprecated, undefined);
+                assert.equal(symbols[0].name, "escape");
+                assert.equal(symbols[0].kind, SymbolKind.Property);
+                assert.equal(symbols[0].location.uri, uri);
+                assert.equal(symbols[0].location.range.start.line, 0);
+                assert.equal(symbols[0].location.range.start.character, 1);
+                assert.equal(symbols[0].location.range.end.line, 0);
+                assert.equal(symbols[0].location.range.end.character, 7);
+                assert.equal(symbols[1].containerName, undefined);
+                assert.equal(symbols[1].deprecated, undefined);
+                assert.equal(symbols[1].name, "syntax");
+                assert.equal(symbols[1].kind, SymbolKind.Property);
+                assert.equal(symbols[1].location.uri, uri);
+                assert.equal(symbols[1].location.range.start.line, 1);
+                assert.equal(symbols[1].location.range.start.character, 1);
+                assert.equal(symbols[1].location.range.end.line, 1);
+                assert.equal(symbols[1].location.range.end.character, 7);
+            });
         });
     });
 
