@@ -383,6 +383,7 @@ export class DockerSemanticTokens {
             let offset = -1;
             let startOffset = this.document.offsetAt(range.start);
             const endOffset = this.document.offsetAt(range.end);
+            let intermediateAdded = false;
             for (let i = startOffset; i < endOffset; i++) {
                 let ch = this.content.charAt(i);
                 switch (ch) {
@@ -397,11 +398,14 @@ export class DockerSemanticTokens {
                                     break;
                                 case '\n':
                                     if (!added) {
-                                        const intermediateRange = {
-                                            start: this.document.positionAt(startOffset),
-                                            end: this.document.positionAt(i),
+                                        if (!intermediateAdded) {
+                                            const intermediateRange = {
+                                                start: this.document.positionAt(startOffset),
+                                                end: this.document.positionAt(i),
+                                            }
+                                            this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
+                                            intermediateAdded = true;
                                         }
-                                        this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
                                         this.createEscapeToken(instruction, i);
                                     }
                                     added = true;
