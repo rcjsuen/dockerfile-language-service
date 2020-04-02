@@ -138,8 +138,8 @@ export class DockerSemanticTokens {
                 const flagRange = flag.getRange();
                 let nameRange = flag.getNameRange();
                 const mergedRange = {
-                    start: { line: flagRange.start.line, character: flagRange.start.character },
-                    end: { line: nameRange.end.line, character: nameRange.end.character }
+                    start: flagRange.start,
+                    end: nameRange.end
                 };
                 this.createToken(instruction, mergedRange, SemanticTokenTypes.parameter);
                 const flagValue = flag.getValue();
@@ -256,8 +256,7 @@ export class DockerSemanticTokens {
 
     private createArgumentTokens(instruction: Instruction, args: Argument[]): void {
         for (let i = 0; i < args.length; i++) {
-            const argsRange = args[i].getRange();
-            this.createToken(instruction, argsRange, SemanticTokenTypes.parameter, [], true, true);
+            this.createToken(instruction, args[i].getRange(), SemanticTokenTypes.parameter, [], true, true);
         }
     }
 
