@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - support multiple directives when calculating a Dockerfile's symbols ([#65](https://github.com/rcjsuen/dockerfile-language-service/issues/65))
+- RUN instructions with only flags and no arguments will now be raised as an error ([rcjsuen/dockerfile-utils#76](https://github.com/rcjsuen/dockerfile-utils/issues/76))
+
+### Fixed
+- multiline instructions with empty newlines will no longer throw an error during validation ([rcjsuen/dockerfile-utils#71](https://github.com/rcjsuen/dockerfile-utils/issues/71))
+- instruction keywords that span multiple lines will no longer be raised as an error ([rcjsuen/dockerfile-utils#72](https://github.com/rcjsuen/dockerfile-utils/issues/72))
+- embedded comments with an empty continuation line will no longer be raised as an error ([rcjsuen/dockerfile-utils#73](https://github.com/rcjsuen/dockerfile-utils/issues/73))
+- arguments that follow a non-leading `#` comment marker will no longer be dropped during validation ([rcjsuen/dockerfile-utils#75](https://github.com/rcjsuen/dockerfile-utils/issues/75))
+- fix parsing of embedded comments in multiline instructions that have a trailing escape character ([rcjsuen/dockerfile-utils#74](https://github.com/rcjsuen/dockerfile-utils/issues/74))
 
 ## [0.0.10] - 2020-03-25
 ### Added
