@@ -382,7 +382,7 @@ export class DockerSemanticTokens {
             let offset = -1;
             let startOffset = this.document.offsetAt(range.start);
             const endOffset = this.document.offsetAt(range.end);
-            rangeLoop: for (let i = startOffset; i < endOffset; i++) {
+            for (let i = startOffset; i < endOffset; i++) {
                 let ch = this.content.charAt(i);
                 switch (ch) {
                     case this.escapeCharacter:
