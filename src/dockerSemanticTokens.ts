@@ -61,11 +61,13 @@ export class DockerSemanticTokens {
 
     private quote: string = null;
     private escapedQuote: string = null;
+    private readonly escapeCharacter: string;
 
     constructor(content: string) {
         this.content = content;
         this.document = TextDocument.create("", "", 0, content);
         this.dockerfile = DockerfileParser.parse(content);
+        this.escapeCharacter = this.dockerfile.getEscapeCharacter();
     }
 
     public computeSemanticTokens(): SemanticTokens {
@@ -107,7 +109,6 @@ export class DockerSemanticTokens {
             }
         }
 
-        const escapeCharacter = this.dockerfile.getEscapeCharacter();
         for (let i = 0; i < lines.length; i++) {
             if (lines[i] instanceof Comment) {
                 const range = lines[i].getRange();
@@ -116,7 +117,7 @@ export class DockerSemanticTokens {
                 // trailing open quotes should not cause subsequent argument parameters to be flagged as strings
                 this.quote = null;
                 this.escapedQuote = null;
-                this.createTokensForInstruction(escapeCharacter, lines[i] as Instruction);
+                this.createTokensForInstruction(lines[i] as Instruction);
             }
         }
         return {
@@ -124,7 +125,7 @@ export class DockerSemanticTokens {
         }
     }
 
-    private createTokensForInstruction(escapeCharacter: string, instruction: Instruction): number[] {
+    private createTokensForInstruction(instruction: Instruction): number[] {
         const instructionRange = instruction.getInstructionRange();
         let modifiers = [];
         if (instruction.getKeyword() === Keyword.MAINTAINER) {
@@ -156,14 +157,12 @@ export class DockerSemanticTokens {
                             nameRange = option.getNameRange();
                             this.createToken(instruction, nameRange, SemanticTokenTypes.parameter);
                             const valueRange = option.getValueRange();
-                            if (valueRange !== null) {
-                                const operatorRange = {
-                                    start: nameRange.end,
-                                    end: valueRange.start
-                                }
-                                this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
-                                this.createToken(instruction, valueRange, SemanticTokenTypes.property);
+                            const operatorRange = {
+                                start: nameRange.end,
+                                end: valueRange.start
                             }
+                            this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
+                            this.createToken(instruction, valueRange, SemanticTokenTypes.property);
                         }
                     } else {
                         const valueRange = flag.getValueRange();
@@ -220,11 +219,11 @@ export class DockerSemanticTokens {
                         if (fromArgs.length > 2) {
                             this.createToken(instruction, fromArgs[2].getRange(), SemanticTokenTypes.label);
                             if (fromArgs.length > 3) {
-                                this.createArgumentTokens(instruction, escapeCharacter, fromArgs.slice(3));
+                                this.createArgumentTokens(instruction, fromArgs.slice(3));
                             }
                         }
                     } else {
-                        this.createArgumentTokens(instruction, escapeCharacter, fromArgs.slice(1));
+                        this.createArgumentTokens(instruction, fromArgs.slice(1));
                     }
                 }
                 return;
@@ -237,7 +236,7 @@ export class DockerSemanticTokens {
 
                     const args = instruction.getArguments();
                     if (args.length > 1) {
-                        this.createArgumentTokens(instruction, escapeCharacter, args.slice(1));
+                        this.createArgumentTokens(instruction, args.slice(1));
                     }
                 }
                 return;
@@ -245,51 +244,48 @@ export class DockerSemanticTokens {
                 const onbuild = instruction as Onbuild;
                 const range = onbuild.getTriggerRange()
                 if (range !== null) {
-                    this.createTokensForInstruction(escapeCharacter, onbuild.getTriggerInstruction());
+                    this.createTokensForInstruction(onbuild.getTriggerInstruction());
                 }
                 return;
         }
 
-        this.createArgumentTokens(instruction, escapeCharacter, instruction.getArguments());
+        this.createArgumentTokens(instruction, instruction.getArguments());
     }
 
-    private createArgumentTokens(instruction: Instruction, escapeCharacter: string, args: Argument[]): void {
-        let lastRange: Position = null;
+    private createArgumentTokens(instruction: Instruction, args: Argument[]): void {
         for (let i = 0; i < args.length; i++) {
             const argsRange = args[i].getRange();
-            if (lastRange !== null && lastRange.line !== argsRange.start.line) {
-                // this implies that there's been a line change between one arg and the next
-                let k = this.document.offsetAt(argsRange.start);
-                let comment = -1;
-                for (let j = this.document.offsetAt(lastRange); j < k; j++) {
-                    switch (this.content.charAt(j)) {
-                        case escapeCharacter:
-                            // mark the escape character if it's not in a comment 
-                            if (comment === -1) {
-                                this.createEscapeToken(instruction, j);
-                            }
-                            break;
-                        case '\r':
-                        case '\n':
-                            if (comment !== -1) {
-                                const commentRange = {
-                                    start: this.document.positionAt(comment),
-                                    end: this.document.positionAt(j)
-                                };
-                                this.createToken(null, commentRange, SemanticTokenTypes.comment, [], false);
-                                comment = -1;
-                            }
-                            break;
-                        case '#':
-                            if (comment === -1) {
-                                comment = j;
-                            }
-                            break;
-                    }
-                }
-            }
             this.createToken(instruction, argsRange, SemanticTokenTypes.parameter, [], true, true);
-            lastRange = argsRange.end;
+        }
+    }
+
+    private handleLineChange(instruction: Instruction, next: Position, previous: Position): void {
+        let comment = -1;
+        for (let i = this.document.offsetAt(previous); i < this.document.offsetAt(next); i++) {
+            switch (this.content.charAt(i)) {
+                case this.escapeCharacter:
+                    // mark the escape character if it's not in a comment 
+                    if (comment === -1) {
+                        this.createEscapeToken(instruction, i);
+                    }
+                    break;
+                case '\r':
+                case '\n':
+                    if (comment !== -1) {
+                        const commentRange = {
+                            start: this.document.positionAt(comment),
+                            end: this.document.positionAt(i)
+                        };
+                        this.createToken(null, commentRange, SemanticTokenTypes.comment, [], false);
+                        comment = -1;
+                    }
+                    break;
+                case '#':
+                    if (comment === -1) {
+                        comment = i;
+                    }
+                    break;
+            }
         }
     }
 
@@ -298,10 +294,15 @@ export class DockerSemanticTokens {
             start: this.document.positionAt(offset),
             end: this.document.positionAt(offset + 1),
         }
-        this.createToken(instruction, escapeRange, SemanticTokenTypes.macro, [], false);
+        this.createToken(instruction, escapeRange, SemanticTokenTypes.macro, [], false, false, false);
     }
 
-    private createToken(instruction: Instruction, range: Range, tokenType: string, tokenModifiers: string[] = [], checkVariables: boolean = true, checkStrings: boolean = false): void {
+    private createToken(instruction: Instruction, range: Range, tokenType: string, tokenModifiers: string[] = [], checkVariables: boolean = true, checkStrings: boolean = false, checkNewline: boolean = true): void {
+        if (checkNewline && this.currentRange !== null && this.currentRange.end.line !== range.start.line) {
+            // this implies that there's been a line change between one arg and the next
+            this.handleLineChange(instruction, range.start, this.currentRange.end);
+        }
+
         if (checkStrings) {
             let startOffset = this.document.offsetAt(range.start);
             let quoteStart = startOffset;
@@ -381,11 +382,10 @@ export class DockerSemanticTokens {
             let offset = -1;
             let startOffset = this.document.offsetAt(range.start);
             const endOffset = this.document.offsetAt(range.end);
-            const escapeCharacter = this.dockerfile.getEscapeCharacter();
             rangeLoop: for (let i = startOffset; i < endOffset; i++) {
                 let ch = this.content.charAt(i);
                 switch (ch) {
-                    case escapeCharacter:
+                    case this.escapeCharacter:
                         // note whether the intermediate token has been added or not
                         let added = false;
                         escapeCheck: for (let j = i + 1; j < endOffset; j++) {

@@ -950,6 +950,39 @@ describe("Dockerfile Semantic Token tests", () => {
             });
         });
 
+        describe("flags", () => {
+            it("flags on separate lines", () => {
+                const tokens = computeSemanticTokens("HEALTHCHECK --interval=30s \\\n--timeout=30s CMD ls");
+                assert.equal(50, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 10);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 10, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 15, 0, 1, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 30, 0, 9, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 35, 0, 1, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 40, 0, 4, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 0, 4, 2);
+            });
+
+            it("flags on separate lines with embedded comment", () => {
+                const tokens = computeSemanticTokens("HEALTHCHECK --interval=30s \\\n # comment\n--timeout=30s CMD ls");
+                assert.equal(55, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 10);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 10, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 15, 0, 1, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 25, 1, 1, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 30, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 35, 0, 9, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 40, 0, 1, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 45, 0, 4, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 50, 0, 4, 2);
+            });
+        });
+
         describe("inlined comments", () => {
             it("multiple \\n", () => {
                 let content =
