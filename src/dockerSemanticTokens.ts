@@ -135,7 +135,7 @@ export class DockerSemanticTokens {
         if (instruction instanceof ModifiableInstruction) {
             for (const flag of instruction.getFlags()) {
                 const flagRange = flag.getRange();
-                const nameRange = flag.getNameRange();
+                let nameRange = flag.getNameRange();
                 const mergedRange = {
                     start: { line: flagRange.start.line, character: flagRange.start.character },
                     end: { line: nameRange.end.line, character: nameRange.end.character }
@@ -143,14 +143,38 @@ export class DockerSemanticTokens {
                 this.createToken(instruction, mergedRange, SemanticTokenTypes.parameter);
                 const flagValue = flag.getValue();
                 if (flagValue !== null) {
-                    const valueRange = flag.getValueRange();
-                    const operatorRange = {
-                        start: mergedRange.end,
-                        end: valueRange.start
-                    }
-                    this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
-                    if (flagValue !== "") {
-                        this.createToken(instruction, valueRange, SemanticTokenTypes.property);
+                    if (flag.hasOptions()) {
+                        const operatorRange = {
+                            start: mergedRange.end,
+                            end: {
+                                line: mergedRange.end.line,
+                                character: mergedRange.end.character + 1
+                            }
+                        }
+                        this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
+                        for (const option of flag.getOptions()) {
+                            nameRange = option.getNameRange();
+                            this.createToken(instruction, nameRange, SemanticTokenTypes.parameter);
+                            const valueRange = option.getValueRange();
+                            if (valueRange !== null) {
+                                const operatorRange = {
+                                    start: nameRange.end,
+                                    end: valueRange.start
+                                }
+                                this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
+                                this.createToken(instruction, valueRange, SemanticTokenTypes.property);
+                            }
+                        }
+                    } else {
+                        const valueRange = flag.getValueRange();
+                        const operatorRange = {
+                            start: mergedRange.end,
+                            end: valueRange.start
+                        }
+                        this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
+                        if (flagValue !== "") {
+                            this.createToken(instruction, valueRange, SemanticTokenTypes.property);
+                        }
                     }
                 }
             }
