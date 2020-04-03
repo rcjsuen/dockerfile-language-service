@@ -384,9 +384,31 @@ export class DockerSemanticTokens {
             let startOffset = this.document.offsetAt(range.start);
             const endOffset = this.document.offsetAt(range.end);
             let intermediateAdded = false;
+            let escaping = false;
             for (let i = startOffset; i < endOffset; i++) {
                 let ch = this.content.charAt(i);
                 switch (ch) {
+                    case '#':
+                        if (escaping) {
+                            commentCheck: for (let j = i + 1; j < endOffset; j++) {
+                                switch (this.content.charAt(j)) {
+                                    case ' ':
+                                    case '\t':
+                                    case '\r':
+                                        break;
+                                    case '\n':
+                                        const escapeRange = {
+                                            start: this.document.positionAt(i),
+                                            end: this.document.positionAt(j)
+                                        }
+                                        this.createToken(null, escapeRange, SemanticTokenTypes.comment, [], false);
+                                        i = j + 1;
+                                        offset = i;
+                                        break commentCheck;
+                                }
+                            }
+                        }
+                        break;
                     case this.escapeCharacter:
                         // note whether the intermediate token has been added or not
                         let added = false;
@@ -408,6 +430,7 @@ export class DockerSemanticTokens {
                                         }
                                         this.createEscapeToken(instruction, i);
                                     }
+                                    escaping = true;
                                     added = true;
                                     i = j;
                                     offset = j + 1;
