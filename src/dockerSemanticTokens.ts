@@ -393,14 +393,22 @@ export class DockerSemanticTokens {
                                 switch (this.content.charAt(j)) {
                                     case ' ':
                                     case '\t':
-                                    case '\r':
                                         break;
-                                    case '\n':
-                                        const escapeRange = {
+                                    case '\r':
+                                        const crComment = {
                                             start: this.document.positionAt(i),
                                             end: this.document.positionAt(j)
                                         }
-                                        this.createToken(null, escapeRange, SemanticTokenTypes.comment, [], false);
+                                        this.createToken(null, crComment, SemanticTokenTypes.comment, [], false);
+                                        i = j + 1;
+                                        startOffset = -1;
+                                        break commentCheck;
+                                    case '\n':
+                                        const lfComment = {
+                                            start: this.document.positionAt(i),
+                                            end: this.document.positionAt(j)
+                                        }
+                                        this.createToken(null, lfComment, SemanticTokenTypes.comment, [], false);
                                         i = j;
                                         startOffset = -1;
                                         break commentCheck;
