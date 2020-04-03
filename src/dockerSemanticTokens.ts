@@ -380,7 +380,6 @@ export class DockerSemanticTokens {
             }
         }
         if (range.start.line !== range.end.line) {
-            let offset = -1;
             let startOffset = this.document.offsetAt(range.start);
             const endOffset = this.document.offsetAt(range.end);
             let intermediateAdded = false;
@@ -402,8 +401,8 @@ export class DockerSemanticTokens {
                                             end: this.document.positionAt(j)
                                         }
                                         this.createToken(null, escapeRange, SemanticTokenTypes.comment, [], false);
-                                        i = j + 1;
-                                        offset = i;
+                                        i = j;
+                                        startOffset = -1;
                                         break commentCheck;
                                 }
                             }
@@ -433,16 +432,24 @@ export class DockerSemanticTokens {
                                     escaping = true;
                                     added = true;
                                     i = j;
-                                    offset = j + 1;
+                                    startOffset = -1;
                                     break;
                                 default:
                                     break escapeCheck;
                             }
                         }
+                        break;
+                    default:
+                        if (startOffset === -1) {
+                            intermediateAdded = false;
+                            escaping = false;
+                            startOffset = i;
+                        }
+                        break;
                 }
             }
             const intermediateRange = {
-                start: this.document.positionAt(offset),
+                start: this.document.positionAt(startOffset),
                 end: this.document.positionAt(endOffset),
             }
             this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);

@@ -979,6 +979,48 @@ describe("Dockerfile Semantic Token tests", () => {
             });
         });
 
+        describe("multiple splits", () => {
+            it("keyword", () => {
+                const tokens = computeSemanticTokens("HE\\\n#\nAL\\\n#\nTHCHECK");
+                assert.equal(35, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 1, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 25, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 30, 1, 0, 7);
+            });
+
+            it("argument", () => {
+                const tokens = computeSemanticTokens("RUN e\\\n#\nch\\\n#\no");
+                assert.equal(40, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 1, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 25, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 30, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 35, 1, 0, 1);
+            });
+
+            it("argument with # and \\", () => {
+                const tokens = computeSemanticTokens("RUN 1\\\n#\n2\\\n#\n3#\\4\\\n5");
+                assert.equal(50, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 25, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 30, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 35, 1, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 40, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 1, 0, 1);
+            });
+        });
+
         /**
          * RUN echo && \
          * 
