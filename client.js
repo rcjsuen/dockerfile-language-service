@@ -236,6 +236,7 @@ monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.macro);
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.string);
         tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.variable);
+        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.operator);
         tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.declaration);
         tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.definition);
         tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.deprecated);
