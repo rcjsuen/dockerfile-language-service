@@ -195,7 +195,7 @@ export class DockerSemanticTokens {
                             end: valueRange.start
                         }
                         this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
-                        this.createToken(instruction, valueRange, SemanticTokenTypes.parameter, []);
+                        this.createToken(instruction, valueRange, SemanticTokenTypes.parameter, [], true, true);
                     }
                 }
                 return;
