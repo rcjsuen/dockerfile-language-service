@@ -324,7 +324,7 @@ export class DockerSemanticTokens {
                                         start: this.document.positionAt(quoteStart),
                                         end: this.document.positionAt(i + 2),
                                     };
-                                    this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], false, false);
+                                    this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], true, false);
                                     newOffset = i + 2;
                                     this.escapedQuote = null;
                                 }
@@ -351,7 +351,7 @@ export class DockerSemanticTokens {
                                 start: this.document.positionAt(quoteStart),
                                 end: this.document.positionAt(i + 1),
                             };
-                            this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], false, false);
+                            this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], true, false);
                             newOffset = i + 1;
                             this.quote = null;
                         }
@@ -364,7 +364,7 @@ export class DockerSemanticTokens {
                     start: this.document.positionAt(quoteStart),
                     end: this.document.positionAt(endOffset),
                 };
-                this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], false, false);
+                this.createToken(instruction, quoteRange, SemanticTokenTypes.string, [], true, false);
                 return;
             } else if (newOffset !== -1) {
                 if (newOffset !== endOffset) {
