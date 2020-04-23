@@ -377,6 +377,21 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 35, 0, 3, 5);
             });
 
+            it("RUN --mount=type=cache,target= go build", () => {
+                const tokens = computeSemanticTokens("RUN --mount=type=cache,target= go build");
+                assert.equal(50, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 7);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 7, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 1, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 20, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 25, 0, 1, 5);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 30, 0, 6, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 35, 0, 6, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 40, 0, 2, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 0, 3, 5);
+            });
+
             it("RUN --mount=type=cache,target=/root/cache go build", () => {
                 const tokens = computeSemanticTokens("RUN --mount=type=cache,target=/root/cache go build");
                 assert.equal(55, tokens.data.length);
