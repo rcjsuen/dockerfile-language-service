@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+- improved semantic tokens support for strings and variables ([#54](https://github.com/rcjsuen/dockerfile-language-service/issues/54))
+
 ## [0.0.11] - 2020-04-03
 ### Added
 - support multiple directives when calculating a Dockerfile's symbols ([#65](https://github.com/rcjsuen/dockerfile-language-service/issues/65))
@@ -291,6 +294,7 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.11...HEAD
 [0.0.11]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.9...v0.0.10
 [0.0.9]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.8...v0.0.9
