@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Fixed
 - improved semantic tokens support for strings and variables ([#54](https://github.com/rcjsuen/dockerfile-language-service/issues/54))
 
 ## [0.0.11] - 2020-04-03
