@@ -12,9 +12,16 @@ export class DockerLinks {
     public getLinks(content: string): DocumentLink[] {
         let dockerfile = DockerfileParser.parse(content);
         let links = [];
+        const stages = dockerfile.getFROMs().reduce((accumulator, from) => {
+            const stage = from.getBuildStage();
+            if (stage !== null) {
+                accumulator.push(stage);
+            }
+            return accumulator;
+        }, []);
         for (let from of dockerfile.getFROMs()) {
             let name = from.getImageName();
-            if (name) {
+            if (name !== null && stages.indexOf(name) === -1) {
                 if (name.indexOf('/') === -1) {
                     links.push({
                         range: from.getImageNameRange(),
