@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- resolve build stage references to support definition navigation ([#67](https://github.com/rcjsuen/dockerfile-language-service/issues/67))
+
 ### Fixed
 - build stages are no longer included as a link ([#68](https://github.com/rcjsuen/dockerfile-language-service/issues/68))
 

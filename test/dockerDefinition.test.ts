@@ -91,6 +91,15 @@ describe("Dockerfile Document Definition tests", function () {
                 location = computeDefinition(document, Position.create(2, 16));
                 assert.equal(location, null);
             });
+
+            it("FROM reference", function () {
+                let document = "FROM node AS base\nFROM base";
+                let location = computeDefinition(document, Position.create(0, 15));
+                assertLocation(location, 0, 13, 0, 17);
+
+                location = computeDefinition(document, Position.create(1, 7));
+                assertLocation(location, 0, 13, 0, 17);
+            });
         });
 
         describe("invalid", function () {

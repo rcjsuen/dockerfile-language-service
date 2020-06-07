@@ -37,6 +37,17 @@ export class DockerDefinition {
                     return range;
                 }
             }
+
+            range = instruction.getImageNameRange();
+            if (Util.isInsideRange(position, range)) {
+                const stageName = instruction.getImageName();
+                for (const from of dockerfile.getFROMs()) {
+                    if (stageName === from.getBuildStage()) {
+                        return from.getBuildStageRange();
+                    }
+                }
+                return null;
+            }
         }
         return null;
     }
