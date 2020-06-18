@@ -1550,6 +1550,31 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 5, 2);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 30, 0, 3, 4);
             });
+
+            it("multiline ENV instruction with only a comment", () => {
+                let content = "ENV \\\n# common variables:";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 19);
+            });
+
+            it("multiline ENV instruction with a comment its variables", () => {
+                let content = "ENV \\\n# common variables:\n  ENV1=something \\\n  ENV2=999";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(50, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 19);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 1, 2, 4, [SemanticTokenModifiers.declaration]);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 20, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 1, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 30, 0, 10, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 35, 1, 2, 4, [SemanticTokenModifiers.declaration]);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 40, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 0, 1, 3);
+            });
         });
     });
 });
