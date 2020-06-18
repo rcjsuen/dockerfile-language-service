@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - build stages are no longer included as a link ([#68](https://github.com/rcjsuen/dockerfile-language-service/issues/68))
+- allow embedded comments to immediately follow an ENV declaration ([#69](https://github.com/rcjsuen/dockerfile-language-service/issues/69))
 
 ## [0.0.12] - 2020-04-23
 ### Fixed
