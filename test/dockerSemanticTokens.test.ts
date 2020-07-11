@@ -1184,6 +1184,36 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 2, 0, 1);
             });
+
+            it("escaped double quote", () => {
+                const tokens = computeSemanticTokens("RUN \"\\\n\\\n\\\"");
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 20, 1, 0, 2);
+            });
+
+            it("escaped double quote and whitespace", () => {
+                const tokens = computeSemanticTokens("RUN \"\\\n    \\\n\\\"");
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 1, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 20, 1, 0, 2);
+            });
+
+            it("escaped double quote and tab", () => {
+                const tokens = computeSemanticTokens("RUN \"\\\n\t\\\n\\\"");
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 1, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 20, 1, 0, 2);
+            });
         });
 
         describe("multiple splits", () => {

@@ -398,6 +398,7 @@ export class DockerSemanticTokens {
             let startOffset = this.document.offsetAt(range.start);
             const endOffset = this.document.offsetAt(range.end);
             let intermediateAdded = false;
+            let handleNewlines = true;
             let escaping = false;
             for (let i = startOffset; i < endOffset; i++) {
                 let ch = this.content.charAt(i);
@@ -452,12 +453,17 @@ export class DockerSemanticTokens {
                                         }
                                         this.createEscapeToken(instruction, i);
                                     }
+                                    // escaped newlines have are being handled here already
+                                    handleNewlines = false;
                                     escaping = true;
                                     added = true;
                                     i = j;
                                     startOffset = -1;
                                     break;
                                 default:
+                                    if (startOffset === -1) {
+                                        startOffset = j;
+                                    }
                                     break escapeCheck;
                             }
                         }
@@ -475,7 +481,7 @@ export class DockerSemanticTokens {
                 start: this.document.positionAt(startOffset),
                 end: this.document.positionAt(endOffset),
             }
-            this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
+            this.createToken(instruction, intermediateRange, tokenType, tokenModifiers, checkVariables, checkStrings, handleNewlines);
             return;
         }
 
