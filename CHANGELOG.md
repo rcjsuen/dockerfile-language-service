@@ -4,11 +4,15 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - resolve build stage references to support definition navigation ([#67](https://github.com/rcjsuen/dockerfile-language-service/issues/67))
+- ARG and ENV instructions that span multiple lines with just a comment are now flagged as an error ([rcjsuen/dockerfile-utils#78](https://github.com/rcjsuen/dockerfile-utils/issues/78))
+- use DiagnosticTag to indicate if a Diagnostic is informing the user about a deprecation or not([rcjsuen/dockerfile-utils#80](https://github.com/rcjsuen/dockerfile-utils/issues/80))
 
 ### Fixed
 - build stages are no longer included as a link ([#68](https://github.com/rcjsuen/dockerfile-language-service/issues/68))
 - allow embedded comments to immediately follow an ENV declaration ([#69](https://github.com/rcjsuen/dockerfile-language-service/issues/69))
 - fix the semantic tokens calculation to allow flags to have options without a value ([#54](https://github.com/rcjsuen/dockerfile-language-service/issues/54))
+- correct ranges of linting errors if the error is on a multiline argument that is preceded by the escape character ([rcjsuen/dockerfile-utils#77](https://github.com/rcjsuen/dockerfile-utils/issues/77))
+- fix linting error caused by whitespace followed after the escape character ([rcjsuen/dockerfile-utils#79](https://github.com/rcjsuen/dockerfile-utils/issues/79))
 
 ## [0.0.12] - 2020-04-23
 ### Fixed
