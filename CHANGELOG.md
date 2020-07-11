@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.1.0] - 2020-07-11
 ### Added
 - resolve build stage references to support definition navigation ([#67](https://github.com/rcjsuen/dockerfile-language-service/issues/67))
 - ARG and ENV instructions that span multiple lines with just a comment are now flagged as an error ([rcjsuen/dockerfile-utils#78](https://github.com/rcjsuen/dockerfile-utils/issues/78))
@@ -308,7 +308,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.12...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.0...HEAD
+[0.0.12]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.12...v0.1.0
 [0.0.12]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.10...v0.0.11
 [0.0.10]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.9...v0.0.10
