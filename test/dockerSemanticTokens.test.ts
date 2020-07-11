@@ -16,12 +16,12 @@ function computeSemanticTokens(content: string): SemanticTokens {
 
 function assertEdit(data: number[], tokenType: string, index: number, line: number, startCharacter: number, length: number, tokenModifiers: string[] = []) {
     assert.equal(data[index], line);
-    assert.equal(data[index + 1], startCharacter);
-    assert.equal(data[index + 2], length);
+    assert.equal(data[index + 1], startCharacter, "startCharacter mismatch");
+    assert.equal(data[index + 2], length, "length mismatch");
     assert.notEqual(undefined, TokensLegend.getTokenType(tokenType));
     assert.notEqual(null, TokensLegend.getTokenType(tokenType));
-    assert.equal(data[index + 3], TokensLegend.getTokenType(tokenType));
-    assert.equal(data[index + 4], TokensLegend.getTokenModifiers(tokenModifiers));
+    assert.equal(data[index + 3], TokensLegend.getTokenType(tokenType), "token types mismatch");
+    assert.equal(data[index + 4], TokensLegend.getTokenModifiers(tokenModifiers), "token modifiers mismatch");
 }
 
 describe("Dockerfile Semantic Token tests", () => {
