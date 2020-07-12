@@ -10,7 +10,7 @@ import {
 import { KEYWORDS } from '../src/docker';
 import { MarkdownDocumentation } from '../src/dockerMarkdown';
 import { PlainTextDocumentation } from '../src/dockerPlainText';
-import { DockerfileLanguageServiceFactory } from '../src/main';
+import { CompletionItemCapabilities, DockerfileLanguageServiceFactory } from '../src/main';
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 const markdownDocumentation = new MarkdownDocumentation();
@@ -20,15 +20,15 @@ function createDocument(content: string): any {
     return TextDocument.create("uri://host/Dockerfile.sample", "dockerfile", 1, content);
 }
 
-function compute(content: string, offset: number, snippetSupport?: boolean, deprecatedSupport?: boolean): CompletionItem[] {
-    if (snippetSupport === undefined) {
-        snippetSupport = true;
-    }
-    if (deprecatedSupport === undefined) {
-        deprecatedSupport = false;
+function compute(content: string, offset: number, capabilities?: CompletionItemCapabilities): CompletionItem[] {
+    if (capabilities === undefined || capabilities === null) {
+        capabilities = {
+            deprecatedSupport: false,
+            snippetSupport: true
+        }
     }
     let document = createDocument(content);
-    service.setCapabilities({ completion: { completionItem: { snippetSupport: snippetSupport, deprecatedSupport: deprecatedSupport } } });
+    service.setCapabilities({ completion: { completionItem: capabilities } });
     let items = service.computeCompletionItems(content, document.positionAt(offset));
     return items as CompletionItem[];
 }
@@ -1165,16 +1165,16 @@ describe('Docker Content Assist Tests', function () {
             var proposals = compute("FROM node\n", 10);
             assertAllProposals(proposals, 1, 0, 0);
 
-            proposals = compute("FROM node\n", 10, false, false);
+            proposals = compute("FROM node\n", 10, { snippetSupport: false, deprecatedSupport: false });
             assertAllProposals(proposals, 1, 0, 0, false, false);
 
-            proposals = compute("FROM node\n", 10, false, true);
+            proposals = compute("FROM node\n", 10, { snippetSupport: false, deprecatedSupport: true });
             assertAllProposals(proposals, 1, 0, 0, false, true);
 
-            proposals = compute("FROM node\n", 10, true, false);
+            proposals = compute("FROM node\n", 10, { snippetSupport: true, deprecatedSupport: false });
             assertAllProposals(proposals, 1, 0, 0, true, false);
 
-            proposals = compute("FROM node\n", 10, true, true);
+            proposals = compute("FROM node\n", 10, { snippetSupport: true, deprecatedSupport: true });
             assertAllProposals(proposals, 1, 0, 0, true, true);
 
             proposals = compute("FROM node\n", 0);

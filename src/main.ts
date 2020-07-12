@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import {
-    Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, Location, DocumentHighlight, SymbolInformation, SignatureHelp, TextEdit, DocumentLink, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange
+    Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, Location, DocumentHighlight, SymbolInformation, SignatureHelp, TextEdit, DocumentLink, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
 } from 'vscode-languageserver-types';
 import { ValidatorSettings } from 'dockerfile-utils';
 import { LanguageService } from './languageService';
@@ -39,32 +39,36 @@ export namespace DockerfileLanguageServiceFactory {
     }
 }
 
+export interface CompletionItemCapabilities {
+    /**
+     * Indicates whether completion items for deprecated
+     * entries should be explicitly flagged in the item.
+     */
+    deprecatedSupport?: boolean;
+    /**
+     * Describes the supported content types that can be used
+     * for a CompletionItem's documentation field.
+     */
+    documentationFormat?: MarkupKind[];
+    /**
+     * Indicates whether the snippet syntax should be used in
+     * returned completion items.
+     */
+    snippetSupport?: boolean;
+}
+
+export interface CompletionCapabilities {
+    /**
+     * Capabilities related to completion items.
+     */
+    completionItem?: CompletionItemCapabilities;
+}
+
 export interface Capabilities {
     /**
      * Capabilities related to completion requests.
      */
-    completion?: {
-        /**
-         * Capabilities related to completion items.
-         */
-        completionItem?: {
-            /**
-             * Indicates whether completion items for deprecated
-             * entries should be explicitly flagged in the item.
-             */
-            deprecatedSupport?: boolean;
-            /**
-             * Describes the supported content types that can be used
-             * for a CompletionItem's documentation field.
-             */
-            documentationFormat?: MarkupKind[];
-            /**
-             * Indicates whether the snippet syntax should be used in
-             * returned completion items.
-             */
-            snippetSupport?: boolean;
-        }
-    };
+    completion?: CompletionCapabilities;
     /**
      * Capabilities related to folding range requests.
      */

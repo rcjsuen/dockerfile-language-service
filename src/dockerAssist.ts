@@ -6,7 +6,7 @@
 
 import {
     TextDocument, TextEdit, Range, Position,
-    CompletionItem, CompletionItemKind, InsertTextFormat
+    CompletionItem, CompletionItemKind, CompletionItemTag, InsertTextFormat
 } from 'vscode-languageserver-types';
 import { Util, KEYWORDS } from './docker';
 import { DockerRegistryClient } from './dockerRegistryClient';
@@ -15,6 +15,7 @@ import {
     Copy, From, Healthcheck, Onbuild,
     ModifiableInstruction, Directive, DefaultVariables
 } from 'dockerfile-ast';
+import { CompletionItemCapabilities } from './main';
 
 export class DockerAssist {
 
@@ -32,14 +33,13 @@ export class DockerAssist {
      * 
      * @param document the text document to provide suggestions for
      * @param dockerRegistryClient the client for communicating with a Docker registry
-     * @param snippetSupport true if snippets are supported by the client, false otherwise
-     * @param deprecatedSupport true if the client supports the deprecated property on a completion item
+     * @param completionItemCapabilities the capabilities that should be set for the returned items
      */
-    constructor(document: TextDocument, dockerRegistryClient: DockerRegistryClient, snippetSupport: boolean, deprecatedSupport: boolean) {
+    constructor(document: TextDocument, dockerRegistryClient: DockerRegistryClient, completionItemCapabilities: CompletionItemCapabilities) {
         this.document = document;
         this.dockerRegistryClient = dockerRegistryClient;
-        this.snippetSupport = snippetSupport;
-        this.deprecatedSupport = deprecatedSupport;
+        this.deprecatedSupport = completionItemCapabilities && completionItemCapabilities.deprecatedSupport;
+        this.snippetSupport = completionItemCapabilities && completionItemCapabilities.snippetSupport;
     }
 
     public computeProposals(position: Position): CompletionItem[] | PromiseLike<CompletionItem[]> {

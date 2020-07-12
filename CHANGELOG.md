@@ -1,6 +1,47 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- added a new CompletionCapabilities and CompletionItemCapabilities to more easily facilitate features related to CompletionItems ([#71](https://github.com/rcjsuen/dockerfile-language-service/issues/71))
+```TypeScript
+export interface CompletionItemCapabilities {
+    /**
+     * Indicates whether completion items for deprecated
+     * entries should be explicitly flagged in the item.
+     */
+    deprecatedSupport?: boolean;
+    /**
+     * Describes the supported content types that can be used
+     * for a CompletionItem's documentation field.
+     */
+    documentationFormat?: MarkupKind[];
+    /**
+     * Indicates whether the snippet syntax should be used in
+     * returned completion items.
+     */
+    snippetSupport?: boolean;
+}
+
+export interface CompletionCapabilities {
+    /**
+     * Capabilities related to completion items.
+     */
+    completionItem?: CompletionItemCapabilities;
+}
+```
+
+### Changed
+- Capabilities will now reference CompletionCapabilities instead of having the structure embedded ([#71](https://github.com/rcjsuen/dockerfile-language-service/issues/71))
+```TypeScript
+export interface Capabilities {
+    /**
+     * Capabilities related to completion requests.
+     */
+    completion?: CompletionCapabilities;
+}
+```
+
 ## [0.1.0] - 2020-07-11
 ### Added
 - resolve build stage references to support definition navigation ([#67](https://github.com/rcjsuen/dockerfile-language-service/issues/67))

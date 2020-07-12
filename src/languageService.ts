@@ -2,9 +2,9 @@
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { DockerfileLanguageService, ILogger, Capabilities } from "./main";
+import { DockerfileLanguageService, ILogger, Capabilities, CompletionItemCapabilities } from "./main";
 import {
-    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange
+    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
 } from "vscode-languageserver-types";
 import * as DockerfileUtils from 'dockerfile-utils';
 import { DockerAssist } from "./dockerAssist";
@@ -31,10 +31,8 @@ export class LanguageService implements DockerfileLanguageService {
     private plainTextDocumentation = new PlainTextDocumentation();
     private logger: ILogger;
 
-    private completionDocumentationFormat: MarkupKind[];
     private hoverContentFormat: MarkupKind[];
-    private snippetSupport: boolean = false;
-    private deprecatedSupport: boolean = false;
+    private completionItemCapabilities: CompletionItemCapabilities;
 
     private foldingRangeLineFoldingOnly: boolean = false;
     private foldingRangeLimit: number = Number.MAX_VALUE;
@@ -44,10 +42,7 @@ export class LanguageService implements DockerfileLanguageService {
     }
 
     public setCapabilities(capabilities: Capabilities) {
-        this.completionDocumentationFormat = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.documentationFormat;
-        this.hoverContentFormat = capabilities && capabilities.hover && capabilities.hover.contentFormat;
-        this.snippetSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.snippetSupport;
-        this.deprecatedSupport = capabilities && capabilities.completion && capabilities.completion.completionItem && capabilities.completion.completionItem.deprecatedSupport;
+        this.completionItemCapabilities = capabilities && capabilities.completion && capabilities.completion.completionItem;
         this.foldingRangeLineFoldingOnly = capabilities && capabilities.foldingRange && capabilities.foldingRange.lineFoldingOnly;
         this.foldingRangeLimit = capabilities && capabilities.foldingRange && capabilities.foldingRange.rangeLimit;
     }
@@ -74,14 +69,14 @@ export class LanguageService implements DockerfileLanguageService {
 
     public computeCompletionItems(content: string, position: Position): CompletionItem[] | PromiseLike<CompletionItem[]> {
         const document = TextDocument.create("", "", 0, content);
-        const dockerAssist = new DockerAssist(document, new DockerRegistryClient(this.logger), this.snippetSupport, this.deprecatedSupport);
+        const dockerAssist = new DockerAssist(document, new DockerRegistryClient(this.logger), this.completionItemCapabilities);
         return dockerAssist.computeProposals(position);
     }
 
     public resolveCompletionItem(item: CompletionItem): CompletionItem {
         if (!item.documentation) {
             let dockerCompletion = new DockerCompletion();
-            return dockerCompletion.resolveCompletionItem(item, this.completionDocumentationFormat);
+            return dockerCompletion.resolveCompletionItem(item, this.completionItemCapabilities && this.completionItemCapabilities.documentationFormat);
         }
         return item;
     }
