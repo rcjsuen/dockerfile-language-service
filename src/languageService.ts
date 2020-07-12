@@ -43,6 +43,7 @@ export class LanguageService implements DockerfileLanguageService {
 
     public setCapabilities(capabilities: Capabilities) {
         this.completionItemCapabilities = capabilities && capabilities.completion && capabilities.completion.completionItem;
+        this.hoverContentFormat = capabilities && capabilities.hover && capabilities.hover.contentFormat;
         this.foldingRangeLineFoldingOnly = capabilities && capabilities.foldingRange && capabilities.foldingRange.lineFoldingOnly;
         this.foldingRangeLimit = capabilities && capabilities.foldingRange && capabilities.foldingRange.rangeLimit;
     }
