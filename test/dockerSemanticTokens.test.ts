@@ -1619,6 +1619,15 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.operator, 40, 0, 4, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 0, 1, 3);
             });
+
+            it("multiline instruction with a comment and no arguments", () => {
+                const content = "ENV \\\n# comment\n";
+                const tokens = computeSemanticTokens(content);
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+            });
         });
     });
 });

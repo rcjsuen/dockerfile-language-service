@@ -183,6 +183,17 @@ export class DockerSemanticTokens {
             }
         }
 
+        const args = instruction.getArguments();
+        if (args.length === 0) {
+            const range = instruction.getRange();
+            if (range.start.line !== range.end.line) {
+                // multiline instruction with no arguments,
+                // only escaped newlines and possibly comments
+                this.handleLineChange(instruction, instructionRange.end, range.end);
+            }
+            return;
+        }
+
         switch (instruction.getKeyword()) {
             case Keyword.ARG:
             case Keyword.ENV:
@@ -238,7 +249,6 @@ export class DockerSemanticTokens {
                     const range = subcommand.getRange();
                     this.createToken(instruction, range, SemanticTokenTypes.keyword);
 
-                    const args = instruction.getArguments();
                     if (args.length > 1) {
                         this.createArgumentTokens(instruction, args.slice(1));
                     }
@@ -253,7 +263,7 @@ export class DockerSemanticTokens {
                 return;
         }
 
-        this.createArgumentTokens(instruction, instruction.getArguments());
+        this.createArgumentTokens(instruction, args);
     }
 
     private createArgumentTokens(instruction: Instruction, args: Argument[]): void {
@@ -262,9 +272,9 @@ export class DockerSemanticTokens {
         }
     }
 
-    private handleLineChange(instruction: Instruction, next: Position, previous: Position): void {
+    private handleLineChange(instruction: Instruction, checkStart: Position, checkEnd: Position): void {
         let comment = -1;
-        for (let i = this.document.offsetAt(previous); i < this.document.offsetAt(next); i++) {
+        for (let i = this.document.offsetAt(checkStart); i < this.document.offsetAt(checkEnd); i++) {
             switch (this.content.charAt(i)) {
                 case this.escapeCharacter:
                     // mark the escape character if it's not in a comment 
@@ -303,7 +313,7 @@ export class DockerSemanticTokens {
     private createToken(instruction: Instruction, range: Range, tokenType: string, tokenModifiers: string[] = [], checkVariables: boolean = true, checkStrings: boolean = false, checkNewline: boolean = true): void {
         if (checkNewline && this.currentRange !== null && this.currentRange.end.line !== range.start.line) {
             // this implies that there's been a line change between one arg and the next
-            this.handleLineChange(instruction, range.start, this.currentRange.end);
+            this.handleLineChange(instruction, this.currentRange.end, range.start);
         }
 
         if (checkStrings) {
