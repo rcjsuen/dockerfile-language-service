@@ -1620,13 +1620,50 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 0, 1, 3);
             });
 
-            it("multiline instruction with a comment and no arguments", () => {
+            it("multiline instruction ending with a comment and newline", () => {
                 const content = "ENV \\\n# comment\n";
                 const tokens = computeSemanticTokens(content);
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+            });
+
+            it("multiline instruction with one comment ending with an escape character", () => {
+                let content = "RUN \\\n# comment\n\\";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 1, 0, 1);
+
+                content = "FROM \\\n# comment\n\\";
+                tokens = computeSemanticTokens(content);
+                assert.equal(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 5, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 15, 1, 0, 1);
+            });
+
+            it("multiline instruction with two comments ending with an escape character", () => {
+                let content = "RUN \\\n# comment\n# comment\n\\";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(25, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 1, 0, 1);
+
+                content = "FROM \\\n# comment\n\\";
+                tokens = computeSemanticTokens(content);
+                assert.equal(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 5, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+                assertEdit(tokens.data, SemanticTokenTypes.class, 15, 1, 0, 1);
             });
         });
     });
