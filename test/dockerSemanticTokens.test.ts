@@ -1069,8 +1069,18 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
-                // no newline so can't determine whether this should be treated different or not
-                assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 5, 1);
+                // trailing escaped characters are essentially ignored
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 5, 1);
+            });
+
+            it("RUN echo \\\n\\", () => {
+                const tokens = computeSemanticTokens("RUN echo \\\n\\");
+                assert.equal(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
+                // ignore escape characters that do not lead to an actual comment
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 5, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 1, 0, 1);
             });
         });
     });
@@ -1629,41 +1639,34 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
             });
 
-            it("multiline instruction with one comment ending with an escape character", () => {
-                let content = "RUN \\\n# comment\n\\";
-                let tokens = computeSemanticTokens(content);
-                assert.equal(20, tokens.data.length);
-                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
-                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 1, 0, 1);
+            function createMultilineInstructionEscapeCommentTests(instruction: string) {
+                it(instruction, () => {
+                    let content = `${instruction} \\\n# comment\n\\`;
+                    let tokens = computeSemanticTokens(content);
+                    assert.equal(20, tokens.data.length);
+                    assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, instruction.length);
+                    assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, instruction.length + 1, 1);
+                    assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+                    assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 1, 0, 1);
 
-                content = "FROM \\\n# comment\n\\";
-                tokens = computeSemanticTokens(content);
-                assert.equal(20, tokens.data.length);
-                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
-                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 5, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
-                assertEdit(tokens.data, SemanticTokenTypes.class, 15, 1, 0, 1);
-            });
+                    content = `${instruction} \\\n# comment\n# comment\n\\`;
+                    tokens = computeSemanticTokens(content);
+                    assert.equal(25, tokens.data.length);
+                    assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, instruction.length);
+                    assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, instruction.length + 1, 1);
+                    assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
+                    assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 9);
+                    assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 1, 0, 1);
+                });
+            }
 
-            it("multiline instruction with two comments ending with an escape character", () => {
-                let content = "RUN \\\n# comment\n# comment\n\\";
-                let tokens = computeSemanticTokens(content);
-                assert.equal(25, tokens.data.length);
-                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 4, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
-                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 9);
-                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 1, 0, 1);
-
-                content = "FROM \\\n# comment\n\\";
-                tokens = computeSemanticTokens(content);
-                assert.equal(20, tokens.data.length);
-                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
-                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 5, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
-                assertEdit(tokens.data, SemanticTokenTypes.class, 15, 1, 0, 1);
+            describe("multiline instruction with one comment ending with an escape character", () => {
+                createMultilineInstructionEscapeCommentTests("ARG");
+                createMultilineInstructionEscapeCommentTests("ENV");
+                createMultilineInstructionEscapeCommentTests("FROM");
+                createMultilineInstructionEscapeCommentTests("HEALTHCHECK");
+                createMultilineInstructionEscapeCommentTests("LABEL");
+                createMultilineInstructionEscapeCommentTests("RUN");
             });
 
             it("multiline instruction with escaped newline and whitespace", () => {

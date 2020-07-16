@@ -267,8 +267,17 @@ export class DockerSemanticTokens {
     }
 
     private createArgumentTokens(instruction: Instruction, args: Argument[]): void {
+        let lastRange: Range = null;
         for (let i = 0; i < args.length; i++) {
+            lastRange = args[i].getRange();
             this.createToken(instruction, args[i].getRange(), SemanticTokenTypes.parameter, [], true, true);
+        }
+
+        if (lastRange !== null) {
+            let instructionRange = instruction.getRange();
+            if (lastRange.end.line !== instructionRange.end.line || lastRange.end.character !== instructionRange.end.character) {
+                this.handleLineChange(instruction, lastRange.end, instructionRange.end);
+            }
         }
     }
 
