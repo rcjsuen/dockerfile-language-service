@@ -1665,6 +1665,32 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.comment, 10, 1, 0, 9);
                 assertEdit(tokens.data, SemanticTokenTypes.class, 15, 1, 0, 1);
             });
+
+            it("multiline instruction with escaped newline and whitespace", () => {
+                let content = "COPY a b \\\n\\ \nc";
+                let tokens = computeSemanticTokens(content);
+                assert.equal(30, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 5, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 1, 0, 1);
+
+                content = "#escape=`\nCOPY a b `\n` \nc";
+                tokens = computeSemanticTokens(content);
+                assert.equal(50, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 0, 0, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 5, 0, 1, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 6, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 20, 1, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 5, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 30, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 35, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 40, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 1, 0, 1);
+            });
         });
     });
 });
