@@ -21,6 +21,15 @@ export interface CompletionItemCapabilities {
      * returned completion items.
      */
     snippetSupport?: boolean;
+    /**
+     * Indicates that the client editor supports tags in CompletionItems.
+     */
+    tagSupport?: {
+        /**
+         * Describes the set of tags that the editor supports.
+         */
+        valueSet: CompletionItemTag[];
+    }
 }
 
 export interface CompletionCapabilities {
