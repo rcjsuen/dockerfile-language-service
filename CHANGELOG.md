@@ -42,6 +42,9 @@ export interface Capabilities {
 }
 ```
 
+### Fixed
+- ENV instructions with blank space operators will no longer be assigned a semantic token ([#76](https://github.com/rcjsuen/dockerfile-language-service/issues/76))
+
 ## [0.1.0] - 2020-07-11
 ### Added
 - resolve build stage references to support definition navigation ([#67](https://github.com/rcjsuen/dockerfile-language-service/issues/67))
