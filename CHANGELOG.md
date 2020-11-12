@@ -30,6 +30,7 @@ export interface CompletionCapabilities {
     completionItem?: CompletionItemCapabilities;
 }
 ```
+- CompletionItemTag is now supported when completing on the MAINTAINER keyword ([#70](https://github.com/rcjsuen/dockerfile-language-service/issues/70))
 
 ### Changed
 - Capabilities will now reference CompletionCapabilities instead of having the structure embedded ([#71](https://github.com/rcjsuen/dockerfile-language-service/issues/71))

@@ -21,6 +21,7 @@ export class DockerAssist {
 
     private snippetSupport: boolean;
     private deprecatedSupport: boolean;
+    private supportedTags: CompletionItemTag[];
     private document: TextDocument;
 
     /**
@@ -40,6 +41,7 @@ export class DockerAssist {
         this.dockerRegistryClient = dockerRegistryClient;
         this.deprecatedSupport = completionItemCapabilities && completionItemCapabilities.deprecatedSupport;
         this.snippetSupport = completionItemCapabilities && completionItemCapabilities.snippetSupport;
+        this.supportedTags = completionItemCapabilities && completionItemCapabilities.tagSupport && completionItemCapabilities.tagSupport.valueSet;
     }
 
     public computeProposals(position: Position): CompletionItem[] | PromiseLike<CompletionItem[]> {
@@ -662,6 +664,9 @@ export class DockerAssist {
 
     createMAINTAINER(prefixLength: number, offset: number, markdown: string): CompletionItem {
         let item = this.createKeywordCompletionItem("MAINTAINER", "MAINTAINER name", prefixLength, offset, "MAINTAINER ${1:name}", markdown);
+        if (this.supportedTags !== undefined && this.supportedTags.length > 0 && this.supportedTags.indexOf(CompletionItemTag.Deprecated) >= 0) {
+            item.tags = [CompletionItemTag.Deprecated];
+        }
         if (this.deprecatedSupport) {
             item.deprecated = true;
         }

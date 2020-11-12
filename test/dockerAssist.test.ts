@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import {
-    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat, MarkupContent, MarkupKind
+    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat, MarkupContent, MarkupKind, CompletionItemTag
 } from 'vscode-languageserver-types';
 import { KEYWORDS } from '../src/docker';
 import { MarkdownDocumentation } from '../src/dockerMarkdown';
@@ -659,7 +659,7 @@ function assertLABEL(item: CompletionItem, line: number, character: number, pref
     assertResolvedDocumentation(item);
 }
 
-function assertMAINTAINER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean) {
+function assertMAINTAINER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean, supportedTags?: CompletionItemTag[]) {
     if (snippetSupport === undefined || snippetSupport) {
         assert.equal(item.label, "MAINTAINER name");
     } else {
@@ -678,6 +678,12 @@ function assertMAINTAINER(item: CompletionItem, line: number, character: number,
         assert.equal(item.deprecated, true);
     } else {
         assert.equal(item.deprecated, undefined);
+    }
+    if (supportedTags !== undefined && supportedTags.length > 0) {
+        assert.strictEqual(item.tags.length, 1);
+        assert.strictEqual(item.tags[0], CompletionItemTag.Deprecated);
+    } else {
+        assert.strictEqual(item.tags, undefined);
     }
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.range.start.line, line);
@@ -942,7 +948,7 @@ function assertDockerVariables(items: CompletionItem[], line: number, character:
     assertVariable("no_proxy", items[7], line, character, prefixLength, brace);
 }
 
-function assertProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean) {
+function assertProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean, supportedTags?: CompletionItemTag[]) {
     for (var i = 0; i < proposals.length; i++) {
         switch (proposals[i].data) {
             case "ADD":
@@ -985,7 +991,7 @@ function assertProposals(proposals: CompletionItem[], offset: number, prefix: nu
                 assertLABEL(proposals[i], offset, prefix, prefixLength, snippetSupport);
                 break;
             case "MAINTAINER":
-                assertMAINTAINER(proposals[i], offset, prefix, prefixLength, snippetSupport, deprecatedSupport);
+                assertMAINTAINER(proposals[i], offset, prefix, prefixLength, snippetSupport, deprecatedSupport, supportedTags);
                 break;
             case "ONBUILD":
                 assertONBUILD(proposals[i], offset, prefix, prefixLength, snippetSupport);
@@ -1071,7 +1077,7 @@ function assertONBUILDProposals(proposals: CompletionItem[], offset: number, pre
     assertProposals(proposals, offset, prefix, prefixLength);
 }
 
-function assertAllProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean) {
+function assertAllProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean, supportedTags?: CompletionItemTag[]) {
     if (snippetSupport === undefined || snippetSupport) {
         // +1 for two ARG proposals
         // +1 for two HEALTHCHECK proposals
@@ -1080,7 +1086,7 @@ function assertAllProposals(proposals: CompletionItem[], offset: number, prefix:
         // +1 for two HEALTHCHECK proposals
         assert.equal(proposals.length, KEYWORDS.length + 1);
     }
-    assertProposals(proposals, offset, prefix, prefixLength, snippetSupport, deprecatedSupport);
+    assertProposals(proposals, offset, prefix, prefixLength, snippetSupport, deprecatedSupport, supportedTags);
 }
 
 describe('Docker Content Assist Tests', function () {
@@ -1176,6 +1182,12 @@ describe('Docker Content Assist Tests', function () {
 
             proposals = compute("FROM node\n", 10, { snippetSupport: true, deprecatedSupport: true });
             assertAllProposals(proposals, 1, 0, 0, true, true);
+
+            proposals = compute("FROM node\n", 10, { snippetSupport: true, deprecatedSupport: true, tagSupport: { valueSet: [] } });
+            assertAllProposals(proposals, 1, 0, 0, true, true, []);
+
+            proposals = compute("FROM node\n", 10, { snippetSupport: true, deprecatedSupport: true, tagSupport: { valueSet: [CompletionItemTag.Deprecated] } });
+            assertAllProposals(proposals, 1, 0, 0, true, true, [CompletionItemTag.Deprecated]);
 
             proposals = compute("FROM node\n", 0);
             assertAllProposals(proposals, 0, 0, 0);
