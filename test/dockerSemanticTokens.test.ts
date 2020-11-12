@@ -93,6 +93,14 @@ describe("Dockerfile Semantic Token tests", () => {
             createVariableDeclarationTests("ARG");
             createVariableDeclarationTests("ENV");
 
+            it("ENV", () => {
+                const tokens = computeSemanticTokens("ENV a b");
+                assert.equal(15, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 1, [SemanticTokenModifiers.declaration]);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 2, 1);
+            });
+
             it("FROM", () => {
                 let tokens = computeSemanticTokens("FROM");
                 assert.equal(5, tokens.data.length);

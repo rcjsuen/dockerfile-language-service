@@ -203,11 +203,15 @@ export class DockerSemanticTokens {
                     this.createToken(instruction, nameRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.declaration], false);
                     const valueRange = property.getValueRange();
                     if (valueRange !== null) {
-                        const operatorRange = {
+                        let operatorRange = {
                             start: nameRange.end,
                             end: valueRange.start
                         }
-                        this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
+                        if (this.document.getText(operatorRange).startsWith("=")) {
+                            const nameRangeEnd = this.document.offsetAt(nameRange.end);
+                            operatorRange = { start: nameRange.end, end: this.document.positionAt(nameRangeEnd + 1) };
+                            this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false);
+                        }
                         this.createToken(instruction, valueRange, SemanticTokenTypes.parameter, [], true, true);
                     }
                 }
