@@ -1,4 +1,4 @@
-name: Node.js 10.x, 12.x, 14.x
+name: Node.js Builds
 on: [push]
 jobs:
   build:
