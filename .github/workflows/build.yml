@@ -13,13 +13,15 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Build
-      run: npm install
-      run: npm run build
+      run: |
+        npm install
+        npm run build
     - name: Package
       run: npm pack
     - name: Test
       run: npm tests
     - name: Build Example
-      run: cd example
-      run: npm install
-      run: npm run build
+      run: |
+        cd example
+        npm install
+        npm run build
