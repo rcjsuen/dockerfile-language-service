@@ -13,5 +13,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npm run prepublish
+    - run: npm run build
+    - run: cd example
+    - run: npm install
+    - run: npm run build
+    - run: cd ..
+    - run: npm pack
     - run: npm test
