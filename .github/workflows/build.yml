@@ -19,7 +19,7 @@ jobs:
     - name: Package
       run: npm pack
     - name: Test
-      run: npm tests
+      run: npm test
     - name: Build Example
       run: |
         cd example
