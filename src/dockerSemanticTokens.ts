@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
+import { SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol';
 import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild, PropertyInstruction, Argument } from 'dockerfile-ast';
 import { Range, TextDocument, Position } from 'vscode-languageserver-types';
 import { Dockerfile } from 'dockerfile-ast';
@@ -21,7 +21,7 @@ export class TokensLegend {
         this.tokenTypes[SemanticTokenTypes.comment] = 1;
         this.tokenTypes[SemanticTokenTypes.parameter] = 2;
         this.tokenTypes[SemanticTokenTypes.property] = 3;
-        this.tokenTypes[SemanticTokenTypes.label] = 4;
+        this.tokenTypes[SemanticTokenTypes.namespace] = 4;
         this.tokenTypes[SemanticTokenTypes.class] = 5;
         this.tokenTypes[SemanticTokenTypes.macro] = 6;
         this.tokenTypes[SemanticTokenTypes.string] = 7;
@@ -31,7 +31,6 @@ export class TokensLegend {
         this.tokenModifiers[SemanticTokenModifiers.declaration] = 1;
         this.tokenModifiers[SemanticTokenModifiers.definition] = 2;
         this.tokenModifiers[SemanticTokenModifiers.deprecated] = 4;
-        this.tokenModifiers[SemanticTokenModifiers.reference] = 8;
     }
 
     public static getTokenType(type: string): number {
@@ -224,11 +223,11 @@ export class DockerSemanticTokens {
                 }
                 const tagRange = from.getImageTagRange();
                 if (tagRange !== null) {
-                    this.createToken(instruction, tagRange, SemanticTokenTypes.label);
+                    this.createToken(instruction, tagRange, SemanticTokenTypes.property);
                 }
                 const digestRange = from.getImageDigestRange();
                 if (digestRange !== null) {
-                    this.createToken(instruction, digestRange, SemanticTokenTypes.label);
+                    this.createToken(instruction, digestRange, SemanticTokenTypes.property);
                 }
                 const fromArgs = instruction.getArguments();
                 if (fromArgs.length > 1) {
@@ -236,7 +235,7 @@ export class DockerSemanticTokens {
                         let range = fromArgs[1].getRange();
                         this.createToken(instruction, range, SemanticTokenTypes.keyword);
                         if (fromArgs.length > 2) {
-                            this.createToken(instruction, fromArgs[2].getRange(), SemanticTokenTypes.label);
+                            this.createToken(instruction, fromArgs[2].getRange(), SemanticTokenTypes.namespace);
                             if (fromArgs.length > 3) {
                                 this.createArgumentTokens(instruction, fromArgs.slice(3));
                             }
@@ -527,9 +526,7 @@ export class DockerSemanticTokens {
                         );
                     }
 
-                    this.createToken(
-                        instruction, variableRange, SemanticTokenTypes.variable, [SemanticTokenModifiers.reference], false
-                    );
+                    this.createToken(instruction, variableRange, SemanticTokenTypes.variable, [], false);
                     lastVariableRange = variableRange;
                     if (Util.positionEquals(range.end, variableRange.end)) {
                         return;

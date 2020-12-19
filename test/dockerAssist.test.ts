@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import {
-    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat, MarkupContent, MarkupKind, CompletionItemTag
+    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat, MarkupContent, MarkupKind, CompletionItemTag, TextEdit
 } from 'vscode-languageserver-types';
 import { KEYWORDS } from '../src/docker';
 import { MarkdownDocumentation } from '../src/dockerMarkdown';
@@ -164,10 +164,10 @@ function assertADD(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.data, "ADD");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -179,10 +179,10 @@ function assertARG(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.data, "ARG");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -199,10 +199,10 @@ function assertARG_NameOnly(item: CompletionItem, line: number, character: numbe
     assert.equal(item.data, "ARG_NameOnly");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -214,10 +214,10 @@ function assertARG_DefaultValue(item: CompletionItem, line: number, character: n
     assert.equal(item.data, "ARG_DefaultValue");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -238,10 +238,10 @@ function assertCMD(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.data, "CMD");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -262,10 +262,10 @@ function assertCOPY(item: CompletionItem, line: number, character: number, prefi
     assert.equal(item.data, "COPY");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -286,10 +286,10 @@ function assertENTRYPOINT(item: CompletionItem, line: number, character: number,
     assert.equal(item.data, "ENTRYPOINT");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -310,10 +310,10 @@ function assertENV(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.data, "ENV");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -334,10 +334,10 @@ function assertEXPOSE(item: CompletionItem, line: number, character: number, pre
     assert.equal(item.data, "EXPOSE");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -358,10 +358,10 @@ function assertFROM(item: CompletionItem, line: number, character: number, prefi
     assert.equal(item.data, "FROM");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -382,10 +382,10 @@ function assertHEALTHCHECK_CMD(item: CompletionItem, line: number, character: nu
     assert.equal(item.data, "HEALTHCHECK_CMD");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -406,10 +406,10 @@ function assertHEALTHCHECK_CMD_Subcommand(item: CompletionItem, line: number, ch
     assert.equal(item.data, "HEALTHCHECK_CMD");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -430,10 +430,10 @@ function assertADD_FlagChown(item: CompletionItem, startLine: number, startChara
     assert.equal(item.data, "ADD_FlagChown");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -454,10 +454,10 @@ function assertCOPY_FlagChown(item: CompletionItem, startLine: number, startChar
     assert.equal(item.data, "COPY_FlagChown");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -478,10 +478,10 @@ function assertCOPY_FlagFrom(item: CompletionItem, startLine: number, startChara
     assert.equal(item.data, "COPY_FlagFrom");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -502,10 +502,10 @@ function assertFROM_FlagPlatform(item: CompletionItem, startLine: number, startC
     assert.equal(item.data, "FROM_FlagPlatform");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -526,10 +526,10 @@ function assertHEALTHCHECK_FlagInterval(item: CompletionItem, startLine: number,
     assert.equal(item.data, "HEALTHCHECK_FlagInterval");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -550,10 +550,10 @@ function assertHEALTHCHECK_FlagTimeout(item: CompletionItem, startLine: number, 
     assert.equal(item.data, "HEALTHCHECK_FlagTimeout");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -574,10 +574,10 @@ function assertHEALTHCHECK_FlagStartPeriod(item: CompletionItem, startLine: numb
     assert.equal(item.data, "HEALTHCHECK_FlagStartPeriod");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -598,10 +598,10 @@ function assertHEALTHCHECK_FlagRetries(item: CompletionItem, startLine: number, 
     assert.equal(item.data, "HEALTHCHECK_FlagRetries");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -613,10 +613,10 @@ function assertHEALTHCHECK_NONE(item: CompletionItem, line: number, character: n
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
     assert.equal(item.textEdit.newText, "HEALTHCHECK NONE");
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -628,10 +628,10 @@ function assertHEALTHCHECK_NONE_Subcommand(item: CompletionItem, line: number, c
     assert.equal(item.data, "HEALTHCHECK_NONE");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
@@ -652,10 +652,10 @@ function assertLABEL(item: CompletionItem, line: number, character: number, pref
     assert.equal(item.data, "LABEL");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -686,10 +686,10 @@ function assertMAINTAINER(item: CompletionItem, line: number, character: number,
         assert.strictEqual(item.tags, undefined);
     }
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -710,10 +710,10 @@ function assertONBUILD(item: CompletionItem, line: number, character: number, pr
     assert.equal(item.data, "ONBUILD");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -734,10 +734,10 @@ function assertRUN(item: CompletionItem, line: number, character: number, prefix
     assert.equal(item.data, "RUN");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -758,10 +758,10 @@ function assertSHELL(item: CompletionItem, line: number, character: number, pref
     assert.equal(item.data, "SHELL");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -782,10 +782,10 @@ function assertSTOPSIGNAL(item: CompletionItem, line: number, character: number,
     assert.equal(item.data, "STOPSIGNAL");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -806,10 +806,10 @@ function assertUSER(item: CompletionItem, line: number, character: number, prefi
     assert.equal(item.data, "USER");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -830,10 +830,10 @@ function assertVOLUME(item: CompletionItem, line: number, character: number, pre
     assert.equal(item.data, "VOLUME");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -854,10 +854,10 @@ function assertWORKDIR(item: CompletionItem, line: number, character: number, pr
     assert.equal(item.data, "WORKDIR");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -870,10 +870,10 @@ function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, documentation);
     assert.equal(item.textEdit.newText, sourceImage);
-    assert.equal(item.textEdit.range.start.line, startLine);
-    assert.equal(item.textEdit.range.start.character, startCharacter);
-    assert.equal(item.textEdit.range.end.line, endLine);
-    assert.equal(item.textEdit.range.end.character, endCharacter);
+    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertRawDocumentation(item, documentation);
 }
 
@@ -891,10 +891,10 @@ function assertDirectiveEscape(item: CompletionItem, line: number, character: nu
     assert.equal(item.data, "escape");
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -906,10 +906,10 @@ function assertDirectiveSyntax(item: CompletionItem, line: number, character: nu
     assert.strictEqual(item.data, "syntax");
     assert.strictEqual(item.deprecated, undefined);
     assert.strictEqual(item.documentation, undefined);
-    assert.strictEqual(item.textEdit.range.start.line, line);
-    assert.strictEqual(item.textEdit.range.start.character, character);
-    assert.strictEqual(item.textEdit.range.end.line, line);
-    assert.strictEqual(item.textEdit.range.end.character, character + prefixLength);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -929,10 +929,10 @@ function assertVariable(variable: string, item: CompletionItem, line: number, ch
     assert.equal(item.data, undefined);
     assert.equal(item.deprecated, undefined);
     assert.equal(item.documentation, documentation);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertRawDocumentation(item, documentation);
 }
 

@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import { DockerfileLanguageServiceFactory } from '../src/main';
-import { SemanticTokenTypes, SemanticTokens, SemanticTokenModifiers } from "vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed";
+import { SemanticTokenTypes, SemanticTokens, SemanticTokenModifiers } from "vscode-languageserver-protocol";
 import { TokensLegend } from "../src/dockerSemanticTokens";
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();
@@ -75,7 +75,7 @@ describe("Dockerfile Semantic Token tests", () => {
                         assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
                         assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 3, [SemanticTokenModifiers.declaration]);
                         assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 3, 1);
-                        assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4);
                     });
 
                     it(keyword + " PATH=$GOPATH/bin:/usr/local/go/bin:$PATH", () => {
@@ -84,16 +84,16 @@ describe("Dockerfile Semantic Token tests", () => {
                         assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
                         assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 4, [SemanticTokenModifiers.declaration]);
                         assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 4, 1);
-                        assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 7, [SemanticTokenModifiers.reference]);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 7);
                         assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 0, 7, 23);
-                        assertEdit(tokens.data, SemanticTokenTypes.variable, 25, 0, 23, 5, [SemanticTokenModifiers.reference]);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 25, 0, 23, 5);
                     });
                 });
             }
             createVariableDeclarationTests("ARG");
             createVariableDeclarationTests("ENV");
 
-            it("ENV", () => {
+            it("ENV a b", () => {
                 const tokens = computeSemanticTokens("ENV a b");
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
@@ -123,7 +123,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
-                assertEdit(tokens.data, SemanticTokenTypes.label, 10, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 10, 0, 5, 6);
             });
 
             it("FROM node@sha256:ab00606a42621fb68f2ed6ad3c88be54397f981a7b70a79db3d1172b11c4367d", () => {
@@ -131,7 +131,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
-                assertEdit(tokens.data, SemanticTokenTypes.label, 10, 0, 5, 71);
+                assertEdit(tokens.data, SemanticTokenTypes.property, 10, 0, 5, 71);
             });
 
             it("FROM node AS", () => {
@@ -148,7 +148,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 0, 5, 2);
-                assertEdit(tokens.data, SemanticTokenTypes.label, 15, 0, 3, 5);
+                assertEdit(tokens.data, SemanticTokenTypes.namespace, 15, 0, 3, 5);
             });
 
             it("FROM node abc", () => {
@@ -165,7 +165,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 0, 5, 2);
-                assertEdit(tokens.data, SemanticTokenTypes.label, 15, 0, 3, 5);
+                assertEdit(tokens.data, SemanticTokenTypes.namespace, 15, 0, 3, 5);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 0, 6, 3);
             });
         });
@@ -574,7 +574,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 const tokens = computeSemanticTokens("RUN $var");
                 assert.equal(10, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4);
             });
 
             it("RUN a$var", () => {
@@ -582,15 +582,15 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 1, 4);
             });
 
             it("RUN $var $var", () => {
                 const tokens = computeSemanticTokens("RUN $var $var");
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4, [SemanticTokenModifiers.reference]);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4);
             });
 
             it("FROM golang:$GO_VERSION AS", () => {
@@ -598,7 +598,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(20, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.class, 5, 0, 5, 6);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 11, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 11);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 0, 12, 2);
             });
 
@@ -608,7 +608,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 9);
                 assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 9, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 2, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 2);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 20, 0, 3, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 4, 2);
             });
@@ -619,7 +619,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 const tokens = computeSemanticTokens("RUN ${var}");
                 assert.equal(10, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6);
             });
 
             it("RUN a${var}b", () => {
@@ -627,7 +627,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assert.equal(20, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 1, 6, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 1, 6);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 6, 1);
             });
 
@@ -635,7 +635,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 const tokens = computeSemanticTokens("RUN ${var}b");
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 10, 0, 6, 1);
             });
 
@@ -643,8 +643,8 @@ describe("Dockerfile Semantic Token tests", () => {
                 const tokens = computeSemanticTokens("RUN ${var} ${var}");
                 assert.equal(15, tokens.data.length);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6, [SemanticTokenModifiers.reference]);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 6, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 6);
             });
 
             it("HEALTHCHECK --timeout=${a} CMD ls", () => {
@@ -653,7 +653,7 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 11);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 12, 9);
                 assertEdit(tokens.data, SemanticTokenTypes.operator, 10, 0, 9, 1);
-                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 20, 0, 5, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 0, 4, 2);
             });
@@ -704,7 +704,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 1);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 20, 0, 4, 1);
                 });
             });
@@ -751,7 +751,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 1);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 20, 0, 4, 1);
                 });
             });
@@ -800,7 +800,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 1);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4);
                 });
             });
 
@@ -846,7 +846,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 1);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 1, 4);
                 });
             });
 
@@ -895,7 +895,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 2);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4);
                 });
 
                 it("RUN echo $var\\'", () => {
@@ -903,7 +903,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assert.equal(20, tokens.data.length);
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 15, 0, 4, 2);
                 });
 
@@ -913,7 +913,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 2);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 20, 0, 4, 2);
                 });
 
@@ -991,7 +991,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 2);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4);
                 });
 
                 it("RUN echo $var\\\"", () => {
@@ -999,7 +999,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assert.equal(20, tokens.data.length);
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 15, 0, 4, 2);
                 });
 
@@ -1009,7 +1009,7 @@ describe("Dockerfile Semantic Token tests", () => {
                     assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                     assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 2);
-                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4, [SemanticTokenModifiers.reference]);
+                    assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 0, 2, 4);
                     assertEdit(tokens.data, SemanticTokenTypes.string, 20, 0, 4, 2);
                 });
 

@@ -6,6 +6,7 @@ import { DockerfileLanguageService, ILogger, Capabilities, CompletionItemCapabil
 import {
     TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
 } from "vscode-languageserver-types";
+import { SemanticTokens } from "vscode-languageserver-protocol";
 import * as DockerfileUtils from 'dockerfile-utils';
 import { DockerAssist } from "./dockerAssist";
 import { DockerRegistryClient } from "./dockerRegistryClient";
@@ -22,7 +23,6 @@ import { DockerHover } from "./dockerHover";
 import { MarkdownDocumentation } from "./dockerMarkdown";
 import { DockerFormatter } from "./dockerFormatter";
 import { DockerCompletion } from "./dockerCompletion";
-import { SemanticTokens } from "vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed";
 import { DockerSemanticTokens } from "./dockerSemanticTokens";
 
 export class LanguageService implements DockerfileLanguageService {

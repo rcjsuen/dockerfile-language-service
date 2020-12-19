@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import {
-    Position, CompletionItem, CompletionItemKind, InsertTextFormat
+    Position, CompletionItem, CompletionItemKind, InsertTextFormat, TextEdit
 } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 import { DockerRegistryClient } from '../src/dockerRegistryClient';
@@ -22,10 +22,10 @@ function assertImageTag(tag: string, item: CompletionItem, line: number, charact
     assert.equal(item.label, tag);
     assert.equal(item.kind, CompletionItemKind.Property);
     assert.equal(item.textEdit.newText, tag);
-    assert.equal(item.textEdit.range.start.line, line);
-    assert.equal(item.textEdit.range.start.character, character);
-    assert.equal(item.textEdit.range.end.line, line);
-    assert.equal(item.textEdit.range.end.character, character + prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
 }
 

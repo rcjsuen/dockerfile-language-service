@@ -4,7 +4,7 @@
 * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { Position, Range, TextDocument, FoldingRange, FoldingRangeKind } from 'vscode-languageserver-types';
+import { Position, Range, TextDocument, FoldingRange, FoldingRangeKind, uinteger } from 'vscode-languageserver-types';
 import { DockerfileParser } from 'dockerfile-ast';
 
 export class DockerFolding {
@@ -21,7 +21,7 @@ export class DockerFolding {
     }
 
     private getLineLength(document: TextDocument, line: number): number {
-        let text = document.getText(Range.create(line, 0, line, Number.MAX_SAFE_INTEGER));
+        let text = document.getText(Range.create(line, 0, line, uinteger.MAX_VALUE));
         let length = text.length;
         let char = text.charAt(length - 1);
         while (char === '\r' || char === '\n') {

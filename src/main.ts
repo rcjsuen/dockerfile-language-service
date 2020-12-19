@@ -5,9 +5,9 @@
 import {
     Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, Location, DocumentHighlight, SymbolInformation, SignatureHelp, TextEdit, DocumentLink, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
 } from 'vscode-languageserver-types';
+import { SemanticTokens } from 'vscode-languageserver-protocol';
 import { ValidatorSettings } from 'dockerfile-utils';
 import { LanguageService } from './languageService';
-import { SemanticTokens } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
 
 /**
  * An interface for logging errors encountered in the language service.
