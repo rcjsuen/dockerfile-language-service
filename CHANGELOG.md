@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.1.1] - 2020-12-24
 ### Added
 - added a new CompletionCapabilities and CompletionItemCapabilities to more easily facilitate features related to CompletionItems ([#71](https://github.com/rcjsuen/dockerfile-language-service/issues/71))
 ```TypeScript
@@ -363,7 +363,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.12...v0.1.0
 [0.0.12]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.11...v0.0.12
 [0.0.11]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.10...v0.0.11
