@@ -40,6 +40,7 @@ export interface CompletionCapabilities {
 }
 ```
 - CompletionItemTag is now supported when completing on the MAINTAINER keyword ([#70](https://github.com/rcjsuen/dockerfile-language-service/issues/70))
+- instructions with only an escape character as its argument should be flagged as not having any arguments ([rcjsuen/dockerfile-utils#83](https://github.com/rcjsuen/dockerfile-utils/issues/83))
 
 ### Changed
 - Capabilities will now reference CompletionCapabilities instead of having the structure embedded ([#71](https://github.com/rcjsuen/dockerfile-language-service/issues/71))
