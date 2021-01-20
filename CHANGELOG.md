@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.2.0] - 2021-01-20
 ### Added
 - support the `--chmod` flag for ADD instructions ([rcjsuen/dockerfile-utils#85](https://github.com/rcjsuen/dockerfile-utils/issues/85))
 - support the `--chmod` flag for COPY instructions ([rcjsuen/dockerfile-utils#86](https://github.com/rcjsuen/dockerfile-utils/issues/86))
@@ -368,7 +368,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.12...v0.1.0
 [0.0.12]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.11...v0.0.12
