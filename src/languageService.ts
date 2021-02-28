@@ -4,9 +4,8 @@
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageService, ILogger, Capabilities, CompletionItemCapabilities } from "./main";
 import {
-    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, WorkspaceEdit, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
+    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, SemanticTokens, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
 } from "vscode-languageserver-types";
-import { SemanticTokens } from "vscode-languageserver-protocol";
 import * as DockerfileUtils from 'dockerfile-utils';
 import { DockerAssist } from "./dockerAssist";
 import { DockerRegistryClient } from "./dockerRegistryClient";

@@ -4,9 +4,8 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol';
+import { Range, TextDocument, Position, SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-types';
 import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild, PropertyInstruction, Argument } from 'dockerfile-ast';
-import { Range, TextDocument, Position } from 'vscode-languageserver-types';
 import { Dockerfile } from 'dockerfile-ast';
 import { Util } from './docker';
 

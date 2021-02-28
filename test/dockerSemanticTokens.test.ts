@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import { DockerfileLanguageServiceFactory } from '../src/main';
-import { SemanticTokenTypes, SemanticTokens, SemanticTokenModifiers } from "vscode-languageserver-protocol";
+import { SemanticTokenTypes, SemanticTokens, SemanticTokenModifiers } from "vscode-languageserver-types";
 import { TokensLegend } from "../src/dockerSemanticTokens";
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();
