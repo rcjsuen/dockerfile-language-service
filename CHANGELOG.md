@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - suggest working directories if editing the last argument of ADD and COPY instructions that aren't written in JSON ([#77](https://github.com/rcjsuen/dockerfile-language-service/issues/77))
 
+### Fixed
+- do not validate variable substitutions if found in CMD and ENTRYPOINT ([rcjsuen/dockerfile-utils#89](https://github.com/rcjsuen/dockerfile-utils/issues/89))
+
 ## [0.2.0] - 2021-01-20
 ### Added
 - support the `--chmod` flag for ADD instructions ([rcjsuen/dockerfile-utils#85](https://github.com/rcjsuen/dockerfile-utils/issues/85))
