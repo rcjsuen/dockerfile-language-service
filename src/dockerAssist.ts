@@ -13,7 +13,7 @@ import { DockerRegistryClient } from './dockerRegistryClient';
 import {
     DockerfileParser, Dockerfile,
     Copy, From, Healthcheck, Onbuild,
-    ModifiableInstruction, Directive, DefaultVariables
+    ModifiableInstruction, Directive, DefaultVariables, Workdir, Argument
 } from 'dockerfile-ast';
 import { CompletionItemCapabilities } from './main';
 
@@ -183,7 +183,7 @@ export class DockerAssist {
             } else if (Util.isInsideRange(position, instruction.getRange())) {
                 switch (instruction.getKeyword()) {
                     case "ADD":
-                        return this.createAddProposals(instruction as ModifiableInstruction, position, offset, prefix);
+                        return this.createAddProposals(dockerfile, instruction as ModifiableInstruction, position, offset, prefix);
                     case "COPY":
                         return this.createCopyProposals(dockerfile, instruction as Copy, position, offset, prefix);
                     case "FROM":
@@ -204,7 +204,7 @@ export class DockerAssist {
                             let trigger = (instruction as Onbuild).getTriggerInstruction();
                             switch (trigger.getKeyword()) {
                                 case "ADD":
-                                    return this.createAddProposals(trigger as ModifiableInstruction, position, offset, prefix);
+                                    return this.createAddProposals(dockerfile, trigger as ModifiableInstruction, position, offset, prefix);
                                 case "COPY":
                                     return this.createCopyProposals(dockerfile, trigger as Copy, position, offset, prefix);
                                 case "HEALTHCHECK":
@@ -281,7 +281,7 @@ export class DockerAssist {
         return proposals;
     }
 
-    private createAddProposals(add: ModifiableInstruction, position: Position, offset: number, prefix: string) {
+    private createAddProposals(dockerfile: Dockerfile, add: ModifiableInstruction, position: Position, offset: number, prefix: string) {
         const flags = add.getFlags();
         let copyArgs = add.getArguments();
         if (copyArgs.length === 0 && add.getFlags().length === 0) {
@@ -295,7 +295,7 @@ export class DockerAssist {
             return [this.createADD_FlagChown(prefix.length, offset)];
         }
 
-        return [];
+        return this.createTargetFolderProposals(dockerfile, copyArgs, position, offset, prefix);
     }
 
     private createCopyProposals(dockerfile: Dockerfile, copy: Copy, position: Position, offset: number, prefix: string) {
@@ -354,7 +354,34 @@ export class DockerAssist {
             return [this.createCOPY_FlagFrom(prefix.length, offset)];
         }
 
+        return this.createTargetFolderProposals(dockerfile, copyArgs, position, offset, prefix);
+    }
+
+    private createTargetFolderProposals(dockerfile: Dockerfile, args: Argument[], position: Position, offset: number, prefix: string): CompletionItem[] {
+        if (args.length === 1) {
+            // after the one and only argument, suggest folder names
+            if (Util.positionBefore(args[0].getRange().end, position)) {
+                return this.createWorkdirPathProposals(dockerfile, position, offset, prefix);
+            }
+            return [];
+        }
+
+        const lastRange = args[args.length - 1].getRange();
+        if (Util.isInsideRange(position, lastRange) || Util.positionBefore(lastRange.end, position)) {
+            // in the last argument or after the last argument
+            return this.createWorkdirPathProposals(dockerfile, position, offset, prefix);
+        }
         return [];
+    }
+
+    private createWorkdirPathProposals(dockerfile: Dockerfile, position: Position, offset: number, prefix: string): CompletionItem[]{
+        const items: CompletionItem[] = [];
+        for (const directory of dockerfile.getAvailableWorkingDirectories(position.line)) {
+            if (directory.startsWith(prefix)) {
+                items.push(this.createPlainTextCompletionItem(directory, prefix.length, offset, directory, CompletionItemKind.Folder));
+            }
+        }
+        return items;
     }
 
     private createFromProposals(from: From, position: Position, offset: number, prefix: string): CompletionItem[] | PromiseLike<CompletionItem[]> {
@@ -651,11 +678,11 @@ export class DockerAssist {
     }
 
     createHEALTHCHECK_NONE(prefixLength: number, offset: number): CompletionItem {
-        return this.createPlainTextCompletionItem("HEALTHCHECK NONE", prefixLength, offset, "HEALTHCHECK NONE", "HEALTHCHECK_NONE");
+        return this.createPlainTextCompletionItem("HEALTHCHECK NONE", prefixLength, offset, "HEALTHCHECK NONE", CompletionItemKind.Keyword, "HEALTHCHECK_NONE");
     }
 
     private createHEALTHCHECK_NONE_Subcommand(prefixLength: number, offset: number): CompletionItem {
-        return this.createPlainTextCompletionItem("NONE", prefixLength, offset, "NONE", "HEALTHCHECK_NONE");
+        return this.createPlainTextCompletionItem("NONE", prefixLength, offset, "NONE", CompletionItemKind.Keyword, "HEALTHCHECK_NONE");
     }
 
     createLABEL(prefixLength: number, offset: number, markdown: string): CompletionItem {
@@ -727,13 +754,13 @@ export class DockerAssist {
         };
     }
 
-    private createPlainTextCompletionItem(label: string, prefixLength: number, offset: number, insertText: string, markdown: string): CompletionItem {
+    private createPlainTextCompletionItem(label: string, prefixLength: number, offset: number, insertText: string, kind: CompletionItemKind, markdown?: string): CompletionItem {
         let textEdit = this.createTextEdit(prefixLength, offset, insertText);
         return {
             data: markdown,
             textEdit: textEdit,
             label: label,
-            kind: CompletionItemKind.Keyword,
+            kind: kind,
             insertTextFormat: InsertTextFormat.PlainText,
         };
     }

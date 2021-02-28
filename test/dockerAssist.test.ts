@@ -948,6 +948,21 @@ function assertDockerVariables(items: CompletionItem[], line: number, character:
     assertVariable("no_proxy", items[7], line, character, prefixLength, brace);
 }
 
+function assertPath(item: CompletionItem, path: string, line: number, character: number, prefixLength: number): void { //variable: string, item: CompletionItem, line: number, character: number, prefixLength: number, brace: boolean, documentation?: string) {
+    assert.strictEqual(item.label, path);
+    assert.strictEqual(item.kind, CompletionItemKind.Folder);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.strictEqual(item.textEdit.newText, path);
+    assert.strictEqual(item.data, undefined);
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual(item.tags, undefined);
+    assert.equal((item.textEdit as TextEdit).range.start.line, line);
+    assert.equal((item.textEdit as TextEdit).range.start.character, character - prefixLength);
+    assert.equal((item.textEdit as TextEdit).range.end.line, line);
+    assert.equal((item.textEdit as TextEdit).range.end.character, character);
+}
+
 function assertProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean, supportedTags?: CompletionItemTag[]) {
     for (var i = 0; i < proposals.length; i++) {
         switch (proposals[i].data) {
@@ -2120,6 +2135,36 @@ describe('Docker Content Assist Tests', function () {
                     testADD_FlagFrom(false);
                 });
 
+                describe("workdir suggestions", () => {
+                    it("inside first argument", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt ", 2, triggerOffset + 8);
+                        assert.equal(items.length, 0);
+                    });
+    
+                    it("after one argument", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt ", 2, triggerOffset + 12);
+                        assert.equal(items.length, 1);
+                        assertPath(items[0], "/tmp/", 2, triggerOffset + 12, 0);
+                    });
+    
+                    it("after two arguments", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt tmp2.txt ", 2, triggerOffset + 21);
+                        assert.equal(items.length, 1);
+                        assertPath(items[0], "/tmp/", 2, triggerOffset + 21, 0);
+                    });
+    
+                    it("honours prefix", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\nWORKDIR /build\n" + onbuild + "ADD tmp.txt /b", 3, triggerOffset + 14);
+                        assert.equal(items.length, 1);
+                        assertPath(items[0], "/build/", 3, triggerOffset + 14, 2);
+                    });
+    
+                    it("inside second of three arguments", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt tmp2.txt tmp3.txt", 2, triggerOffset + 15);
+                        assert.equal(items.length, 0);
+                    });
+                });
+
                 it("none", function () {
                     let items = computePosition("FROM busybox\n" + onbuild + "ADD --from=", 1, triggerOffset + 12);
                     assert.equal(items.length, 0);
@@ -2276,6 +2321,36 @@ describe('Docker Content Assist Tests', function () {
 
                 describe("plain text", function () {
                     testCOPY_FlagFrom(false);
+                });
+
+                describe("workdir suggestions", () => {
+                    it("inside first argument", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt ", 2, triggerOffset + 8);
+                        assert.equal(items.length, 0);
+                    });
+
+                    it("after one argument", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt ", 2, triggerOffset + 13);
+                        assert.equal(items.length, 1);
+                        assertPath(items[0], "/tmp/", 2, triggerOffset + 13, 0);
+                    });
+
+                    it("after two arguments", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt tmp2.txt ", 2, triggerOffset + 22);
+                        assert.equal(items.length, 1);
+                        assertPath(items[0], "/tmp/", 2, triggerOffset + 22, 0);
+                    });
+
+                    it("honours prefix", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\nWORKDIR /build\n" + onbuild + "COPY tmp.txt /b", 3, triggerOffset + 15);
+                        assert.equal(items.length, 1);
+                        assertPath(items[0], "/build/", 3, triggerOffset + 15, 2);
+                    });
+
+                    it("inside second of three arguments", () => {
+                        const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt tmp2.txt tmp3.txt", 2, triggerOffset + 15);
+                        assert.equal(items.length, 0);
+                    });
                 });
 
                 it("none", function () {
