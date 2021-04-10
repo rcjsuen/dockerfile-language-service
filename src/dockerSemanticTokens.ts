@@ -426,6 +426,7 @@ export class DockerSemanticTokens {
                 switch (ch) {
                     case '#':
                         if (escaping) {
+                            let commenting = true;
                             commentCheck: for (let j = i + 1; j < endOffset; j++) {
                                 switch (this.content.charAt(j)) {
                                     case ' ':
@@ -439,7 +440,9 @@ export class DockerSemanticTokens {
                                         this.createToken(null, crComment, SemanticTokenTypes.comment, [], false);
                                         i = j + 1;
                                         startOffset = -1;
-                                        break commentCheck;
+                                        commenting = false;
+                                        j++;
+                                        break;
                                     case '\n':
                                         const lfComment = {
                                             start: this.document.positionAt(i),
@@ -448,6 +451,19 @@ export class DockerSemanticTokens {
                                         this.createToken(null, lfComment, SemanticTokenTypes.comment, [], false);
                                         i = j;
                                         startOffset = -1;
+                                        commenting = false;
+                                        break;
+                                    case '#':
+                                        if (!commenting) {
+                                            i = j;
+                                        }
+                                        commenting = true;
+                                        break;
+                                    default:
+                                        if (commenting) {
+                                            break;
+                                        }
+                                        i = j - 1;
                                         break commentCheck;
                                 }
                             }

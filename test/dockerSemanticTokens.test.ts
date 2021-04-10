@@ -88,6 +88,19 @@ describe("Dockerfile Semantic Token tests", () => {
                         assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 0, 7, 23);
                         assertEdit(tokens.data, SemanticTokenTypes.variable, 25, 0, 23, 5);
                     });
+
+                    it(keyword + " a \\\\n b \\\\n # comment\\n # comment\\n c", () => {
+                        const tokens = computeSemanticTokens(keyword + " a \\\n b \\\n # comment\n # comment\n c");
+                        assert.equal(40, tokens.data.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, keyword.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, keyword.length + 1, 1, [SemanticTokenModifiers.declaration]);
+                        assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 2, 1);
+                        assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 1, 1, 2);
+                        assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 2, 1);
+                        assertEdit(tokens.data, SemanticTokenTypes.comment, 25, 1, 1, 9);
+                        assertEdit(tokens.data, SemanticTokenTypes.comment, 30, 1, 1, 9);
+                        assertEdit(tokens.data, SemanticTokenTypes.parameter, 35, 1, 1, 1);
+                    });
                 });
             }
             createVariableDeclarationTests("ARG");
