@@ -4,10 +4,12 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - suggest working directories if editing the last argument of ADD and COPY instructions that aren't written in JSON ([#77](https://github.com/rcjsuen/dockerfile-language-service/issues/77))
+- allow multiple arguments to be defined for ARG instructions to support Docker Engine 20.10 ([rcjsuen/dockerfile-utils#92](https://github.com/rcjsuen/dockerfile-utils/issues/92))
 
 ### Fixed
 - do not validate variable substitutions if found in CMD and ENTRYPOINT ([rcjsuen/dockerfile-utils#89](https://github.com/rcjsuen/dockerfile-utils/issues/89))
 - fix infinite loop issue when calculating semantic tokens for ARG or ENV instructions with nested comments ([#74](https://github.com/rcjsuen/dockerfile-language-service/issues/74))
+- do not flag `?` as an invalid modifier in variable substitutions ([rcjsuen/dockerfile-utils#91](https://github.com/rcjsuen/dockerfile-utils/issues/91))
 
 ## [0.2.0] - 2021-01-20
 ### Added
