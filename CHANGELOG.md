@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.3.0] - 2011-04-11
 ### Added
 - suggest working directories if editing the last argument of ADD and COPY instructions that aren't written in JSON ([#77](https://github.com/rcjsuen/dockerfile-language-service/issues/77))
 - allow multiple arguments to be defined for ARG instructions to support Docker Engine 20.10 ([rcjsuen/dockerfile-utils#92](https://github.com/rcjsuen/dockerfile-utils/issues/92))
@@ -399,7 +399,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.0.12...v0.1.0
