@@ -135,8 +135,7 @@ export class LanguageService implements DockerfileLanguageService {
     }
 
     public formatRange(content: string, range: Range, options: FormattingOptions): TextEdit[] {
-        let dockerFormat = new DockerFormatter();
-        return dockerFormat.formatRange(content, range, options);
+        return DockerfileUtils.formatRange(content, range, options);
     }
 
     public formatOnType(content: string, position: Position, ch: string, options: FormattingOptions): TextEdit[] {

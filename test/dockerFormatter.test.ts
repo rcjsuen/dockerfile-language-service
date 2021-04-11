@@ -252,6 +252,13 @@ describe("Dockerfile formatter", function () {
                 assert.equal(edits[0].range.end.line, 1);
                 assert.equal(edits[0].range.end.character, 0);
             });
+
+            it("no edits returned", () => {
+                let content = "EXPOSE 8081\\ \n\t8082";
+                let range = Range.create(Position.create(1, 3), Position.create(1, 4));
+                let edits = formatRange(content, range);
+                assert.equal(edits.length, 0);
+            });
         });
 
         describe("multi line selection", function () {
@@ -576,6 +583,13 @@ describe("Dockerfile formatter", function () {
                 assert.equal(edits[0].range.start.character, 0);
                 assert.equal(edits[0].range.end.line, 1);
                 assert.equal(edits[0].range.end.character, 1);
+            });
+
+            it("no edits returned", () => {
+                let content = "EXPOSE 8081\\ \n\t8082";
+                let range = Range.create(Position.create(0, 3), Position.create(1, 4));
+                let edits = formatRange(content, range);
+                assert.equal(edits.length, 0);
             });
         });
     });

@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - suggest working directories if editing the last argument of ADD and COPY instructions that aren't written in JSON ([#77](https://github.com/rcjsuen/dockerfile-language-service/issues/77))
 - allow multiple arguments to be defined for ARG instructions to support Docker Engine 20.10 ([rcjsuen/dockerfile-utils#92](https://github.com/rcjsuen/dockerfile-utils/issues/92))
+- optimized range formatting so that it does not return unnecessary edits ([#81](https://github.com/rcjsuen/dockerfile-language-service/issues/81))
 
 ### Fixed
 - do not validate variable substitutions if found in CMD and ENTRYPOINT ([rcjsuen/dockerfile-utils#89](https://github.com/rcjsuen/dockerfile-utils/issues/89))
