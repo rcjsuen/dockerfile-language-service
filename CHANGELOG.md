@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - do not validate variable substitutions if found in CMD and ENTRYPOINT ([rcjsuen/dockerfile-utils#89](https://github.com/rcjsuen/dockerfile-utils/issues/89))
 - fix infinite loop issue when calculating semantic tokens for ARG or ENV instructions with nested comments ([#74](https://github.com/rcjsuen/dockerfile-language-service/issues/74))
 - do not flag `?` as an invalid modifier in variable substitutions ([rcjsuen/dockerfile-utils#91](https://github.com/rcjsuen/dockerfile-utils/issues/91))
+- prevent false positive by improving the parsing of an escape character and newline that immediately follows a label definition ([rcjsuen/dockerfile-utils#95](https://github.com/rcjsuen/dockerfile-utils/issues/95))
 
 ## [0.2.0] - 2021-01-20
 ### Added
