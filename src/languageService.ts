@@ -2,7 +2,7 @@
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { DockerfileLanguageService, ILogger, Capabilities, CompletionItemCapabilities } from "./main";
+import { DockerfileLanguageService, ILogger, Capabilities, CompletionItemCapabilities, FormatterSettings } from "./main";
 import {
     TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, SemanticTokens, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
 } from "vscode-languageserver-types";
@@ -130,15 +130,15 @@ export class LanguageService implements DockerfileLanguageService {
         return DockerfileUtils.validate(content, settings);
     }
 
-    public format(content: string, options: FormattingOptions): TextEdit[] {
-        return DockerfileUtils.format(content, options);
+    public format(content: string, settings: FormatterSettings): TextEdit[] {
+        return DockerfileUtils.format(content, settings);
     }
 
-    public formatRange(content: string, range: Range, options: FormattingOptions): TextEdit[] {
-        return DockerfileUtils.formatRange(content, range, options);
+    public formatRange(content: string, range: Range, settings: FormatterSettings): TextEdit[] {
+        return DockerfileUtils.formatRange(content, range, settings);
     }
 
-    public formatOnType(content: string, position: Position, ch: string, options: FormattingOptions): TextEdit[] {
-        return DockerfileUtils.formatOnType(content, position, ch, options);
+    public formatOnType(content: string, position: Position, ch: string, settings: FormatterSettings): TextEdit[] {
+        return DockerfileUtils.formatOnType(content, position, ch, settings);
     }
 }

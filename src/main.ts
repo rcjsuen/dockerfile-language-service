@@ -103,6 +103,14 @@ export interface Capabilities {
         contentFormat?: MarkupKind[];
     }
 }
+export interface FormatterSettings extends FormattingOptions {
+
+    /**
+     * Flag to indicate that instructions that span multiple lines
+     * should be ignored.
+     */
+    ignoreMultilineInstructions?: boolean;
+}
 
 export interface DockerfileLanguageService {
 
@@ -143,11 +151,11 @@ export interface DockerfileLanguageService {
 
     validate(content: string, settings?: ValidatorSettings): Diagnostic[];
 
-    format(content: string, options: FormattingOptions): TextEdit[];
+    format(content: string, settings: FormatterSettings): TextEdit[];
 
-    formatRange(content: string, range: Range, options: FormattingOptions): TextEdit[];
+    formatRange(content: string, range: Range, settings: FormatterSettings): TextEdit[];
 
-    formatOnType(content: string, position: Position, ch: string, options: FormattingOptions): TextEdit[];
+    formatOnType(content: string, position: Position, ch: string, settings: FormatterSettings): TextEdit[];
 
     setLogger(logger: ILogger): void;
 }

@@ -5,30 +5,30 @@
 import * as assert from "assert";
 
 import {
-    TextEdit, TextDocument, Position, Range, FormattingOptions
+    TextEdit, TextDocument, Position, Range
 } from 'vscode-languageserver-types';
-import { DockerfileLanguageServiceFactory } from '../src/main';
+import { DockerfileLanguageServiceFactory, FormatterSettings } from '../src/main';
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 
-function formatRange(content: string, range: Range, options?: FormattingOptions): TextEdit[] {
-    if (!options) {
-        options = {
+function formatRange(content: string, range: Range, settings?: FormatterSettings): TextEdit[] {
+    if (!settings) {
+        settings = {
             insertSpaces: false,
             tabSize: 4
         };
     }
-    return service.formatRange(content, range, options);
+    return service.formatRange(content, range, settings);
 }
 
-function formatOnType(content: string, position: Position, ch: string, options?: FormattingOptions): TextEdit[] {
-    if (!options) {
-        options = {
+function formatOnType(content: string, position: Position, ch: string, settings?: FormatterSettings): TextEdit[] {
+    if (!settings) {
+        settings = {
             insertSpaces: false,
             tabSize: 4
         };
     }
-    return service.formatOnType(content, position, ch, options);
+    return service.formatOnType(content, position, ch, settings);
 }
 
 describe("Dockerfile formatter", function () {
@@ -257,6 +257,21 @@ describe("Dockerfile formatter", function () {
                 let content = "EXPOSE 8081\\ \n\t8082";
                 let range = Range.create(Position.create(1, 3), Position.create(1, 4));
                 let edits = formatRange(content, range);
+                assert.equal(edits.length, 0);
+            });
+
+            it("ignore multiline instructions", () => {
+                const content = "EXPOSE 8081\\ \n8082";
+                const range = Range.create(Position.create(1, 3), Position.create(1, 4));
+                const edits = formatRange(
+                    content,
+                    range,
+                    {
+                        insertSpaces: false,
+                        tabSize: 4,
+                        ignoreMultilineInstructions: true
+                    }
+                );
                 assert.equal(edits.length, 0);
             });
         });
@@ -591,6 +606,21 @@ describe("Dockerfile formatter", function () {
                 let edits = formatRange(content, range);
                 assert.equal(edits.length, 0);
             });
+
+            it("ignore multiline instructions", () => {
+                const content = "EXPOSE 8081\\ \n8082";
+                const range = Range.create(Position.create(0, 3), Position.create(1, 4));
+                const edits = formatRange(
+                    content,
+                    range,
+                    {
+                        insertSpaces: false,
+                        tabSize: 4,
+                        ignoreMultilineInstructions: true
+                    }
+                );
+                assert.equal(edits.length, 0);
+            });
         });
     });
 
@@ -683,6 +713,21 @@ describe("Dockerfile formatter", function () {
                 let edits = formatOnType(content, Position.create(0, 11), '\\');
                 assert.equal(edits.length, 0);
             });
+
+            it("ignore multiline instructions", () => {
+                const content = "EXPOSE 8081 \n8082";
+                const edits = formatOnType(
+                    content,
+                    Position.create(0, 11),
+                    '\\',
+                    {
+                        insertSpaces: false,
+                        tabSize: 4,
+                        ignoreMultilineInstructions: true
+                    }
+                );
+                assert.equal(edits.length, 0);
+            });
         });
 
         describe("backtick", function () {
@@ -706,6 +751,21 @@ describe("Dockerfile formatter", function () {
             it("no edits returned", () => {
                 let content = "#escape=`\nEXPOSE 8081 \n\t8082";
                 let edits = formatOnType(content, Position.create(1, 11), '`');
+                assert.equal(edits.length, 0);
+            });
+
+            it("ignore multiline instructions", () => {
+                const content = "#escape=`\nEXPOSE 8081 \n8082";
+                const edits = formatOnType(
+                    content,
+                    Position.create(1, 11),
+                    '`',
+                    {
+                        insertSpaces: false,
+                        tabSize: 4,
+                        ignoreMultilineInstructions: true
+                    }
+                );
                 assert.equal(edits.length, 0);
             });
         });
