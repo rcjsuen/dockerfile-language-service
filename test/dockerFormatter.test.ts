@@ -677,6 +677,12 @@ describe("Dockerfile formatter", function () {
                 let edits = formatOnType(content, Position.create(0, 8), '\\');
                 assert.equal(edits.length, 0);
             });
+
+            it("no edits returned", () => {
+                let content = "EXPOSE 8081 \n\t8082";
+                let edits = formatOnType(content, Position.create(0, 11), '\\');
+                assert.equal(edits.length, 0);
+            });
         });
 
         describe("backtick", function () {
@@ -695,6 +701,12 @@ describe("Dockerfile formatter", function () {
                 assert.equal(edits[0].range.start.character, 0);
                 assert.equal(edits[0].range.end.line, 2);
                 assert.equal(edits[0].range.end.character, 0);
+            });
+
+            it("no edits returned", () => {
+                let content = "#escape=`\nEXPOSE 8081 \n\t8082";
+                let edits = formatOnType(content, Position.create(1, 11), '`');
+                assert.equal(edits.length, 0);
             });
         });
     });
