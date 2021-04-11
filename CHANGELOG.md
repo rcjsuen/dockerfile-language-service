@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 - allow multiple arguments to be defined for ARG instructions to support Docker Engine 20.10 ([rcjsuen/dockerfile-utils#92](https://github.com/rcjsuen/dockerfile-utils/issues/92))
 - optimized range formatting so that it does not return unnecessary edits ([#81](https://github.com/rcjsuen/dockerfile-language-service/issues/81))
 - optimized on type formatting so that it does not return unnecessary edits ([#82](https://github.com/rcjsuen/dockerfile-language-service/issues/82))
-- a new `FormatterSettings` interface for defining `ignoreMultilineInstructions` to ignore instructions that span multiple lines ([#83](https://github.com/rcjsuen/dockerfile-utils/issues/83))
+- a new `FormatterSettings` interface for defining `ignoreMultilineInstructions` to ignore instructions that span multiple lines ([#83](https://github.com/rcjsuen/dockerfile-language-service/issues/83))
 ```TypeScript
 export interface FormatterSettings extends FormattingOptions {
 
