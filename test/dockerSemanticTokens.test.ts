@@ -15,7 +15,7 @@ function computeSemanticTokens(content: string): SemanticTokens {
 }
 
 function assertEdit(data: number[], tokenType: string, index: number, line: number, startCharacter: number, length: number, tokenModifiers: string[] = []) {
-    assert.equal(data[index], line);
+    assert.equal(data[index], line, "line mismatch");
     assert.equal(data[index + 1], startCharacter, "startCharacter mismatch");
     assert.equal(data[index + 2], length, "length mismatch");
     assert.notEqual(undefined, TokensLegend.getTokenType(tokenType));
