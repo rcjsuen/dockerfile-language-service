@@ -480,7 +480,7 @@ export class DockerSemanticTokens {
                                     break;
                                 case '\n':
                                     if (!added) {
-                                        if (!intermediateAdded) {
+                                        if (!intermediateAdded && startOffset !== -1) {
                                             const intermediateRange = {
                                                 start: this.document.positionAt(startOffset),
                                                 end: this.document.positionAt(i),
@@ -497,9 +497,28 @@ export class DockerSemanticTokens {
                                     i = j;
                                     startOffset = -1;
                                     break;
+                                case '#':
+                                    if (escaping) {
+                                        i = j - 1;
+                                        break escapeCheck;
+                                    }
+                                case '\\':
+                                    if (!escaping) {
+                                        intermediateAdded = false;
+                                        escaping = false;
+                                        i = j;
+                                        break escapeCheck;
+                                    }
+                                    i = j;
+                                    added = false;
+                                    startOffset = j;
+                                    break;
                                 default:
                                     if (startOffset === -1) {
+                                        intermediateAdded = false;
+                                        escaping = false;
                                         startOffset = j;
+                                        i = j;
                                     }
                                     break escapeCheck;
                             }

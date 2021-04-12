@@ -1287,6 +1287,33 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.macro, 40, 0, 4, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 1, 0, 1);
             });
+
+            it("RUN 1\\\\n2#\\\\n3\\\\n4", () => {
+                const tokens = computeSemanticTokens("RUN 1\\\n2#\\\n3\\\n4");
+                assert.strictEqual(tokens.data.length, 40);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 1, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 25, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 30, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 35, 1, 0, 1);
+            });
+
+            it("RUN 1\\\\n#\\n2#\\\\n3\\\\n4", () => {
+                const tokens = computeSemanticTokens("RUN 1\\\n#\n2#\\\n3\\\n4");
+                assert.strictEqual(tokens.data.length, 45);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 15, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 20, 1, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 25, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 30, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 35, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 40, 1, 0, 1);
+            });
         });
 
         /**

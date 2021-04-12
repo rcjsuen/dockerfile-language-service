@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- fix semantic highlighting issue seen in arguments spanning multiple lines that are contiguous with no whitespace ([#84](https://github.com/rcjsuen/dockerfile-language-service/issues/84))
+
 ## [0.3.0] - 2011-04-11
 ### Added
 - suggest working directories if editing the last argument of ADD and COPY instructions that aren't written in JSON ([#77](https://github.com/rcjsuen/dockerfile-language-service/issues/77))
