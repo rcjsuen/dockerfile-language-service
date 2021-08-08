@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 - fix semantic highlighting issue seen in arguments spanning multiple lines that are contiguous with no whitespace ([#84](https://github.com/rcjsuen/dockerfile-language-service/issues/84))
 - remove special handling of backslash characters in strings for semantic tokens ([#88](https://github.com/rcjsuen/dockerfile-language-service/issues/84))
 
-## [0.3.0] - 2011-04-11
+## [0.3.0] - 2021-04-11
 ### Added
 - suggest working directories if editing the last argument of ADD and COPY instructions that aren't written in JSON ([#77](https://github.com/rcjsuen/dockerfile-language-service/issues/77))
 - allow multiple arguments to be defined for ARG instructions to support Docker Engine 20.10 ([rcjsuen/dockerfile-utils#92](https://github.com/rcjsuen/dockerfile-utils/issues/92))
