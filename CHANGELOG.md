@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - fix semantic highlighting issue seen in arguments spanning multiple lines that are contiguous with no whitespace ([#84](https://github.com/rcjsuen/dockerfile-language-service/issues/84))
+- remove special handling of backslash characters in strings for semantic tokens ([#88](https://github.com/rcjsuen/dockerfile-language-service/issues/84))
 
 ## [0.3.0] - 2011-04-11
 ### Added
