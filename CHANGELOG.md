@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - process heredoc syntax correctly when deciding what completion items to return ([#87](https://github.com/rcjsuen/dockerfile-language-service/issues/87))
+- add heredoc syntax when validating RUN instructions ([rcjsuen/dockerfile-utils#97](https://github.com/rcjsuen/dockerfile-utils/issues/97))
 
 ### Fixed
 - fix semantic highlighting issue seen in arguments spanning multiple lines that are contiguous with no whitespace ([#84](https://github.com/rcjsuen/dockerfile-language-service/issues/84))
