@@ -2086,6 +2086,13 @@ describe('Docker Content Assist Tests', function () {
         });
     })
 
+    describe("heredoc", () => {
+        it("no instructions suggested", () => {
+            const items = computePosition("RUN <<eot\n", 1, 0);
+            assert.strictEqual(items.length, 0);
+        });
+    });
+
     function testAdd(trigger: boolean) {
         describe("ADD", function () {
             let onbuild = trigger ? "ONBUILD " : "";

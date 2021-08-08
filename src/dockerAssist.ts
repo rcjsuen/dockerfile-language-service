@@ -178,7 +178,7 @@ export class DockerAssist {
         let previousWord = "";
 
         instructionsCheck: for (let instruction of dockerfile.getInstructions()) {
-            if (Util.isInsideRange(position, instruction.getInstructionRange())) {
+            if (Util.isInsideRange(position, instruction.getInstructionRange()) || prefix === instruction.getKeyword()) {
                 break;
             } else if (Util.isInsideRange(position, instruction.getRange())) {
                 switch (instruction.getKeyword()) {
