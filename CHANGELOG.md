@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.4.0] - 2021-08-08
 ### Added
 - process heredoc syntax correctly when deciding what completion items to return ([#87](https://github.com/rcjsuen/dockerfile-language-service/issues/87))
 - add heredoc syntax when validating RUN instructions ([rcjsuen/dockerfile-utils#97](https://github.com/rcjsuen/dockerfile-utils/issues/97))
@@ -408,7 +408,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.0...v0.1.1
