@@ -2088,7 +2088,13 @@ describe('Docker Content Assist Tests', function () {
 
     describe("heredoc", () => {
         it("no instructions suggested", () => {
-            const items = computePosition("RUN <<eot\n", 1, 0);
+            let items = computePosition("RUN <<eot\n", 1, 0);
+            assert.strictEqual(items.length, 0);
+
+            items = computePosition("ADD a.txt <<file b.txt <<file2 /destination/\nabc\nfile\n", 3, 0);
+            assert.strictEqual(items.length, 0);
+
+            items = computePosition("COPY a.txt <<file b.txt <<file2 /destination/\nabc\nfile\n", 3, 0);
             assert.strictEqual(items.length, 0);
         });
     });

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- process heredoc syntax correctly when deciding what completion items to return for ADD and COPY ([#90](https://github.com/rcjsuen/dockerfile-language-service/issues/90))
+
 ## [0.4.0] - 2021-08-08
 ### Added
 - process heredoc syntax correctly when deciding what completion items to return ([#87](https://github.com/rcjsuen/dockerfile-language-service/issues/87))
