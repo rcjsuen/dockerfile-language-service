@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - process heredoc syntax correctly when deciding what completion items to return for ADD and COPY ([#90](https://github.com/rcjsuen/dockerfile-language-service/issues/90))
+- support heredoc syntax in ADD and COPY instructions when linting the Dockerfile ([rcjsuen/dockerfile-utils#98](https://github.com/rcjsuen/dockerfile-utils/issues/98))
+- flag duplicated escape parser directive declarations as being unnecessary ([rcjsuen/dockerfile-utils#82](https://github.com/rcjsuen/dockerfile-utils/issues/82))
+- flag duplicated CMD, ENTRYPOINT, and HEALTHCHECK instructions as being unnecessary diagnostics ([rcjsuen/dockerfile-utils#82](https://github.com/rcjsuen/dockerfile-utils/issues/82))
 
 ## [0.4.0] - 2021-08-08
 ### Added
