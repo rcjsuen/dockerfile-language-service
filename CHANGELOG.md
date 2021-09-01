@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.5.0] - 2021-09-01
 ### Added
 - process heredoc syntax correctly when deciding what completion items to return for ADD and COPY ([#90](https://github.com/rcjsuen/dockerfile-language-service/issues/90))
 - support heredoc syntax in ADD and COPY instructions when linting the Dockerfile ([rcjsuen/dockerfile-utils#98](https://github.com/rcjsuen/dockerfile-utils/issues/98))
@@ -415,7 +415,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.1.1...v0.2.0
