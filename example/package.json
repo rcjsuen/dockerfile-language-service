@@ -3,14 +3,15 @@
   "name": "@rcjsuen/dockerfile-language-service-example",
   "version": "0.0.1",
   "dependencies": {
-    "monaco-editor": "0.27.0",
-    "dockerfile-language-service": "0.5.0"
+    "dockerfile-language-service": "0.5.0",
+    "monaco-editor": "0.27.0"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "^4.0.1",
-    "umd-compat-loader": "^2.1.1",
+    "copy-webpack-plugin": "^9.0.1",
     "typescript": "^3.7.5",
-    "webpack": "^2.3.3"
+    "umd-compat-loader": "^2.1.1",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0"
   },
   "scripts": {
     "compile": "tsc",

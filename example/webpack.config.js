@@ -23,6 +23,13 @@ module.exports = {
         ]
     },
     resolve: {
+        fallback: {
+            fs: 'empty',
+            https: false,
+            child_process: 'empty',
+            net: 'empty',
+            crypto: 'empty'
+        },
         extensions: ['.js'],
         alias: {
             'vs': path.resolve(buildRoot, monacoEditorPath)
@@ -30,12 +37,6 @@ module.exports = {
     },
     devtool: 'source-map',
     target: 'web',
-    node: {
-        fs: 'empty',
-        child_process: 'empty',
-        net: 'empty',
-        crypto: 'empty'
-    },
     plugins: [
         new CopyWebpackPlugin([
             {
