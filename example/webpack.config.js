@@ -38,11 +38,13 @@ module.exports = {
     devtool: 'source-map',
     target: 'web',
     plugins: [
-        new CopyWebpackPlugin([
-            {
-                from: monacoEditorPath,
-                to: 'vs'
-            }
-        ])
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: monacoEditorPath,
+                    to: 'vs'
+                }
+            ]
+        })
     ]
 }
