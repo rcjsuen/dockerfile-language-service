@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * ------------------------------------------------------------------------------------------ */
 var dockerfile_language_service_1 = require("dockerfile-language-service");
 var vscode_languageserver_types_1 = require("vscode-languageserver-types");
-var protocol_sematicTokens_proposed_1 = require("vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed");
 var LANGUAGE_ID = 'dockerfile';
 // content to initialize the editor with
 var content = "FROM node:alpine\nCOPY lib /docker-langserver/lib\nCOPY bin /docker-langserver/bin\nCOPY package.json /docker-langserver/package.json\nWORKDIR /docker-langserver/\nRUN npm install --production && \\\n    chmod +x /docker-langserver/bin/docker-langserver\nENTRYPOINT [ \"/docker-langserver/bin/docker-langserver\" ]";
@@ -227,20 +226,19 @@ monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
     getLegend: function () {
         var tokenTypes = [];
         var tokenModifiers = [];
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.keyword);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.comment);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.parameter);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.property);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.label);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.class);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.macro);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.string);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.variable);
-        tokenTypes.push(protocol_sematicTokens_proposed_1.SemanticTokenTypes.operator);
-        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.declaration);
-        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.definition);
-        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.deprecated);
-        tokenModifiers.push(protocol_sematicTokens_proposed_1.SemanticTokenModifiers.reference);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.keyword);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.comment);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.parameter);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.property);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.namespace);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.class);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.macro);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.string);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.variable);
+        tokenTypes.push(vscode_languageserver_types_1.SemanticTokenTypes.operator);
+        tokenModifiers.push(vscode_languageserver_types_1.SemanticTokenModifiers.declaration);
+        tokenModifiers.push(vscode_languageserver_types_1.SemanticTokenModifiers.definition);
+        tokenModifiers.push(vscode_languageserver_types_1.SemanticTokenModifiers.deprecated);
         return {
             tokenModifiers: tokenModifiers,
             tokenTypes: tokenTypes
