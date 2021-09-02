@@ -3,8 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageServiceFactory } from 'dockerfile-language-service';
-import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation, InsertTextFormat } from 'vscode-languageserver-types';
-import { SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-protocol/lib/protocol.sematicTokens.proposed';
+import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation, InsertTextFormat, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-types';
 
 declare var monaco: any
 const LANGUAGE_ID = 'dockerfile';
@@ -214,7 +213,7 @@ function convertCompletionItem(item: CompletionItem) {
         documentation: {
             value: item.documentation
         },
-        range: item.textEdit ? convertProtocolRange(item.textEdit.range) : undefined,
+        range: item.textEdit ? convertProtocolRange((item.textEdit as TextEdit).range) : undefined,
         kind: item.kind as number + 1,
         insertText: item.textEdit ? item.textEdit.newText : item.insertText,
         insertTextRules: item.insertTextFormat === InsertTextFormat.Snippet ? monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet : undefined,
@@ -259,7 +258,7 @@ monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
         tokenTypes.push(SemanticTokenTypes.comment);
         tokenTypes.push(SemanticTokenTypes.parameter);
         tokenTypes.push(SemanticTokenTypes.property);
-        tokenTypes.push(SemanticTokenTypes.label);
+        tokenTypes.push(SemanticTokenTypes.namespace);
         tokenTypes.push(SemanticTokenTypes.class);
         tokenTypes.push(SemanticTokenTypes.macro);
         tokenTypes.push(SemanticTokenTypes.string);
@@ -269,7 +268,6 @@ monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
         tokenModifiers.push(SemanticTokenModifiers.declaration);
         tokenModifiers.push(SemanticTokenModifiers.definition);
         tokenModifiers.push(SemanticTokenModifiers.deprecated);
-        tokenModifiers.push(SemanticTokenModifiers.reference);
         return {
             tokenModifiers,
             tokenTypes
