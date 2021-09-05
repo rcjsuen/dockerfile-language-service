@@ -216,10 +216,7 @@ export class DockerSemanticTokens {
                 return;
             case Keyword.FROM:
                 const from = instruction as From;
-                const nameRange = from.getImageNameRange();
-                if (nameRange !== null) {
-                    this.createToken(instruction, nameRange, SemanticTokenTypes.class);
-                }
+                this.createToken(instruction, from.getImageNameRange(), SemanticTokenTypes.class);
                 const tagRange = from.getImageTagRange();
                 if (tagRange !== null) {
                     this.createToken(instruction, tagRange, SemanticTokenTypes.property);
@@ -246,22 +243,16 @@ export class DockerSemanticTokens {
                 return;
             case Keyword.HEALTHCHECK:
                 const healthcheck = instruction as Healthcheck;
-                const subcommand = healthcheck.getSubcommand();
-                if (subcommand !== null) {
-                    const range = subcommand.getRange();
-                    this.createToken(instruction, range, SemanticTokenTypes.keyword);
+                const range = healthcheck.getSubcommand().getRange();
+                this.createToken(instruction, range, SemanticTokenTypes.keyword);
 
-                    if (args.length > 1) {
-                        this.createArgumentTokens(instruction, args.slice(1));
-                    }
+                if (args.length > 1) {
+                    this.createArgumentTokens(instruction, args.slice(1));
                 }
                 return;
             case Keyword.ONBUILD:
                 const onbuild = instruction as Onbuild;
-                const range = onbuild.getTriggerRange()
-                if (range !== null) {
-                    this.createTokensForInstruction(onbuild.getTriggerInstruction());
-                }
+                this.createTokensForInstruction(onbuild.getTriggerInstruction());
                 return;
         }
 
