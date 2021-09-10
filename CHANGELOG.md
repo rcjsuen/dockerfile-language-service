@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- prevent infinite loop when computing semantic tokens for a keyword with an escape character ([#91](https://github.com/rcjsuen/dockerfile-language-service/issues/91))
+
 ## [0.5.0] - 2021-09-01
 ### Added
 - process heredoc syntax correctly when deciding what completion items to return for ADD and COPY ([#90](https://github.com/rcjsuen/dockerfile-language-service/issues/90))
