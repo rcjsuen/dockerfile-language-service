@@ -101,12 +101,12 @@ function assertRawHover(content: string, line: number, character: number, value:
 }
 
 function assertNullHover(content: string, line: number, character: number) {
-    assert.equal(onHover(content, line, character), null);
-    assert.equal(onHover(content, line, character, []), null);
-    assert.equal(onHover(content, line, character, [MarkupKind.Markdown]), null);
-    assert.equal(onHover(content, line, character, [MarkupKind.Markdown, MarkupKind.PlainText]), null);
-    assert.equal(onHover(content, line, character, [MarkupKind.PlainText]), null);
-    assert.equal(onHover(content, line, character, [MarkupKind.PlainText, MarkupKind.Markdown]), null);
+    assert.strictEqual(onHover(content, line, character), null);
+    assert.strictEqual(onHover(content, line, character, []), null);
+    assert.strictEqual(onHover(content, line, character, [MarkupKind.Markdown]), null);
+    assert.strictEqual(onHover(content, line, character, [MarkupKind.Markdown, MarkupKind.PlainText]), null);
+    assert.strictEqual(onHover(content, line, character, [MarkupKind.PlainText]), null);
+    assert.strictEqual(onHover(content, line, character, [MarkupKind.PlainText, MarkupKind.Markdown]), null);
 }
 
 describe("Dockerfile hover", function () {

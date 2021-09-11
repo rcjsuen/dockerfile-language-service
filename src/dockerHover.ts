@@ -58,7 +58,8 @@ export class DockerHover {
                 }
                 return null;
             }
-            return this.markdown.getMarkdown(key);
+            const hover = this.markdown.getMarkdown(key);
+            return hover === undefined ? null : hover;
         }
 
         for (let instruction of image.getInstructions()) {
