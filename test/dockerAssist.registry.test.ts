@@ -19,20 +19,20 @@ function computePromise(content: string, line: number, character: number): Promi
 }
 
 function assertImageTag(tag: string, item: CompletionItem, line: number, character: number, prefixLength: number) {
-    assert.equal(item.label, tag);
-    assert.equal(item.kind, CompletionItemKind.Property);
-    assert.equal(item.textEdit.newText, tag);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
-    assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.strictEqual(item.label, tag);
+    assert.strictEqual(item.kind, CompletionItemKind.Property);
+    assert.strictEqual(item.textEdit.newText, tag);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
 }
 
 function assertImageTags(tags: string[], items: CompletionItem[], cursorPosition: number, prefixLength: number) {
     assert.notEqual(items.length, 0);
     assert.notEqual(tags.length, 0);
-    assert.equal(items.length, tags.length);
+    assert.strictEqual(items.length, tags.length);
     for (let i = 0; i < tags.length; i++) {
         assertImageTag(tags[i], items[i], 0, cursorPosition - prefixLength, prefixLength);
     }
@@ -65,7 +65,7 @@ describe("Docker Content Assist Registry Tests", () => {
             it("invalid", async function () {
                 this.timeout(10000);
                 const items = await computePromise("FROM alpine-abc:", 0, 16);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
         });
 
@@ -94,7 +94,7 @@ describe("Docker Content Assist Registry Tests", () => {
             it("invalid", async function () {
                 this.timeout(10000);
                 const items = await computePromise("FROM library/alpine-abc:", 0, 24);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("issue #39", async function () {

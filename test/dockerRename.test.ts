@@ -25,15 +25,15 @@ function assertRange(actual: Range, startLine: number, startCharacter: number, e
 }
 
 function assertEdit(edit: TextEdit, newName: string, startLine: number, startCharacter: number, endLine: number, endCharacter: number) {
-    assert.equal(edit.newText, newName);
-    assert.equal(edit.range.start.line, startLine);
-    assert.equal(edit.range.start.character, startCharacter);
-    assert.equal(edit.range.end.line, endLine);
-    assert.equal(edit.range.end.character, endCharacter);
+    assert.strictEqual(edit.newText, newName);
+    assert.strictEqual(edit.range.start.line, startLine);
+    assert.strictEqual(edit.range.start.character, startCharacter);
+    assert.strictEqual(edit.range.end.line, endLine);
+    assert.strictEqual(edit.range.end.character, endCharacter);
 }
 
 function assertEdits(actualEdits: TextEdit[], expectedEdits: TextEdit[]) {
-    assert.equal(actualEdits.length, expectedEdits.length);
+    assert.strictEqual(actualEdits.length, expectedEdits.length);
     for (let i = 0; i < actualEdits.length; i++) {
         assertEdit(
             actualEdits[i],
@@ -54,7 +54,7 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 1);
+                assert.strictEqual(edits.length, 1);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
             });
 
@@ -64,14 +64,14 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 1, 13, 1, 22);
 
                 range  = prepareRename(content, 1, 17);
                 assertRange(range, 1, 13, 1, 22);
                 edits = rename(content, 1, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 1, 13, 1, 22);
 
@@ -80,14 +80,14 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 1, 13, 1, 22);
 
                 range  = prepareRename(content, 1, 17);
                 assertRange(range, 1, 13, 1, 22);
                 edits = rename(content, 1, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 1, 13, 1, 22);
             });
@@ -98,7 +98,7 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
 
@@ -106,7 +106,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 2, 16);
                 assertRange(range, 2, 12, 2, 21);
                 edits = rename(content, 2, 16, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
 
@@ -115,7 +115,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 1, 12, 1, 21);
 
@@ -123,7 +123,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 1, 16);
                 assertRange(range, 1, 12, 1, 21);
                 edits = rename(content, 1, 16, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 1, 12, 1, 21);
             });
@@ -134,7 +134,7 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
 
@@ -142,7 +142,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 2, 16);
                 assertRange(range, 2, 12, 2, 21);
                 edits = rename(content, 2, 16, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
 
@@ -151,7 +151,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
 
@@ -159,7 +159,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 2, 16);
                 assertRange(range, 2, 12, 2, 21);
                 edits = rename(content, 2, 16, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 21);
             });
@@ -170,14 +170,14 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 let edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 1);
+                assert.strictEqual(edits.length, 1);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
 
                 // cursor in the COPY
                 range  = prepareRename(content, 2, 16);
                 assertRange(range, 2, 12, 2, 22);
                 edits = rename(content, 2, 16, "renamed");
-                assert.equal(edits.length, 1);
+                assert.strictEqual(edits.length, 1);
                 assertEdit(edits[0], "renamed", 2, 12, 2, 22);
 
                 content = "FROM node AS bootstrap\nCOPY bootstrap /git/build/";
@@ -185,7 +185,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 0, 17);
                 assertRange(range, 0, 13, 0, 22);
                 edits = rename(content, 0, 17, "renamed");
-                assert.equal(edits.length, 1);
+                assert.strictEqual(edits.length, 1);
                 assertEdit(edits[0], "renamed", 0, 13, 0, 22);
             });
 
@@ -195,7 +195,7 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 1, 13);
                 assertRange(range, 1, 12, 1, 15);
                 let edits = rename(content, 1, 13, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 1, 12, 1, 15);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 15);
 
@@ -203,7 +203,7 @@ describe("Dockerfile Document Rename tests", function () {
                 range  = prepareRename(content, 2, 13);
                 assertRange(range, 2, 12, 2, 15);
                 edits = rename(content, 1, 13, "renamed");
-                assert.equal(edits.length, 2);
+                assert.strictEqual(edits.length, 2);
                 assertEdit(edits[0], "renamed", 1, 12, 1, 15);
                 assertEdit(edits[1], "renamed", 2, 12, 2, 15);
             });
@@ -216,12 +216,12 @@ describe("Dockerfile Document Rename tests", function () {
                 assert.strictEqual(range, null);
                 // cursor after the AS source image
                 let edits = rename(content, 0, 24, "renamed");
-                assert.equal(edits.length, 0);
+                assert.strictEqual(edits.length, 0);
                 // cursor after the COPY --from
                 range  = prepareRename(content, 2, 22);
                 assert.strictEqual(range, null);
                 edits = rename(content, 2, 22, "renamed");
-                assert.equal(edits.length, 0);
+                assert.strictEqual(edits.length, 0);
             });
 
             it("COPY bootstrap", function () {
@@ -230,7 +230,7 @@ describe("Dockerfile Document Rename tests", function () {
                 let range  = prepareRename(content, 1, 10);
                 assert.strictEqual(range, null);
                 let edits = rename(content, 1, 10, "renamed");
-                assert.equal(edits.length, 0);
+                assert.strictEqual(edits.length, 0);
             });
         });
     });
@@ -243,7 +243,7 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -252,7 +252,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 13, 1, 16);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -261,7 +261,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 2, 7);
                     assertRange(range, 2, 7, 2, 10);
                     edits = rename(content, 2, 7, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -270,7 +270,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 3, 11);
                     assertRange(range, 3, 10, 3, 13);
                     edits = rename(content, 3, 11, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -282,7 +282,7 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -291,7 +291,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 13, 1, 16);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -300,7 +300,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 2, 7);
                     assertRange(range, 2, 7, 2, 10);
                     edits = rename(content, 2, 7, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -309,7 +309,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 3, 11);
                     assertRange(range, 3, 10, 3, 13);
                     edits = rename(content, 3, 11, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 13, 1, 16);
                     assertEdit(edits[2], "renamed", 2, 7, 2, 10);
@@ -321,7 +321,7 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -332,7 +332,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 1, 15);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -343,7 +343,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 2, 7);
                     assertRange(range, 2, 6, 2, 9);
                     edits = rename(content, 2, 7, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -354,7 +354,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 3, 11);
                     assertRange(range, 3, 9, 3, 12);
                     edits = rename(content, 3, 11, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -365,7 +365,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 4, 12);
                     assertRange(range, 4, 11, 4, 14);
                     edits = rename(content, 4, 12, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -376,7 +376,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 5, 13);
                     assertRange(range, 5, 11, 5, 14);
                     edits = rename(content, 5, 13, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -390,7 +390,7 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -401,7 +401,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 1, 15);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -412,7 +412,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 2, 7);
                     assertRange(range, 2, 6, 2, 9);
                     edits = rename(content, 2, 7, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -423,7 +423,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 3, 11);
                     assertRange(range, 3, 9, 3, 12);
                     edits = rename(content, 3, 11, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -434,7 +434,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 4, 12);
                     assertRange(range, 4, 11, 4, 14);
                     edits = rename(content, 4, 12, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -445,7 +445,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 5, 13);
                     assertRange(range, 5, 11, 5, 14);
                     edits = rename(content, 5, 13, "renamed");
-                    assert.equal(edits.length, 6);
+                    assert.strictEqual(edits.length, 6);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                     assertEdit(edits[2], "renamed", 2, 6, 2, 9);
@@ -459,13 +459,13 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
 
                     range = prepareRename(content, 1, 15);
                     assert.strictEqual(range, null);
                     edits = rename(content, 1, 15, "renamed");
-                    assert.equal(edits.length, 0);
+                    assert.strictEqual(edits.length, 0);
                 });
 
                 it("$var in LABEL value with double quotes", function () {
@@ -473,14 +473,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 14, 1, 17);
 
                     range = prepareRename(content, 1, 15);
                     assertRange(range, 1, 14, 1, 17);
                     edits = rename(content, 1, 15, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 14, 1, 17);
                 });
@@ -490,13 +490,13 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
 
                     range = prepareRename(content, 1, 17);
                     assert.strictEqual(range, null);
                     edits = rename(content, 1, 17, "renamed");
-                    assert.equal(edits.length, 0);
+                    assert.strictEqual(edits.length, 0);
                 });
 
                 it("${var} in LABEL value with double quotes", function () {
@@ -504,14 +504,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 15, 1, 18);
 
                     range = prepareRename(content, 1, 17);
                     assertRange(range, 1, 15, 1, 18);
                     edits = rename(content, 1, 17, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 15, 1, 18);
                 });
@@ -521,21 +521,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     range = prepareRename(content, 1, 10);
                     assertRange(range, 1, 9, 2, 2);
                     edits = rename(content, 1, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 9, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
@@ -543,21 +543,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     edits = rename(content, 2, 10, "renamed");
                     range = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -565,21 +565,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     range = prepareRename(content, 1, 9);
                     assertRange(range, 1, 8, 2, 2);
                     edits = rename(content, 1, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 8, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
@@ -587,21 +587,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     edits = rename(content, 2, 9, "renamed");
                     range = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -609,21 +609,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 2, 2);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 12, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
                 });
@@ -633,21 +633,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     edits = rename(content, 1, 10, "renamed");
                     range = prepareRename(content, 1, 10);
                     assertRange(range, 1, 9, 2, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     edits = rename(content, 2, 1, "renamed");
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 9, 2, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
@@ -655,21 +655,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -677,21 +677,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     edits = rename(content, 1, 9, "renamed");
                     range = prepareRename(content, 1, 9);
                     assertRange(range, 1, 8, 2, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     edits = rename(content, 2, 1, "renamed");
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 8, 2, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
@@ -699,21 +699,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     edits = rename(content, 2, 9, "renamed");
                     range = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     edits = rename(content, 3, 1, "renamed");
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -721,21 +721,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 2, 2);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 12, 2, 2,);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
                 });
@@ -745,21 +745,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     range = prepareRename(content, 1, 10);
                     assertRange(range, 1, 9, 2, 2);
                     edits = rename(content, 1, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 9, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
@@ -767,21 +767,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -789,21 +789,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     range = prepareRename(content, 1, 9);
                     assertRange(range, 1, 8, 2, 2);
                     edits = rename(content, 1, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 8, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
@@ -811,21 +811,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 2, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -833,21 +833,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 2, 2);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 12, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
                 });
@@ -857,21 +857,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     range = prepareRename(content, 1, 10);
                     assertRange(range, 1, 9, 2, 2);
                     edits = rename(content, 1, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 9, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 9, 2, 2);
 
@@ -879,21 +879,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -901,21 +901,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     range = prepareRename(content, 1, 9);
                     assertRange(range, 1, 8, 2, 2);
                     edits = rename(content, 1, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 8, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 8, 2, 2);
 
@@ -923,21 +923,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 2, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -945,21 +945,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 2, 2);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
 
                     range = prepareRename(content, 2, 1);
                     assertRange(range, 1, 12, 2, 2);
                     edits = rename(content, 2, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 12, 2, 2);
                 });
@@ -969,14 +969,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
 
                     range  = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 1, 15);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                 });
@@ -986,14 +986,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
 
                     range  = prepareRename(content, 1, 13);
                     assertRange(range, 1, 12, 1, 15);
                     edits = rename(content, 1, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 12, 1, 15);
                 });
@@ -1003,14 +1003,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 13);
 
                     range  = prepareRename(content, 1, 12);
                     assertRange(range, 1, 10, 1, 13);
                     edits = rename(content, 1, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 13);
                 });
@@ -1020,14 +1020,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 8);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 14);
 
                     range  = prepareRename(content, 1, 12);
                     assertRange(range, 1, 10, 1, 14);
                     edits = rename(content, 1, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 8);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 14);
                 });
@@ -1203,13 +1203,13 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5,);
                     assertRange(range, 1, 4, 1, 7);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
 
                     range  = prepareRename(content, 2, 15);
                     assert.strictEqual(null, range);
                     edits = rename(content, 2, 15, "renamed");
-                    assert.equal(edits.length, 0);
+                    assert.strictEqual(edits.length, 0);
                 });
 
                 it("$var in LABEL value with double quotes", function () {
@@ -1217,14 +1217,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5,);
                     assertRange(range, 1, 4, 1, 7);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 14, 2, 17);
 
                     range  = prepareRename(content, 2, 15);
                     assertRange(range, 2, 14, 2, 17);
                     edits = rename(content, 2, 15, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 14, 2, 17);
                 });
@@ -1234,13 +1234,13 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5,);
                     assertRange(range, 1, 4, 1, 7);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
 
                     range  = prepareRename(content, 2, 17);
                     assert.strictEqual(null, range);
                     edits = rename(content, 2, 17, "renamed");
-                    assert.equal(edits.length, 0);
+                    assert.strictEqual(edits.length, 0);
                 });
 
                 it("${var} in LABEL value with double quotes", function () {
@@ -1248,14 +1248,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5,);
                     assertRange(range, 1, 4, 1, 7);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 15, 2, 18);
 
                     range  = prepareRename(content, 2, 17);
                     assertRange(range, 2, 15, 2, 18);
                     edits = rename(content, 2, 17, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 15, 2, 18);
                 });
@@ -1265,21 +1265,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5,);
                     assertRange(range, 1, 4, 1, 8);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -1287,21 +1287,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 3, 10);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 3, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
@@ -1309,21 +1309,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 2, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -1331,21 +1331,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 3, 9);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 3, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
@@ -1353,21 +1353,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 2, 13);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 2, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
                 });
@@ -1377,21 +1377,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -1399,21 +1399,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 3, 10);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 3, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
@@ -1421,21 +1421,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 2, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -1443,21 +1443,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 3, 9);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 3, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
@@ -1465,21 +1465,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 2, 13);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 2, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
                 });
@@ -1489,21 +1489,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -1511,21 +1511,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 3, 10);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 3, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
@@ -1533,21 +1533,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 2, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -1555,21 +1555,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 3, 9);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 3, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
@@ -1577,21 +1577,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 2, 13);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 2, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
                 });
@@ -1601,21 +1601,21 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 9, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 9, 3, 2);
 
@@ -1623,21 +1623,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 3, 10);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 3, 10, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 9, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 9, 4, 2);
 
@@ -1645,21 +1645,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 2, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 8, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 8, 3, 2);
 
@@ -1667,21 +1667,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 8);
                     edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 3, 9);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 3, 9, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
                     range  = prepareRename(content, 4, 1);
                     assertRange(range, 3, 8, 4, 2);
                     edits = rename(content, 4, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 8);
                     assertEdit(edits[1], "renamed", 3, 8, 4, 2);
 
@@ -1689,21 +1689,21 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 2, 13);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 2, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
 
                     range  = prepareRename(content, 3, 1);
                     assertRange(range, 2, 12, 3, 2);
                     edits = rename(content, 3, 1, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 12, 3, 2);
                 });
@@ -1713,14 +1713,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 7);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 12, 2, 15);
 
                     range  = prepareRename(content, 2, 13);
                     assertRange(range, 2, 12, 2, 15);
                     edits = rename(content, 2, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 12, 2, 15);
                 });
@@ -1730,14 +1730,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 7);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 12, 2, 15);
 
                     range  = prepareRename(content, 2, 13);
                     assertRange(range, 2, 12, 2, 15);
                     edits = rename(content, 2, 13, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 12, 2, 15);
                 });
@@ -1747,14 +1747,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 7);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 10, 2, 13);
 
                     range  = prepareRename(content, 2, 12);
                     assertRange(range, 2, 10, 2, 13);
                     edits = rename(content, 2, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 7);
                     assertEdit(edits[1], "renamed", 2, 10, 2, 13);
                 });
@@ -1764,14 +1764,14 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 8);
                     let edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 10, 2, 14);
 
                     range  = prepareRename(content, 2, 12);
                     assertRange(range, 2, 10, 2, 14);
                     edits = rename(content, 2, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 4, 1, 8);
                     assertEdit(edits[1], "renamed", 2, 10, 2, 14);
                 });
@@ -1781,7 +1781,7 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 2, 5);
                     assertRange(range, 2, 4, 2, 7);
                     let edits = rename(content, 2, 5, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 2, 4, 2, 7);
                 });
             });
@@ -1801,26 +1801,26 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 6);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 11, 1, 13);
 
                     range  = prepareRename(content, 1, 12);
                     assertRange(range, 1, 11, 1, 13);
                     edits = rename(content, 1, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 11, 1, 13);
 
                     range  = prepareRename(content, 0, 11);
                     assert.strictEqual(null, range);
                     edits = rename(content, 0, 11, "renamed");
-                    assert.equal(edits.length, 0);
+                    assert.strictEqual(edits.length, 0);
 
                     range  = prepareRename(content, 1, 18);
                     assertRange(range, 1, 17, 1, 19);
                     edits = rename(content, 1, 18, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 1, 17, 1, 19);
                 });
 
@@ -1829,26 +1829,26 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 6);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 12);
 
                     range  = prepareRename(content, 1, 11);
                     assertRange(range, 1, 10, 1, 12);
                     edits = rename(content, 1, 11, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 12);
 
                     range  = prepareRename(content, 0, 11);
                     assert.strictEqual(null, range);
                     edits = rename(content, 0, 11, "renamed");
-                    assert.equal(edits.length, 0);
+                    assert.strictEqual(edits.length, 0);
 
                     range  = prepareRename(content, 1, 15);
                     assertRange(range, 1, 14, 1, 16);
                     edits = rename(content, 1, 15, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 1, 14, 1, 16);
                 });
             });
@@ -1865,7 +1865,7 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 6);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 14, 1, 16);
@@ -1874,7 +1874,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 6);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 14, 1, 16);
@@ -1883,7 +1883,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 15);
                     assertRange(range, 1, 14, 1, 16);
                     edits = rename(content, 1, 15, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 14, 1, 16);
@@ -1892,7 +1892,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 10);
                     assertRange(range, 2, 9, 2, 11);
                     edits = rename(content, 2, 10, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 14, 1, 16);
@@ -1909,7 +1909,7 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 6);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 13, 1, 15);
@@ -1918,7 +1918,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 5);
                     assertRange(range, 1, 4, 1, 6);
                     edits = rename(content, 1, 5, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 13, 1, 15);
@@ -1927,7 +1927,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 1, 14);
                     assertRange(range, 1, 13, 1, 15);
                     edits = rename(content, 1, 14, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 13, 1, 15);
@@ -1936,7 +1936,7 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 2, 9);
                     assertRange(range, 2, 8, 2, 10);
                     edits = rename(content, 2, 9, "renamed");
-                    assert.equal(edits.length, 4);
+                    assert.strictEqual(edits.length, 4);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 6);
                     assertEdit(edits[1], "renamed", 1, 4, 1, 6);
                     assertEdit(edits[2], "renamed", 1, 13, 1, 15);
@@ -1950,28 +1950,28 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 11, 1, 14);
 
                     range  = prepareRename(content, 1, 12);
                     assertRange(range, 1, 11, 1, 14);
                     edits = rename(content, 1, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 11, 1, 14);
 
                     range  = prepareRename(content, 0, 16);
                     assertRange(range, 0, 14, 0, 18);
                     edits = rename(content, 0, 16, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 14, 0, 18);
                     assertEdit(edits[1], "renamed", 1, 18, 1, 22);
 
                     range  = prepareRename(content, 1, 20);
                     assertRange(range, 1, 18, 1, 22);
                     edits = rename(content, 1, 20, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 14, 0, 18);
                     assertEdit(edits[1], "renamed", 1, 18, 1, 22);
 
@@ -1979,42 +1979,42 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 3, 11, 3, 14);
 
                     range  = prepareRename(content, 3, 12);
                     assertRange(range, 3, 11, 3, 14);
                     edits = rename(content, 3, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 3, 11, 3, 14);
 
                     range  = prepareRename(content, 1, 2);
                     assertRange(range, 1, 0, 1, 4);
                     edits = rename(content, 1, 2, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 0, 1, 4);
                     assertEdit(edits[1], "renamed", 3, 18, 3, 22);
 
                     range  = prepareRename(content, 3, 20);
                     assertRange(range, 3, 18, 3, 22);
                     edits = rename(content, 3, 20, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 0, 1, 4);
                     assertEdit(edits[1], "renamed", 3, 18, 3, 22);
 
                     range  = prepareRename(content, 2, 2);
                     assertRange(range, 2, 0, 2, 4);
                     edits = rename(content, 2, 2, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 0, 2, 4);
                     assertEdit(edits[1], "renamed", 3, 26, 3, 30);
 
                     range  = prepareRename(content, 3, 28);
                     assertRange(range, 3, 26, 3, 30);
                     edits = rename(content, 3, 28, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 0, 2, 4);
                     assertEdit(edits[1], "renamed", 3, 26, 3, 30);
                 });
@@ -2024,28 +2024,28 @@ describe("Dockerfile Document Rename tests", function () {
                     let range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     let edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 13);
 
                     range  = prepareRename(content, 1, 12);
                     assertRange(range, 1, 10, 1, 13);
                     edits = rename(content, 1, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 1, 10, 1, 13);
 
                     range  = prepareRename(content, 0, 16);
                     assertRange(range, 0, 14, 0, 18);
                     edits = rename(content, 0, 16, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 14, 0, 18);
                     assertEdit(edits[1], "renamed", 1, 15, 1, 19);
 
                     range  = prepareRename(content, 1, 16);
                     assertRange(range, 1, 15, 1, 19);
                     edits = rename(content, 1, 16, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 14, 0, 18);
                     assertEdit(edits[1], "renamed", 1, 15, 1, 19);
 
@@ -2053,42 +2053,42 @@ describe("Dockerfile Document Rename tests", function () {
                     range  = prepareRename(content, 0, 5);
                     assertRange(range, 0, 4, 0, 7);
                     edits = rename(content, 0, 5, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 3, 10, 3, 13);
 
                     range  = prepareRename(content, 3, 12);
                     assertRange(range, 3, 10, 3, 13);
                     edits = rename(content, 3, 12, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 0, 4, 0, 7);
                     assertEdit(edits[1], "renamed", 3, 10, 3, 13);
 
                     range  = prepareRename(content, 1, 2);
                     assertRange(range, 1, 0, 1, 4);
                     edits = rename(content, 1, 2, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 0, 1, 4);
                     assertEdit(edits[1], "renamed", 3, 15, 3, 19);
 
                     range  = prepareRename(content, 3, 16);
                     assertRange(range, 3, 15, 3, 19);
                     edits = rename(content, 3, 16, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 1, 0, 1, 4);
                     assertEdit(edits[1], "renamed", 3, 15, 3, 19);
 
                     range  = prepareRename(content, 2, 2);
                     assertRange(range, 2, 0, 2, 4);
                     edits = rename(content, 2, 2, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 0, 2, 4);
                     assertEdit(edits[1], "renamed", 3, 21, 3, 25);
 
                     range  = prepareRename(content, 3, 22);
                     assertRange(range, 3, 21, 3, 25);
                     edits = rename(content, 3, 22, "renamed");
-                    assert.equal(edits.length, 2);
+                    assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "renamed", 2, 0, 2, 4);
                     assertEdit(edits[1], "renamed", 3, 21, 3, 25);
                 });
@@ -2122,14 +2122,14 @@ describe("Dockerfile Document Rename tests", function () {
 
                     assert.strictEqual(null, prepareRename(content, 1, 11));
                     assert.strictEqual(null, prepareRename(content, 4, 11));
-                    assert.equal(rename(content, 1, 11, "renamed").length, 0);
-                    assert.equal(rename(content, 4, 11, "renamed").length, 0);
+                    assert.strictEqual(rename(content, 1, 11, "renamed").length, 0);
+                    assert.strictEqual(rename(content, 4, 11, "renamed").length, 0);
 
                     let edits = rename(content, 2, 18, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 2, 17, 2, 19);
                     edits = rename(content, 5, 18, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 5, 17, 5, 19);
                 });
 
@@ -2158,19 +2158,19 @@ describe("Dockerfile Document Rename tests", function () {
 
                     assert.strictEqual(null, prepareRename(content, 1, 11));
                     assert.strictEqual(null, prepareRename(content, 4, 11));
-                    assert.equal(rename(content, 1, 11, "renamed").length, 0);
-                    assert.equal(rename(content, 4, 11, "renamed").length, 0);
+                    assert.strictEqual(rename(content, 1, 11, "renamed").length, 0);
+                    assert.strictEqual(rename(content, 4, 11, "renamed").length, 0);
 
                     let range  = prepareRename(content, 2, 15);
                     assertRange(range, 2, 14, 2, 16);
                     let edits = rename(content, 2, 15, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 2, 14, 2, 16);
 
                     range  = prepareRename(content, 5, 15);
                     assertRange(range, 5, 14, 5, 16);
                     edits = rename(content, 5, 15, "renamed");
-                    assert.equal(edits.length, 1);
+                    assert.strictEqual(edits.length, 1);
                     assertEdit(edits[0], "renamed", 5, 14, 5, 16);
                 });
             });

@@ -23,11 +23,11 @@ function findDefinition(content: string, line: number, character: number): Locat
 }
 
 function assertLocation(location: Location, startLine: number, startCharacter: number, endLine: number, endCharacter: number) {
-    assert.equal(location.uri, URI);
-    assert.equal(location.range.start.line, startLine);
-    assert.equal(location.range.start.character, startCharacter);
-    assert.equal(location.range.end.line, endLine);
-    assert.equal(location.range.end.character, endCharacter);
+    assert.strictEqual(location.uri, URI);
+    assert.strictEqual(location.range.start.line, startLine);
+    assert.strictEqual(location.range.start.character, startCharacter);
+    assert.strictEqual(location.range.end.line, endLine);
+    assert.strictEqual(location.range.end.character, endCharacter);
 }
 
 describe("Dockerfile Document Definition tests", function () {
@@ -89,7 +89,7 @@ describe("Dockerfile Document Definition tests", function () {
 
                 // cursor in the COPY
                 location = computeDefinition(document, Position.create(2, 16));
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
             });
 
             it("FROM reference", function () {
@@ -107,17 +107,17 @@ describe("Dockerfile Document Definition tests", function () {
                 let document = "FROM node AS bootstrap   \nFROM node\nCOPY --from=bootstrap /git/bin/app .";
                 // cursor after the AS source image
                 let location = computeDefinition(document, Position.create(0, 24));
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 // cursor after the COPY --from
                 location = computeDefinition(document, Position.create(2, 22));
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
             });
 
             it("COPY bootstrap", function () {
                 let document = "FROM node AS bootstrap\nCOPY bootstrap /git/build/";
                 // cursor after the AS source image
                 let location = computeDefinition(document, Position.create(1, 10));
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
             });
         });
     });
@@ -167,21 +167,21 @@ describe("Dockerfile Document Definition tests", function () {
                     it("nested escaped", function () {
                         let document = instruction + " var\nSTOPSIGNAL prefix\\${var}\nUSER prefix\\${var}\nWORKDIR prefix\\${var}";
                         let location = computeDefinition(document, Position.create(1, 20));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(2, 14));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 18));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("no definition", function () {
                         let document = instruction + "\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}";
                         let location = computeDefinition(document, Position.create(1, 13));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(2, 7));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 11));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("repeated declaration", function () {
@@ -221,7 +221,7 @@ describe("Dockerfile Document Definition tests", function () {
                     it("label value with single quotes", function () {
                         let document = instruction + " var\nLABEL label='${var}'";
                         let location = computeDefinition(document, Position.create(1, 17));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("label value with double quotes", function () {
@@ -393,29 +393,29 @@ describe("Dockerfile Document Definition tests", function () {
                     it("nested escaped", function () {
                         let document = instruction + " var\nSTOPSIGNAL prefix\\$var\nUSER prefix\\$var\nWORKDIR prefix\\$var";
                         let location = computeDefinition(document, Position.create(1, 20));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(2, 14));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 18));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("no definition", function () {
                         let document = instruction + "\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var";
                         let location = computeDefinition(document, Position.create(1, 13));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(2, 7));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 11));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
 
                         document = instruction + "\nRUN echo \"$var\"";
                         location = computeDefinition(document, Position.create(1, 12));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
 
                         document = instruction + "\nRUN echo '$var'";
                         location = computeDefinition(document, Position.create(1, 12));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("repeated declaration", function () {
@@ -455,7 +455,7 @@ describe("Dockerfile Document Definition tests", function () {
                     it("label value with single quotes", function () {
                         let document = instruction + " var\nLABEL label='$var'";
                         let location = computeDefinition(document, Position.create(1, 15));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("label value with double quotes", function () {
@@ -676,17 +676,17 @@ describe("Dockerfile Document Definition tests", function () {
                             "FROM alpine\n" + instruction + " var\nSTOPSIGNAL prefix\\${var}\nUSER prefix\\${var}\nWORKDIR prefix\\${var}"
                             ;
                         let location = computeDefinition(document, Position.create(2, 20));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 14));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(4, 18));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(7, 20));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(8, 14));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(9, 18));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("no definition", function () {
@@ -695,17 +695,17 @@ describe("Dockerfile Document Definition tests", function () {
                             "FROM alpine\n" + instruction + "\nSTOPSIGNAL ${var}\nUSER ${var}\nWORKDIR ${var}"
                             ;
                         let location = computeDefinition(document, Position.create(2, 13));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 7));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(4, 11));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(7, 13));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(8, 7));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(9, 11));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("repeated declaration", function () {
@@ -776,7 +776,7 @@ describe("Dockerfile Document Definition tests", function () {
                     it("label value with single quotes", function () {
                         let document = "FROM alpine\n" + instruction + " var\nLABEL label='$var'";
                         let location = computeDefinition(document, Position.create(2, 15));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("label value with double quotes", function () {
@@ -1007,17 +1007,17 @@ describe("Dockerfile Document Definition tests", function () {
                             "FROM alpine\n" + instruction + " var\nSTOPSIGNAL prefix\\$var\nUSER prefix\\$var\nWORKDIR prefix\\$var"
                             ;
                         let location = computeDefinition(document, Position.create(2, 20));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 14));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(4, 18));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(7, 20));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(8, 14));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(9, 18));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("no definition", function () {
@@ -1026,35 +1026,35 @@ describe("Dockerfile Document Definition tests", function () {
                             "FROM alpine\n" + instruction + "\nSTOPSIGNAL $var\nUSER $var\nWORKDIR $var"
                             ;
                         let location = computeDefinition(document, Position.create(2, 13));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(3, 7));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(4, 11));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(7, 13));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(8, 7));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(9, 11));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
 
                         document =
                             "FROM alpine\n" + instruction + "\nRUN echo \"$var\"\n" +
                             "FROM alpine\n" + instruction + "\nRUN echo \"$var\""
                             ;
                         location = computeDefinition(document, Position.create(2, 12));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(5, 12));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
 
                         document =
                             "FROM alpine\n" + instruction + "\nRUN echo '$var'\n" +
                             "FROM alpine\n" + instruction + "\nRUN echo '$var'"
                             ;
                         location = computeDefinition(document, Position.create(2, 12));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                         location = computeDefinition(document, Position.create(5, 12));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("repeated declaration", function () {
@@ -1125,7 +1125,7 @@ describe("Dockerfile Document Definition tests", function () {
                     it("label value with single quotes", function () {
                         let document = "FROM alpine\n" + instruction + " var\nLABEL label='${var}'";
                         let location = computeDefinition(document, Position.create(2, 17));
-                        assert.equal(location, null);
+                        assert.strictEqual(location, null);
                     });
 
                     it("label value with double quotes", function () {
@@ -1281,9 +1281,9 @@ describe("Dockerfile Document Definition tests", function () {
                     location = computeDefinition(document, Position.create(1, 12));
                     assertLocation(location, 0, 4, 0, 6);
                     location = computeDefinition(document, Position.create(0, 11));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(1, 18));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                 });
 
                 it("$var", function () {
@@ -1293,9 +1293,9 @@ describe("Dockerfile Document Definition tests", function () {
                     location = computeDefinition(document, Position.create(1, 11));
                     assertLocation(location, 0, 4, 0, 6);
                     location = computeDefinition(document, Position.create(0, 11));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(1, 15));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                 });
             });
 
@@ -1403,17 +1403,17 @@ describe("Dockerfile Document Definition tests", function () {
                     location = computeDefinition(document, Position.create(2, 12));
                     assertLocation(location, 1, 4, 1, 6);
                     location = computeDefinition(document, Position.create(1, 11));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(2, 18));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(4, 5));
                     assertLocation(location, 4, 4, 4, 6);
                     location = computeDefinition(document, Position.create(5, 12));
                     assertLocation(location, 4, 4, 4, 6);
                     location = computeDefinition(document, Position.create(4, 11));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(5, 18));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                 });
 
                 it("$var", function () {
@@ -1426,17 +1426,17 @@ describe("Dockerfile Document Definition tests", function () {
                     location = computeDefinition(document, Position.create(2, 11));
                     assertLocation(location, 1, 4, 1, 6);
                     location = computeDefinition(document, Position.create(1, 11));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(2, 15));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(4, 5));
                     assertLocation(location, 4, 4, 4, 6);
                     location = computeDefinition(document, Position.create(5, 11));
                     assertLocation(location, 4, 4, 4, 6);
                     location = computeDefinition(document, Position.create(4, 11));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                     location = computeDefinition(document, Position.create(5, 15));
-                    assert.equal(location, null);
+                    assert.strictEqual(location, null);
                 });
             });
 
@@ -1722,23 +1722,23 @@ describe("Dockerfile Document Definition tests", function () {
             it("scoped", function () {
                 let document = "ARG image=alpine\nFROM alpine\nRUN echo $image";
                 let location = findDefinition(document, 2, 12);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
             });
 
             it("non-existent variable", function () {
                 let document = "FROM $image\nARG image";
                 let location = findDefinition(document, 0, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
 
                 document = "ARG\nFROM $image";
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
 
                 document = "ARG image=alpine\nFROM $image2\nARG image2=alpine2";
                 location = findDefinition(document, 0, 6);
                 assertLocation(location, 0, 4, 0, 9);
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 location = findDefinition(document, 2, 6);
                 assertLocation(location, 2, 4, 2, 10);
             });
@@ -1750,15 +1750,15 @@ describe("Dockerfile Document Definition tests", function () {
                 let location = findDefinition(document, 0, 6);
                 assertLocation(location, 0, 4, 0, 9);
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
 
                 document = "ENV image=alpine\nFROM $image\nFROM $image";
                 location = findDefinition(document, 0, 6);
                 assertLocation(location, 0, 4, 0, 9);
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 location = findDefinition(document, 2, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
             });
 
             it("reused variable name", function () {
@@ -1766,7 +1766,7 @@ describe("Dockerfile Document Definition tests", function () {
                 let location = findDefinition(document, 0, 6);
                 assertLocation(location, 0, 4, 0, 9);
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 location = findDefinition(document, 2, 6);
                 assertLocation(location, 2, 4, 2, 9);
 
@@ -1774,19 +1774,19 @@ describe("Dockerfile Document Definition tests", function () {
                 location = findDefinition(document, 0, 6);
                 assertLocation(location, 0, 4, 0, 9);
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 location = findDefinition(document, 2, 6);
                 assertLocation(location, 2, 4, 2, 9);
                 location = findDefinition(document, 3, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
 
                 document = "ENV image=alpine\nFROM $image\nFROM $image\nENV image=alpine2";
                 location = findDefinition(document, 0, 6);
                 assertLocation(location, 0, 4, 0, 9);
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 location = findDefinition(document, 2, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 location = findDefinition(document, 3, 6);
                 assertLocation(location, 3, 4, 3, 9);
             });
@@ -1794,23 +1794,23 @@ describe("Dockerfile Document Definition tests", function () {
             it("scoped", function () {
                 let document = "ENV image=alpine\nFROM alpine\nRUN echo $image";
                 let location = findDefinition(document, 2, 12);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
             });
 
             it("non-existent variable", function () {
                 let document = "FROM $image\nENV image";
                 let location = findDefinition(document, 0, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
 
                 document = "ENV\nFROM $image";
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
 
                 document = "ENV image=alpine\nFROM $image2\nENV image2=alpine2";
                 location = findDefinition(document, 0, 6);
                 assertLocation(location, 0, 4, 0, 9);
                 location = findDefinition(document, 1, 8);
-                assert.equal(location, null);
+                assert.strictEqual(location, null);
                 location = findDefinition(document, 2, 6);
                 assertLocation(location, 2, 4, 2, 10);
             });

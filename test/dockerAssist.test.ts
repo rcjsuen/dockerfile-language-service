@@ -43,641 +43,641 @@ function computePosition(content: string, line: number, character: number, snipp
 }
 
 function assertOnlyFROM(proposals: CompletionItem[], line: number, number: number, prefixLength: number) {
-    assert.equal(proposals.length, 1);
+    assert.strictEqual(proposals.length, 1);
     assertFROM(proposals[0], line, number, prefixLength);
 }
 
 function assertRawDocumentation(item: CompletionItem, expected: string) {
     service.setCapabilities({ });
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [] } }});
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ undefined ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ null ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown, MarkupKind.PlainText ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText, MarkupKind.Markdown ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(item.documentation, expected);
+    assert.strictEqual(item.documentation, expected);
 }
 
 function assertResolvedDocumentation(item: CompletionItem) {
     item.documentation = undefined;
     let service = DockerfileLanguageServiceFactory.createLanguageService();
     service.resolveCompletionItem(item);
-    assert.equal(typeof item.documentation, "string");
-    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+    assert.strictEqual(typeof item.documentation, "string");
+    assert.strictEqual(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [] } }});
     service.resolveCompletionItem(item);
-    assert.equal(typeof item.documentation, "string");
-    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+    assert.strictEqual(typeof item.documentation, "string");
+    assert.strictEqual(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ undefined ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(typeof item.documentation, "string");
-    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+    assert.strictEqual(typeof item.documentation, "string");
+    assert.strictEqual(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ null ] } }});
     service.resolveCompletionItem(item);
-    assert.equal(typeof item.documentation, "string");
-    assert.equal(item.documentation, plainTextDocumentation.getDocumentation(item.data));
+    assert.strictEqual(typeof item.documentation, "string");
+    assert.strictEqual(item.documentation, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown ] } }});
     service.resolveCompletionItem(item);
     let markupContent = item.documentation as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.strictEqual(markupContent.kind, MarkupKind.Markdown);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
+    assert.strictEqual(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText ] } }});
     service.resolveCompletionItem(item);
     markupContent = item.documentation as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.strictEqual(markupContent.kind, MarkupKind.PlainText);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
+    assert.strictEqual(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.Markdown, MarkupKind.PlainText ] } }});
     service.resolveCompletionItem(item);
     markupContent = item.documentation as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.strictEqual(markupContent.kind, MarkupKind.Markdown);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
+    assert.strictEqual(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
 
     item.documentation = undefined;
     service.setCapabilities({ completion: { completionItem: { documentationFormat: [ MarkupKind.PlainText, MarkupKind.Markdown ] } }});
     service.resolveCompletionItem(item);
     markupContent = item.documentation as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.strictEqual(markupContent.kind, MarkupKind.PlainText);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
+    assert.strictEqual(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
 }
 
 function assertADD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "ADD source dest");
+        assert.strictEqual(item.label, "ADD source dest");
     } else {
-        assert.equal(item.label, "ADD");
+        assert.strictEqual(item.label, "ADD");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "ADD ${1:source} ${2:dest}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "ADD ${1:source} ${2:dest}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "ADD");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "ADD");
     }
-    assert.equal(item.data, "ADD");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "ADD");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertARG(item: CompletionItem, line: number, character: number, prefixLength: number) {
-    assert.equal(item.label, "ARG");
-    assert.equal(item.kind, CompletionItemKind.Keyword);
-    assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-    assert.equal(item.textEdit.newText, "ARG");
-    assert.equal(item.data, "ARG");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.label, "ARG");
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.strictEqual(item.textEdit.newText, "ARG");
+    assert.strictEqual(item.data, "ARG");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertARG_NameOnly(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
-    assert.equal(item.label, "ARG name");
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.label, "ARG name");
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "ARG ${1:name}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "ARG ${1:name}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "ARG");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "ARG");
     }
-    assert.equal(item.data, "ARG_NameOnly");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "ARG_NameOnly");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertARG_DefaultValue(item: CompletionItem, line: number, character: number, prefixLength: number) {
-    assert.equal(item.label, "ARG name=defaultValue");
-    assert.equal(item.kind, CompletionItemKind.Keyword);
-    assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-    assert.equal(item.textEdit.newText, "ARG ${1:name}=${2:defaultValue}");
-    assert.equal(item.data, "ARG_DefaultValue");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.label, "ARG name=defaultValue");
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+    assert.strictEqual(item.textEdit.newText, "ARG ${1:name}=${2:defaultValue}");
+    assert.strictEqual(item.data, "ARG_DefaultValue");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertCMD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "CMD [ \"executable\" ]");
+        assert.strictEqual(item.label, "CMD [ \"executable\" ]");
     } else {
-        assert.equal(item.label, "CMD");
+        assert.strictEqual(item.label, "CMD");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "CMD [ \"${1:executable}\" ]");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "CMD [ \"${1:executable}\" ]");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "CMD");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "CMD");
     }
-    assert.equal(item.data, "CMD");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "CMD");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertCOPY(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "COPY source dest");
+        assert.strictEqual(item.label, "COPY source dest");
     } else {
-        assert.equal(item.label, "COPY");
+        assert.strictEqual(item.label, "COPY");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "COPY ${1:source} ${2:dest}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "COPY ${1:source} ${2:dest}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "COPY");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "COPY");
     }
-    assert.equal(item.data, "COPY");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "COPY");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertENTRYPOINT(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "ENTRYPOINT [ \"executable\" ]");
+        assert.strictEqual(item.label, "ENTRYPOINT [ \"executable\" ]");
     } else {
-        assert.equal(item.label, "ENTRYPOINT");
+        assert.strictEqual(item.label, "ENTRYPOINT");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "ENTRYPOINT [ \"${1:executable}\" ]");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "ENTRYPOINT [ \"${1:executable}\" ]");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "ENTRYPOINT");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "ENTRYPOINT");
     }
-    assert.equal(item.data, "ENTRYPOINT");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "ENTRYPOINT");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertENV(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "ENV key=value");
+        assert.strictEqual(item.label, "ENV key=value");
     } else {
-        assert.equal(item.label, "ENV");
+        assert.strictEqual(item.label, "ENV");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "ENV ${1:key}=${2:value}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "ENV ${1:key}=${2:value}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "ENV");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "ENV");
     }
-    assert.equal(item.data, "ENV");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "ENV");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertEXPOSE(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "EXPOSE port");
+        assert.strictEqual(item.label, "EXPOSE port");
     } else {
-        assert.equal(item.label, "EXPOSE");
+        assert.strictEqual(item.label, "EXPOSE");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "EXPOSE ${1:port}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "EXPOSE ${1:port}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "EXPOSE");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "EXPOSE");
     }
-    assert.equal(item.data, "EXPOSE");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "EXPOSE");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertFROM(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "FROM baseImage");
+        assert.strictEqual(item.label, "FROM baseImage");
     } else {
-        assert.equal(item.label, "FROM");
+        assert.strictEqual(item.label, "FROM");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "FROM ${1:baseImage}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "FROM ${1:baseImage}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "FROM");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "FROM");
     }
-    assert.equal(item.data, "FROM");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "FROM");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_CMD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ \"executable\" ]");
+        assert.strictEqual(item.label, "HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD [ \"executable\" ]");
     } else {
-        assert.equal(item.label, "HEALTHCHECK CMD");
+        assert.strictEqual(item.label, "HEALTHCHECK CMD");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "HEALTHCHECK --interval=${1:30s} --timeout=${2:30s} --start-period=${3:5s} --retries=${4:3} CMD [ \"${5:executable}\" ]");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "HEALTHCHECK --interval=${1:30s} --timeout=${2:30s} --start-period=${3:5s} --retries=${4:3} CMD [ \"${5:executable}\" ]");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "HEALTHCHECK CMD");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "HEALTHCHECK CMD");
     }
-    assert.equal(item.data, "HEALTHCHECK_CMD");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "HEALTHCHECK_CMD");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_CMD_Subcommand(item: CompletionItem, line: number, character: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "CMD [ \"executable\" ]");
+        assert.strictEqual(item.label, "CMD [ \"executable\" ]");
     } else {
-        assert.equal(item.label, "CMD");
+        assert.strictEqual(item.label, "CMD");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "CMD [ \"${1:executable}\" ]");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "CMD [ \"${1:executable}\" ]");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "CMD");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "CMD");
     }
-    assert.equal(item.data, "HEALTHCHECK_CMD");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "HEALTHCHECK_CMD");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertADD_FlagChown(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--chown=user:group");
+        assert.strictEqual(item.label, "--chown=user:group");
     } else {
-        assert.equal(item.label, "--chown=");
+        assert.strictEqual(item.label, "--chown=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--chown=${1:user\:group}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--chown=${1:user\:group}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--chown=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--chown=");
     }
-    assert.equal(item.data, "ADD_FlagChown");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "ADD_FlagChown");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertCOPY_FlagChown(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--chown=user:group");
+        assert.strictEqual(item.label, "--chown=user:group");
     } else {
-        assert.equal(item.label, "--chown=");
+        assert.strictEqual(item.label, "--chown=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--chown=${1:user\:group}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--chown=${1:user\:group}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--chown=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--chown=");
     }
-    assert.equal(item.data, "COPY_FlagChown");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "COPY_FlagChown");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertCOPY_FlagFrom(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--from=stage");
+        assert.strictEqual(item.label, "--from=stage");
     } else {
-        assert.equal(item.label, "--from=");
+        assert.strictEqual(item.label, "--from=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--from=${1:stage}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--from=${1:stage}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--from=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--from=");
     }
-    assert.equal(item.data, "COPY_FlagFrom");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "COPY_FlagFrom");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertFROM_FlagPlatform(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--platform=arm64");
+        assert.strictEqual(item.label, "--platform=arm64");
     } else {
-        assert.equal(item.label, "--platform=");
+        assert.strictEqual(item.label, "--platform=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--platform=${1:arm64}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--platform=${1:arm64}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--platform=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--platform=");
     }
-    assert.equal(item.data, "FROM_FlagPlatform");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "FROM_FlagPlatform");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagInterval(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--interval=30s");
+        assert.strictEqual(item.label, "--interval=30s");
     } else {
-        assert.equal(item.label, "--interval=");
+        assert.strictEqual(item.label, "--interval=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--interval=${1:30s}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--interval=${1:30s}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--interval=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--interval=");
     }
-    assert.equal(item.data, "HEALTHCHECK_FlagInterval");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "HEALTHCHECK_FlagInterval");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagTimeout(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--timeout=30s");
+        assert.strictEqual(item.label, "--timeout=30s");
     } else {
-        assert.equal(item.label, "--timeout=");
+        assert.strictEqual(item.label, "--timeout=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--timeout=${1:30s}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--timeout=${1:30s}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--timeout=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--timeout=");
     }
-    assert.equal(item.data, "HEALTHCHECK_FlagTimeout");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "HEALTHCHECK_FlagTimeout");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagStartPeriod(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--start-period=5s");
+        assert.strictEqual(item.label, "--start-period=5s");
     } else {
-        assert.equal(item.label, "--start-period=");
+        assert.strictEqual(item.label, "--start-period=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--start-period=${1:5s}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--start-period=${1:5s}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--start-period=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--start-period=");
     }
-    assert.equal(item.data, "HEALTHCHECK_FlagStartPeriod");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "HEALTHCHECK_FlagStartPeriod");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_FlagRetries(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "--retries=3");
+        assert.strictEqual(item.label, "--retries=3");
     } else {
-        assert.equal(item.label, "--retries=");
+        assert.strictEqual(item.label, "--retries=");
     }
-    assert.equal(item.kind, CompletionItemKind.Field);
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "--retries=${1:3}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--retries=${1:3}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "--retries=");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--retries=");
     }
-    assert.equal(item.data, "HEALTHCHECK_FlagRetries");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.data, "HEALTHCHECK_FlagRetries");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_NONE(item: CompletionItem, line: number, character: number, prefixLength: number) {
-    assert.equal(item.label, "HEALTHCHECK NONE");
-    assert.equal(item.kind, CompletionItemKind.Keyword);
-    assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-    assert.equal(item.data, "HEALTHCHECK_NONE");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal(item.textEdit.newText, "HEALTHCHECK NONE");
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.label, "HEALTHCHECK NONE");
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.strictEqual(item.data, "HEALTHCHECK_NONE");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual(item.textEdit.newText, "HEALTHCHECK NONE");
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertHEALTHCHECK_NONE_Subcommand(item: CompletionItem, line: number, character: number, endLine: number, endCharacter: number) {
-    assert.equal(item.label, "NONE");
-    assert.equal(item.kind, CompletionItemKind.Keyword);
-    assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-    assert.equal(item.textEdit.newText, "NONE");
-    assert.equal(item.data, "HEALTHCHECK_NONE");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.label, "NONE");
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.strictEqual(item.textEdit.newText, "NONE");
+    assert.strictEqual(item.data, "HEALTHCHECK_NONE");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
 }
 
 function assertLABEL(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "LABEL key=\"value\"");
+        assert.strictEqual(item.label, "LABEL key=\"value\"");
     } else {
-        assert.equal(item.label, "LABEL");
+        assert.strictEqual(item.label, "LABEL");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "LABEL ${1:key}=\"${2:value}\"");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "LABEL ${1:key}=\"${2:value}\"");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "LABEL");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "LABEL");
     }
-    assert.equal(item.data, "LABEL");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "LABEL");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertMAINTAINER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean, supportedTags?: CompletionItemTag[]) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "MAINTAINER name");
+        assert.strictEqual(item.label, "MAINTAINER name");
     } else {
-        assert.equal(item.label, "MAINTAINER");
+        assert.strictEqual(item.label, "MAINTAINER");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "MAINTAINER ${1:name}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "MAINTAINER ${1:name}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "MAINTAINER");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "MAINTAINER");
     }
-    assert.equal(item.data, "MAINTAINER");
+    assert.strictEqual(item.data, "MAINTAINER");
     if (deprecatedSupport) {
-        assert.equal(item.deprecated, true);
+        assert.strictEqual(item.deprecated, true);
     } else {
-        assert.equal(item.deprecated, undefined);
+        assert.strictEqual(item.deprecated, undefined);
     }
     if (supportedTags !== undefined && supportedTags.length > 0) {
         assert.strictEqual(item.tags.length, 1);
@@ -685,216 +685,216 @@ function assertMAINTAINER(item: CompletionItem, line: number, character: number,
     } else {
         assert.strictEqual(item.tags, undefined);
     }
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertONBUILD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "ONBUILD INSTRUCTION");
+        assert.strictEqual(item.label, "ONBUILD INSTRUCTION");
     } else {
-        assert.equal(item.label, "ONBUILD");
+        assert.strictEqual(item.label, "ONBUILD");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "ONBUILD ${1:INSTRUCTION}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "ONBUILD ${1:INSTRUCTION}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "ONBUILD");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "ONBUILD");
     }
-    assert.equal(item.data, "ONBUILD");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "ONBUILD");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertRUN(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "RUN command");
+        assert.strictEqual(item.label, "RUN command");
     } else {
-        assert.equal(item.label, "RUN");
+        assert.strictEqual(item.label, "RUN");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "RUN ${1:command}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "RUN ${1:command}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "RUN");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "RUN");
     }
-    assert.equal(item.data, "RUN");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "RUN");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertSHELL(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "SHELL [ \"executable\" ]");
+        assert.strictEqual(item.label, "SHELL [ \"executable\" ]");
     } else {
-        assert.equal(item.label, "SHELL");
+        assert.strictEqual(item.label, "SHELL");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "SHELL [ \"${1:executable}\" ]");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "SHELL [ \"${1:executable}\" ]");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "SHELL");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "SHELL");
     }
-    assert.equal(item.data, "SHELL");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "SHELL");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertSTOPSIGNAL(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "STOPSIGNAL signal");
+        assert.strictEqual(item.label, "STOPSIGNAL signal");
     } else {
-        assert.equal(item.label, "STOPSIGNAL");
+        assert.strictEqual(item.label, "STOPSIGNAL");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "STOPSIGNAL ${1:signal}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "STOPSIGNAL ${1:signal}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "STOPSIGNAL");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "STOPSIGNAL");
     }
-    assert.equal(item.data, "STOPSIGNAL");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "STOPSIGNAL");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertUSER(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "USER daemon");
+        assert.strictEqual(item.label, "USER daemon");
     } else {
-        assert.equal(item.label, "USER");
+        assert.strictEqual(item.label, "USER");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "USER ${1:daemon}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "USER ${1:daemon}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "USER");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "USER");
     }
-    assert.equal(item.data, "USER");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "USER");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertVOLUME(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "VOLUME [ \"/data\" ]");
+        assert.strictEqual(item.label, "VOLUME [ \"/data\" ]");
     } else {
-        assert.equal(item.label, "VOLUME");
+        assert.strictEqual(item.label, "VOLUME");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "VOLUME [ \"${1:/data}\" ]");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "VOLUME [ \"${1:/data}\" ]");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "VOLUME");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "VOLUME");
     }
-    assert.equal(item.data, "VOLUME");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "VOLUME");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertWORKDIR(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.label, "WORKDIR /the/workdir/path");
+        assert.strictEqual(item.label, "WORKDIR /the/workdir/path");
     } else {
-        assert.equal(item.label, "WORKDIR");
+        assert.strictEqual(item.label, "WORKDIR");
     }
-    assert.equal(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
-        assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.equal(item.textEdit.newText, "WORKDIR ${1:/the/workdir/path}");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "WORKDIR ${1:/the/workdir/path}");
     } else {
-        assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.equal(item.textEdit.newText, "WORKDIR");
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "WORKDIR");
     }
-    assert.equal(item.data, "WORKDIR");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, "WORKDIR");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
 function assertSourceImage(item: CompletionItem, sourceImage: string, buildIndex: number, documentation: string, startLine: number, startCharacter: number, endLine: number, endCharacter: number) {
-    assert.equal(item.label, sourceImage);
-    assert.equal(item.kind, CompletionItemKind.Reference);
-    assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
-    assert.equal(item.sortText, buildIndex.toString());
-    assert.equal(item.data, undefined);
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, documentation);
-    assert.equal(item.textEdit.newText, sourceImage);
-    assert.equal((item.textEdit as TextEdit).range.start.line, startLine);
-    assert.equal((item.textEdit as TextEdit).range.start.character, startCharacter);
-    assert.equal((item.textEdit as TextEdit).range.end.line, endLine);
-    assert.equal((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assert.strictEqual(item.label, sourceImage);
+    assert.strictEqual(item.kind, CompletionItemKind.Reference);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.strictEqual(item.sortText, buildIndex.toString());
+    assert.strictEqual(item.data, undefined);
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, documentation);
+    assert.strictEqual(item.textEdit.newText, sourceImage);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertRawDocumentation(item, documentation);
 }
 
 function assertDirectiveItems(items: CompletionItem[], line: number, character: number, prefixLength: number) {
-    assert.equal(items.length, 2);
+    assert.strictEqual(items.length, 2);
     assertDirectiveEscape(items[0], line, character, prefixLength);
     assertDirectiveSyntax(items[1], line, character, prefixLength);
 }
 
 function assertDirectiveEscape(item: CompletionItem, line: number, character: number, prefixLength: number) {
-    assert.equal(item.label, "escape=`");
-    assert.equal(item.kind, CompletionItemKind.Keyword);
-    assert.equal(item.insertTextFormat, InsertTextFormat.Snippet);
-    assert.equal(item.textEdit.newText, "escape=${1:`}");
-    assert.equal(item.data, "escape");
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.label, "escape=`");
+    assert.strictEqual(item.kind, CompletionItemKind.Keyword);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+    assert.strictEqual(item.textEdit.newText, "escape=${1:`}");
+    assert.strictEqual(item.data, "escape");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertResolvedDocumentation(item);
 }
 
@@ -915,29 +915,29 @@ function assertDirectiveSyntax(item: CompletionItem, line: number, character: nu
 
 function assertVariable(variable: string, item: CompletionItem, line: number, character: number, prefixLength: number, brace: boolean, documentation?: string) {
     if (brace) {
-        assert.equal(item.label, "${" + variable + '}');
+        assert.strictEqual(item.label, "${" + variable + '}');
     } else {
-        assert.equal(item.label, '$' + variable);
+        assert.strictEqual(item.label, '$' + variable);
     }
-    assert.equal(item.kind, CompletionItemKind.Variable);
-    assert.equal(item.insertTextFormat, InsertTextFormat.PlainText);
+    assert.strictEqual(item.kind, CompletionItemKind.Variable);
+    assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
     if (brace) {
-        assert.equal(item.textEdit.newText, "${" + variable + '}');
+        assert.strictEqual(item.textEdit.newText, "${" + variable + '}');
     } else {
-        assert.equal(item.textEdit.newText, '$' + variable);
+        assert.strictEqual(item.textEdit.newText, '$' + variable);
     }
-    assert.equal(item.data, undefined);
-    assert.equal(item.deprecated, undefined);
-    assert.equal(item.documentation, documentation);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual(item.data, undefined);
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, documentation);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
     assertRawDocumentation(item, documentation);
 }
 
 function assertDockerVariables(items: CompletionItem[], line: number, character: number, prefixLength: number, brace: boolean) {
-    assert.equal(items.length, 8);
+    assert.strictEqual(items.length, 8);
     assertVariable("FTP_PROXY", items[0], line, character, prefixLength, brace);
     assertVariable("ftp_proxy", items[1], line, character, prefixLength, brace);
     assertVariable("HTTP_PROXY", items[2], line, character, prefixLength, brace);
@@ -957,10 +957,10 @@ function assertPath(item: CompletionItem, path: string, line: number, character:
     assert.strictEqual(item.deprecated, undefined);
     assert.strictEqual(item.documentation, undefined);
     assert.strictEqual(item.tags, undefined);
-    assert.equal((item.textEdit as TextEdit).range.start.line, line);
-    assert.equal((item.textEdit as TextEdit).range.start.character, character - prefixLength);
-    assert.equal((item.textEdit as TextEdit).range.end.line, line);
-    assert.equal((item.textEdit as TextEdit).range.end.character, character);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character - prefixLength);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character);
 }
 
 function assertProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number, snippetSupport?: boolean, deprecatedSupport?: boolean, supportedTags?: CompletionItemTag[]) {
@@ -1036,23 +1036,23 @@ function assertProposals(proposals: CompletionItem[], offset: number, prefix: nu
 }
 
 function assertAddFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
-    assert.equal(items.length, 1);
+    assert.strictEqual(items.length, 1);
     assertADD_FlagChown(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 }
 
 function assertCopyFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
-    assert.equal(items.length, 2);
+    assert.strictEqual(items.length, 2);
     assertCOPY_FlagChown(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertCOPY_FlagFrom(items[1], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 }
 
 function assertFromFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
-    assert.equal(items.length, 1);
+    assert.strictEqual(items.length, 1);
     assertFROM_FlagPlatform(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 }
 
 function assertHealthcheckItems(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
-    assert.equal(items.length, 6);
+    assert.strictEqual(items.length, 6);
     // CMD and NONE first
     assertHEALTHCHECK_CMD_Subcommand(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_NONE_Subcommand(items[1], startLine, startCharacter, endLine, endCharacter);
@@ -1062,33 +1062,33 @@ function assertHealthcheckItems(items: CompletionItem[], startLine: number, star
     assertHEALTHCHECK_FlagStartPeriod(items[4], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_FlagTimeout(items[5], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 
-    assert.equal(items[0].sortText, "0");
-    assert.equal(items[1].sortText, "1");
-    assert.equal(items[2].sortText, "2");
-    assert.equal(items[3].sortText, "3");
-    assert.equal(items[4].sortText, "4");
-    assert.equal(items[5].sortText, "5");
+    assert.strictEqual(items[0].sortText, "0");
+    assert.strictEqual(items[1].sortText, "1");
+    assert.strictEqual(items[2].sortText, "2");
+    assert.strictEqual(items[3].sortText, "3");
+    assert.strictEqual(items[4].sortText, "4");
+    assert.strictEqual(items[5].sortText, "5");
 }
 
 function assertHealthcheckFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
-    assert.equal(items.length, 4);
+    assert.strictEqual(items.length, 4);
     // alphabetical order
     assertHEALTHCHECK_FlagInterval(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_FlagRetries(items[1], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_FlagStartPeriod(items[2], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_FlagTimeout(items[3], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 
-    assert.equal(items[0].sortText, "0");
-    assert.equal(items[1].sortText, "1");
-    assert.equal(items[2].sortText, "2");
-    assert.equal(items[3].sortText, "3");
+    assert.strictEqual(items[0].sortText, "0");
+    assert.strictEqual(items[1].sortText, "1");
+    assert.strictEqual(items[2].sortText, "2");
+    assert.strictEqual(items[3].sortText, "3");
 }
 
 function assertONBUILDProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number) {
     // +1 for two ARG proposals
     // +1 for two HEALTHCHECK proposals
     // -3 for ONBUILD, FROM, MAINTAINER
-    assert.equal(proposals.length, KEYWORDS.length - 1);
+    assert.strictEqual(proposals.length, KEYWORDS.length - 1);
     assertProposals(proposals, offset, prefix, prefixLength);
 }
 
@@ -1096,10 +1096,10 @@ function assertAllProposals(proposals: CompletionItem[], offset: number, prefix:
     if (snippetSupport === undefined || snippetSupport) {
         // +1 for two ARG proposals
         // +1 for two HEALTHCHECK proposals
-        assert.equal(proposals.length, KEYWORDS.length + 2);
+        assert.strictEqual(proposals.length, KEYWORDS.length + 2);
     } else {
         // +1 for two HEALTHCHECK proposals
-        assert.equal(proposals.length, KEYWORDS.length + 1);
+        assert.strictEqual(proposals.length, KEYWORDS.length + 1);
     }
     assertProposals(proposals, offset, prefix, prefixLength, snippetSupport, deprecatedSupport, supportedTags);
 }
@@ -1132,22 +1132,22 @@ describe('Docker Content Assist Tests', function () {
             assertOnlyFROM(proposals, 1, 0, 0);
 
             proposals = compute("# abc", 5);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("#FROM", 5);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("#\n#", 3);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("#\n# ", 4);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("#\n#\n", 3);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("#\n# \n", 4);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
         });
 
         it('outside comment', function () {
@@ -1168,18 +1168,18 @@ describe('Docker Content Assist Tests', function () {
     describe('keywords', function () {
         it('none', function () {
             var proposals = compute("F ", 2);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
         });
 
         it("nesting", function () {
             let proposals = compute("FROM F", 6);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("FROM node F", 11);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("FROM \\\n F", 9);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
         });
 
         it('all', function () {
@@ -1216,10 +1216,10 @@ describe('Docker Content Assist Tests', function () {
 
         it('prefix', function () {
             var proposals = compute("#F", 2);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("# F", 3);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = compute("F", 1);
             assertOnlyFROM(proposals, 0, 0, 1);
@@ -1234,35 +1234,35 @@ describe('Docker Content Assist Tests', function () {
             assertOnlyFROM(proposals, 0, 0, 1);
 
             proposals = compute("FROM", 4);
-            assert.equal(0, proposals.length);
+            assert.strictEqual(0, proposals.length);
 
             proposals = compute("from", 4);
-            assert.equal(0, proposals.length);
+            assert.strictEqual(0, proposals.length);
 
             proposals = compute("FROM node\nA", 11);
-            assert.equal(proposals.length, 3);
+            assert.strictEqual(proposals.length, 3);
             assertADD(proposals[0], 1, 0, 1);
             assertARG_NameOnly(proposals[1], 1, 0, 1);
             assertARG_DefaultValue(proposals[2], 1, 0, 1);
 
             proposals = compute("FROM node\na", 11);
-            assert.equal(proposals.length, 3);
+            assert.strictEqual(proposals.length, 3);
             assertADD(proposals[0], 1, 0, 1);
             assertARG_NameOnly(proposals[1], 1, 0, 1);
             assertARG_DefaultValue(proposals[2], 1, 0, 1);
 
             proposals = compute("FROM node\nH", 11);
-            assert.equal(proposals.length, 2);
+            assert.strictEqual(proposals.length, 2);
             assertHEALTHCHECK_CMD(proposals[0], 1, 0, 1);
             assertHEALTHCHECK_NONE(proposals[1], 1, 0, 1);
 
             proposals = compute("FROM node\nh", 11);
-            assert.equal(proposals.length, 2);
+            assert.strictEqual(proposals.length, 2);
             assertHEALTHCHECK_CMD(proposals[0], 1, 0, 1);
             assertHEALTHCHECK_NONE(proposals[1], 1, 0, 1);
 
             proposals = compute("FROM node O", 10);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
         });
     });
 
@@ -1270,7 +1270,7 @@ describe('Docker Content Assist Tests', function () {
         it("no instruction", function () {
             var content = "FROM node\n\\";
             var proposals = compute(content, content.length);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             content = "FROM node\n\\\n";
             proposals = compute(content, content.length);
@@ -1278,7 +1278,7 @@ describe('Docker Content Assist Tests', function () {
 
             content = "FROM node\r\n\\";
             proposals = compute(content, content.length);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             content = "FROM node\n\\\r\n";
             proposals = compute(content, content.length);
@@ -1286,26 +1286,26 @@ describe('Docker Content Assist Tests', function () {
 
             content = "\\";
             proposals = compute(content, content.length);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = computePosition("FROM busybox\nEXPOSE 8080 \\ \n", 1, 14, true);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = computePosition("FROM busybox\nEXPOSE 8080 \\ \n 8081", 1, 14, true);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             proposals = computePosition("FROM busybox\nEXPOSE 8080 \\ \n\\ \n 8081", 2, 1, true);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
         });
 
         function testEscape(header: string, instruction: string, escapeChar: string) {
             var content = header + "FROM node\n" + instruction + escapeChar + "\n";
             var proposals = compute(content, content.length);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             content = header + "FROM node\n" + instruction + escapeChar + "\r\n";
             proposals = compute(content, content.length);
-            assert.equal(proposals.length, 0);
+            assert.strictEqual(proposals.length, 0);
 
             content = header + "FROM node\n" + instruction + " " + escapeChar + "\n";
             proposals = compute(content, content.length);
@@ -1328,7 +1328,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 0, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
 
             content = header + "FROM node\n" + instruction + " " + escapeChar + "\r\n";
@@ -1350,7 +1350,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 0, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
 
             content = header + "FROM node\n" + instruction + " " + escapeChar + " \n";
@@ -1372,7 +1372,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 0, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
 
             content = header + "FROM node\n" + instruction + " " + escapeChar + " \r\n";
@@ -1394,7 +1394,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 0, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
 
             content = header + "FROM node\n" + instruction + escapeChar + "\n ";
@@ -1416,7 +1416,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 1, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
 
             content = header + "FROM node\n" + instruction + escapeChar + "\r\n ";
@@ -1438,7 +1438,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 1, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
 
             content = header + "FROM node\n" + instruction + " " + escapeChar + "\n ";
@@ -1460,7 +1460,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 1, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
 
             content = header + "FROM node\n" + instruction + " " + escapeChar + "\r\n ";
@@ -1482,7 +1482,7 @@ describe('Docker Content Assist Tests', function () {
                     assertONBUILDProposals(proposals, lastLine, 1, 0);
                     break;
                 default:
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
             }
         }
 
@@ -1996,31 +1996,31 @@ describe('Docker Content Assist Tests', function () {
             describe("ok", function() {
                 it("#e", function () {
                     const proposals = compute("#e", 2);
-                    assert.equal(1, proposals.length);
+                    assert.strictEqual(1, proposals.length);
                     assertDirectiveEscape(proposals[0], 0, 1, 1);
                 });
     
                 it("# e", function () {
                     const proposals = compute("# e", 3);
-                    assert.equal(1, proposals.length);
+                    assert.strictEqual(1, proposals.length);
                     assertDirectiveEscape(proposals[0], 0, 2, 1);
                 });
     
                 it("#E", function () {
                     const proposals = compute("#E", 2);
-                    assert.equal(1, proposals.length);
+                    assert.strictEqual(1, proposals.length);
                     assertDirectiveEscape(proposals[0], 0, 1, 1);
                 });
     
                 it("#eS", function () {
                     const proposals = compute("#eS", 3);
-                    assert.equal(1, proposals.length);
+                    assert.strictEqual(1, proposals.length);
                     assertDirectiveEscape(proposals[0], 0, 1, 2);
                 });
     
                 it("# escape=`", function () {
                     const items = compute("# escape=`", 4);
-                    assert.equal(1, items.length);
+                    assert.strictEqual(1, items.length);
                     assertDirectiveEscape(items[0], 0, 2, 2);
                 });
             });
@@ -2028,12 +2028,12 @@ describe('Docker Content Assist Tests', function () {
             describe("invalid", function() {
                 it("# escape=` ", function () {
                     const items = compute("# escape=` ", 11);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
                 });
 
                 it("#e ", function () {
                     const proposals = compute("#e ", 3);
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
                 });
             });
         });
@@ -2041,19 +2041,19 @@ describe('Docker Content Assist Tests', function () {
         describe("syntax", function () {
             it("#s", function () {
                 const proposals = compute("#s", 2);
-                assert.equal(1, proposals.length);
+                assert.strictEqual(1, proposals.length);
                 assertDirectiveSyntax(proposals[0], 0, 1, 1);
             });
 
             it("#synta", function () {
                 const proposals = compute("#synta", 6);
-                assert.equal(1, proposals.length);
+                assert.strictEqual(1, proposals.length);
                 assertDirectiveSyntax(proposals[0], 0, 1, 5);
             });
 
             it("#syntax=docker/dockerfile", function () {
                 const proposals = compute("#syntax=docker/dockerfile", 6);
-                assert.equal(1, proposals.length);
+                assert.strictEqual(1, proposals.length);
                 assertDirectiveSyntax(proposals[0], 0, 1, 5);
             });
 
@@ -2066,22 +2066,22 @@ describe('Docker Content Assist Tests', function () {
         describe("invalid", function() {
             it("#\\n#", function () {
                 const proposals = compute("#\n#", 3);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
             });
 
             it("#\\n#e", function () {
                 const proposals = compute("#\n#e", 4);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
             });
 
             it("# escape=\\n# syntax=docker/dockerfile\\n#\\n#", function () {
                 const items = computePosition("# escape=\n# syntax=docker/dockerfile\n#\n#", 3, 1); 
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("# a", function () {
                 const items = computePosition("# a=b", 0, 3);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
         });
     })
@@ -2151,48 +2151,48 @@ describe('Docker Content Assist Tests', function () {
                 describe("workdir suggestions", () => {
                     it("inside first argument", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt ", 2, triggerOffset + 8);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
                     });
     
                     it("after one argument", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt ", 2, triggerOffset + 12);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertPath(items[0], "/tmp/", 2, triggerOffset + 12, 0);
                     });
     
                     it("after two arguments", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt tmp2.txt ", 2, triggerOffset + 21);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertPath(items[0], "/tmp/", 2, triggerOffset + 21, 0);
                     });
     
                     it("honours prefix", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\nWORKDIR /build\n" + onbuild + "ADD tmp.txt /b", 3, triggerOffset + 14);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertPath(items[0], "/build/", 3, triggerOffset + 14, 2);
                     });
     
                     it("inside second of three arguments", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "ADD tmp.txt tmp2.txt tmp3.txt", 2, triggerOffset + 15);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
                     });
                 });
 
                 it("none", function () {
                     let items = computePosition("FROM busybox\n" + onbuild + "ADD --from=", 1, triggerOffset + 12);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "ADD app app", 1, triggerOffset + 6);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "ADD app app", 1, triggerOffset + 10);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "ADD app  app", 1, triggerOffset + 9);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "ADD app --fr app", 1, triggerOffset + 13);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
                 });
             });
         });
@@ -2208,63 +2208,63 @@ describe('Docker Content Assist Tests', function () {
             describe("build stages", function () {
                 it("no sources", function () {
                     var proposals = computePosition("FROM busybox\n" + onbuild + "COPY --from=", 1, triggerOffset + 12);
-                    assert.equal(proposals.length, 0);
+                    assert.strictEqual(proposals.length, 0);
                 });
 
                 it("source image", function () {
                     var proposals = computePosition("FROM busybox AS source\n" + onbuild + "COPY --from=", 1, triggerOffset + 12);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "source", 0, "busybox", 1, triggerOffset + 12, 1, triggerOffset + 12);
                 });
 
                 it("source images alphabetical", function () {
                     var proposals = computePosition("FROM ubuntu:trusty AS setup\nFROM redhat:rawhide AS dev\n" + onbuild + "COPY --from=", 2, triggerOffset + 12);
-                    assert.equal(proposals.length, 2);
+                    assert.strictEqual(proposals.length, 2);
                     assertSourceImage(proposals[0], "setup", 0, "ubuntu:trusty", 2, triggerOffset + 12, 2, triggerOffset + 12);
                     assertSourceImage(proposals[1], "dev", 1, "redhat:rawhide", 2, triggerOffset + 12, 2, triggerOffset + 12);
                 });
 
                 it("source image prefix", function () {
                     var proposals = computePosition("FROM busybox AS setup\nFROM busybox AS dev\n" + onbuild + "COPY --from=s", 2, triggerOffset + 13);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "setup", 0, "busybox", 2, triggerOffset + 12, 2, triggerOffset + 13);
 
                     // casing should be ignored
                     proposals = computePosition("FROM busybox AS setup\nFROM busybox AS dev\n" + onbuild + "COPY --from=S", 2, triggerOffset + 13);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "setup", 0, "busybox", 2, triggerOffset + 12, 2, triggerOffset + 13);
                 });
 
                 it("no duplicate source images", function () {
                     let proposals = computePosition("FROM busybox AS source\nFROM busybox AS source\n" + onbuild + "COPY --from=", 2, triggerOffset + 12);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "source", 0, "busybox", 2, triggerOffset + 12, 2, triggerOffset + 12);
                 });
 
                 it("no duplicate source images ignoring case", function () {
                     let proposals = computePosition("FROM busybox AS source\nFROM busybox AS soURCe\n" + onbuild + "COPY --from=", 2, triggerOffset + 12);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "source", 0, "busybox", 2, triggerOffset + 12, 2, triggerOffset + 12);
                 });
 
                 it("only suggest previously declared source images", function () {
                     let proposals = computePosition("FROM node AS dev\n" + onbuild + "COPY --from=\nFROM node AS test", 1, triggerOffset + 12);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "dev", 0, "node", 1, triggerOffset + 12, 1, triggerOffset + 12);
                 });
 
                 it("source image indices", function () {
                     let proposals = computePosition("FROM alpine\nFROM node\n" + onbuild + "COPY --from=\nFROM busybox", 2, triggerOffset + 12);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "0", 0, "alpine", 2, triggerOffset + 12, 2, triggerOffset + 12);
 
                     proposals = computePosition("FROM alpine AS linux\nFROM node\nFROM busybox\n" + onbuild + "COPY --from=", 3, triggerOffset + 12);
-                    assert.equal(proposals.length, 2);
+                    assert.strictEqual(proposals.length, 2);
                     assertSourceImage(proposals[0], "linux", 0, "alpine", 3, triggerOffset + 12, 3, triggerOffset + 12);
                     assertSourceImage(proposals[1], "1", 1, "node", 3, triggerOffset + 12, 3, triggerOffset + 12);
 
                     proposals = computePosition("FROM alpine AS 1\nFROM node\nFROM busybox\n" + onbuild + "COPY --from=", 3, triggerOffset + 12);
-                    assert.equal(proposals.length, 1);
+                    assert.strictEqual(proposals.length, 1);
                     assertSourceImage(proposals[0], "1", 0, "alpine", 3, triggerOffset + 12, 3, triggerOffset + 12);
                 });
             });
@@ -2289,41 +2289,41 @@ describe('Docker Content Assist Tests', function () {
 
                     it("prefix --from", function () {
                         let items = computePosition("FROM busybox\n" + onbuild + "COPY --f", 1, triggerOffset + 8, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 8, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY --fr", 1, triggerOffset + 9, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 9, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY --fro", 1, triggerOffset + 10, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 10, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY --from", 1, triggerOffset + 11, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 11, snippetSupport);
                     });
 
                     it("prefix --chown", function () {
                         let items = computePosition("FROM busybox\n" + onbuild + "COPY --c", 1, triggerOffset + 8, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 8, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY --ch", 1, triggerOffset + 9, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 9, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY --cho", 1, triggerOffset + 10, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 10, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY --chow", 1, triggerOffset + 11, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 11, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY --chown", 1, triggerOffset + 12, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 12, snippetSupport);
                     });
                 }
@@ -2339,48 +2339,48 @@ describe('Docker Content Assist Tests', function () {
                 describe("workdir suggestions", () => {
                     it("inside first argument", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt ", 2, triggerOffset + 8);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
                     });
 
                     it("after one argument", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt ", 2, triggerOffset + 13);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertPath(items[0], "/tmp/", 2, triggerOffset + 13, 0);
                     });
 
                     it("after two arguments", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt tmp2.txt ", 2, triggerOffset + 22);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertPath(items[0], "/tmp/", 2, triggerOffset + 22, 0);
                     });
 
                     it("honours prefix", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\nWORKDIR /build\n" + onbuild + "COPY tmp.txt /b", 3, triggerOffset + 15);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertPath(items[0], "/build/", 3, triggerOffset + 15, 2);
                     });
 
                     it("inside second of three arguments", () => {
                         const items = computePosition("FROM busybox\nWORKDIR /tmp\n" + onbuild + "COPY tmp.txt tmp2.txt tmp3.txt", 2, triggerOffset + 15);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
                     });
                 });
 
                 it("none", function () {
                     let items = computePosition("FROM busybox\n" + onbuild + "COPY --from=", 1, triggerOffset + 12);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "COPY app app", 1, triggerOffset + 6);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "COPY app app", 1, triggerOffset + 10);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "COPY app  app", 1, triggerOffset + 9);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "COPY app --fr app", 1, triggerOffset + 13);
-                    assert.equal(items.length, 0);
+                    assert.strictEqual(items.length, 0);
                 });
             });
         });
@@ -2392,7 +2392,7 @@ describe('Docker Content Assist Tests', function () {
         // currently not supported so the expectation is that no suggestions should be provided
         it("image names", function () {
             let items = compute("FROM node", 7);
-            assert.equal(items.length, 0);
+            assert.strictEqual(items.length, 0);
         });
 
         function testFlags(snippetSupport: boolean): void {
@@ -2423,28 +2423,28 @@ describe('Docker Content Assist Tests', function () {
 
             it("after image", function() {
                 let items = computePosition("FROM node ", 0, 10, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
 
                 items = computePosition("FROM node:latest ", 0, 17, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
 
                 items = computePosition("FROM node AS stage", 0, 10, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
 
                 items = computePosition("FROM node AS stage", 0, 13, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
 
                 items = computePosition("FROM node AS stage", 0, 18, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
 
                 items = computePosition("FROM node  AS  stage ", 0, 10, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
 
                 items = computePosition("FROM node  AS  stage ", 0, 14, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
 
                 items = computePosition("FROM node  AS  stage ", 0, 21, snippetSupport);
-                assert.equal(0, items.length);
+                assert.strictEqual(0, items.length);
             });
         }
 
@@ -2482,35 +2482,35 @@ describe('Docker Content Assist Tests', function () {
                         assertHealthcheckFlags(items, 1, triggerOffset + 12, 1, triggerOffset + 14, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK c", 1, triggerOffset + 13, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_CMD_Subcommand(items[0], 1, triggerOffset + 12, 1, triggerOffset + 13, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK CM", 1, triggerOffset + 14, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_CMD_Subcommand(items[0], 1, triggerOffset + 12, 1, triggerOffset + 14, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK n", 1, triggerOffset + 13, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_NONE_Subcommand(items[0], 1, triggerOffset + 12, 1, triggerOffset + 13);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK NO", 1, triggerOffset + 14, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_NONE_Subcommand(items[0], 1, triggerOffset + 12, 1, triggerOffset + 14);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --inter", 1, triggerOffset + 19, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_FlagInterval(items[0], 1, triggerOffset + 12, 1, triggerOffset + 19, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --ret", 1, triggerOffset + 17, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_FlagRetries(items[0], 1, triggerOffset + 12, 1, triggerOffset + 17, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --start", 1, triggerOffset + 19, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_FlagStartPeriod(items[0], 1, triggerOffset + 12, 1, triggerOffset + 19, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --time", 1, triggerOffset + 18, snippetSupport);
-                        assert.equal(items.length, 1);
+                        assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_FlagTimeout(items[0], 1, triggerOffset + 12, 1, triggerOffset + 18, snippetSupport);
                     });
 
@@ -2521,55 +2521,55 @@ describe('Docker Content Assist Tests', function () {
 
                     it("after command", function () {
                         var items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK CMD", 1, triggerOffset + 15, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK cmd", 1, triggerOffset + 15, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         var items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK CMD ", 1, triggerOffset + 16, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         var items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --timeout=30s CMD ", 1, triggerOffset + 30, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK cmd ", 1, triggerOffset + 16, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK CMD\\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK cmd\\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK CMD \\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK cmd \\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK NONE", 1, triggerOffset + 16, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK none", 1, triggerOffset + 16, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK NONE ", 1, triggerOffset + 17, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK none ", 1, triggerOffset + 17, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK NONE \\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK none \\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK NONE\\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK none\\\n", 2, 0, snippetSupport);
-                        assert.equal(items.length, 0);
+                        assert.strictEqual(items.length, 0);
                     });
                 });
             }
@@ -2599,19 +2599,19 @@ describe('Docker Content Assist Tests', function () {
 			 */
             it('ONBUILD W', function () {
                 var proposals = compute("FROM node\nONBUILD W", 19);
-                assert.equal(proposals.length, 1);
+                assert.strictEqual(proposals.length, 1);
                 assertWORKDIR(proposals[0], 1, 8, 1, true);
 
                 proposals = compute("FROM node\nONBUILD w", 19);
-                assert.equal(proposals.length, 1);
+                assert.strictEqual(proposals.length, 1);
                 assertWORKDIR(proposals[0], 1, 8, 1, true);
 
                 proposals = compute("FROM node\nonbuild W", 19);
-                assert.equal(proposals.length, 1);
+                assert.strictEqual(proposals.length, 1);
                 assertWORKDIR(proposals[0], 1, 8, 1, true);
 
                 proposals = compute("FROM node\nonbuild w", 19);
-                assert.equal(proposals.length, 1);
+                assert.strictEqual(proposals.length, 1);
                 assertWORKDIR(proposals[0], 1, 8, 1, true);
             });
 
@@ -2620,16 +2620,16 @@ describe('Docker Content Assist Tests', function () {
 			 */
             it('ONBUILD F', function () {
                 var proposals = compute("FROM node\nONBUILD F", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nONBUILD f", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nonbuild F", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nonbuild f", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
             });
 
 			/**
@@ -2637,16 +2637,16 @@ describe('Docker Content Assist Tests', function () {
 			 */
             it('ONBUILD M', function () {
                 var proposals = compute("FROM node\nONBUILD M", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nONBUILD m", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nonbuild M", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nonbuild m", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
             });
 
 			/**
@@ -2654,16 +2654,16 @@ describe('Docker Content Assist Tests', function () {
 			 */
             it('ONBUILD O', function () {
                 var proposals = compute("FROM node\nONBUILD O", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nONBUILD o", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nonbuild O", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nonbuild o", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
             });
 
 			/**
@@ -2671,42 +2671,42 @@ describe('Docker Content Assist Tests', function () {
 			 */
             it('ONBUILD ONBUILD W', function () {
                 var proposals = compute("FROM node\nONBUILD ONBUILD W", 27);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nONBUILD ONBUILD w", 27);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nONBUILD onbuild W", 27);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nONBUILD onbuild w", 27);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
             });
 
             it('false ONBUILD instruction', function () {
                 var proposals = compute("FROM node\nRUN echo \"ONBUILD W", 29);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\nRUN echo \" ONBUILD W", 30);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\n\"ONBUILD ", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\n\" ONBUILD ", 20);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\n\O NBUILD ", 19);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\n\\ O NBUILD ", 20);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\n\"O NBUILD ", 20);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
 
                 proposals = compute("FROM node\n\" O NBUILD ", 21);
-                assert.equal(proposals.length, 0);
+                assert.strictEqual(proposals.length, 0);
             });
         });
 
@@ -2724,19 +2724,19 @@ describe('Docker Content Assist Tests', function () {
 
             it("prefix", function () {
                 let items = computePosition("FROM busybox\nRUN echo $f", 1, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 1, 9, 2, false);
 
                 items = computePosition("FROM busybox\nRUN echo $F", 1, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 1, 9, 2, false);
             });
 
             it("ARG variable", function () {
                 let items = computePosition("FROM busybox\nARG foo=bar\nARG FOO=BAR\nRUN echo $", 3, 10);
-                assert.equal(items.length, 10);
+                assert.strictEqual(items.length, 10);
                 assertVariable("FOO", items[0], 3, 9, 1, true, "BAR");
                 assertVariable("foo", items[1], 3, 9, 1, true, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 1, true);
@@ -2749,54 +2749,54 @@ describe('Docker Content Assist Tests', function () {
                 assertVariable("no_proxy", items[9], 3, 9, 1, true);
 
                 items = computePosition("FROM busybox\nARG foo=bar\nARG FOO=BAR\nRUN echo $F", 3, 11);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 3, 9, 2, false, "BAR");
                 assertVariable("foo", items[1], 3, 9, 2, false, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 2, false);
                 assertVariable("ftp_proxy", items[3], 3, 9, 2, false);
 
                 items = computePosition("FROM busybox\nARG foo=bar\nARG FOO=BAR\nRUN echo $f", 3, 11);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 3, 9, 2, false, "BAR");
                 assertVariable("foo", items[1], 3, 9, 2, false, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 2, false);
                 assertVariable("ftp_proxy", items[3], 3, 9, 2, false);
 
                 items = computePosition("FROM busybox\nARG foo=bar\nARG foo=bar2\nRUN echo $f", 3, 11);
-                assert.equal(items.length, 3);
+                assert.strictEqual(items.length, 3);
                 assertVariable("foo", items[0], 3, 9, 2, false, "bar2");
                 assertVariable("FTP_PROXY", items[1], 3, 9, 2, false);
                 assertVariable("ftp_proxy", items[2], 3, 9, 2, false);
 
                 items = computePosition("FROM busybox\nRUN echo $f\nARG foo=bar\nARG FOO=BAR", 1, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 1, 9, 2, false);
 
                 items = computePosition("FROM busybox\nARG\nRUN echo $f", 2, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 2, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 2, 9, 2, false);
 
                 items = computePosition("FROM busybox\nRUN echo $f\nARG", 1, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 1, 9, 2, false);
 
                 items = computePosition("FROM busybox\nARG foo=env\nRUN echo $o", 2, 11);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("ARG variable overlaps with default", function () {
                 let items = computePosition("FROM busybox\nARG FTP_PROXY\nRUN echo $f", 2, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 2, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 2, 9, 2, false);
             });
 
             it("ENV variable", function () {
                 let items = computePosition("FROM busybox\nENV foo=bar\nENV FOO=BAR\nRUN echo $", 3, 10);
-                assert.equal(items.length, 10);
+                assert.strictEqual(items.length, 10);
                 assertVariable("FOO", items[0], 3, 9, 1, true, "BAR");
                 assertVariable("foo", items[1], 3, 9, 1, true, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 1, true);
@@ -2809,54 +2809,54 @@ describe('Docker Content Assist Tests', function () {
                 assertVariable("no_proxy", items[9], 3, 9, 1, true);
 
                 items = computePosition("FROM busybox\nENV foo=bar\nENV FOO=BAR\nRUN echo $F", 3, 11);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 3, 9, 2, false, "BAR");
                 assertVariable("foo", items[1], 3, 9, 2, false, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 2, false);
                 assertVariable("ftp_proxy", items[3], 3, 9, 2, false);
 
                 items = computePosition("FROM busybox\nENV foo=bar\nENV FOO=BAR\nRUN echo $f", 3, 11);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 3, 9, 2, false, "BAR");
                 assertVariable("foo", items[1], 3, 9, 2, false, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 2, false);
                 assertVariable("ftp_proxy", items[3], 3, 9, 2, false);
 
                 items = computePosition("FROM busybox\nENV foo=bar\nENV foo=bar2\nRUN echo $f", 3, 11);
-                assert.equal(items.length, 3);
+                assert.strictEqual(items.length, 3);
                 assertVariable("foo", items[0], 3, 9, 2, false, "bar2");
                 assertVariable("FTP_PROXY", items[1], 3, 9, 2, false);
                 assertVariable("ftp_proxy", items[2], 3, 9, 2, false);
 
                 items = computePosition("FROM busybox\nRUN echo $f\nENV foo=bar\nENV FOO=BAR", 1, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 1, 9, 2, false);
 
                 items = computePosition("FROM busybox\nENV\nRUN echo $f", 2, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 2, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 2, 9, 2, false);
 
                 items = computePosition("FROM busybox\nRUN echo $f\nENV", 1, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 1, 9, 2, false);
 
                 items = computePosition("FROM busybox\nENV foo=env\nRUN echo $o", 2, 11);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("ENV variable overlaps with default", function () {
                 let items = computePosition("FROM busybox\nENV FTP_PROXY=8001\nRUN echo $f", 2, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 2, 9, 2, false, "8001");
                 assertVariable("ftp_proxy", items[1], 2, 9, 2, false);
             });
 
             it("ARG and ENV variable", function () {
                 let items = computePosition("FROM busybox\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV\nRUN echo $", 4, 10);
-                assert.equal(items.length, 10);
+                assert.strictEqual(items.length, 10);
                 assertVariable("FOO", items[0], 4, 9, 1, true, "ENV");
                 assertVariable("foo", items[1], 4, 9, 1, true, "env");
                 assertVariable("FTP_PROXY", items[2], 4, 9, 1, true);
@@ -2869,48 +2869,48 @@ describe('Docker Content Assist Tests', function () {
                 assertVariable("no_proxy", items[9], 4, 9, 1, true);
 
                 items = computePosition("FROM busybox\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV\nRUN echo $F", 4, 11);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 4, 9, 2, false, "ENV");
                 assertVariable("foo", items[1], 4, 9, 2, false, "env");
                 assertVariable("FTP_PROXY", items[2], 4, 9, 2, false);
                 assertVariable("ftp_proxy", items[3], 4, 9, 2, false);
 
                 items = computePosition("FROM busybox\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV\nRUN echo $f", 4, 11);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 4, 9, 2, false, "ENV");
                 assertVariable("foo", items[1], 4, 9, 2, false, "env");
                 assertVariable("FTP_PROXY", items[2], 4, 9, 2, false);
                 assertVariable("ftp_proxy", items[3], 4, 9, 2, false);
 
                 items = computePosition("FROM busybox\nRUN echo $f\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV", 1, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 2, false);
                 assertVariable("ftp_proxy", items[1], 1, 9, 2, false);
 
                 items = computePosition("FROM busybox\nARG foo=arg\nENV foo=env\nRUN echo $o", 3, 11);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("ARG and ENV variables overlap with default", function () {
                 let items = computePosition("FROM busybox\nARG ftp_proxy\nENV FTP_PROXY=8001\nRUN echo $f", 3, 11);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 3, 9, 2, false, "8001");
                 assertVariable("ftp_proxy", items[1], 3, 9, 2, false);
             });
 
             it("variable from other build stage ignored", function () {
                 let items = computePosition("FROM scratch\nENV xyz=y\nFROM alpine\nRUN echo $x", 3, 11);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("escaped", function () {
                 let items = computePosition("FROM busybox\nRUN echo \\$", 1, 11);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("non-existent", function () {
                 let items = computePosition("FROM busybox\nRUN echo $x", 1, 11);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
         });
 
@@ -2922,134 +2922,134 @@ describe('Docker Content Assist Tests', function () {
 
             it("prefix", function () {
                 let items = computePosition("FROM busybox\nRUN echo ${f", 1, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 3, true);
                 assertVariable("ftp_proxy", items[1], 1, 9, 3, true);
 
                 items = computePosition("FROM busybox\nRUN echo ${F", 1, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 3, true);
                 assertVariable("ftp_proxy", items[1], 1, 9, 3, true);
             });
 
             it("ARG variable", function () {
                 let items = computePosition("FROM busybox\nARG foo=bar\nARG FOO=BAR\nRUN echo ${F", 3, 12);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 3, 9, 3, true, "BAR");
                 assertVariable("foo", items[1], 3, 9, 3, true, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 3, true);
                 assertVariable("ftp_proxy", items[3], 3, 9, 3, true);
 
                 items = computePosition("FROM busybox\nARG foo=bar\nARG FOO=BAR\nRUN echo ${f", 3, 12);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 3, 9, 3, true, "BAR");
                 assertVariable("foo", items[1], 3, 9, 3, true, "bar");
                 assertVariable("FTP_PROXY", items[2], 3, 9, 3, true);
                 assertVariable("ftp_proxy", items[3], 3, 9, 3, true);
 
                 items = computePosition("FROM busybox\nARG foo=bar\nARG foo=bar2\nRUN echo ${f", 3, 12);
-                assert.equal(items.length, 3);
+                assert.strictEqual(items.length, 3);
                 assertVariable("foo", items[0], 3, 9, 3, true, "bar2");
                 assertVariable("FTP_PROXY", items[1], 3, 9, 3, true);
                 assertVariable("ftp_proxy", items[2], 3, 9, 3, true);
 
                 items = computePosition("FROM busybox\nRUN echo ${f\nARG foo=bar\nARG FOO=BAR", 1, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 3, true);
                 assertVariable("ftp_proxy", items[1], 1, 9, 3, true);
 
                 items = computePosition("FROM busybox\nARG foo=env\nRUN echo ${o", 2, 12);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("ARG variable overlaps with default", function () {
                 let items = computePosition("FROM busybox\nARG FTP_PROXY\nRUN echo ${f", 2, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 2, 9, 3, true);
                 assertVariable("ftp_proxy", items[1], 2, 9, 3, true);
             });
 
             it("ENV variable", function () {
                 let items = computePosition("FROM busybox\nENV foo=bar FOO=BAR\nRUN echo ${F", 2, 12);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 2, 9, 3, true, "BAR");
                 assertVariable("foo", items[1], 2, 9, 3, true, "bar");
                 assertVariable("FTP_PROXY", items[2], 2, 9, 3, true);
                 assertVariable("ftp_proxy", items[3], 2, 9, 3, true);
 
                 items = computePosition("FROM busybox\nENV foo=bar FOO=BAR\nRUN echo ${f", 2, 12);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 2, 9, 3, true, "BAR");
                 assertVariable("foo", items[1], 2, 9, 3, true, "bar");
                 assertVariable("FTP_PROXY", items[2], 2, 9, 3, true);
                 assertVariable("ftp_proxy", items[3], 2, 9, 3, true);
 
                 items = computePosition("FROM busybox\nENV foo=bar\nENV foo=bar2\nRUN echo ${f", 3, 12);
-                assert.equal(items.length, 3);
+                assert.strictEqual(items.length, 3);
                 assertVariable("foo", items[0], 3, 9, 3, true, "bar2");
                 assertVariable("FTP_PROXY", items[1], 3, 9, 3, true);
                 assertVariable("ftp_proxy", items[2], 3, 9, 3, true);
 
                 items = computePosition("FROM busybox\nRUN echo ${f\nENV foo=bar\nENV FOO=BAR", 1, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 3, true);
                 assertVariable("ftp_proxy", items[1], 1, 9, 3, true);
 
                 items = computePosition("FROM busybox\nENV foo=env\nRUN echo ${o", 2, 12);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("ENV variable overlaps with default", function () {
                 let items = computePosition("FROM busybox\nENV FTP_PROXY=8001\nRUN echo ${f", 2, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 2, 9, 3, true, "8001");
                 assertVariable("ftp_proxy", items[1], 2, 9, 3, true);
             });
 
             it("ARG and ENV variable", function () {
                 let items = computePosition("FROM busybox\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV\nRUN echo ${F", 4, 12);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 4, 9, 3, true, "ENV");
                 assertVariable("foo", items[1], 4, 9, 3, true, "env");
                 assertVariable("FTP_PROXY", items[2], 4, 9, 3, true);
                 assertVariable("ftp_proxy", items[3], 4, 9, 3, true);
 
                 items = computePosition("FROM busybox\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV\nRUN echo ${f", 4, 12);
-                assert.equal(items.length, 4);
+                assert.strictEqual(items.length, 4);
                 assertVariable("FOO", items[0], 4, 9, 3, true, "ENV");
                 assertVariable("foo", items[1], 4, 9, 3, true, "env");
                 assertVariable("FTP_PROXY", items[2], 4, 9, 3, true);
                 assertVariable("ftp_proxy", items[3], 4, 9, 3, true);
 
                 items = computePosition("FROM busybox\nRUN echo ${f\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV", 1, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 1, 9, 3, true);
                 assertVariable("ftp_proxy", items[1], 1, 9, 3, true);
 
                 items = computePosition("FROM busybox\nARG foo=arg\nENV foo=env\nRUN echo ${o", 3, 12);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("ARG and ENV variable overlaps with default", function () {
                 let items = computePosition("FROM busybox\nARG ftp_proxy\nENV FTP_PROXY=8001\nRUN echo ${f", 3, 12);
-                assert.equal(items.length, 2);
+                assert.strictEqual(items.length, 2);
                 assertVariable("FTP_PROXY", items[0], 3, 9, 3, true, "8001");
                 assertVariable("ftp_proxy", items[1], 3, 9, 3, true);
             });
 
             it("variable from other build stage ignored", function () {
                 let items = computePosition("FROM scratch\nENV xyz=y\nFROM alpine\nRUN echo ${x", 3, 12);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("escaped", function () {
                 let items = computePosition("FROM busybox\nRUN echo \\${", 1, 12);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
 
             it("non-existent", function () {
                 let items = computePosition("FROM busybox\nRUN echo ${x", 1, 12);
-                assert.equal(items.length, 0);
+                assert.strictEqual(items.length, 0);
             });
         });
     });

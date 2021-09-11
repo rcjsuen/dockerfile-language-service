@@ -27,77 +27,77 @@ function assertHover(content: string, line: number, character: number, key: stri
     assert.notEqual(hover.contents, undefined);
     assert.notEqual(hover.contents, null);
     assert.notEqual(hover.contents, "");
-    assert.equal(hover.contents, markdownDocumentation.getMarkdown(key).contents);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, markdownDocumentation.getMarkdown(key).contents);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, []);
     assert.notEqual(hover.contents, undefined);
     assert.notEqual(hover.contents, null);
     assert.notEqual(hover.contents, "");
-    assert.equal(hover.contents, markdownDocumentation.getMarkdown(key).contents);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, markdownDocumentation.getMarkdown(key).contents);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.Markdown]);
     let markupContent = hover.contents as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.strictEqual(markupContent.kind, MarkupKind.Markdown);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(key).contents);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(markupContent.value, markdownDocumentation.getMarkdown(key).contents);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.Markdown, MarkupKind.PlainText]);
     markupContent = hover.contents as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.Markdown);
+    assert.strictEqual(markupContent.kind, MarkupKind.Markdown);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, markdownDocumentation.getMarkdown(key).contents);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(markupContent.value, markdownDocumentation.getMarkdown(key).contents);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.PlainText]);
     markupContent = hover.contents as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.strictEqual(markupContent.kind, MarkupKind.PlainText);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(key));
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(markupContent.value, plainTextDocumentation.getDocumentation(key));
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.PlainText, MarkupKind.Markdown]);
     markupContent = hover.contents as MarkupContent;
-    assert.equal(markupContent.kind, MarkupKind.PlainText);
+    assert.strictEqual(markupContent.kind, MarkupKind.PlainText);
     assert.notEqual(markupContent.value, undefined);
     assert.notEqual(markupContent.value, null);
     assert.notEqual(markupContent.value, "");
-    assert.equal(markupContent.value, plainTextDocumentation.getDocumentation(key));
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(markupContent.value, plainTextDocumentation.getDocumentation(key));
+    assert.strictEqual(hover.range, undefined);
 }
 
 function assertRawHover(content: string, line: number, character: number, value: string) {
     let hover = onHover(content, line, character);
-    assert.equal(hover.contents, value);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, value);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, []);
-    assert.equal(hover.contents, value);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, value);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.Markdown]);
-    assert.equal(hover.contents, value);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, value);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.Markdown, MarkupKind.PlainText]);
-    assert.equal(hover.contents, value);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, value);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.PlainText]);
-    assert.equal(hover.contents, value);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, value);
+    assert.strictEqual(hover.range, undefined);
 
     hover = onHover(content, line, character, [MarkupKind.PlainText, MarkupKind.Markdown]);
-    assert.equal(hover.contents, value);
-    assert.equal(hover.range, undefined);
+    assert.strictEqual(hover.contents, value);
+    assert.strictEqual(hover.range, undefined);
 }
 
 function assertNullHover(content: string, line: number, character: number) {

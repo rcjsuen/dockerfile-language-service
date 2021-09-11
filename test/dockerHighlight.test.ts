@@ -14,26 +14,26 @@ function computeHighlightRanges(content: string, line: number, character: number
 }
 
 function assertHighlight(highlight: DocumentHighlight, kind: DocumentHighlightKind, startLine: number, startCharacter: number, endLine: number, endCharacter: number) {
-    assert.equal(highlight.kind, kind);
-    assert.equal(highlight.range.start.line, startLine);
-    assert.equal(highlight.range.start.character, startCharacter);
-    assert.equal(highlight.range.end.line, endLine);
-    assert.equal(highlight.range.end.character, endCharacter);
+    assert.strictEqual(highlight.kind, kind);
+    assert.strictEqual(highlight.range.start.line, startLine);
+    assert.strictEqual(highlight.range.start.character, startCharacter);
+    assert.strictEqual(highlight.range.end.line, endLine);
+    assert.strictEqual(highlight.range.end.character, endCharacter);
 }
 
 function assertHighlightRanges(actual: DocumentHighlight[], expected: DocumentHighlight[]) {
-    assert.equal(actual.length, expected.length);
+    assert.strictEqual(actual.length, expected.length);
     for (let i = 0; i < actual.length; i++) {
         assertHighlightRange(actual[i], expected[i]);
     }
 }
 
 function assertHighlightRange(actual: DocumentHighlight, expected: DocumentHighlight) {
-    assert.equal(actual.kind, expected.kind);
-    assert.equal(actual.range.start.line, expected.range.start.line);
-    assert.equal(actual.range.start.character, expected.range.start.character);
-    assert.equal(actual.range.end.line, expected.range.end.line);
-    assert.equal(actual.range.end.character, expected.range.end.character);
+    assert.strictEqual(actual.kind, expected.kind);
+    assert.strictEqual(actual.range.start.line, expected.range.start.line);
+    assert.strictEqual(actual.range.start.character, expected.range.start.character);
+    assert.strictEqual(actual.range.end.line, expected.range.end.line);
+    assert.strictEqual(actual.range.end.character, expected.range.end.character);
 }
 
 describe("Dockerfile Document Highlight tests", function () {
@@ -42,7 +42,7 @@ describe("Dockerfile Document Highlight tests", function () {
             it("no COPY", function () {
                 let content = "FROM node AS bootstrap";
                 let ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 1);
+                assert.strictEqual(ranges.length, 1);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
             });
 
@@ -50,24 +50,24 @@ describe("Dockerfile Document Highlight tests", function () {
                 // same casing
                 let content = "FROM node AS bootstrap\nFROM node AS bootstrap";
                 let ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
 
                 ranges = computeHighlightRanges(content, 1, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
 
                 // differnt casing
                 content = "FROM node AS bootstrap\nFROM node AS BOOTSTRAP";
                 ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
 
                 ranges = computeHighlightRanges(content, 1, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
             });
@@ -76,52 +76,52 @@ describe("Dockerfile Document Highlight tests", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=bootstrap /git/bin/app .";
                 // cursor in the FROM
                 let ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
                 // cursor in the COPY
                 ranges = computeHighlightRanges(content, 2, 16);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
                 content = "FROM node AS bootstrap\nFROM node\nCOPY --from=BOOTSTRAP /git/bin/app .";
                 // cursor in the FROM
                 ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
                 // cursor in the COPY
                 ranges = computeHighlightRanges(content, 2, 16);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
                 content = "FROM node AS bootstrap\nFROM node AS bootstrap2\nCOPY --from=bootstrap2 /git/bin/app .";
                 // cursor in the FROM
                 ranges = computeHighlightRanges(content, 1, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 13, 1, 23);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 22);
 
                 // cursor in the COPY
                 ranges = computeHighlightRanges(content, 2, 16);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 13, 1, 23);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 22);
 
                 content = "FROM node AS bootstrap\nFROM node AS bootstrap2\nCOPY --from=BOOTSTRAP2 /git/bin/app .";
                 // cursor in the FROM
                 ranges = computeHighlightRanges(content, 1, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 13, 1, 23);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 22);
 
                 // cursor in the COPY
                 ranges = computeHighlightRanges(content, 2, 16);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 13, 1, 23);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 22);
             });
@@ -130,26 +130,26 @@ describe("Dockerfile Document Highlight tests", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=bootstrap";
                 // cursor in the FROM
                 let ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
                 // cursor in the COPY
                 ranges = computeHighlightRanges(content, 2, 16);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
                 content = "FROM node AS bootstrap\nFROM node\nCOPY --from=BOOTSTRAP";
                 // cursor in the FROM
                 ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
 
                 // cursor in the COPY
                 ranges = computeHighlightRanges(content, 2, 16);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 21);
             });
@@ -158,12 +158,12 @@ describe("Dockerfile Document Highlight tests", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=other\nCOPY --from=bootstrap2 /git/bin/app .";
                 // cursor in the FROM
                 let ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 1);
+                assert.strictEqual(ranges.length, 1);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
 
                 // cursor in the COPY
                 ranges = computeHighlightRanges(content, 3, 16);
-                assert.equal(ranges.length, 1);
+                assert.strictEqual(ranges.length, 1);
                 assertHighlight(ranges[0], DocumentHighlightKind.Read, 3, 12, 3, 22);
             });
 
@@ -171,13 +171,13 @@ describe("Dockerfile Document Highlight tests", function () {
                 let content = "FROM node\nCOPY --from=dev\nCOPY --from=dev /git/bin/app .";
                 // cursor in the first COPY
                 let ranges = computeHighlightRanges(content, 1, 13);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 12, 1, 15);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 15);
 
                 // cursor in the second COPY
                 ranges = computeHighlightRanges(content, 2, 13);
-                assert.equal(ranges.length, 2);
+                assert.strictEqual(ranges.length, 2);
                 assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 12, 1, 15);
                 assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 12, 2, 15);
             });
@@ -188,21 +188,21 @@ describe("Dockerfile Document Highlight tests", function () {
                 let content = "FROM node AS bootstrap   \nFROM node\nCOPY --from=bootstrap /git/bin/app .";
                 // cursor after the AS source image
                 let ranges = computeHighlightRanges(content, 0, 24);
-                assert.equal(ranges.length, 0);
+                assert.strictEqual(ranges.length, 0);
                 // cursor after the COPY --from
                 ranges = computeHighlightRanges(content, 2, 22);
-                assert.equal(ranges.length, 0);
+                assert.strictEqual(ranges.length, 0);
             });
 
             it("COPY bootstrap", function () {
                 let content = "FROM node AS bootstrap\nCOPY bootstrap /git/build/";
                 // cursor after the AS source image
                 let ranges = computeHighlightRanges(content, 0, 17);
-                assert.equal(ranges.length, 1);
+                assert.strictEqual(ranges.length, 1);
                 assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 13, 0, 22);
                 // cursor on COPY bootstrap
                 ranges = computeHighlightRanges(content, 1, 10);
-                assert.equal(ranges.length, 0);
+                assert.strictEqual(ranges.length, 0);
             });
         });
     });
@@ -433,7 +433,7 @@ describe("Dockerfile Document Highlight tests", function () {
                     assertHighlightRanges(ranges, [declaration]);
 
                     ranges = computeHighlightRanges(content, 1, 15);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                 });
 
                 it("$var in LABEL value with double quotes", function () {
@@ -455,7 +455,7 @@ describe("Dockerfile Document Highlight tests", function () {
                     assertHighlightRanges(ranges, [declaration]);
 
                     ranges = computeHighlightRanges(content, 1, 17);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                 });
 
                 it("${var} in LABEL value with double quotes", function () {
@@ -1105,7 +1105,7 @@ describe("Dockerfile Document Highlight tests", function () {
                     assertHighlightRanges(ranges, [declaration]);
 
                     ranges = computeHighlightRanges(document, 2, 15);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                 });
 
                 it("$var in LABEL value with double quotes", function () {
@@ -1127,7 +1127,7 @@ describe("Dockerfile Document Highlight tests", function () {
                     assertHighlightRanges(ranges, [declaration]);
 
                     ranges = computeHighlightRanges(document, 2, 17);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                 });
 
                 it("${var} in LABEL value with double quotes", function () {
@@ -1434,9 +1434,9 @@ describe("Dockerfile Document Highlight tests", function () {
                     ranges = computeHighlightRanges(document, 1, 12);
                     assertHighlightRanges(ranges, [varDeclaration, varReference]);
                     ranges = computeHighlightRanges(document, 0, 11);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                     ranges = computeHighlightRanges(document, 1, 18);
-                    assert.equal(ranges.length, 1);
+                    assert.strictEqual(ranges.length, 1);
                     assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 17, 1, 19);
                 });
 
@@ -1449,9 +1449,9 @@ describe("Dockerfile Document Highlight tests", function () {
                     ranges = computeHighlightRanges(document, 1, 11);
                     assertHighlightRanges(ranges, [varDeclaration, varReference]);
                     ranges = computeHighlightRanges(document, 0, 11);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                     ranges = computeHighlightRanges(document, 1, 15);
-                    assert.equal(ranges.length, 1);
+                    assert.strictEqual(ranges.length, 1);
                     assertHighlight(ranges[0], DocumentHighlightKind.Read, 1, 14, 1, 16);
                 });
             });
@@ -1599,18 +1599,18 @@ describe("Dockerfile Document Highlight tests", function () {
                     ranges = computeHighlightRanges(document, 2, 12);
                     assertHighlightRanges(ranges, [varDeclaration, varReference]);
                     ranges = computeHighlightRanges(document, 1, 11);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                     ranges = computeHighlightRanges(document, 2, 18);
-                    assert.equal(ranges.length, 1);
+                    assert.strictEqual(ranges.length, 1);
                     assertHighlight(ranges[0], DocumentHighlightKind.Read, 2, 17, 2, 19);
                     ranges = computeHighlightRanges(document, 4, 5);
                     assertHighlightRanges(ranges, [varDeclarationB, varReferenceB]);
                     ranges = computeHighlightRanges(document, 5, 12);
                     assertHighlightRanges(ranges, [varDeclarationB, varReferenceB]);
                     ranges = computeHighlightRanges(document, 4, 11);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                     ranges = computeHighlightRanges(document, 5, 18);
-                    assert.equal(ranges.length, 1);
+                    assert.strictEqual(ranges.length, 1);
                     assertHighlight(ranges[0], DocumentHighlightKind.Read, 5, 17, 5, 19);
                 });
 
@@ -1628,18 +1628,18 @@ describe("Dockerfile Document Highlight tests", function () {
                     ranges = computeHighlightRanges(document, 2, 11);
                     assertHighlightRanges(ranges, [varDeclaration, varReference]);
                     ranges = computeHighlightRanges(document, 1, 11);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                     ranges = computeHighlightRanges(document, 2, 15);
-                    assert.equal(ranges.length, 1);
+                    assert.strictEqual(ranges.length, 1);
                     assertHighlight(ranges[0], DocumentHighlightKind.Read, 2, 14, 2, 16);
                     ranges = computeHighlightRanges(document, 4, 5);
                     assertHighlightRanges(ranges, [varDeclarationB, varReferenceB]);
                     ranges = computeHighlightRanges(document, 5, 11);
                     assertHighlightRanges(ranges, [varDeclarationB, varReferenceB]);
                     ranges = computeHighlightRanges(document, 4, 11);
-                    assert.equal(ranges.length, 0);
+                    assert.strictEqual(ranges.length, 0);
                     ranges = computeHighlightRanges(document, 5, 15);
-                    assert.equal(ranges.length, 1);
+                    assert.strictEqual(ranges.length, 1);
                     assertHighlight(ranges[0], DocumentHighlightKind.Read, 5, 14, 5, 16);
                 });
             });
