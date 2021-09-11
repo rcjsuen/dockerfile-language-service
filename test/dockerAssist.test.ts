@@ -111,9 +111,9 @@ function assertResolvedDocumentation(item: CompletionItem) {
     service.resolveCompletionItem(item);
     let markupContent = item.documentation as MarkupContent;
     assert.strictEqual(markupContent.kind, MarkupKind.Markdown);
-    assert.notEqual(markupContent.value, undefined);
-    assert.notEqual(markupContent.value, null);
-    assert.notEqual(markupContent.value, "");
+    assert.notStrictEqual(markupContent.value, undefined);
+    assert.notStrictEqual(markupContent.value, null);
+    assert.notStrictEqual(markupContent.value, "");
     assert.strictEqual(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
 
     item.documentation = undefined;
@@ -121,9 +121,9 @@ function assertResolvedDocumentation(item: CompletionItem) {
     service.resolveCompletionItem(item);
     markupContent = item.documentation as MarkupContent;
     assert.strictEqual(markupContent.kind, MarkupKind.PlainText);
-    assert.notEqual(markupContent.value, undefined);
-    assert.notEqual(markupContent.value, null);
-    assert.notEqual(markupContent.value, "");
+    assert.notStrictEqual(markupContent.value, undefined);
+    assert.notStrictEqual(markupContent.value, null);
+    assert.notStrictEqual(markupContent.value, "");
     assert.strictEqual(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
 
     item.documentation = undefined;
@@ -131,9 +131,9 @@ function assertResolvedDocumentation(item: CompletionItem) {
     service.resolveCompletionItem(item);
     markupContent = item.documentation as MarkupContent;
     assert.strictEqual(markupContent.kind, MarkupKind.Markdown);
-    assert.notEqual(markupContent.value, undefined);
-    assert.notEqual(markupContent.value, null);
-    assert.notEqual(markupContent.value, "");
+    assert.notStrictEqual(markupContent.value, undefined);
+    assert.notStrictEqual(markupContent.value, null);
+    assert.notStrictEqual(markupContent.value, "");
     assert.strictEqual(markupContent.value, markdownDocumentation.getMarkdown(item.data).contents);
 
     item.documentation = undefined;
@@ -141,9 +141,9 @@ function assertResolvedDocumentation(item: CompletionItem) {
     service.resolveCompletionItem(item);
     markupContent = item.documentation as MarkupContent;
     assert.strictEqual(markupContent.kind, MarkupKind.PlainText);
-    assert.notEqual(markupContent.value, undefined);
-    assert.notEqual(markupContent.value, null);
-    assert.notEqual(markupContent.value, "");
+    assert.notStrictEqual(markupContent.value, undefined);
+    assert.notStrictEqual(markupContent.value, null);
+    assert.notStrictEqual(markupContent.value, "");
     assert.strictEqual(markupContent.value, plainTextDocumentation.getDocumentation(item.data));
 }
 

@@ -18,8 +18,8 @@ function assertEdit(data: number[], tokenType: string, index: number, line: numb
     assert.strictEqual(data[index], line, "line mismatch");
     assert.strictEqual(data[index + 1], startCharacter, "startCharacter mismatch");
     assert.strictEqual(data[index + 2], length, "length mismatch");
-    assert.notEqual(undefined, TokensLegend.getTokenType(tokenType));
-    assert.notEqual(null, TokensLegend.getTokenType(tokenType));
+    assert.notStrictEqual(undefined, TokensLegend.getTokenType(tokenType));
+    assert.notStrictEqual(null, TokensLegend.getTokenType(tokenType));
     assert.strictEqual(data[index + 3], TokensLegend.getTokenType(tokenType), "token types mismatch");
     assert.strictEqual(data[index + 4], TokensLegend.getTokenModifiers(tokenModifiers), "token modifiers mismatch");
 }

@@ -30,8 +30,8 @@ function assertImageTag(tag: string, item: CompletionItem, line: number, charact
 }
 
 function assertImageTags(tags: string[], items: CompletionItem[], cursorPosition: number, prefixLength: number) {
-    assert.notEqual(items.length, 0);
-    assert.notEqual(tags.length, 0);
+    assert.notStrictEqual(items.length, 0);
+    assert.notStrictEqual(tags.length, 0);
     assert.strictEqual(items.length, tags.length);
     for (let i = 0; i < tags.length; i++) {
         assertImageTag(tags[i], items[i], 0, cursorPosition - prefixLength, prefixLength);
