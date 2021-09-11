@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - prevent infinite loop when computing semantic tokens for a keyword with an escape character ([#91](https://github.com/rcjsuen/dockerfile-language-service/issues/91))
 - fix incorrect merging of error ranges if escape character embedded in the keyword ([rcjsuen/dockerfile-utils#99](https://github.com/rcjsuen/dockerfile-utils/issues/99))
+- fix undefined hover return value to be null instead to match the stated API ([#92](https://github.com/rcjsuen/dockerfile-language-service/issues/92))
 
 ## [0.5.0] - 2021-09-01
 ### Added
