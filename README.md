@@ -23,6 +23,7 @@ To [install](#installation-instructions) this language service as a dependency i
 - formatting
 - hovers
 - rename
+- semantic tokens
 - signature help
 
 ## Development Instructions
