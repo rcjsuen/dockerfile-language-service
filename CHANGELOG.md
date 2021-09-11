@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.6.0]
 ### Changed
 - duplicated escape parser directive errors will now only flag the duplicates ([rcjsuen/dockerfile-utils#100](https://github.com/rcjsuen/dockerfile-utils/issues/100))
 - duplicated CMD, ENTRYPOINT, and HEALTHCHECK instructions will no longer flag the last one found as it is the valid one ([rcjsuen/dockerfile-utils#101](https://github.com/rcjsuen/dockerfile-utils/issues/101))
@@ -425,7 +425,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.2.0...v0.3.0
