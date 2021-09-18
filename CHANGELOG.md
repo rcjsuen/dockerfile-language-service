@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- support BuildKit by ignoring RUN instructions with no arguments ([rcjsuen/dockerfile-utils#102](https://github.com/rcjsuen/dockerfile-utils/issues/102))
+
 ## [0.6.0] - 2021-09-11
 ### Changed
 - duplicated escape parser directive errors will now only flag the duplicates ([rcjsuen/dockerfile-utils#100](https://github.com/rcjsuen/dockerfile-utils/issues/100))
