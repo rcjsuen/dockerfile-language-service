@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.6.0]
+## [0.6.0] - 2021-09-11
 ### Changed
 - duplicated escape parser directive errors will now only flag the duplicates ([rcjsuen/dockerfile-utils#100](https://github.com/rcjsuen/dockerfile-utils/issues/100))
 - duplicated CMD, ENTRYPOINT, and HEALTHCHECK instructions will no longer flag the last one found as it is the valid one ([rcjsuen/dockerfile-utils#101](https://github.com/rcjsuen/dockerfile-utils/issues/101))
