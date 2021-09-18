@@ -44,7 +44,7 @@ function computePosition(content: string, line: number, character: number, snipp
 
 function assertOnlyFROM(proposals: CompletionItem[], line: number, number: number, prefixLength: number) {
     assert.strictEqual(proposals.length, 1);
-    assertFROM(proposals[0], line, number, prefixLength);
+    assertFROM(proposals[0], line, number, line, number + prefixLength);
 }
 
 function assertRawDocumentation(item: CompletionItem, expected: string) {
@@ -341,28 +341,32 @@ function assertEXPOSE(item: CompletionItem, line: number, character: number, pre
     assertResolvedDocumentation(item);
 }
 
-function assertFROM(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
+function assertCompletionItem(item: CompletionItem, label: string, snippetLabel: string, newText: string, snippetNewText: string, data: any, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
-        assert.strictEqual(item.label, "FROM baseImage");
+        assert.strictEqual(item.label, snippetLabel);
     } else {
-        assert.strictEqual(item.label, "FROM");
+        assert.strictEqual(item.label, label);
     }
     assert.strictEqual(item.kind, CompletionItemKind.Keyword);
     if (snippetSupport === undefined || snippetSupport) {
         assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
-        assert.strictEqual(item.textEdit.newText, "FROM ${1:baseImage}");
+        assert.strictEqual(item.textEdit.newText, snippetNewText);
     } else {
         assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
-        assert.strictEqual(item.textEdit.newText, "FROM");
+        assert.strictEqual(item.textEdit.newText, newText);
     }
-    assert.strictEqual(item.data, "FROM");
+    assert.strictEqual(item.data, data);
     assert.strictEqual(item.deprecated, undefined);
     assert.strictEqual(item.documentation, undefined);
-    assert.strictEqual((item.textEdit as TextEdit).range.start.line, line);
-    assert.strictEqual((item.textEdit as TextEdit).range.start.character, character);
-    assert.strictEqual((item.textEdit as TextEdit).range.end.line, line);
-    assert.strictEqual((item.textEdit as TextEdit).range.end.character, character + prefixLength);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
     assertResolvedDocumentation(item);
+}
+
+function assertFROM(item: CompletionItem, line: number, character: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
+    assertCompletionItem(item, "FROM", "FROM baseImage", "FROM", "FROM ${1:baseImage}", "FROM", line, character, endLine, endCharacter, snippetSupport);
 }
 
 function assertHEALTHCHECK_CMD(item: CompletionItem, line: number, character: number, prefixLength: number, snippetSupport?: boolean) {
@@ -994,7 +998,7 @@ function assertProposals(proposals: CompletionItem[], offset: number, prefix: nu
                 assertEXPOSE(proposals[i], offset, prefix, prefixLength, snippetSupport);
                 break;
             case "FROM":
-                assertFROM(proposals[i], offset, prefix, prefixLength, snippetSupport);
+                assertFROM(proposals[i], offset, prefix, offset, prefix + prefixLength, snippetSupport);
                 break;
             case "HEALTHCHECK_CMD":
                 assertHEALTHCHECK_CMD(proposals[i++], offset, prefix, prefixLength, snippetSupport);
@@ -1232,6 +1236,34 @@ describe('Docker Content Assist Tests', function () {
 
             proposals = compute("F\n", 1);
             assertOnlyFROM(proposals, 0, 0, 1);
+
+            proposals = computePosition("FR\\\n\n", 2, 0, true);
+            assert.strictEqual(proposals.length, 1);
+            assertFROM(proposals[0], 0, 0, 2, 0);
+
+            proposals = computePosition("FR\\\n \n", 2, 0, true);
+            assert.strictEqual(proposals.length, 1);
+            assertFROM(proposals[0], 0, 0, 2, 0);
+
+            proposals = computePosition("FR\\\n\t\n", 2, 0, true);
+            assert.strictEqual(proposals.length, 1);
+            assertFROM(proposals[0], 0, 0, 2, 0);
+
+            proposals = computePosition("FR\\\n\\\n", 2, 0, true);
+            assert.strictEqual(proposals.length, 1);
+            assertFROM(proposals[0], 0, 0, 2, 0);
+
+            proposals = computePosition("FR\\\n\\ \n", 2, 0, true);
+            assert.strictEqual(proposals.length, 1);
+            assertFROM(proposals[0], 0, 0, 2, 0);
+
+            proposals = computePosition("FR\\\n \nO", 2, 1, true);
+            assert.strictEqual(proposals.length, 1);
+            assertFROM(proposals[0], 0, 0, 2, 1);
+
+            proposals = computePosition("FR\\\n\nO", 2, 1, true);
+            assert.strictEqual(proposals.length, 1);
+            assertFROM(proposals[0], 0, 0, 2, 1);
 
             proposals = compute("FROM", 4);
             assert.strictEqual(0, proposals.length);

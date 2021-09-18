@@ -17,6 +17,12 @@ import {
 } from 'dockerfile-ast';
 import { CompletionItemCapabilities } from './main';
 
+interface Prefix {
+
+    content: string;
+    offset: number;
+}
+
 export class DockerAssist {
 
     private snippetSupport: boolean;
@@ -120,14 +126,14 @@ export class DockerAssist {
         }
 
         let prefix = DockerAssist.calculateTruePrefix(buffer, offset, escapeCharacter);
-        if (prefix !== "") {
-            let index = prefix.lastIndexOf('$');
+        if (prefix.content !== "") {
+            let index = prefix.content.lastIndexOf('$');
             // $ exists so we're at a variable
             if (index !== -1) {
                 // check that the variable $ wasn't escaped
-                if (prefix.charAt(index - 1) !== '\\') {
+                if (prefix.content.charAt(index - 1) !== '\\') {
                     // get the variable's prefix thus far
-                    var variablePrefix = prefix.substring(index + 1).toLowerCase();
+                    var variablePrefix = prefix.content.substring(index + 1).toLowerCase();
                     let prefixLength = variablePrefix.length + 1;
                     const items: CompletionItem[] = [];
                     if (variablePrefix === "") {
@@ -178,22 +184,22 @@ export class DockerAssist {
         let previousWord = "";
 
         instructionsCheck: for (let instruction of dockerfile.getInstructions()) {
-            if (Util.isInsideRange(position, instruction.getInstructionRange()) || prefix === instruction.getKeyword()) {
+            if (Util.isInsideRange(position, instruction.getInstructionRange()) || prefix.content === instruction.getKeyword()) {
                 break;
             } else if (Util.isInsideRange(position, instruction.getRange())) {
                 switch (instruction.getKeyword()) {
                     case "ADD":
-                        return this.createAddProposals(dockerfile, instruction as ModifiableInstruction, position, offset, prefix);
+                        return this.createAddProposals(dockerfile, instruction as ModifiableInstruction, position, offset, prefix.content);
                     case "COPY":
-                        return this.createCopyProposals(dockerfile, instruction as Copy, position, offset, prefix);
+                        return this.createCopyProposals(dockerfile, instruction as Copy, position, offset, prefix.content);
                     case "FROM":
-                        return this.createFromProposals(instruction as From, position, offset, prefix);
+                        return this.createFromProposals(instruction as From, position, offset, prefix.content);
                     case "HEALTHCHECK":
                         let subcommand = (instruction as Healthcheck).getSubcommand();
                         if (subcommand && subcommand.isBefore(position)) {
                             return [];
                         }
-                        return this.createHealthcheckProposals(offset, prefix);
+                        return this.createHealthcheckProposals(offset, prefix.content);
                     case "ONBUILD":
                         let onbuildArgs = instruction.getArguments();
                         if (onbuildArgs.length === 0 || Util.isInsideRange(position, onbuildArgs[0].getRange())) {
@@ -204,15 +210,15 @@ export class DockerAssist {
                             let trigger = (instruction as Onbuild).getTriggerInstruction();
                             switch (trigger.getKeyword()) {
                                 case "ADD":
-                                    return this.createAddProposals(dockerfile, trigger as ModifiableInstruction, position, offset, prefix);
+                                    return this.createAddProposals(dockerfile, trigger as ModifiableInstruction, position, offset, prefix.content);
                                 case "COPY":
-                                    return this.createCopyProposals(dockerfile, trigger as Copy, position, offset, prefix);
+                                    return this.createCopyProposals(dockerfile, trigger as Copy, position, offset, prefix.content);
                                 case "HEALTHCHECK":
                                     let subcommand = (trigger as Healthcheck).getSubcommand();
                                     if (subcommand && subcommand.isBefore(position)) {
                                         return [];
                                     }
-                                    return this.createHealthcheckProposals(offset, prefix);
+                                    return this.createHealthcheckProposals(offset, prefix.content);
                             }
                         }
                         return [];
@@ -222,7 +228,7 @@ export class DockerAssist {
             }
         }
 
-        if (prefix === "") {
+        if (prefix.content === "") {
             if (dockerfile.getInstructions().length === 0) {
                 // if we don't have any instructions, only suggest FROM
                 return [this.createFROM(0, offset, "FROM")];
@@ -232,7 +238,7 @@ export class DockerAssist {
         }
 
         const suggestions: string[] = [];
-        var uppercasePrefix = prefix.toUpperCase();
+        var uppercasePrefix = prefix.content.toUpperCase();
         for (let i = 0; i < KEYWORDS.length; i++) {
             if (KEYWORDS[i] === uppercasePrefix) {
                 // prefix is a keyword already, nothing to suggest
@@ -247,7 +253,7 @@ export class DockerAssist {
             return [];
         }
 
-        return this.createProposals(suggestions, previousWord, prefix.length, offset);
+        return this.createProposals(suggestions, previousWord, offset - prefix.offset, offset);
     }
 
     createProposals(keywords: string[], previousWord: string, prefixLength: number, offset: number): CompletionItem[] {
@@ -459,29 +465,42 @@ export class DockerAssist {
     * @param offset the current text caret's offset
     * @param escapeCharacter the escape character defined in this Dockerfile
     */
-    private static calculateTruePrefix(buffer: string, offset: number, escapeCharacter: string): string {
+    private static calculateTruePrefix(buffer: string, offset: number, escapeCharacter: string): Prefix {
         var char = buffer.charAt(offset - 1);
+        let checkEscape = true;
         switch (char) {
             case '\n':
                 var escapedPrefix = "";
-                for (var i = offset - 1; i >= 0; i--) {
-                    if (buffer.charAt(i) === '\n') {
-                        if (buffer.charAt(i - 1) === escapeCharacter) {
-                            i--;
-                        } else if (buffer.charAt(i - 1) === '\r' && buffer.charAt(i - 2) === escapeCharacter) {
-                            i = i - 2;
-                        } else {
+                escapeCheck: for (var i = offset - 2; i >= 0; i--) {
+                    switch (buffer.charAt(i)) {
+                        case ' ':
+                        case '\t':
+                            if (!checkEscape) {
+                                break escapeCheck;
+                            }
                             break;
-                        }
-                    } else if (buffer.charAt(i) === ' ' || buffer.charAt(i) === '\t') {
-                        break;
-                    } else {
-                        escapedPrefix = buffer.charAt(i).toUpperCase() + escapedPrefix;
+                        case '\r':
+                        case '\n':
+                            checkEscape = true;
+                            break
+                        case escapeCharacter:
+                            if (checkEscape) {
+                                checkEscape = false;
+                                continue;
+                            }
+                            break;
+                        default:
+                            if (checkEscape) {
+                                break escapeCheck;
+                            }
+                            offset = i;
+                            escapedPrefix = buffer.charAt(i).toUpperCase() + escapedPrefix;
+                            break;
                     }
                 }
 
                 if (escapedPrefix !== "") {
-                    return escapedPrefix;
+                    return { content: escapedPrefix, offset };
                 }
                 break;
             case '\r':
@@ -489,18 +508,33 @@ export class DockerAssist {
             case '\t':
                 break;
             default:
+                checkEscape = false;
                 var truePrefix = char;
                 for (let i = offset - 2; i >= 0; i--) {
                     char = buffer.charAt(i);
-                    if (Util.isWhitespace(char)) {
+                    if (Util.isNewline(char)) {
+                        checkEscape = true;
+                    } else if (Util.isWhitespace(char)) {
+                        if (checkEscape) {
+                            continue;
+                        }
                         break;
                     } else {
+                        if (char === escapeCharacter) {
+                            if (checkEscape) {
+                                checkEscape = false;
+                                continue;
+                            }
+                        } else if (checkEscape) {
+                            break;
+                        }
                         truePrefix = char + truePrefix;
+                        offset = i;
                     }
                 }
-                return truePrefix;
+                return { content: truePrefix, offset: offset - 1 };
         }
-        return "";
+        return { content: "", offset }
     }
 
     createSingleProposals(keyword: string, prefixLength: number, offset: number): CompletionItem {
