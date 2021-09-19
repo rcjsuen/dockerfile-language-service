@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.7.1] - 2021-09-19
 ### Fixed
 - correct replacement text range calculation in completion items ([#93](https://github.com/rcjsuen/dockerfile-language-service/issues/93))
 
@@ -436,7 +436,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.4.0...v0.5.0
