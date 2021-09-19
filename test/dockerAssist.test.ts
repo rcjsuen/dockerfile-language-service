@@ -1293,6 +1293,18 @@ describe('Docker Content Assist Tests', function () {
             assertHEALTHCHECK_CMD(proposals[0], 1, 0, 1);
             assertHEALTHCHECK_NONE(proposals[1], 1, 0, 1);
 
+            proposals = compute("FROM node\nM", 14);
+            assert.strictEqual(proposals.length, 1);
+            assertMAINTAINER(proposals[0], 1, 0, 1);
+
+            proposals = compute("FROM node\nMAIN", 14);
+            assert.strictEqual(proposals.length, 1);
+            assertMAINTAINER(proposals[0], 1, 0, 4);
+
+            proposals = compute("FROM node\nONBUILD RU", 21);
+            assert.strictEqual(proposals.length, 1);
+            assertRUN(proposals[0], 1, 8 , 2);
+
             proposals = compute("FROM node O", 10);
             assert.strictEqual(proposals.length, 0);
         });

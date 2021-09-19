@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- correct replacement text range calculation in completion items ([#93](https://github.com/rcjsuen/dockerfile-language-service/issues/93))
+
 ## [0.7.0] - 2021-09-19
 ### Added
 - support BuildKit by ignoring RUN instructions with no arguments ([rcjsuen/dockerfile-utils#102](https://github.com/rcjsuen/dockerfile-utils/issues/102))

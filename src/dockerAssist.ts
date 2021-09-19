@@ -125,7 +125,7 @@ export class DockerAssist {
             }
         }
 
-        let prefix = DockerAssist.calculateTruePrefix(buffer, offset, escapeCharacter);
+        let prefix = this.calculateTruePrefix(dockerfile, buffer, offset, escapeCharacter);
         if (prefix.content !== "") {
             let index = prefix.content.lastIndexOf('$');
             // $ exists so we're at a variable
@@ -465,7 +465,7 @@ export class DockerAssist {
     * @param offset the current text caret's offset
     * @param escapeCharacter the escape character defined in this Dockerfile
     */
-    private static calculateTruePrefix(buffer: string, offset: number, escapeCharacter: string): Prefix {
+    private calculateTruePrefix(dockerfile: Dockerfile, buffer: string, offset: number, escapeCharacter: string): Prefix {
         var char = buffer.charAt(offset - 1);
         let checkEscape = true;
         switch (char) {
@@ -529,10 +529,31 @@ export class DockerAssist {
                             break;
                         }
                         truePrefix = char + truePrefix;
-                        offset = i;
                     }
                 }
-                return { content: truePrefix, offset: offset - 1 };
+                for (const instruction of dockerfile.getInstructions()) {
+                    const instructionRange = instruction.getInstructionRange();
+                    const startOffset = this.document.offsetAt(instructionRange.start);
+                    if (startOffset <= offset && offset <= this.document.offsetAt(instructionRange.end)) {
+                        return { content: truePrefix, offset: startOffset };
+                    }
+                    for (const arg of instruction.getArguments()) {
+                        const argRange = arg.getRange();
+                        const startOffset = this.document.offsetAt(argRange.start);
+                        if (startOffset <= offset && offset <= this.document.offsetAt(argRange.end)) {
+                            return { content: truePrefix, offset: startOffset };
+                        }
+                    }
+                    if (instruction instanceof ModifiableInstruction) {
+                        for (const flag of instruction.getFlags()) {
+                            const flagRange = flag.getRange();
+                            const startOffset = this.document.offsetAt(flagRange.start);
+                            if (startOffset <= offset && offset <= this.document.offsetAt(flagRange.end)) {
+                                return { content: truePrefix, offset: startOffset };
+                            }
+                        }
+                    }
+                }
         }
         return { content: "", offset }
     }
