@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.7.0] - 2021-09-19
 ### Added
 - support BuildKit by ignoring RUN instructions with no arguments ([rcjsuen/dockerfile-utils#102](https://github.com/rcjsuen/dockerfile-utils/issues/102))
 
@@ -432,7 +432,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.3.0...v0.4.0
