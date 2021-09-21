@@ -1225,6 +1225,15 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 4);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 5, 1, 0, 3);
             });
+
+            it("RU\\\\nN\\nRUN", () => {
+                const tokens = computeSemanticTokens("RU\\\nN\nRUN");
+                assert.strictEqual(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 1, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 1, 0, 3);
+            });
         });
 
         describe("split arguments", () => {

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- prevent infinite loop when calculating semantic tokens for an instruction with a keyword that spans multiple lines ([#94](https://github.com/rcjsuen/dockerfile-language-service/issues/94))
+
 ## [0.7.1] - 2021-09-19
 ### Fixed
 - correct replacement text range calculation in completion items ([#93](https://github.com/rcjsuen/dockerfile-language-service/issues/93))
