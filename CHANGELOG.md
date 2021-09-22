@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.7.2] - 2021-09-21
 ### Fixed
 - prevent infinite loop when calculating semantic tokens for an instruction with a keyword that spans multiple lines ([#94](https://github.com/rcjsuen/dockerfile-language-service/issues/94))
 - prevent merging of instructions if it contains an escape character and spans multiple lines ([rcjsuen/dockerfile-utils#103](https://github.com/rcjsuen/dockerfile-utils/issues/103))
@@ -442,7 +442,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.2...HEAD
+[0.7.2]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.5.0...v0.6.0
