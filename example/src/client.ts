@@ -245,6 +245,7 @@ monacoModel.onDidChangeContent(() => {
             endColumn: range.endColumn,
             message: diagnostic.message,
             source: diagnostic.source,
+            tags: diagnostic.tags,
         }
     });
     monaco.editor.setModelMarkers(monacoModel, LANGUAGE_ID, markers);
