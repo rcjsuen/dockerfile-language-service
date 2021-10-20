@@ -606,6 +606,15 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 5, 4);
             });
 
+            it("RUN $var\\\\niable", () => {
+                const tokens = computeSemanticTokens("RUN $var\\\niable");
+                assert.strictEqual(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 15, 1, 0, 5);
+            });
+
             it("FROM golang:$GO_VERSION AS", () => {
                 const tokens = computeSemanticTokens("FROM golang:$GO_VERSION AS");
                 assert.strictEqual(20, tokens.data.length);
@@ -658,6 +667,15 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6);
                 assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 7, 6);
+            });
+
+            it("RUN ${var}\\\\niable", () => {
+                const tokens = computeSemanticTokens("RUN ${var}\\\niable");
+                assert.strictEqual(20, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.variable, 5, 0, 4, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 10, 0, 6, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 1, 0, 5);
             });
 
             it("HEALTHCHECK --timeout=${a} CMD ls", () => {

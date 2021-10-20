@@ -519,7 +519,11 @@ export class DockerSemanticTokens {
             let lastVariableRange = null;
             for (const variable of instruction.getVariables()) {
                 const variableRange = variable.getRange();
-                if (Util.isInsideRange(variableRange.start, range)) {
+                if (Util.isInsideRange(range.start, variableRange) && Util.isInsideRange(range.end, variableRange)) {
+                    // the token is completely inside the variable's range, render it as a variable
+                    this.createToken(instruction, range, SemanticTokenTypes.variable, [], false);
+                    return;
+                } else if (Util.isInsideRange(variableRange.start, range)) {
                     if (Util.positionBefore(startPosition, variableRange.start)) {
                         // create a parameter token for the characters
                         // before the variable
