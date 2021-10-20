@@ -1234,6 +1234,13 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 10, 1, 0, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.keyword, 15, 1, 0, 3);
             });
+
+            it("splits into nothing", () => {
+                const tokens = computeSemanticTokens("R\\ \n");
+                assert.strictEqual(10, tokens.data.length);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 5, 0, 1, 1);
+            });
         });
 
         describe("split arguments", () => {

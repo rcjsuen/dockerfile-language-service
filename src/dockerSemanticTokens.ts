@@ -501,6 +501,11 @@ export class DockerSemanticTokens {
                         break;
                 }
             }
+
+            if (startOffset === -1) {
+                // we've processed the intermediate token but there is nothing of interest after it
+                return;
+            }
             const intermediateRange = {
                 start: this.document.positionAt(startOffset),
                 end: this.document.positionAt(endOffset),
