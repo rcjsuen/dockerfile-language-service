@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Fixed
 - prevent infinite loop when calculating semantic tokens if an escape character is not followed by any actual content ([#95](https://github.com/rcjsuen/dockerfile-language-service/issues/95))
+- prevent infinite loop when calculating semantic tokens if an escape character is embedded within a variable ([#96](https://github.com/rcjsuen/dockerfile-language-service/issues/96))
 
 ## [0.7.2] - 2021-09-21
 ### Fixed
