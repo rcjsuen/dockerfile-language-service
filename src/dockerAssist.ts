@@ -288,20 +288,15 @@ export class DockerAssist {
     }
 
     private createAddProposals(dockerfile: Dockerfile, add: ModifiableInstruction, position: Position, offset: number, prefix: string) {
-        const flags = add.getFlags();
-        let copyArgs = add.getArguments();
-        if (copyArgs.length === 0 && add.getFlags().length === 0) {
-            return [this.createADD_FlagChown(0, offset)];
-        } else if (copyArgs.length > 0 && Util.isInsideRange(position, copyArgs[0].getRange()) && prefix === "-") {
-            return [this.createADD_FlagChown(prefix.length, offset)];
-        } else if (flags.length > 0 && flags[0].toString() === "--") {
-            return [this.createADD_FlagChown(prefix.length, offset)];
-        } else if ((copyArgs.length > 0 && Util.isInsideRange(position, copyArgs[0].getRange()) && "--chown=".indexOf(prefix) === 0)
-            || (flags.length > 0 && "--chown=".indexOf(flags[0].toString()) === 0)) {
-            return [this.createADD_FlagChown(prefix.length, offset)];
+        const fnMap = new Map<string, Function>();
+        fnMap.set("chown", this.createADD_FlagChown.bind(this));
+        const args = add.getArguments();
+        const flagProposals = this.createFlagProposals(add.getFlags(), args, position, offset, prefix, fnMap);
+        if (flagProposals !== null) {
+            return flagProposals;
         }
 
-        return this.createTargetFolderProposals(dockerfile, copyArgs, position, offset, prefix);
+        return this.createTargetFolderProposals(dockerfile, args, position, offset, prefix);
     }
 
     private createOtherFlagProposals(flagProposalsMap: Map<string, Function>, allProposals: CompletionItem[], skipList: string[], prefixLength: number, offset: number): CompletionItem[] {

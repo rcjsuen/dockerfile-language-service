@@ -2182,21 +2182,14 @@ describe('Docker Content Assist Tests', function () {
                         assertAddFlags(items, 1, triggerOffset + 4, 1, triggerOffset + 6, snippetSupport);
                     });
 
-                    it("prefix --chown", function () {
-                        let items = computePosition("FROM busybox\n" + onbuild + "ADD --c", 1, triggerOffset + 7, snippetSupport);
-                        assertAddFlags(items, 1, triggerOffset + 4, 1, triggerOffset + 7, snippetSupport);
+                    describe("prefix --chown", () => {
+                        testFlagPrefix(trigger, "ADD", "", "chown=", "", assertADD_FlagChown, snippetSupport);
+                    });
 
-                        items = computePosition("FROM busybox\n" + onbuild + "ADD --ch", 1, triggerOffset + 8, snippetSupport);
-                        assertAddFlags(items, 1, triggerOffset + 4, 1, triggerOffset + 8, snippetSupport);
-
-                        items = computePosition("FROM busybox\n" + onbuild + "ADD --cho", 1, triggerOffset + 9, snippetSupport);
-                        assertAddFlags(items, 1, triggerOffset + 4, 1, triggerOffset + 9, snippetSupport);
-
-                        items = computePosition("FROM busybox\n" + onbuild + "ADD --chow", 1, triggerOffset + 10, snippetSupport);
-                        assertAddFlags(items, 1, triggerOffset + 4, 1, triggerOffset + 10, snippetSupport);
-
-                        items = computePosition("FROM busybox\n" + onbuild + "ADD --chown", 1, triggerOffset + 11, snippetSupport);
-                        assertAddFlags(items, 1, triggerOffset + 4, 1, triggerOffset + 11, snippetSupport);
+                    it("chown invalid", () => {
+                        const items = computePosition("FROM busybox\n" + onbuild + "ADD --chown2=user:group ", 1, triggerOffset + 24, snippetSupport);
+                        assert.strictEqual(items.length, 1);
+                        assertADD_FlagChown(items[0], 1, triggerOffset + 24, 1, triggerOffset + 24, snippetSupport);
                     });
                 }
 

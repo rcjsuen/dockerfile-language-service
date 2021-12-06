@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## Unreleased]
 ### Fixed
 - fix TypeError thrown when computing completion items for a COPY instruction with flags ([#97](https://github.com/rcjsuen/dockerfile-language-service/issues/97))
+- fix TypeError thrown when computing completion items for an ADD instruction with flags ([#98](https://github.com/rcjsuen/dockerfile-language-service/issues/98))
 
 ## [0.7.3] - 2021-10-20
 ### Fixed
