@@ -2323,7 +2323,7 @@ describe('Docker Content Assist Tests', function () {
             });
 
             describe("arguments", function () {
-                function testCOPY_FlagFrom(snippetSupport: boolean) {
+                function testCOPY_Flags(snippetSupport: boolean) {
                     it("full", function () {
                         let items = computePosition("FROM busybox\n" + onbuild + "COPY ", 1, triggerOffset + 5, snippetSupport);
                         assertCopyFlags(items, 1, triggerOffset + 5, 1, triggerOffset + 5, snippetSupport);
@@ -2420,11 +2420,11 @@ describe('Docker Content Assist Tests', function () {
                 }
 
                 describe("snippets", function () {
-                    testCOPY_FlagFrom(true);
+                    testCOPY_Flags(true);
                 });
 
                 describe("plain text", function () {
-                    testCOPY_FlagFrom(false);
+                    testCOPY_Flags(false);
                 });
 
                 describe("workdir suggestions", () => {
