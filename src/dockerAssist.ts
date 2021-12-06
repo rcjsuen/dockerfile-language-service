@@ -13,7 +13,7 @@ import { DockerRegistryClient } from './dockerRegistryClient';
 import {
     DockerfileParser, Dockerfile,
     Copy, From, Healthcheck, Onbuild,
-    ModifiableInstruction, Directive, DefaultVariables, Workdir, Argument
+    ModifiableInstruction, Directive, DefaultVariables, Argument, Flag
 } from 'dockerfile-ast';
 import { CompletionItemCapabilities } from './main';
 
@@ -304,6 +304,75 @@ export class DockerAssist {
         return this.createTargetFolderProposals(dockerfile, copyArgs, position, offset, prefix);
     }
 
+    private createOtherFlagProposals(flagProposalsMap: Map<string, Function>, allProposals: CompletionItem[], skipList: string[], prefixLength: number, offset: number): CompletionItem[] {
+        if (skipList.length === 0) {
+            // have nothing, return everything
+            return allProposals;
+        }
+        if (skipList.length === flagProposalsMap.size) {
+            // have everything, return nothing
+            return [];
+        }
+        const flagProposals = [];
+        flagProposalsMap.forEach((_, key) => {
+            if (skipList.indexOf(key) === -1) {
+                flagProposals.push(key);
+            }
+        });
+        return flagProposals.map(flag => {
+            const func = flagProposalsMap.get(flag);
+            return func(prefixLength, offset);
+        });
+    }
+
+    private createFlagProposals(
+        flags: Flag[],
+        args: Argument[],
+        position: Position,
+        offset: number,
+        prefix: string,
+        flagProposalsMap: Map<string, Function>
+    ): CompletionItem[] | null {
+        const allProposals = [];
+        flagProposalsMap.forEach((createFlagProposalItem) => {
+            allProposals.push(createFlagProposalItem(prefix.length, offset));
+        });
+        let promptFlags = true;
+        if (args.length > 0 && Util.positionBefore(args[0].getRange().start, this.document.positionAt(offset))) {
+            // current position is not before the first argument, don't prompt flags
+            promptFlags = false;
+        }
+        const skipList = [];
+        let insideFlag = false;
+        for (const flag of flags) {
+            const name = flag.getName();
+            if (flagProposalsMap.has(name)) {
+                skipList.push(name);
+            }
+            if (Util.isInsideRange(position, flag.getRange())) {
+                insideFlag = true;
+            }
+        }
+        if (insideFlag) {
+            if (prefix === "--") {
+                return this.createOtherFlagProposals(flagProposalsMap, allProposals, skipList, prefix.length, offset);
+            }
+            let item = null;
+            flagProposalsMap.forEach((fn, flagName) => {
+                if (`--${flagName}=`.indexOf(prefix) === 0) {
+                    item = fn(prefix.length, offset);
+                }
+            });
+            if (item !== null) {
+                return [item];
+            }
+        }
+        if (promptFlags || (args.length > 0 && Util.isInsideRange(position, args[0].getRange()) && prefix === "-")) {
+            return this.createOtherFlagProposals(flagProposalsMap, allProposals, skipList, prefix.length, offset);
+        }
+        return null;
+    }
+
     private createCopyProposals(dockerfile: Dockerfile, copy: Copy, position: Position, offset: number, prefix: string) {
         let flag = copy.getFromFlag();
         // is the user in the --from= area
@@ -344,23 +413,16 @@ export class DockerAssist {
             return items;
         }
 
-        const flags = copy.getFlags();
-        let copyArgs = copy.getArguments();
-        if (copyArgs.length === 0 && copy.getFlags().length === 0) {
-            return [this.createCOPY_FlagChown(0, offset), this.createCOPY_FlagFrom(0, offset)];
-        } else if (copyArgs.length > 0 && Util.isInsideRange(position, copyArgs[0].getRange()) && prefix === "-") {
-            return [this.createCOPY_FlagChown(prefix.length, offset), this.createCOPY_FlagFrom(prefix.length, offset)];
-        } else if (flags.length > 0 && flags[0].toString() === "--") {
-            return [this.createCOPY_FlagChown(prefix.length, offset), this.createCOPY_FlagFrom(prefix.length, offset)];
-        } else if ((copyArgs.length > 0 && Util.isInsideRange(position, copyArgs[0].getRange()) && "--chown=".indexOf(prefix) === 0)
-            || (flags.length > 0 && "--chown=".indexOf(flags[0].toString()) === 0)) {
-            return [this.createCOPY_FlagChown(prefix.length, offset)];
-        } else if ((copyArgs.length > 0 && Util.isInsideRange(position, copyArgs[0].getRange()) && "--from=".indexOf(prefix) === 0)
-            || (flags.length > 0 && "--from=".indexOf(flags[0].toString()) === 0)) {
-            return [this.createCOPY_FlagFrom(prefix.length, offset)];
+        const fnMap = new Map<string, Function>();
+        fnMap.set("chown", this.createCOPY_FlagChown.bind(this));
+        fnMap.set("from", this.createCOPY_FlagFrom.bind(this));
+        const args = copy.getArguments();
+        const flagProposals = this.createFlagProposals(copy.getFlags(), args, position, offset, prefix, fnMap);
+        if (flagProposals !== null) {
+            return flagProposals;
         }
 
-        return this.createTargetFolderProposals(dockerfile, copyArgs, position, offset, prefix);
+        return this.createTargetFolderProposals(dockerfile, args, position, offset, prefix);
     }
 
     private createTargetFolderProposals(dockerfile: Dockerfile, args: Argument[], position: Position, offset: number, prefix: string): CompletionItem[] {

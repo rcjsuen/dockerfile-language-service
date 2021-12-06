@@ -1108,6 +1108,22 @@ function assertAllProposals(proposals: CompletionItem[], offset: number, prefix:
     assertProposals(proposals, offset, prefix, prefixLength, snippetSupport, deprecatedSupport, supportedTags);
 }
 
+function testFlagPrefix(trigger: boolean, instruction: string, beforeContent: string, incompleteFlag: string, afterContent: string, validateCompletionItem: Function, snippetSupport: boolean) {
+    const onbuild = trigger ? "ONBUILD " : "";
+    const triggerOffset = onbuild.length;
+    const instructionLength = instruction.length;
+    const offset = instructionLength + 3 + beforeContent.length;
+    for (let i = 1; i < incompleteFlag.length; i++) {
+        const line = `${onbuild}${instruction} ${beforeContent}--${incompleteFlag.substring(0, i)}${afterContent}`;
+        const content = `FROM busybox\n${line}`;
+        it(line, () => {
+            const items = computePosition(content, 1, triggerOffset + offset + i, snippetSupport);
+            assert.strictEqual(items.length, 1);
+            validateCompletionItem(items[0], 1, triggerOffset + instructionLength + beforeContent.length + 1, 1, triggerOffset + offset + i, snippetSupport);
+        });
+    }
+}
+
 describe('Docker Content Assist Tests', function () {
     describe('no content', function () {
         it('empty file', function () {
@@ -2321,6 +2337,10 @@ describe('Docker Content Assist Tests', function () {
 
                         items = computePosition("FROM busybox\n" + onbuild + "COPY  ", 1, triggerOffset + 5, snippetSupport);
                         assertCopyFlags(items, 1, triggerOffset + 5, 1, triggerOffset + 5, snippetSupport);
+
+                        // the first hyphen causes the flags after it to be perceived as arguments, hence we prompt everything
+                        items = computePosition("FROM busybox\n" + onbuild + "COPY - --chown=user:group --from=test", 1, triggerOffset + 5, snippetSupport);
+                        assertCopyFlags(items, 1, triggerOffset + 5, 1, triggerOffset + 5, snippetSupport);
                     });
 
                     it("prefix", function () {
@@ -2331,44 +2351,78 @@ describe('Docker Content Assist Tests', function () {
                         assertCopyFlags(items, 1, triggerOffset + 5, 1, triggerOffset + 7, snippetSupport);
                     });
 
-                    it("prefix --from", function () {
-                        let items = computePosition("FROM busybox\n" + onbuild + "COPY --f", 1, triggerOffset + 8, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 8, snippetSupport);
-
-                        items = computePosition("FROM busybox\n" + onbuild + "COPY --fr", 1, triggerOffset + 9, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 9, snippetSupport);
-
-                        items = computePosition("FROM busybox\n" + onbuild + "COPY --fro", 1, triggerOffset + 10, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 10, snippetSupport);
-
-                        items = computePosition("FROM busybox\n" + onbuild + "COPY --from", 1, triggerOffset + 11, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagFrom(items[0], 1, triggerOffset + 5, 1, triggerOffset + 11, snippetSupport);
+                    describe("prefix --from", () => {
+                        testFlagPrefix(trigger, "COPY", "", "from=", "", assertCOPY_FlagFrom, snippetSupport);
                     });
 
-                    it("prefix --chown", function () {
-                        let items = computePosition("FROM busybox\n" + onbuild + "COPY --c", 1, triggerOffset + 8, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 8, snippetSupport);
+                    describe("prefix --chown", () => {
+                        testFlagPrefix(trigger, "COPY", "", "chown=", "", assertCOPY_FlagChown, snippetSupport);
+                    });
 
-                        items = computePosition("FROM busybox\n" + onbuild + "COPY --ch", 1, triggerOffset + 9, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 9, snippetSupport);
+                    describe("--from present", () => {
+                        it("no prefix", () => {
+                            const items = computePosition("FROM busybox\n" + onbuild + "COPY --from=something ", 1, triggerOffset + 22, snippetSupport);
+                            assert.strictEqual(items.length, 1);
+                            assertCOPY_FlagChown(items[0], 1, triggerOffset + 22, 1, triggerOffset + 22, snippetSupport);
+                        });
 
-                        items = computePosition("FROM busybox\n" + onbuild + "COPY --cho", 1, triggerOffset + 10, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 10, snippetSupport);
+                        it("- prefix", () => {
+                            const items = computePosition("FROM busybox\n" + onbuild + "COPY --from=something -", 1, triggerOffset + 23, snippetSupport);
+                            assert.strictEqual(items.length, 1);
+                            assertCOPY_FlagChown(items[0], 1, triggerOffset + 22, 1, triggerOffset + 23, snippetSupport);
+                        });
 
-                        items = computePosition("FROM busybox\n" + onbuild + "COPY --chow", 1, triggerOffset + 11, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 11, snippetSupport);
+                        describe("no args", () => {
+                            testFlagPrefix(trigger, "COPY", "--from=something ", "chown=", "", assertCOPY_FlagChown, snippetSupport);
+                        });
 
-                        items = computePosition("FROM busybox\n" + onbuild + "COPY --chown", 1, triggerOffset + 12, snippetSupport);
-                        assert.strictEqual(items.length, 1);
-                        assertCOPY_FlagChown(items[0], 1, triggerOffset + 5, 1, triggerOffset + 12, snippetSupport);
+                        describe("has args", () => {
+                            testFlagPrefix(trigger, "COPY", "--from=something ", "chown=", " .", assertCOPY_FlagChown, snippetSupport);
+                        });
+                    });
+
+                    describe("--chown present", () => {
+                        it("no prefix", () => {
+                            let items = computePosition("FROM busybox\n" + onbuild + "COPY --chown=user:group ", 1, triggerOffset + 24, snippetSupport);
+                            assert.strictEqual(items.length, 1);
+                            assertCOPY_FlagFrom(items[0], 1, triggerOffset + 24, 1, triggerOffset + 24, snippetSupport);
+                        });
+
+                        it("- prefix", () => {
+                            const items = computePosition("FROM busybox\n" + onbuild + "COPY --chown=user:group -", 1, triggerOffset + 25, snippetSupport);
+                            assert.strictEqual(items.length, 1);
+                            assertCOPY_FlagFrom(items[0], 1, triggerOffset + 24, 1, triggerOffset + 25, snippetSupport);
+                        });
+
+                        describe("no args", () => {
+                            testFlagPrefix(trigger, "COPY", "--chown=user:group ", "from=", "", assertCOPY_FlagFrom, snippetSupport);
+                        });
+
+                        describe("has args", () => {
+                            testFlagPrefix(trigger, "COPY", "--chown=user:group ", "from=", " .", assertCOPY_FlagFrom, snippetSupport);
+                        });
+                    });
+
+                    describe("invalid flags", () => {
+                        it("all invalid", () => {
+                            let items = computePosition("FROM busybox\n" + onbuild + "COPY --from2=abc ", 1, triggerOffset + 17, snippetSupport);
+                            assertCopyFlags(items, 1, triggerOffset + 17, 1, triggerOffset + 17, snippetSupport);
+
+                            items = computePosition("FROM busybox\n" + onbuild + "COPY --chown2=test --from2=abc ", 1, triggerOffset + 31, snippetSupport);
+                            assertCopyFlags(items, 1, triggerOffset + 31, 1, triggerOffset + 31, snippetSupport);
+                        });
+
+                        it("chown valid", () => {
+                            const items = computePosition("FROM busybox\n" + onbuild + "COPY --chown=user:group --from2=abc ", 1, triggerOffset + 36, snippetSupport);
+                            assert.strictEqual(items.length, 1);
+                            assertCOPY_FlagFrom(items[0], 1, triggerOffset + 36, 1, triggerOffset + 36, snippetSupport);
+                        });
+
+                        it("from valid", () => {
+                            const items = computePosition("FROM busybox\n" + onbuild + "COPY --chown2=user:group --from=abc ", 1, triggerOffset + 36, snippetSupport);
+                            assert.strictEqual(items.length, 1);
+                            assertCOPY_FlagChown(items[0], 1, triggerOffset + 36, 1, triggerOffset + 36, snippetSupport);
+                        });
                     });
                 }
 
@@ -2424,6 +2478,21 @@ describe('Docker Content Assist Tests', function () {
                     assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "COPY app --fr app", 1, triggerOffset + 13);
+                    assert.strictEqual(items.length, 0);
+
+                    items = computePosition("FROM busybox\n" + onbuild + "COPY  --chown=user:group --from=test", 1, triggerOffset + 5);
+                    assert.strictEqual(items.length, 0);
+
+                    items = computePosition("FROM busybox\n" + onbuild + "COPY -- --chown=user:group --from=test", 1, triggerOffset + 7);
+                    assert.strictEqual(items.length, 0);
+
+                    items = computePosition("FROM busybox\n" + onbuild + "COPY --chown=user:group --from=test ", 1, triggerOffset + 36);
+                    assert.strictEqual(items.length, 0);
+
+                    items = computePosition("FROM busybox\n" + onbuild + "COPY --chown=user:group --from=test -", 1, triggerOffset + 37);
+                    assert.strictEqual(items.length, 0);
+
+                    items = computePosition("FROM busybox\n" + onbuild + "COPY --chown=user:group --from=test --", 1, triggerOffset + 38);
                     assert.strictEqual(items.length, 0);
                 });
             });
