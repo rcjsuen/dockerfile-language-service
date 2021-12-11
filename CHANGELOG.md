@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.7.4] - 2021-12-11
 ### Fixed
 - fix TypeError thrown when computing completion items for a COPY instruction with flags ([#97](https://github.com/rcjsuen/dockerfile-language-service/issues/97))
 - fix TypeError thrown when computing completion items for an ADD instruction with flags ([#98](https://github.com/rcjsuen/dockerfile-language-service/issues/98))
@@ -454,7 +454,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.3...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.4...HEAD
+[0.7.4]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.0...v0.7.1
