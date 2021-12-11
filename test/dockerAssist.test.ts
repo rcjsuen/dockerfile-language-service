@@ -2246,6 +2246,9 @@ describe('Docker Content Assist Tests', function () {
 
                     items = computePosition("FROM busybox\n" + onbuild + "ADD app --fr app", 1, triggerOffset + 13);
                     assert.strictEqual(items.length, 0);
+
+                    items = computePosition("FROM busybox as busybox\n" + onbuild + "ADD . . ", 1, triggerOffset + 8);
+                    assert.strictEqual(items.length, 0);
                 });
             });
         });
@@ -2486,6 +2489,9 @@ describe('Docker Content Assist Tests', function () {
                     assert.strictEqual(items.length, 0);
 
                     items = computePosition("FROM busybox\n" + onbuild + "COPY --chown=user:group --from=test --", 1, triggerOffset + 38);
+                    assert.strictEqual(items.length, 0);
+
+                    items = computePosition("FROM busybox as busybox\n" + onbuild + "COPY . . ", 1, triggerOffset + 9);
                     assert.strictEqual(items.length, 0);
                 });
             });
