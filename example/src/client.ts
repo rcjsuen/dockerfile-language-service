@@ -377,6 +377,9 @@ monaco.languages.registerSignatureHelpProvider(LANGUAGE_ID, {
     provideSignatureHelp(model: any, position: any) {
         const signatureHelp = service.computeSignatureHelp(model.getValue(), convertPosition(position.lineNumber, position.column));
         return {
+            // SignatureHelpResult API needs this
+            // https://github.com/microsoft/monaco-editor/issues/2164
+            dispose: () => { },
             value: {
                 activeParameter: signatureHelp.activeParameter !== undefined ? signatureHelp.activeParameter : undefined,
                 activeSignature: signatureHelp.activeSignature !== undefined ? signatureHelp.activeSignature : undefined,
