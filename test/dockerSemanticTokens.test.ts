@@ -25,6 +25,30 @@ function assertEdit(data: number[], tokenType: string, index: number, line: numb
 }
 
 describe("Dockerfile Semantic Token tests", () => {
+    describe("TokensLegend", () => {
+        it("getTokenType returns unique values", () => {
+            const tokenTypes = [
+                SemanticTokenTypes.keyword,
+                SemanticTokenTypes.comment,
+                SemanticTokenTypes.parameter,
+                SemanticTokenTypes.property,
+                SemanticTokenTypes.namespace,
+                SemanticTokenTypes.class,
+                SemanticTokenTypes.macro,
+                SemanticTokenTypes.string,
+                SemanticTokenTypes.variable,
+                SemanticTokenTypes.operator,
+                SemanticTokenTypes.modifier
+            ]
+            const values = [];
+            for (const tokenType of tokenTypes) {
+                const tokenTypeValue = TokensLegend.getTokenType(tokenType);
+                assert.strictEqual(values.indexOf(tokenTypeValue), -1);
+                values.push(tokenTypeValue);
+            }
+        });
+    });
+
     describe("keywords", () => {
         describe("FROM", () => {
             function createVariableDeclarationTests(keyword: string) {

@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- operator and modifier semantic token types no longer share the same number in the legend ([#101](https://github.com/rcjsuen/dockerfile-language-service/issues/101))
+
 ## [0.8.0] - 2022-01-22
 ### Added
 - variable semantic tokens are now split up into multiple tokens, offering a finer-grained view of what each part of it is for which should improve readability ([#100](https://github.com/rcjsuen/dockerfile-language-service/issues/100))

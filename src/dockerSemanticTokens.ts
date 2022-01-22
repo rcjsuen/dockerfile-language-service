@@ -16,17 +16,18 @@ export class TokensLegend {
     private static tokenModifiers = {};
     
     public static init() {
-        this.tokenTypes[SemanticTokenTypes.keyword] = 0;
-        this.tokenTypes[SemanticTokenTypes.comment] = 1;
-        this.tokenTypes[SemanticTokenTypes.parameter] = 2;
-        this.tokenTypes[SemanticTokenTypes.property] = 3;
-        this.tokenTypes[SemanticTokenTypes.namespace] = 4;
-        this.tokenTypes[SemanticTokenTypes.class] = 5;
-        this.tokenTypes[SemanticTokenTypes.macro] = 6;
-        this.tokenTypes[SemanticTokenTypes.string] = 7;
-        this.tokenTypes[SemanticTokenTypes.variable] = 8;
-        this.tokenTypes[SemanticTokenTypes.operator] = 9;
-        this.tokenTypes[SemanticTokenTypes.modifier] = 9;
+        let counter = 0;
+        this.tokenTypes[SemanticTokenTypes.keyword] = counter++; // 0
+        this.tokenTypes[SemanticTokenTypes.comment] = counter++; // 1
+        this.tokenTypes[SemanticTokenTypes.parameter] = counter++; // 2
+        this.tokenTypes[SemanticTokenTypes.property] = counter++; // 3
+        this.tokenTypes[SemanticTokenTypes.namespace] = counter++; // 4
+        this.tokenTypes[SemanticTokenTypes.class] = counter++; // 5
+        this.tokenTypes[SemanticTokenTypes.macro] = counter++; // 6
+        this.tokenTypes[SemanticTokenTypes.string] = counter++; // 7
+        this.tokenTypes[SemanticTokenTypes.variable] = counter++; // 8
+        this.tokenTypes[SemanticTokenTypes.operator] = counter++; // 9
+        this.tokenTypes[SemanticTokenTypes.modifier] = counter++; // 10
 
         this.tokenModifiers[SemanticTokenModifiers.declaration] = 1;
         this.tokenModifiers[SemanticTokenModifiers.definition] = 2;
