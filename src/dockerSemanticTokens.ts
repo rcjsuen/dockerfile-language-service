@@ -5,7 +5,7 @@
 'use strict';
 
 import { Range, TextDocument, Position, SemanticTokens, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-types';
-import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild, PropertyInstruction, Argument } from 'dockerfile-ast';
+import { DockerfileParser, Keyword, Comment, Instruction, Line, Healthcheck, ModifiableInstruction, From, Onbuild, PropertyInstruction, Argument, Variable } from 'dockerfile-ast';
 import { Dockerfile } from 'dockerfile-ast';
 import { Util } from './docker';
 
@@ -26,6 +26,7 @@ export class TokensLegend {
         this.tokenTypes[SemanticTokenTypes.string] = 7;
         this.tokenTypes[SemanticTokenTypes.variable] = 8;
         this.tokenTypes[SemanticTokenTypes.operator] = 9;
+        this.tokenTypes[SemanticTokenTypes.modifier] = 9;
 
         this.tokenModifiers[SemanticTokenModifiers.declaration] = 1;
         this.tokenModifiers[SemanticTokenModifiers.definition] = 2;
@@ -310,6 +311,22 @@ export class DockerSemanticTokens {
         this.createToken(instruction, escapeRange, SemanticTokenTypes.macro, [], false, false, false);
     }
 
+    private createVariableToken(instruction: Instruction, variable: Variable, range: Range): void {
+        const modifierRange = variable.getModifierRange();
+        if (modifierRange === null) {
+            this.createToken(instruction, range, SemanticTokenTypes.variable, [], false);
+        } else {
+            const operatorRange = Range.create(Position.create(modifierRange.start.line, modifierRange.start.character - 1), modifierRange.start);
+            this.createToken(instruction, Range.create(range.start, operatorRange.start), SemanticTokenTypes.variable, [], false);
+            this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false, false);
+            if (modifierRange.start.character !== modifierRange.end.character) {
+                // only render the modifier if there is one, the variable may be ${var:} which we then want to skip
+                this.createToken(instruction, modifierRange, SemanticTokenTypes.modifier, [], false, false, false);
+            }
+            this.createToken(instruction, Range.create(modifierRange.end, range.end), SemanticTokenTypes.variable, [], false);
+        }
+    }
+
     private createToken(instruction: Instruction, range: Range, tokenType: string, tokenModifiers: string[] = [], checkVariables: boolean = true, checkStrings: boolean = false, checkNewline: boolean = true): void {
         if (checkNewline && this.currentRange !== null && this.currentRange.end.line !== range.start.line) {
             // this implies that there's been a line change between one arg and the next
@@ -521,7 +538,7 @@ export class DockerSemanticTokens {
                 const variableRange = variable.getRange();
                 if (Util.isInsideRange(range.start, variableRange) && Util.isInsideRange(range.end, variableRange)) {
                     // the token is completely inside the variable's range, render it as a variable
-                    this.createToken(instruction, range, SemanticTokenTypes.variable, [], false);
+                    this.createVariableToken(instruction, variable, range);
                     return;
                 } else if (Util.isInsideRange(variableRange.start, range)) {
                     if (Util.positionBefore(startPosition, variableRange.start)) {
@@ -537,7 +554,7 @@ export class DockerSemanticTokens {
                         );
                     }
 
-                    this.createToken(instruction, variableRange, SemanticTokenTypes.variable, [], false);
+                    this.createVariableToken(instruction, variable, variableRange);
                     lastVariableRange = variableRange;
                     if (Util.positionEquals(range.end, variableRange.end)) {
                         return;

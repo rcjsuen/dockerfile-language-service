@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- variable semantic tokens are now split up into multiple tokens, offering a finer-grained view of what each part of it is for which should improve readability ([#100](https://github.com/rcjsuen/dockerfile-language-service/issues/100))
+
 ## [0.7.4] - 2021-12-11
 ### Fixed
 - fix TypeError thrown when computing completion items for a COPY instruction with flags ([#97](https://github.com/rcjsuen/dockerfile-language-service/issues/97))
