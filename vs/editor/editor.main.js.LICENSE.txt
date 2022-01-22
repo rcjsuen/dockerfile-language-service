@@ -1,41 +1,15 @@
+/*! @license DOMPurify 2.3.1 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.1/LICENSE */
+
 /*!-----------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * Version: 0.27.0(730c98dfd4e771a851edf1bc944ea5c5018ee8cb)
+ * Version: 0.31.1(5a1b4999493d49c857497ad481d73a737439f305)
  * Released under the MIT license
  * https://github.com/microsoft/vscode/blob/main/LICENSE.txt
  *-----------------------------------------------------------*/
 
 /*!-----------------------------------------------------------------------------
  * Copyright (c) Microsoft Corporation. All rights reserved.
- * monaco-css version: 3.7.0(116c3cf36d90a2f11f2ac826d7a80e38a209cacf)
+ * Version: 0.31.1(337587859b1c171314b40503171188b6cea6a32a)
  * Released under the MIT license
- * https://github.com/Microsoft/monaco-css/blob/master/LICENSE.md
- *-----------------------------------------------------------------------------*/
-
-/*!-----------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * monaco-html version: 3.7.0(0b1dc817dccc3fc52be56c8e0b8f6c302754f6d3)
- * Released under the MIT license
- * https://github.com/Microsoft/monaco-html/blob/master/LICENSE.md
- *-----------------------------------------------------------------------------*/
-
-/*!-----------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * monaco-json version: 3.7.0(874d98a04030ed630d6f7bc552f9e652db3c2371)
- * Released under the MIT license
- * https://github.com/Microsoft/monaco-json/blob/master/LICENSE.md
- *-----------------------------------------------------------------------------*/
-
-/*!-----------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * monaco-languages version: 2.7.0(ddc2f60c7e216177be563a8ec8e1205935125976)
- * Released under the MIT license
- * https://github.com/Microsoft/monaco-languages/blob/master/LICENSE.md
- *-----------------------------------------------------------------------------*/
-
-/*!-----------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * monaco-typescript version: 4.7.0(7903958fcc07bd6c55a4c5d60749e8d738201e4e)
- * Released under the MIT license
- * https://github.com/Microsoft/monaco-typescript/blob/master/LICENSE.md
+ * https://github.com/microsoft/monaco-editor/blob/main/LICENSE.txt
  *-----------------------------------------------------------------------------*/
