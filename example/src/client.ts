@@ -3,7 +3,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageServiceFactory } from 'dockerfile-language-service';
-import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation, InsertTextFormat, SemanticTokenTypes, SemanticTokenModifiers } from 'vscode-languageserver-types';
+import { IMarkdownString } from 'monaco-editor';
+import { Range, FormattingOptions, TextEdit, DocumentLink, Hover, CompletionItem, SignatureInformation, ParameterInformation, InsertTextFormat, SemanticTokenTypes, SemanticTokenModifiers, MarkupContent } from 'vscode-languageserver-types';
 
 declare var monaco: any
 const LANGUAGE_ID = 'dockerfile';
@@ -144,17 +145,25 @@ function convertTextEdits(edits: TextEdit[]) {
 function convertParameter(parameter: ParameterInformation) {
     return {
         label: parameter.label,
-        documentation: {
-            value: parameter.documentation
-        }
+        documentation: convertDocumentation(parameter.documentation)
     }
+}
+
+function convertDocumentation(documentation: string | MarkupContent | undefined): string | IMarkdownString | undefined {
+    if (documentation === undefined) {
+        return undefined;
+    } else if (typeof documentation === "string") {
+        return documentation;
+    }
+    const content = (documentation as MarkupContent);
+    return {
+        value: content.value
+    };
 }
 
 function convertSignature(signature: SignatureInformation) {
     return {
-        documentation: {
-            value: signature.documentation
-        },
+        documentation: convertDocumentation(signature.documentation),
         label: signature.label,
         parameters: signature.parameters ? signature.parameters.map(convertParameter) : []
     }
