@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - variable semantic tokens are now split up into multiple tokens, offering a finer-grained view of what each part of it is for which should improve readability ([#100](https://github.com/rcjsuen/dockerfile-language-service/issues/100))
 
+### Fixed
+- empty lines in heredoc content should not trigger the empty continuation line warning ([rcjsuen/dockerfile-utils#107](https://github.com/rcjsuen/dockerfile-utils/issues/107))
+
 ## [0.7.4] - 2021-12-11
 ### Fixed
 - fix TypeError thrown when computing completion items for a COPY instruction with flags ([#97](https://github.com/rcjsuen/dockerfile-language-service/issues/97))
