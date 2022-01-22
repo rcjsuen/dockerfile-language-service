@@ -3,7 +3,7 @@
   "name": "@rcjsuen/dockerfile-language-service-example",
   "version": "0.0.1",
   "dependencies": {
-    "dockerfile-language-service": "0.7.4",
+    "dockerfile-language-service": "0.8.1",
     "monaco-editor": "0.31.1"
   },
   "devDependencies": {

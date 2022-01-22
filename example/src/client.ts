@@ -265,6 +265,7 @@ monaco.languages.registerDocumentSemanticTokensProvider(LANGUAGE_ID, {
         tokenTypes.push(SemanticTokenTypes.string);
         tokenTypes.push(SemanticTokenTypes.variable);
         tokenTypes.push(SemanticTokenTypes.operator);
+        tokenTypes.push(SemanticTokenTypes.modifier);
 
         tokenModifiers.push(SemanticTokenModifiers.declaration);
         tokenModifiers.push(SemanticTokenModifiers.definition);
