@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.8.0] - 2022-01-22
 ### Added
 - variable semantic tokens are now split up into multiple tokens, offering a finer-grained view of what each part of it is for which should improve readability ([#100](https://github.com/rcjsuen/dockerfile-language-service/issues/100))
 
@@ -461,7 +461,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.4...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.4...v0.8.0
 [0.7.4]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.1...v0.7.2
