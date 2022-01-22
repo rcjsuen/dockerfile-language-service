@@ -19,6 +19,44 @@ RUN npm install --production && \\
     chmod +x /docker-langserver/bin/docker-langserver
 ENTRYPOINT [ "/docker-langserver/bin/docker-langserver" ]`;
 
+monaco.editor.defineTheme("custom", {
+	base: "vs",
+	inherit: true,
+	colors: {},
+	rules: [
+        { token: "keyword", foreground: "450640" },
+		{ token: "comment", foreground: "EA19D5" },
+		{ token: "parameter", foreground: "1C7E5C" },
+		{ token: "property", foreground: "4930CE" },
+        { token: "namespace", foreground: "CE4930" },
+		{ token: "class", foreground: "CE3049", fontStyle: "underline" },
+		{ token: "macro", foreground: "6ED5D5" },
+        { token: "string", foreground: "4E11F8" },
+		{ token: "variable", foreground: "7F7F30" },
+		{ token: "operator", foreground: "6ED5D5" },
+		{ token: "modifier", foreground: "10107F" },
+	]
+});
+
+monaco.editor.defineTheme("custom-dark", {
+	base: "vs-dark",
+	inherit: true,
+	colors: {},
+	rules: [
+        { token: "keyword", foreground: "C586C0" },
+		{ token: "comment", foreground: "6A9955" },
+		{ token: "parameter", foreground: "9CFEDC" },
+		{ token: "property", foreground: "C9B04E" },
+        { token: "namespace", foreground: "4EC9B0" },
+		{ token: "class", foreground: "4EB0C9", fontStyle: "underline" },
+		{ token: "macro", foreground: "EE5555" },
+        { token: "string", foreground: "CE9178" },
+		{ token: "variable", foreground: "FFFFB0" },
+		{ token: "operator", foreground: "EE5555" },
+		{ token: "modifier", foreground: "9090FF" },
+	]
+});
+
 // create the Monaco editor
 const editor = monaco.editor.create(document.getElementById("container")!, {
     language: LANGUAGE_ID,
@@ -28,84 +66,12 @@ const editor = monaco.editor.create(document.getElementById("container")!, {
     },
     'semanticHighlighting.enabled': true,
     formatOnType: true,
-    theme: "vs"
+    theme: "custom-dark"
 });
 const monacoModel = editor.getModel();
 const MONACO_URI = monacoModel.uri;
 const MODEL_URI = MONACO_URI.toString();
 const LSP_URI = { uri: MODEL_URI };
-
-const darkThemeMap = {
-    "keyword": 12,
-    "comment": 7,
-    "parameter": 6,
-    "property": 14,
-    "operator": 1,
-    "label": 16,
-    "class": 3,
-    "macro": 11,
-    "string": 5,
-    "variable": {
-        "declaration": 8,
-        "definition": 8,
-        "deprecated": 8,
-        "reference": 4,
-    }
-}
-function getStyleMetadataDark(type: string, modifiers: string[]) {
-    let color = (darkThemeMap as any)[type];
-    if (type === "variable") {
-        color = (darkThemeMap[type] as any)[modifiers[0]];
-    }
-    const style = {
-        foreground: color,
-        bold: false,
-        underline: false,
-        italic: false
-    };
-    if (true) {
-        return style;
-    }
-};
-
-const lightThemeMap = {
-    "keyword": 0,
-    "comment": 7,
-    "parameter": 5,
-    "property": 4,
-    "operator": 1,
-    "label": 11,
-    "class": 5,
-    "macro": 3,
-    "string": 11,
-    "variable": {
-        "declaration": 12,
-        "definition": 12,
-        "deprecated": 12,
-        "reference": 13,
-    }
-}
-function getStyleMetadataLight(type: string, modifiers: string[]) {
-    let color = (lightThemeMap as any)[type];
-    if (type === "variable") {
-        color = (lightThemeMap[type] as any)[modifiers[0]];
-    }
-    const style = {
-        foreground: color,
-        bold: false,
-        underline: false,
-        italic: false
-    };
-    if (true) {
-        return style;
-    }
-};
-
-monaco.editor.setTheme('vs');
-editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataLight;
-
-monaco.editor.setTheme('vs-dark');
-editor._themeService._theme.getTokenStyleMetadata = getStyleMetadataDark
 
 const service = DockerfileLanguageServiceFactory.createLanguageService();
 service.setCapabilities({ completion: { completionItem: { snippetSupport: true }}});
