@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.8.1] - 2022-01-22
 ### Fixed
 - operator and modifier semantic token types no longer share the same number in the legend ([#101](https://github.com/rcjsuen/dockerfile-language-service/issues/101))
 
@@ -465,7 +465,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.4...v0.8.0
 [0.7.4]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.2...v0.7.3
