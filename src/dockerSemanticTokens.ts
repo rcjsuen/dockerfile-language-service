@@ -318,13 +318,26 @@ export class DockerSemanticTokens {
             this.createToken(instruction, range, SemanticTokenTypes.variable, [], false);
         } else {
             const operatorRange = Range.create(Position.create(modifierRange.start.line, modifierRange.start.character - 1), modifierRange.start);
-            this.createToken(instruction, Range.create(range.start, operatorRange.start), SemanticTokenTypes.variable, [], false);
-            this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false, false);
-            if (modifierRange.start.character !== modifierRange.end.character) {
-                // only render the modifier if there is one, the variable may be ${var:} which we then want to skip
-                this.createToken(instruction, modifierRange, SemanticTokenTypes.modifier, [], false, false, false);
+            if (range.start.character < operatorRange.start.character) {
+                // the operator is in the range, handle the content before the operator and the operator
+                this.createToken(instruction, Range.create(range.start, operatorRange.start), SemanticTokenTypes.variable, [], false);
+                this.createToken(instruction, operatorRange, SemanticTokenTypes.operator, [], false, false, false);
             }
-            this.createToken(instruction, Range.create(modifierRange.end, range.end), SemanticTokenTypes.variable, [], false);
+            // check if there is more content after the operator to process
+            if (range.end.character > operatorRange.end.character) {
+                if (modifierRange.end.character >= range.start.character) {
+                    // only render the modifier if there is one, the variable may be ${var:} which we then want to skip
+                    if (modifierRange.start.character !== modifierRange.end.character) {
+                        this.createToken(instruction, modifierRange, SemanticTokenTypes.modifier, [], false, false, false);
+                    }
+                    // process the content between the modifier and the end of the range if applicable
+                    if (modifierRange.end.character !== range.end.character) {
+                        this.createToken(instruction, Range.create(modifierRange.end, range.end), SemanticTokenTypes.variable, [], false);
+                    }
+                } else {
+                    this.createToken(instruction, range, SemanticTokenTypes.variable, [], false);
+                }
+            }
         }
     }
 
@@ -538,6 +551,9 @@ export class DockerSemanticTokens {
             for (const variable of instruction.getVariables()) {
                 const variableRange = variable.getRange();
                 if (Util.isInsideRange(range.start, variableRange) && Util.isInsideRange(range.end, variableRange)) {
+                    if (tokenType === SemanticTokenTypes.string) {
+                        break;
+                    }
                     // the token is completely inside the variable's range, render it as a variable
                     this.createVariableToken(instruction, variable, range);
                     return;

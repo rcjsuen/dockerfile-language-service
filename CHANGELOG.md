@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- semantic tokens will no longer have negative values if quoted string content is inside a variable ([#104](https://github.com/rcjsuen/dockerfile-language-service/issues/104))
+
 ## [0.8.1] - 2022-01-22
 ### Fixed
 - operator and modifier semantic token types no longer share the same number in the legend ([#101](https://github.com/rcjsuen/dockerfile-language-service/issues/101))
