@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.9.0] - 2022-05-04
 ### Added
 - add support for validating the `--link` flag in COPY instructions ([#103](https://github.com/rcjsuen/dockerfile-language-service/issues/103)
 - add support for validating the `--link` flag in ADD instructions ([rcjsuen/dockerfile-utils#109](https://github.com/rcjsuen/dockerfile-utils/issues/109))
@@ -473,7 +473,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.8.1...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.4...v0.8.0
 [0.7.4]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.7.3...v0.7.4
