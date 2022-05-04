@@ -868,6 +868,18 @@ describe("Dockerfile Semantic Token tests", () => {
                         assertEdit(tokens.data, SemanticTokenTypes.string, 15, 0, 1, 6);
                         assertEdit(tokens.data, SemanticTokenTypes.variable, 20, 0, 6, 1);
                     });
+
+                    it("RUN a=${b:=\"c\"}", () => {
+                        const tokens = computeSemanticTokens("RUN a=${b:=\"c\"}");
+                        assert.strictEqual(35, tokens.data.length);
+                        assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                        assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 2);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 10, 0, 2, 3);
+                        assertEdit(tokens.data, SemanticTokenTypes.operator, 15, 0, 3, 1);
+                        assertEdit(tokens.data, SemanticTokenTypes.modifier, 20, 0, 1, 1);
+                        assertEdit(tokens.data, SemanticTokenTypes.string, 25, 0, 1, 3);
+                        assertEdit(tokens.data, SemanticTokenTypes.variable, 30, 0, 3, 1);
+                    });
                 });
             });
         });

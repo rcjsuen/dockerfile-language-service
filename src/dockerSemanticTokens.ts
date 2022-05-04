@@ -571,7 +571,11 @@ export class DockerSemanticTokens {
                         );
                     }
 
-                    this.createVariableToken(instruction, variable, variableRange);
+                    const variableProcessingRange = variableRange;
+                    if (variableRange.end.character > range.end.character) {
+                        variableProcessingRange.end = range.end;
+                    }
+                    this.createVariableToken(instruction, variable, variableProcessingRange);
                     lastVariableRange = variableRange;
                     if (Util.positionEquals(range.end, variableRange.end)) {
                         return;
