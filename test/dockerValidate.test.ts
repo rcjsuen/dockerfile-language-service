@@ -42,4 +42,10 @@ describe("Docker Validation Tests", () => {
         assert.strictEqual(1, problems.length);
         assertInstructionCasing(problems[0], DiagnosticSeverity.Error);
     });
+
+    it("issue #103", () => {
+        const content = "FROM alpine\nCOPY --link . .";
+        const problems = service.validate(content, { instructionCasing: ValidationSeverity.ERROR });
+        assert.strictEqual(0, problems.length);
+    });
 });
