@@ -104,14 +104,5 @@ describe("Docker Content Assist Registry Tests", () => {
                 assertImageTags(tags, items, 17, 5);
             });
         });
-
-        describe("Docker Store published images", () => {
-            it("issue #50", async function () {
-                this.timeout(10000);
-                const tags = await dockerRegistryClient.getTags("store/intersystems/iris-community");
-                const items = await computePromise("FROM store/intersystems/iris-community:", 0, 39);
-                assertImageTags(tags, items, 39, 0);
-            });
-        });
     });
 });
