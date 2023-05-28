@@ -1602,6 +1602,14 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 35, 1, 0, 1);
             });
 
+            /**
+             * RUN 1\
+             * # \t
+             * 2\
+             * #
+             * 3#\4\
+             * 5
+             */
             it("argument with # and \\", () => {
                 const tokens = computeSemanticTokens("RUN 1\\\n# \t\r\n2\\\n#\n3#\\4\\\n5");
                 assert.strictEqual(50, tokens.data.length);
