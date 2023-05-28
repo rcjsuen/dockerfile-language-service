@@ -2,8 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- update formatter to ignore heredocs embedded in COPY instructions ([rcjsuen/dockerfile-utils#111](https://github.com/rcjsuen/dockerfile-utils/issues/111))
+- ignore empty continuation lines in heredocs embedded in COPY instructions ([rcjsuen/dockerfile-utils#112](https://github.com/rcjsuen/dockerfile-utils/issues/112))
+
 ### Fixed
 - ignore quotes in comments if it's within an embedded argument ([#110](https://github.com/rcjsuen/dockerfile-language-service/issues/110))
+- ignore UTF-8 BOM when validating the Dockerfile ([rcjsuen/dockerfile-utils#113](https://github.com/rcjsuen/dockerfile-utils/issues/113))
 
 ## [0.9.0] - 2022-05-04
 ### Added
