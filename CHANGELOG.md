@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- ignore quotes in comments if it's within an embedded argument ([#110](https://github.com/rcjsuen/dockerfile-language-service/issues/110))
+
 ## [0.9.0] - 2022-05-04
 ### Added
 - add support for validating the `--link` flag in COPY instructions ([#103](https://github.com/rcjsuen/dockerfile-language-service/issues/103)
