@@ -2079,6 +2079,42 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.macro, 40, 1, 0, 1);
                 assertEdit(tokens.data, SemanticTokenTypes.parameter, 45, 1, 0, 1);
             });
+
+            it("multiline instruction with &\\", () => {
+                let content = `RUN echo "test" &\\\n# a'b\necho "test2"`;
+                let tokens = computeSemanticTokens(content);
+                assert.strictEqual(tokens.data.length, 40);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 7, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 25, 1, 0, 5);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 30, 1, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 35, 0, 5, 7);
+
+                content = `RUN echo "test" &\\\n \t# a'b\necho "test2"`;
+                tokens = computeSemanticTokens(content);
+                assert.strictEqual(tokens.data.length, 40);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 7, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 25, 1, 2, 5);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 30, 1, 0, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 35, 0, 5, 7);
+
+                content = `RUN echo "test" &\\\n# a'b`;
+                tokens = computeSemanticTokens(content);
+                assert.strictEqual(tokens.data.length, 30);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 4);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 5, 6);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 15, 0, 7, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 20, 0, 1, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.comment, 25, 1, 0, 5);
+            });
         });
     });
 });

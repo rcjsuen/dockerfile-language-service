@@ -351,12 +351,36 @@ export class DockerSemanticTokens {
             let startOffset = this.document.offsetAt(range.start);
             let quoteStart = startOffset;
             let newOffset = -1;
+            let escaping = false;
             const endOffset = this.document.offsetAt(range.end);
-            for (let i = startOffset; i < endOffset; i++) {
+            stringsCheck: for (let i = startOffset; i < endOffset; i++) {
                 let ch = this.content.charAt(i);
                 switch (ch) {
+                    case this.escapeCharacter:
+                        escapeCheck: for (let j = i + 1; j < endOffset; j++) {
+                            let escapedCh = this.content.charAt(j);
+                            switch (escapedCh) {
+                                case ' ':
+                                case '\t':
+                                    continue;
+                                case '\r':
+                                    j + 1;
+                                case '\n':
+                                    escaping = true;
+                                    i = j;
+                                    continue stringsCheck;
+                                default:
+                                    break escapeCheck;
+                            }
+                        }
+                        escaping = false;
+                        if (startOffset === -1) {
+                            startOffset = i;
+                        }
+                        break;
                     case '\'':
                     case '"':
+                        escaping = false;
                         if (this.quote === null) {
                             if (this.escapedQuote === null) {
                                 this.quote = ch;
@@ -380,7 +404,27 @@ export class DockerSemanticTokens {
                             this.quote = null;
                         }
                         break;
+                    case '#':
+                        if (escaping) {
+                            for (let j = i + 1; j < endOffset; j++) {
+                                const escapedCh = this.content.charAt(j);
+                                switch (escapedCh) {
+                                    case '\r':
+                                        j + 1;
+                                    case '\n':
+                                        i = j;
+                                        continue stringsCheck;
+                                }
+                            }
+                            break;
+                        }
+                    case ' ':
+                    case '\t':
+                        if (escaping) {
+                            continue;
+                        }
                     default:
+                        escaping = false;
                         if (startOffset === -1) {
                             startOffset = i;
                         }
