@@ -364,7 +364,7 @@ export class DockerSemanticTokens {
                                 case '\t':
                                     continue;
                                 case '\r':
-                                    j + 1;
+                                    j++;
                                 case '\n':
                                     escaping = true;
                                     i = j;
