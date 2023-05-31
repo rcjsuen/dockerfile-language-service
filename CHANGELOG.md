@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- ignore UTF-8 BOM when calculating completion items ([#112](https://github.com/rcjsuen/dockerfile-language-service/issues/112))
+
 ## [0.10.0] - 2023-05-28
 ### Added
 - update formatter to ignore heredocs embedded in COPY instructions ([rcjsuen/dockerfile-utils#111](https://github.com/rcjsuen/dockerfile-utils/issues/111))

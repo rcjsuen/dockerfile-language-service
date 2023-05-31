@@ -1131,6 +1131,11 @@ describe('Docker Content Assist Tests', function () {
             assertOnlyFROM(proposals, 0, 0, 0);
         });
 
+        it("UTF-8 BOM header", () => {
+            var proposals = compute("\ufeff", 1);
+            assertOnlyFROM(proposals, 0, 1, 0);
+        });
+
         it('whitespace', function () {
             var proposals = compute(" ", 0);
             assertOnlyFROM(proposals, 0, 0, 0);
