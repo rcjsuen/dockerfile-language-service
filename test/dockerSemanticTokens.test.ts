@@ -2204,6 +2204,26 @@ describe("Dockerfile Semantic Token tests", () => {
                 assertEdit(tokens.data, SemanticTokenTypes.string, 45, 0, 5, 7);
             });
 
+            it("multiline instruction with string content before and after escaped newline", () => {
+                let content = `RUN a''\\\n\n''`;
+                let tokens = computeSemanticTokens(content);
+                assert.strictEqual(tokens.data.length, 25);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 1, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 20, 2, 0, 2);
+
+                content = `RUN a''\\\r\n\r\n''`;
+                tokens = computeSemanticTokens(content);
+                assert.strictEqual(tokens.data.length, 25);
+                assertEdit(tokens.data, SemanticTokenTypes.keyword, 0, 0, 0, 3);
+                assertEdit(tokens.data, SemanticTokenTypes.parameter, 5, 0, 4, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 10, 0, 1, 2);
+                assertEdit(tokens.data, SemanticTokenTypes.macro, 15, 0, 2, 1);
+                assertEdit(tokens.data, SemanticTokenTypes.string, 20, 2, 0, 2);
+            });
+
             it("multiline instruction with string content before and after escaped newline with an embedded comment", () => {
                 let content = `RUN a''\\\n#\n''`;
                 let tokens = computeSemanticTokens(content);

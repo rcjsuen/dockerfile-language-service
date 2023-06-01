@@ -420,6 +420,8 @@ export class DockerSemanticTokens {
                         }
                     case ' ':
                     case '\t':
+                    case '\r':
+                    case '\n':
                         if (escaping) {
                             continue;
                         }
