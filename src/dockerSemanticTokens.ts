@@ -524,11 +524,13 @@ export class DockerSemanticTokens {
                                 case '\n':
                                     if (!added) {
                                         if (!intermediateAdded && startOffset !== -1) {
-                                            const intermediateRange = {
-                                                start: this.document.positionAt(startOffset),
-                                                end: this.document.positionAt(i),
+                                            if (i !== startOffset) {
+                                                const intermediateRange = {
+                                                    start: this.document.positionAt(startOffset),
+                                                    end: this.document.positionAt(i),
+                                                }
+                                                this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
                                             }
-                                            this.createToken(instruction, intermediateRange, tokenType, tokenModifiers);
                                             intermediateAdded = true;
                                         }
                                         this.createEscapeToken(instruction, i);
