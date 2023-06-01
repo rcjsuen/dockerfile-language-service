@@ -410,7 +410,7 @@ export class DockerSemanticTokens {
                                 const escapedCh = this.content.charAt(j);
                                 switch (escapedCh) {
                                     case '\r':
-                                        j + 1;
+                                        j++;
                                     case '\n':
                                         i = j;
                                         continue stringsCheck;

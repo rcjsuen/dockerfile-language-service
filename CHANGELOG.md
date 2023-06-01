@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - ignore quotes in comments if it's within an embedded argument with CRLF used as a newline delimiter ([#113](https://github.com/rcjsuen/dockerfile-language-service/issues/113))
 - prevent 0-length semantic tokens from being added ([#114](https://github.com/rcjsuen/dockerfile-language-service/issues/114))
+- correct typo in the comment handling logic of semantic tokens with CRLF newlines ([#116](https://github.com/rcjsuen/dockerfile-language-service/issues/116))
 
 ## [0.10.1] - 2023-05-31
 ### Fixed
