@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - support parsing the new `--keep-git-dir` flag for ADD instructions ([rcjsuen/dockerfile-utils#117](https://github.com/rcjsuen/dockerfile-utils/issues/117))
 - support parsing the new `--start-interval` flag for HEALTHCHECK instructions ([rcjsuen/dockerfile-utils#115](https://github.com/rcjsuen/dockerfile-utils/issues/115))
 - allow some diagnostics to be ignored if a `# dockerfile-utils: ignore` comment precedes the originating line of the error ([rcjsuen/dockerfile-utils#106](https://github.com/rcjsuen/dockerfile-utils/issues/106))
+- suggest the new `--start-interval` flag for HEALTHCHECK instructions when calculating completion items ([#117](https://github.com/rcjsuen/dockerfile-language-service/issues/117))
 
 ## [0.10.2] - 2023-06-01
 ### Fixed

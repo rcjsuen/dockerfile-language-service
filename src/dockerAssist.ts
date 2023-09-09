@@ -498,6 +498,9 @@ export class DockerAssist {
         if ("--retries".indexOf(prefix) === 0) {
             items.push(this.createHEALTHCHECK_FlagRetries(prefix.length, offset));
         }
+        if ("--start-interval".indexOf(prefix) === 0) {
+            items.push(this.createHEALTHCHECK_FlagStartInterval(prefix.length, offset));
+        }
         if ("--start-period".indexOf(prefix) === 0) {
             items.push(this.createHEALTHCHECK_FlagStartPeriod(prefix.length, offset));
         }
@@ -773,6 +776,13 @@ export class DockerAssist {
             return this.createFlagCompletionItem("--retries=3", prefixLength, offset, "--retries=${1:3}", "HEALTHCHECK_FlagRetries");
         }
         return this.createFlagCompletionItem("--retries=", prefixLength, offset, "--retries=", "HEALTHCHECK_FlagRetries");
+    }
+
+    private createHEALTHCHECK_FlagStartInterval(prefixLength: number, offset: number): CompletionItem {
+        if (this.snippetSupport) {
+            return this.createFlagCompletionItem("--start-interval=5s", prefixLength, offset, "--start-interval=${1:5s}", "HEALTHCHECK_FlagStartInterval");
+        }
+        return this.createFlagCompletionItem("--start-interval=", prefixLength, offset, "--start-interval=", "HEALTHCHECK_FlagStartInterval");
     }
 
     private createHEALTHCHECK_FlagStartPeriod(prefixLength: number, offset: number): CompletionItem {

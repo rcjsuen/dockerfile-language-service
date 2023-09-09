@@ -537,6 +537,30 @@ function assertHEALTHCHECK_FlagInterval(item: CompletionItem, startLine: number,
     assertResolvedDocumentation(item);
 }
 
+function assertHEALTHCHECK_FlagStartInterval(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
+    if (snippetSupport === undefined || snippetSupport) {
+        assert.strictEqual(item.label, "--start-interval=5s");
+    } else {
+        assert.strictEqual(item.label, "--start-interval=");
+    }
+    assert.strictEqual(item.kind, CompletionItemKind.Field);
+    if (snippetSupport === undefined || snippetSupport) {
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.Snippet);
+        assert.strictEqual(item.textEdit.newText, "--start-interval=${1:5s}");
+    } else {
+        assert.strictEqual(item.insertTextFormat, InsertTextFormat.PlainText);
+        assert.strictEqual(item.textEdit.newText, "--start-interval=");
+    }
+    assert.strictEqual(item.data, "HEALTHCHECK_FlagStartInterval");
+    assert.strictEqual(item.deprecated, undefined);
+    assert.strictEqual(item.documentation, undefined);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.line, startLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.start.character, startCharacter);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.line, endLine);
+    assert.strictEqual((item.textEdit as TextEdit).range.end.character, endCharacter);
+    assertResolvedDocumentation(item);
+}
+
 function assertHEALTHCHECK_FlagTimeout(item: CompletionItem, startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
     if (snippetSupport === undefined || snippetSupport) {
         assert.strictEqual(item.label, "--timeout=30s");
@@ -1056,15 +1080,16 @@ function assertFromFlags(items: CompletionItem[], startLine: number, startCharac
 }
 
 function assertHealthcheckItems(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
-    assert.strictEqual(items.length, 6);
+    assert.strictEqual(items.length, 7);
     // CMD and NONE first
     assertHEALTHCHECK_CMD_Subcommand(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_NONE_Subcommand(items[1], startLine, startCharacter, endLine, endCharacter);
     // flags in alphabetical order next
     assertHEALTHCHECK_FlagInterval(items[2], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_FlagRetries(items[3], startLine, startCharacter, endLine, endCharacter, snippetSupport);
-    assertHEALTHCHECK_FlagStartPeriod(items[4], startLine, startCharacter, endLine, endCharacter, snippetSupport);
-    assertHEALTHCHECK_FlagTimeout(items[5], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+    assertHEALTHCHECK_FlagStartInterval(items[4], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+    assertHEALTHCHECK_FlagStartPeriod(items[5], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+    assertHEALTHCHECK_FlagTimeout(items[6], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 
     assert.strictEqual(items[0].sortText, "0");
     assert.strictEqual(items[1].sortText, "1");
@@ -1072,20 +1097,23 @@ function assertHealthcheckItems(items: CompletionItem[], startLine: number, star
     assert.strictEqual(items[3].sortText, "3");
     assert.strictEqual(items[4].sortText, "4");
     assert.strictEqual(items[5].sortText, "5");
+    assert.strictEqual(items[6].sortText, "6");
 }
 
 function assertHealthcheckFlags(items: CompletionItem[], startLine: number, startCharacter: number, endLine: number, endCharacter: number, snippetSupport?: boolean) {
-    assert.strictEqual(items.length, 4);
+    assert.strictEqual(items.length, 5);
     // alphabetical order
     assertHEALTHCHECK_FlagInterval(items[0], startLine, startCharacter, endLine, endCharacter, snippetSupport);
     assertHEALTHCHECK_FlagRetries(items[1], startLine, startCharacter, endLine, endCharacter, snippetSupport);
-    assertHEALTHCHECK_FlagStartPeriod(items[2], startLine, startCharacter, endLine, endCharacter, snippetSupport);
-    assertHEALTHCHECK_FlagTimeout(items[3], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+    assertHEALTHCHECK_FlagStartInterval(items[2], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+    assertHEALTHCHECK_FlagStartPeriod(items[3], startLine, startCharacter, endLine, endCharacter, snippetSupport);
+    assertHEALTHCHECK_FlagTimeout(items[4], startLine, startCharacter, endLine, endCharacter, snippetSupport);
 
     assert.strictEqual(items[0].sortText, "0");
     assert.strictEqual(items[1].sortText, "1");
     assert.strictEqual(items[2].sortText, "2");
     assert.strictEqual(items[3].sortText, "3");
+    assert.strictEqual(items[4].sortText, "4");
 }
 
 function assertONBUILDProposals(proposals: CompletionItem[], offset: number, prefix: number, prefixLength: number) {
@@ -2622,9 +2650,13 @@ describe('Docker Content Assist Tests', function () {
                         assert.strictEqual(items.length, 1);
                         assertHEALTHCHECK_FlagRetries(items[0], 1, triggerOffset + 12, 1, triggerOffset + 17, snippetSupport);
 
-                        items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --start", 1, triggerOffset + 19, snippetSupport);
+                        items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --start-i", 1, triggerOffset + 21, snippetSupport);
                         assert.strictEqual(items.length, 1);
-                        assertHEALTHCHECK_FlagStartPeriod(items[0], 1, triggerOffset + 12, 1, triggerOffset + 19, snippetSupport);
+                        assertHEALTHCHECK_FlagStartInterval(items[0], 1, triggerOffset + 12, 1, triggerOffset + 21, snippetSupport);
+
+                        items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --start-p", 1, triggerOffset + 21, snippetSupport);
+                        assert.strictEqual(items.length, 1);
+                        assertHEALTHCHECK_FlagStartPeriod(items[0], 1, triggerOffset + 12, 1, triggerOffset + 21, snippetSupport);
 
                         items = computePosition("FROM busybox\n" + onbuild + "HEALTHCHECK --time", 1, triggerOffset + 18, snippetSupport);
                         assert.strictEqual(items.length, 1);
