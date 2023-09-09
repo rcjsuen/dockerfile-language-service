@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- support parsing the new `--checksum` flag for ADD instructions ([rcjsuen/dockerfile-utils#116](https://github.com/rcjsuen/dockerfile-utils/issues/116))
+- support parsing the new `--keep-git-dir` flag for ADD instructions ([rcjsuen/dockerfile-utils#117](https://github.com/rcjsuen/dockerfile-utils/issues/117))
+- support parsing the new `--start-interval` flag for HEALTHCHECK instructions ([rcjsuen/dockerfile-utils#115](https://github.com/rcjsuen/dockerfile-utils/issues/115))
+- allow some diagnostics to be ignored if a `# dockerfile-utils: ignore` comment precedes the originating line of the error ([rcjsuen/dockerfile-utils#106](https://github.com/rcjsuen/dockerfile-utils/issues/106))
+
 ## [0.10.2] - 2023-06-01
 ### Fixed
 - ignore quotes in comments if it's within an embedded argument with CRLF used as a newline delimiter ([#113](https://github.com/rcjsuen/dockerfile-language-service/issues/113))
