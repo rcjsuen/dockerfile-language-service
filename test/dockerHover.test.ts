@@ -1625,6 +1625,11 @@ describe("Dockerfile hover", function () {
                     assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagRetries");
                 });
 
+                it("--start-interval", () => {
+                    const content = onbuild + "HEALTHCHECK --start-interval";
+                    assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagStartInterval");
+                });
+
                 it("--start-period", function () {
                     let content = onbuild + "HEALTHCHECK --start-period";
                     assertHover(content, 0, triggerOffset + 17, "HEALTHCHECK_FlagStartPeriod");

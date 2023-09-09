@@ -197,6 +197,8 @@ export class DockerHover {
                                 return "HEALTHCHECK_FlagInterval";
                             case "retries":
                                 return "HEALTHCHECK_FlagRetries";
+                            case "start-interval":
+                                return "HEALTHCHECK_FlagStartInterval";
                             case "start-period":
                                 return "HEALTHCHECK_FlagStartPeriod";
                             case "timeout":

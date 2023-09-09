@@ -32,7 +32,7 @@ export class PlainTextDocumentation {
         "hoverFromFlagPlatform": "The platform of the image if referencing a multi-platform image.\n\nSince Docker CE 18.04.",
         "hoverHealthcheckFlagInterval": "The seconds to wait for the health check to run after the container has started, and then again the number of seconds to wait before running again after the previous check has completed.",
         "hoverHealthcheckFlagRetries": "The number of consecutive failures of this health check before the container is considered to be `unhealthy`.",
-        "hoverHealthcheckFlagStartInterval": "The number of seconds to wait between health checks  during the start period.",
+        "hoverHealthcheckFlagStartInterval": "The number of seconds to wait between health checks during the start period.",
         "hoverHealthcheckFlagStartPeriod": "The number of seconds to wait for the container to startup. Failures during this grace period will not count towards the maximum number of retries. However, should a health check succeed during this period then any subsequent failures will count towards the maximum number of retries.\n\nSince Docker 17.05.0-ce.",
         "hoverHealthcheckFlagTimeout": "The number of seconds to wait for the check to complete before considering it to have failed.",
 
