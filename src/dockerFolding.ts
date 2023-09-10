@@ -4,7 +4,8 @@
 * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { Position, Range, TextDocument, FoldingRange, FoldingRangeKind, uinteger } from 'vscode-languageserver-types';
+import { TextDocument } from 'vscode-languageserver-textdocument'; 
+import { Position, Range, FoldingRange, FoldingRangeKind, uinteger } from 'vscode-languageserver-types';
 import { DockerfileParser } from 'dockerfile-ast';
 
 export class DockerFolding {

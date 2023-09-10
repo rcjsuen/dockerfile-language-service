@@ -2,8 +2,9 @@
  * Copyright (c) Remy Suen. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
-    TextDocument, Position, SignatureHelp, SignatureInformation
+    Position, SignatureHelp, SignatureInformation
 } from 'vscode-languageserver-types';
 import { PlainTextDocumentation } from './dockerPlainText';
 import {

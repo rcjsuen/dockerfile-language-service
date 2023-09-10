@@ -3,8 +3,9 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { DockerfileLanguageService, ILogger, Capabilities, CompletionItemCapabilities, FormatterSettings } from "./main";
+import { TextDocument } from 'vscode-languageserver-textdocument'; 
 import {
-    TextDocument, Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, SemanticTokens, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
+    Position, CompletionItem, Range, CodeActionContext, Command, TextDocumentIdentifier, SemanticTokens, Location, DocumentHighlight, SymbolInformation, SignatureHelp, DocumentLink, TextEdit, Hover, FormattingOptions, Diagnostic, MarkupKind, FoldingRange, CompletionItemTag
 } from "vscode-languageserver-types";
 import * as DockerfileUtils from 'dockerfile-utils';
 import { DockerAssist } from "./dockerAssist";

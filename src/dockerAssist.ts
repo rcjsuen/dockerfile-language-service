@@ -4,8 +4,9 @@
 * ------------------------------------------------------------------------------------------ */
 'use strict';
 
+import { TextDocument } from 'vscode-languageserver-textdocument'; 
 import {
-    TextDocument, TextEdit, Range, Position,
+    TextEdit, Range, Position,
     CompletionItem, CompletionItemKind, CompletionItemTag, InsertTextFormat
 } from 'vscode-languageserver-types';
 import { Util, KEYWORDS } from './docker';

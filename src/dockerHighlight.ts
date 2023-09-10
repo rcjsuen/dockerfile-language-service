@@ -4,8 +4,9 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
+import { TextDocument } from 'vscode-languageserver-textdocument'; 
 import {
-    TextDocument, Position, DocumentHighlight, DocumentHighlightKind
+    Position, DocumentHighlight, DocumentHighlightKind
 } from 'vscode-languageserver-types';
 import { DockerfileParser, From } from 'dockerfile-ast';
 import { DockerDefinition } from './dockerDefinition';

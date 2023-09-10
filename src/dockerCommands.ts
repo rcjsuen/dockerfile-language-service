@@ -4,7 +4,8 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { TextDocument, Command, Diagnostic, Range, TextEdit } from 'vscode-languageserver-types';
+import { TextDocument } from 'vscode-languageserver-textdocument'; 
+import { Command, Diagnostic, Range, TextEdit } from 'vscode-languageserver-types';
 import { ValidationCode } from 'dockerfile-utils';
 import { CommandIds } from './main';
 

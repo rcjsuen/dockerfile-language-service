@@ -4,8 +4,9 @@
 * ------------------------------------------------------------------------------------------ */
 'use strict';
 
+import { TextDocument } from 'vscode-languageserver-textdocument'; 
 import {
-    TextDocument, TextEdit, Position, Range, FormattingOptions,
+    TextEdit, Position, Range, FormattingOptions,
 } from 'vscode-languageserver-types';
 import { DockerfileParser } from 'dockerfile-ast';
 

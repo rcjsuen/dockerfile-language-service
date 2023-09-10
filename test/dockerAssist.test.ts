@@ -4,8 +4,9 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
+import { TextDocument } from 'vscode-languageserver-textdocument'; 
 import {
-    TextDocument, Position, CompletionItem, CompletionItemKind, InsertTextFormat, MarkupContent, MarkupKind, CompletionItemTag, TextEdit
+    Position, CompletionItem, CompletionItemKind, InsertTextFormat, MarkupContent, MarkupKind, CompletionItemTag, TextEdit
 } from 'vscode-languageserver-types';
 import { KEYWORDS } from '../src/docker';
 import { MarkdownDocumentation } from '../src/dockerMarkdown';
