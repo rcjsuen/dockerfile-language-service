@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import {
-    TextEdit, TextDocument, Position, Range
+    TextEdit, Position, Range
 } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory, FormatterSettings } from '../src/main';
 

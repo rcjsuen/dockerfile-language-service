@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
-import { Range, Position, DocumentHighlight, DocumentHighlightKind, TextDocumentIdentifier } from 'vscode-languageserver-types';
+import { Range, Position, DocumentHighlight, DocumentHighlightKind } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 
 let service = DockerfileLanguageServiceFactory.createLanguageService();

@@ -5,7 +5,7 @@
 import * as assert from "assert";
 
 import {
-    TextDocument, Position, Range, Diagnostic, DiagnosticSeverity, TextDocumentIdentifier, CodeActionContext
+    Position, Range, Diagnostic, DiagnosticSeverity, TextDocumentIdentifier, CodeActionContext
 } from 'vscode-languageserver-types';
 import { ValidationCode } from 'dockerfile-utils';
 import { DockerfileLanguageServiceFactory, CommandIds } from '../src/main';

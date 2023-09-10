@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
-import { TextDocument, Position, Location, TextDocumentIdentifier } from 'vscode-languageserver-types';
+import { Position, Location, TextDocumentIdentifier } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 
 const URI = "uri://host/Dockerfile.sample";

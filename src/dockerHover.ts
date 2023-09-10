@@ -8,7 +8,6 @@ import { Hover, Position, MarkupKind } from 'vscode-languageserver-types';
 import { DockerfileParser, Dockerfile, Arg, Env, Instruction, ModifiableInstruction, Onbuild, Directive } from 'dockerfile-ast';
 import { Util } from './docker';
 import { MarkdownDocumentation } from './dockerMarkdown';
-import { DockerDefinition } from './dockerDefinition';
 import { PlainTextDocumentation } from './dockerPlainText';
 
 export class DockerHover {

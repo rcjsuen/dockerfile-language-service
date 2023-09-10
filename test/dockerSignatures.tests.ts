@@ -7,7 +7,7 @@
 import * as assert from "assert";
 
 import {
-    TextDocument, Position, SignatureHelp, SignatureInformation
+    Position, SignatureHelp, SignatureInformation
 } from 'vscode-languageserver-types';
 import { PlainTextDocumentation } from '../src/dockerPlainText';
 import { DockerfileLanguageServiceFactory } from '../src/main';
