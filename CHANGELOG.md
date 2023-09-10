@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file.
 - flag empty tag specified with a digest in FROM instructions as an error ([rcjsuen/dockerfile-utils#118](https://github.com/rcjsuen/dockerfile-utils/issues/118))
 - ignore predefined platform ARG variables if they are used as a base image ([rcjsuen/dockerfile-utils#119](https://github.com/rcjsuen/dockerfile-utils/issues/119))
 
+### Fixed
+- correct link range calculation if tag provided with a digest ([#120](https://github.com/rcjsuen/dockerfile-language-service/issues/120))
+
 ## [0.10.2] - 2023-06-01
 ### Fixed
 - ignore quotes in comments if it's within an embedded argument with CRLF used as a newline delimiter ([#113](https://github.com/rcjsuen/dockerfile-language-service/issues/113))

@@ -72,6 +72,14 @@ describe("Dockerfile links", function () {
             links[0] = service.resolveLink(links[0]);
             assertLink(links[0], "https://hub.docker.com/r/microsoft/dotnet/", "r/microsoft/dotnet/", 0, 5, 0, 21);
         });
+
+        it("FROM microsoft/dotnet:non-existent-tag@sha256:5483e2b609c0f66c3ebd96666de7b0a74537613b43565879ecb0d0a73e845d7d", () => {
+            const links = service.computeLinks("FROM microsoft/dotnet:non-existent-tag@sha256:5483e2b609c0f66c3ebd96666de7b0a74537613b43565879ecb0d0a73e845d7d");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], undefined, "r/microsoft/dotnet/", 0, 5, 0, 21);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://hub.docker.com/r/microsoft/dotnet/", "r/microsoft/dotnet/", 0, 5, 0, 21);
+        });
     });
 
     describe("build stages", function () {
