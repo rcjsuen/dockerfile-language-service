@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - suggest the new `--start-interval` flag for HEALTHCHECK instructions when calculating completion items ([#117](https://github.com/rcjsuen/dockerfile-language-service/issues/117))
 - provide documentation support when hovering over the `--start-interval` flag for HEALTHCHECK instructions ([#119](https://github.com/rcjsuen/dockerfile-language-service/issues/119))
 - flag empty tag specified with a digest in FROM instructions as an error ([rcjsuen/dockerfile-utils#118](https://github.com/rcjsuen/dockerfile-utils/issues/118))
+- ignore predefined platform ARG variables if they are used as a base image ([rcjsuen/dockerfile-utils#119](https://github.com/rcjsuen/dockerfile-utils/issues/119))
 
 ## [0.10.2] - 2023-06-01
 ### Fixed
