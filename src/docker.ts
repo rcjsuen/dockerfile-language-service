@@ -57,6 +57,10 @@ export class Util {
         return range.start.line < position.line && position.line < range.end.line;
     }
 
+    public static isEmpty(range: Range): boolean {
+        return range.start.line === range.end.line && range.start.character === range.end.character;
+    }
+
     public static rangeEquals(range: Range, range2: Range) {
         return Util.positionEquals(range.start, range2.start) && Util.positionEquals(range.end, range2.end);
     }
