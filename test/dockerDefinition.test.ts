@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from "assert";
 
-import { Position, Location, TextDocumentIdentifier } from 'vscode-languageserver-types';
+import { Location, Position, TextDocumentIdentifier } from 'vscode-languageserver-types';
 import { DockerfileLanguageServiceFactory } from '../src/main';
 
 const URI = "uri://host/Dockerfile.sample";
@@ -23,6 +23,7 @@ function findDefinition(content: string, line: number, character: number): Locat
 }
 
 function assertLocation(location: Location, startLine: number, startCharacter: number, endLine: number, endCharacter: number) {
+    assert.notStrictEqual(location, null);
     assert.strictEqual(location.uri, URI);
     assert.strictEqual(location.range.start.line, startLine);
     assert.strictEqual(location.range.start.character, startCharacter);
@@ -1815,5 +1816,113 @@ describe("Dockerfile Document Definition tests", function () {
                 assertLocation(location, 2, 4, 2, 10);
             });
         });
+    });
+
+    function createRegularHeredocTests(instruction: string, offset: number) {
+        const tests = [
+            {
+                testName: `<<file`,
+                content: `FROM alpine\n${instruction} echo <<file\nabc\nfile`,
+                offset: 8
+            },
+            {
+                testName: `<<-file`,
+                content: `FROM alpine\n${instruction} echo <<-file\nabc\nfile`,
+                offset: 9
+            },
+            {
+                testName: `<<'file'`,
+                content: `FROM alpine\n${instruction} echo <<'file'\nabc\nfile`,
+                offset: 9
+            },
+            {
+                testName: `<<-'file'`,
+                content: `FROM alpine\n${instruction} echo <<-'file'\nabc\nfile`,
+                offset: 10
+            },
+            {
+                testName: `<<"file"`,
+                content: `FROM alpine\n${instruction} echo <<"file"\nabc\nfile`,
+                offset: 9
+            },
+            {
+                testName: `<<-"file"`,
+                content: `FROM alpine\n${instruction} echo <<-"file"\nabc\nfile`,
+                offset: 10
+            }
+        ];
+
+        describe("regular", () => {
+            tests.forEach((test) => {
+                describe(test.testName, () => {
+                    it("definition", () => {
+                        const location = findDefinition(test.content, 1, offset + 11);
+                        assertLocation(location, 1, offset + test.offset, 1, offset + test.offset + 4);
+                    });
+    
+                    it("delimiter", () => {
+                        const location = findDefinition(test.content, 3, 2);
+                        assertLocation(location, 1, offset + test.offset, 1, offset + test.offset + 4);
+                    });
+                });
+            });
+        });
+    }
+
+    function createEmptyHeredocTests(instruction: string, offset: number) {
+        const tests = [
+            {
+                testName: `<<`,
+                content: `FROM alpine\n${instruction} echo <<`,
+                offset: 8
+            },
+            {
+                testName: `<<-`,
+                content: `FROM alpine\n${instruction} echo <<-`,
+                offset: 9
+            },
+            {
+                testName: `<<''`,
+                content: `FROM alpine\n${instruction} echo <<''`,
+                offset: 9
+            },
+            {
+                testName: `<<''`,
+                content: `FROM alpine\n${instruction} echo <<-''`,
+                offset: 10
+            },
+            {
+                testName: `<<""`,
+                content: `FROM alpine\n${instruction} echo <<""`,
+                offset: 9
+            },
+            {
+                testName: `<<-""`,
+                content: `FROM alpine\n${instruction} echo <<-""`,
+                offset: 10
+            }
+        ];
+
+        describe("empty", () => {
+            tests.forEach((test) => {
+                it(test.testName, () => {
+                    const location = findDefinition(test.content, 1, offset + test.offset);
+                    assert.strictEqual(location, null);
+                });
+            });
+        });
+    }
+
+    function createHeredocTests(instruction: string) {
+        describe(instruction, () => {
+            const offset = instruction.length;
+            createRegularHeredocTests(instruction, offset);
+            createEmptyHeredocTests(instruction, offset);
+        });
+    }
+
+    describe("Heredoc", () => {
+        createHeredocTests("COPY");
+        createHeredocTests("RUN");
     });
 });

@@ -8,7 +8,7 @@ import { Position, Range, Location, TextDocumentIdentifier } from 'vscode-langua
 import { Util } from './docker';
 import {
     DockerfileParser, Dockerfile, ImageTemplate,
-    Property, Arg, Env
+    Arg, Env, Heredoc, Property, Copy, Run
 } from 'dockerfile-ast';
 
 export class DockerDefinition {
@@ -127,6 +127,37 @@ export class DockerDefinition {
         return DockerDefinition.computeVariableDefinition(image, position);
     }
 
+    private static checkHeredocs(heredocs: Heredoc[], position: Position): Range | null {
+        for (const heredoc of heredocs) {
+            const nameRange = heredoc.getNameRange();
+            if (Util.isInsideRange(position, nameRange)) {
+                return Util.isEmpty(nameRange) ? null : nameRange;
+            }
+            const delimiterRange = heredoc.getDelimiterRange();
+            if (delimiterRange !== null && Util.isInsideRange(position, delimiterRange)) {
+                return nameRange;
+            }
+        }
+        return null;
+    }
+
+    private static computeHeredocDefinition(dockerfile: Dockerfile, position: Position): Range | null {
+        for (const instruction of dockerfile.getInstructions()) {
+            if (instruction instanceof Copy) {
+                const range = DockerDefinition.checkHeredocs(instruction.getHeredocs(), position);
+                if (range !== null) {
+                    return range;
+                }
+            } else if (instruction instanceof Run) {
+                const range = DockerDefinition.checkHeredocs(instruction.getHeredocs(), position);
+                if (range !== null) {
+                    return range;
+                }
+            }
+        }
+        return null;
+    }
+
     private computeVariableDefinition(dockerfile: Dockerfile, position: Position): Range | null {
         const property = DockerDefinition.findDefinition(dockerfile, position);
         return property ? property.getNameRange() : null;
@@ -148,7 +179,10 @@ export class DockerDefinition {
         if (range !== null) {
             return Location.create(textDocument.uri, range);
         }
-
+        range = DockerDefinition.computeHeredocDefinition(dockerfile, position);
+        if (range !== null) {
+            return Location.create(textDocument.uri, range);
+        }
         return null;
     }
 }

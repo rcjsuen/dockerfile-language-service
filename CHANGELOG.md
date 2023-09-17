@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- support navigating the definitions of heredocs ([#122](https://github.com/rcjsuen/dockerfile-language-service/issues/122))
+
 ## [0.11.0] - 2023-09-10
 ### Added
 - support parsing the new `--start-interval` flag for HEALTHCHECK instructions ([rcjsuen/dockerfile-utils#115](https://github.com/rcjsuen/dockerfile-utils/issues/115))
