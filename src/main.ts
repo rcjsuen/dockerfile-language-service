@@ -114,7 +114,7 @@ export interface FormatterSettings extends FormattingOptions {
 
 export interface DockerfileLanguageService {
 
-    setCapabilities(capabilities: Capabilities);
+    setCapabilities(capabilities: Capabilities): void;
 
     computeCodeActions(textDocument: TextDocumentIdentifier, range: Range, context: CodeActionContext): Command[];
 

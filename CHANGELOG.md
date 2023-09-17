@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ### Added
 - support navigating the definitions of heredocs ([#122](https://github.com/rcjsuen/dockerfile-language-service/issues/122))
 
+### Changed
+- altered the return type of `setCapabilities(Capabilities)` in `DockerfileLanguageService`
+  - previously it was implicitly set as `any` but it has now been changed to `void`
+  - the implementation never did return anything so this should hopefully not affect anyone using the library
+
 ## [0.11.0] - 2023-09-10
 ### Added
 - support parsing the new `--start-interval` flag for HEALTHCHECK instructions ([rcjsuen/dockerfile-utils#115](https://github.com/rcjsuen/dockerfile-utils/issues/115))

@@ -41,7 +41,7 @@ export class LanguageService implements DockerfileLanguageService {
         this.logger = logger;
     }
 
-    public setCapabilities(capabilities: Capabilities) {
+    public setCapabilities(capabilities: Capabilities): void {
         this.completionItemCapabilities = capabilities && capabilities.completion && capabilities.completion.completionItem;
         this.hoverContentFormat = capabilities && capabilities.hover && capabilities.hover.contentFormat;
         this.foldingRangeLineFoldingOnly = capabilities && capabilities.foldingRange && capabilities.foldingRange.lineFoldingOnly;
