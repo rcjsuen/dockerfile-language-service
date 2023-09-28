@@ -3,12 +3,14 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 const path = require('path');
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const buildRoot = path.resolve(__dirname, "lib");
 const monacoEditorPath = './node_modules/monaco-editor/min/vs';
 
 module.exports = {
+    mode: "production", // see https://webpack.js.org/configuration/mode/
     entry: path.resolve(buildRoot, "main.js"),
     output: {
         filename: 'bundle.js',
@@ -45,6 +47,10 @@ module.exports = {
                     to: 'vs'
                 }
             ]
-        })
+        }),
+        // https://stackoverflow.com/a/71515171
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        }),
     ]
 }
