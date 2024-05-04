@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.13.0] - 2024-05-04
 ### Added
 - support parsing the new `--exclude` flag for ADD and COPY instructions ([rcjsuen/dockerfile-utils#124](https://github.com/rcjsuen/dockerfile-utils/issues/124))
 - support parsing the new `--parents` flag for COPY instructions ([rcjsuen/dockerfile-utils#123](https://github.com/rcjsuen/dockerfile-utils/issues/123))
@@ -521,7 +521,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.11.0...v0.12.0
 [0.11.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.10.2...v0.11.0
 [0.10.2]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.10.1...v0.10.2
