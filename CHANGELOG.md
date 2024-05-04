@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- support parsing the new `--exclude` flag for ADD and COPY instructions ([rcjsuen/dockerfile-utils#124](https://github.com/rcjsuen/dockerfile-utils/issues/124))
+- support parsing the new `--parents` flag for COPY instructions ([rcjsuen/dockerfile-utils#123](https://github.com/rcjsuen/dockerfile-utils/issues/123))
+
 ## [0.12.0] - 2024-05-04
 ### Added
 - support navigating the definitions of heredocs ([#122](https://github.com/rcjsuen/dockerfile-language-service/issues/122))
