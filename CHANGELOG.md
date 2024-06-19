@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- support computing highlight ranges for heredocs ([#121](https://github.com/rcjsuen/dockerfile-language-service/issues/121))
+
 ### Fixed
 - consider default value of a variable when determining if FROM is invalid or not ([rcjsuen/dockerfile-utils#126](https://github.com/rcjsuen/dockerfile-utils/issues/126))
 

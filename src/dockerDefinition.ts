@@ -166,20 +166,17 @@ export class DockerDefinition {
     public computeDefinitionRange(content: string, position: Position): Range | null {
         let dockerfile = DockerfileParser.parse(content);
         let range = this.computeBuildStageDefinition(dockerfile, position);
-        return range ? range : this.computeVariableDefinition(dockerfile, position);
+        if (range === null) {
+            range = this.computeVariableDefinition(dockerfile, position);
+            if (range === null) {
+                return DockerDefinition.computeHeredocDefinition(dockerfile, position);
+            }
+        }
+        return range;
     }
 
     public computeDefinition(textDocument: TextDocumentIdentifier, content: string, position: Position): Location | null {
-        let dockerfile = DockerfileParser.parse(content);
-        let range = this.computeBuildStageDefinition(dockerfile, position);
-        if (range !== null) {
-            return Location.create(textDocument.uri, range);
-        }
-        range = this.computeVariableDefinition(dockerfile, position);
-        if (range !== null) {
-            return Location.create(textDocument.uri, range);
-        }
-        range = DockerDefinition.computeHeredocDefinition(dockerfile, position);
+        const range = this.computeDefinitionRange(content, position);
         if (range !== null) {
             return Location.create(textDocument.uri, range);
         }

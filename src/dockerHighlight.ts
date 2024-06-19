@@ -8,7 +8,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
     Position, DocumentHighlight, DocumentHighlightKind
 } from 'vscode-languageserver-types';
-import { DockerfileParser, From } from 'dockerfile-ast';
+import { Copy, DockerfileParser, From, Run } from 'dockerfile-ast';
 import { DockerDefinition } from './dockerDefinition';
 import { Util } from './docker';
 
@@ -74,6 +74,21 @@ export class DockerHighlight {
                 }
             }
         } else {
+            for (const instruction of dockerfile.getInstructions()) {
+                if (instruction instanceof Copy || instruction instanceof Run) {
+                    for (const heredoc of instruction.getHeredocs()) {
+                        const nameRange = heredoc.getNameRange();
+                        if (Util.positionEquals(definitionRange.start, nameRange.start) && Util.positionEquals(definitionRange.start, nameRange.start)) {
+                            highlights.push(DocumentHighlight.create(definitionRange, DocumentHighlightKind.Write));
+                            const delimiterRange = heredoc.getDelimiterRange();
+                            if (delimiterRange !== null) {
+                                highlights.push(DocumentHighlight.create(delimiterRange, DocumentHighlightKind.Read));
+                            }
+                            return highlights;
+                        }
+                    }
+                }
+            }
             let document = TextDocument.create("", "", 0, content);
             let definition = document.getText().substring(document.offsetAt(definitionRange.start), document.offsetAt(definitionRange.end));
             let isBuildStage = false;

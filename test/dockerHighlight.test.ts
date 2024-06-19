@@ -2271,4 +2271,103 @@ describe("Dockerfile Document Highlight tests", function () {
             });
         });
     });
+
+    function createHeredocTests(instruction: string) {
+        describe(instruction, () => {
+            const offset = instruction.length;
+            const tests = [
+                {
+                    testName: `<<file`,
+                    content: `FROM alpine\n${instruction} echo <<file\nabc\nfile`,
+                    writeRange: Range.create(1, offset + 8, 1, offset + 12),
+                    hasReadRange: true
+                },
+                {
+                    testName: `<<-file`,
+                    content: `FROM alpine\n${instruction} echo <<-file\nabc\nfile`,
+                    writeRange: Range.create(1, offset + 9, 1, offset + 13),
+                    hasReadRange: true
+                },
+                {
+                    testName: `<<'file'`,
+                    content: `FROM alpine\n${instruction} echo <<'file'\nabc\nfile`,
+                    writeRange: Range.create(1, offset + 9, 1, offset + 13),
+                    hasReadRange: true
+                },
+                {
+                    testName: `<<'file'`,
+                    content: `FROM alpine\n${instruction} echo <<-'file'\nabc\nfile`,
+                    writeRange: Range.create(1, offset + 10, 1, offset + 14),
+                    hasReadRange: true
+                },
+                {
+                    testName: `<<"file"`,
+                    content: `FROM alpine\n${instruction} echo <<"file"\nabc\nfile`,
+                    writeRange: Range.create(1, offset + 9, 1, offset + 13),
+                    hasReadRange: true
+                },
+                {
+                    testName: `<<-"file"`,
+                    content: `FROM alpine\n${instruction} echo <<-"file"\nabc\nfile`,
+                    writeRange: Range.create(1, offset + 10, 1, offset + 14),
+                    hasReadRange: true
+                },
+                {
+                    testName: `<<file`,
+                    content: `FROM alpine\n${instruction} echo <<file\nabc`,
+                    writeRange: Range.create(1, offset + 8, 1, offset + 12),
+                    hasReadRange: false
+                },
+                {
+                    testName: `<<-file`,
+                    content: `FROM alpine\n${instruction} echo <<-file\nabc`,
+                    writeRange: Range.create(1, offset + 9, 1, offset + 13),
+                    hasReadRange: false
+                },
+                {
+                    testName: `<<'file'`,
+                    content: `FROM alpine\n${instruction} echo <<'file'\nabc`,
+                    writeRange: Range.create(1, offset + 9, 1, offset + 13),
+                    hasReadRange: false
+                },
+                {
+                    testName: `<<'file'`,
+                    content: `FROM alpine\n${instruction} echo <<-'file'\nabc`,
+                    writeRange: Range.create(1, offset + 10, 1, offset + 14),
+                    hasReadRange: false
+                },
+                {
+                    testName: `<<"file"`,
+                    content: `FROM alpine\n${instruction} echo <<"file"\nabc`,
+                    writeRange: Range.create(1, offset + 9, 1, offset + 13),
+                    hasReadRange: false
+                },
+                {
+                    testName: `<<-"file"`,
+                    content: `FROM alpine\n${instruction} echo <<-"file"\nabc`,
+                    writeRange: Range.create(1, offset + 10, 1, offset + 14),
+                    hasReadRange: false
+                }
+            ];
+
+            tests.forEach((test) => {
+                it(test.testName, () => {
+                    const ranges = computeHighlightRanges(test.content, 1, offset + 11);
+                    if (test.hasReadRange) {
+                        assert.strictEqual(ranges.length, 2);
+                        assertHighlightRange(ranges[0], { range: test.writeRange, kind: DocumentHighlightKind.Write });
+                        assertHighlightRange(ranges[1], { range: Range.create(3, 0, 3, 4), kind: DocumentHighlightKind.Read });
+                    } else {
+                        assert.strictEqual(ranges.length, 1);
+                        assertHighlightRange(ranges[0], { range: test.writeRange, kind: DocumentHighlightKind.Write });
+                    }
+                });
+            });
+        });
+    }
+
+    describe("Heredoc", () => {
+        createHeredocTests("COPY");
+        createHeredocTests("RUN");
+    });
 });
