@@ -2803,4 +2803,100 @@ describe("Dockerfile Document Rename tests", function () {
             });
         });
     });
+
+    function createHeredocTests(instruction: string, offset: number) {
+        const tests = [
+            {
+                testName: `<<file`,
+                content: `FROM alpine\n${instruction} echo <<file\nabc\nfile`,
+                offset: 8
+            },
+            {
+                testName: `<<-file`,
+                content: `FROM alpine\n${instruction} echo <<-file\nabc\nfile`,
+                offset: 9
+            },
+            {
+                testName: `<<'file'`,
+                content: `FROM alpine\n${instruction} echo <<'file'\nabc\nfile`,
+                offset: 9
+            },
+            {
+                testName: `<<-'file'`,
+                content: `FROM alpine\n${instruction} echo <<-'file'\nabc\nfile`,
+                offset: 10
+            },
+            {
+                testName: `<<"file"`,
+                content: `FROM alpine\n${instruction} echo <<"file"\nabc\nfile`,
+                offset: 9
+            },
+            {
+                testName: `<<-"file"`,
+                content: `FROM alpine\n${instruction} echo <<-"file"\nabc\nfile`,
+                offset: 10
+            }
+        ];
+
+        describe(instruction, () => {
+            describe("definition", () => {
+                describe("prepareRename", () => {
+                    tests.forEach((test) => {
+                        it(test.testName, () => {
+                            const range = prepareRename(test.content, 1, offset + 11);
+                            assertRange(range, 1, offset + test.offset, 1, offset + test.offset + 4);
+                        });
+                    });
+
+                    it("outside name range", () => {
+                        const content = `FROM alpine\n${instruction} echo <<file\nfile`;
+                        const range = prepareRename(content, 1, offset + 7);
+                        assert.strictEqual(range, null);
+                    });
+                });
+
+                describe("computeRename", () => {
+                    tests.forEach((test) => {
+                        it(test.testName, () => {
+                            const edits = rename(test.content, 1, offset + 11, "file2");
+                            assertEdit(edits[0], "file2", 1, offset + test.offset, 1, offset + test.offset + 4);
+                            assertEdit(edits[1], "file2", 3, 0, 3, 4);
+                        });
+                    });
+
+                    it("outside name range", () => {
+                        const content = `FROM alpine\n${instruction} echo <<file\nfile`;
+                        const range = rename(content, 1, offset + 7, "file2");
+                        assert.strictEqual(0, range.length);
+                    });
+                });
+            });
+
+            describe("delimiter", () => {
+                describe("prepareRename", () => {
+                    tests.forEach((test) => {
+                        it(test.testName, () => {
+                            const range = prepareRename(test.content, 3, 2);
+                            assertRange(range, 3, 0, 3, 4);
+                        });
+                    });
+                });
+
+                describe("computeRename", () => {
+                    tests.forEach((test) => {
+                        it(test.testName, () => {
+                            const edits = rename(test.content, 3, 2, "file2");
+                            assertEdit(edits[0], "file2", 1, offset + test.offset, 1, offset + test.offset + 4);
+                            assertEdit(edits[1], "file2", 3, 0, 3, 4);
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    describe("Heredoc", () => {
+        createHeredocTests("COPY", 4);
+        createHeredocTests("RUN", 3);
+    });
 });

@@ -5,7 +5,7 @@
 'use strict';
 
 import { Range, Position, TextEdit, TextDocumentIdentifier } from 'vscode-languageserver-types';
-import { DockerfileParser } from 'dockerfile-ast';
+import { DockerfileParser, Copy, Run } from 'dockerfile-ast';
 import { DockerHighlight } from './dockerHighlight';
 import { Util } from './docker';
 
@@ -49,6 +49,20 @@ export class DockerRename {
             for (let variable of instruction.getVariables()) {
                 if (Util.isInsideRange(position, variable.getNameRange())) {
                     return variable.getNameRange();
+                }
+            }
+
+            if (instruction instanceof Copy || instruction instanceof Run) {
+                for (const heredoc of instruction.getHeredocs()) {
+                    let range = heredoc.getNameRange();
+                    if (Util.isInsideRange(position, range)) {
+                        return range;
+                    }
+
+                    range = heredoc.getDelimiterRange();
+                    if (Util.isInsideRange(position, range)) {
+                        return range;
+                    }
                 }
             }
         }
