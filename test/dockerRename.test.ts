@@ -102,6 +102,8 @@ describe("Dockerfile Document Rename tests", function () {
                     assertEdit(edits[0], "base2", 0, 15, 0, 19);
                     assertEdit(edits[1], "base2", 1, 5, 1, 9);
 
+                    range  = prepareRename(content, 1, 7);
+                    assertRange(range, 1, 5, 1, 9);
                     edits = rename(content, 1, 7, "base2");
                     assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "base2", 0, 15, 0, 19);
@@ -122,6 +124,8 @@ describe("Dockerfile Document Rename tests", function () {
                     assertEdit(edits[0], "base", 1, 16, 1, 22);
                     assertEdit(edits[1], "base", 2, 5, 2, 11);
 
+                    range  = prepareRename(content, 2, 8);
+                    assertRange(range, 2, 5, 2, 11);
                     edits = rename(content, 2, 8, "base");
                     assert.strictEqual(edits.length, 2);
                     assertEdit(edits[0], "base", 1, 16, 1, 22);

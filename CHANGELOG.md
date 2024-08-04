@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - support preparing renames for here-documents ([#129](https://github.com/rcjsuen/dockerfile-language-service/issues/129))
+- support preparing renames for a build stage referenced in a FROM ([#126](https://github.com/rcjsuen/dockerfile-language-service/issues/126))
 
 ### Fixed
 - stop resolving definitions to build stages after the selected line ([#130](https://github.com/rcjsuen/dockerfile-language-service/issues/130))

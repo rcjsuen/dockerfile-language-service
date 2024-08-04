@@ -24,9 +24,20 @@ export class DockerRename {
             }
         }
 
-        for (let from of image.getFROMs()) {
+        const fromInstructions = dockerfile.getFROMs();
+        for (const from of fromInstructions) {
             if (Util.isInsideRange(position, from.getBuildStageRange())) {
                 return from.getBuildStageRange();
+            }
+
+            const range = from.getImageNameRange();
+            if (Util.isInsideRange(position, range)) {
+                const imageName = from.getImageName();
+                for (const stageCheck of fromInstructions) {
+                    if (stageCheck.getBuildStage() === imageName && stageCheck.getBuildStageRange().start.line < range.start.line) {
+                        return range;
+                    }
+                }
             }
         }
 
