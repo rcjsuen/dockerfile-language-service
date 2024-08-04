@@ -92,6 +92,57 @@ describe("Dockerfile Document Rename tests", function () {
                 assertEdit(edits[1], "renamed", 1, 13, 1, 22);
             });
 
+            describe("repeated FROM", () => {
+                it("simple", () => {
+                    const content = "FROM alpine AS base\nFROM base";
+                    let range  = prepareRename(content, 0, 17);
+                    assertRange(range, 0, 15, 0, 19);
+                    let edits = rename(content, 0, 17, "base2");
+                    assert.strictEqual(edits.length, 2);
+                    assertEdit(edits[0], "base2", 0, 15, 0, 19);
+                    assertEdit(edits[1], "base2", 1, 5, 1, 9);
+
+                    edits = rename(content, 1, 7, "base2");
+                    assert.strictEqual(edits.length, 2);
+                    assertEdit(edits[0], "base2", 0, 15, 0, 19);
+                    assertEdit(edits[1], "base2", 1, 5, 1, 9);
+                });
+
+                it("stage name shadows actual image name before", () => {
+                    const content = "FROM alpine\nFROM scratch AS alpine\nFROM alpine";
+                    let range  = prepareRename(content, 0, 17);
+                    assert.strictEqual(range, null);
+                    let edits = rename(content, 0, 8, "base");
+                    assert.strictEqual(edits.length, 0);
+
+                    range  = prepareRename(content, 1, 20);
+                    assertRange(range, 1, 16, 1, 22);
+                    edits = rename(content, 1, 20, "base");
+                    assert.strictEqual(edits.length, 2);
+                    assertEdit(edits[0], "base", 1, 16, 1, 22);
+                    assertEdit(edits[1], "base", 2, 5, 2, 11);
+
+                    edits = rename(content, 2, 8, "base");
+                    assert.strictEqual(edits.length, 2);
+                    assertEdit(edits[0], "base", 1, 16, 1, 22);
+                    assertEdit(edits[1], "base", 2, 5, 2, 11);
+                });
+
+                it("stage name shadows actual image name on the same line", () => {
+                    const content = "FROM alpine AS alpine";
+                    let range  = prepareRename(content, 0, 8);
+                    assert.strictEqual(range, null);
+                    let edits = rename(content, 0, 8, "base");
+                    assert.strictEqual(edits.length, 0);
+
+                    range  = prepareRename(content, 0, 19);
+                    assertRange(range, 0, 15, 0, 21);
+                    edits = rename(content, 0, 19, "base");
+                    assert.strictEqual(edits.length, 1);
+                    assertEdit(edits[0], "base", 0, 15, 0, 21);
+                });
+            });
+
             it("COPY", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=bootstrap /git/bin/app .";
                 // cursor in the FROM
