@@ -42,7 +42,7 @@ export class DockerDefinition {
             if (Util.isInsideRange(position, range)) {
                 const stageName = instruction.getImageName();
                 for (const from of dockerfile.getFROMs()) {
-                    if (stageName === from.getBuildStage()) {
+                    if (stageName === from.getBuildStage() && from.getRange().start.line < range.start.line) {
                         return from.getBuildStageRange();
                     }
                 }

@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - support preparing renames for here-documents ([#129](https://github.com/rcjsuen/dockerfile-language-service/issues/129))
 
+### Fixed
+- stop resolving definitions to build stages after the selected line ([#130](https://github.com/rcjsuen/dockerfile-language-service/issues/130))
+
 ## [0.14.0] - 2024-06-18
 ### Added
 - support computing highlight ranges for heredocs ([#121](https://github.com/rcjsuen/dockerfile-language-service/issues/121))

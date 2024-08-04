@@ -120,6 +120,26 @@ describe("Dockerfile Document Definition tests", function () {
                 let location = computeDefinition(document, Position.create(1, 10));
                 assert.strictEqual(location, null);
             });
+
+            describe("stage name shadowing an image", () => {
+                it("referencing a later stage", () => {
+                    const document = "FROM alpine\nFROM scratch AS alpine";
+                    let location = computeDefinition(document, Position.create(0, 8));
+                    assert.strictEqual(location, null);
+
+                    location = computeDefinition(document, Position.create(1, 19));
+                    assertLocation(location, 1, 16, 1, 22);
+                });
+
+                it("referencing itself", () => {
+                    const document = "FROM alpine AS alpine";
+                    let location = computeDefinition(document, Position.create(0, 8));
+                    assert.strictEqual(location, null);
+
+                    location = computeDefinition(document, Position.create(0, 18));
+                    assertLocation(location, 0, 15, 0, 21);
+                });
+            });
         });
     });
 
