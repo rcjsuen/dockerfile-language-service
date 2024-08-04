@@ -72,6 +72,47 @@ describe("Dockerfile Document Highlight tests", function () {
                 assertHighlight(ranges[1], DocumentHighlightKind.Write, 1, 13, 1, 22);
             });
 
+            describe("repeated FROM", () => {
+                it("simple", () => {
+                    const content = "FROM alpine AS base\nFROM base";
+                    let ranges = computeHighlightRanges(content, 0, 17);
+                    assert.strictEqual(ranges.length, 2);
+                    assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 15, 0, 19);
+                    assertHighlight(ranges[1], DocumentHighlightKind.Read, 1, 5, 1, 9);
+
+                    ranges = computeHighlightRanges(content, 1, 7);
+                    assert.strictEqual(ranges.length, 2);
+                    assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 15, 0, 19);
+                    assertHighlight(ranges[1], DocumentHighlightKind.Read, 1, 5, 1, 9);
+                });
+
+                it("stage name shadows actual image name before", () => {
+                    const content = "FROM alpine\nFROM scratch AS alpine\nFROM alpine";
+                    let ranges = computeHighlightRanges(content, 0, 8);
+                    assert.strictEqual(ranges.length, 0);
+
+                    ranges = computeHighlightRanges(content, 1, 20);
+                    assert.strictEqual(ranges.length, 2);
+                    assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 16, 1, 22);
+                    assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 5, 2, 11);
+
+                    ranges = computeHighlightRanges(content, 2, 8);
+                    assert.strictEqual(ranges.length, 2);
+                    assertHighlight(ranges[0], DocumentHighlightKind.Write, 1, 16, 1, 22);
+                    assertHighlight(ranges[1], DocumentHighlightKind.Read, 2, 5, 2, 11);
+                });
+
+                it("stage name shadows actual image name on the same line", () => {
+                    const content = "FROM alpine AS alpine";
+                    let ranges = computeHighlightRanges(content, 0, 8);
+                    assert.strictEqual(ranges.length, 0);
+
+                    ranges = computeHighlightRanges(content, 0, 19);
+                    assert.strictEqual(ranges.length, 1);
+                    assertHighlight(ranges[0], DocumentHighlightKind.Write, 0, 15, 0, 21);
+                });
+            });
+
             it("COPY", function () {
                 let content = "FROM node AS bootstrap\nFROM node\nCOPY --from=bootstrap /git/bin/app .";
                 // cursor in the FROM

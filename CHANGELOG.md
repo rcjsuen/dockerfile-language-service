@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - stop resolving definitions to build stages after the selected line ([#130](https://github.com/rcjsuen/dockerfile-language-service/issues/130))
+- build stage references in FROM instructions will now be highlighted ([#128](https://github.com/rcjsuen/dockerfile-language-service/issues/128))
 
 ## [0.14.0] - 2024-06-18
 ### Added
