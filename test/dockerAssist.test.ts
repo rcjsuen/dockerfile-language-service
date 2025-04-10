@@ -966,15 +966,17 @@ function assertVariable(variable: string, item: CompletionItem, line: number, ch
 }
 
 function assertDockerVariables(items: CompletionItem[], line: number, character: number, prefixLength: number, brace: boolean) {
-    assert.strictEqual(items.length, 8);
-    assertVariable("FTP_PROXY", items[0], line, character, prefixLength, brace);
-    assertVariable("ftp_proxy", items[1], line, character, prefixLength, brace);
-    assertVariable("HTTP_PROXY", items[2], line, character, prefixLength, brace);
-    assertVariable("http_proxy", items[3], line, character, prefixLength, brace);
-    assertVariable("HTTPS_PROXY", items[4], line, character, prefixLength, brace);
-    assertVariable("https_proxy", items[5], line, character, prefixLength, brace);
-    assertVariable("NO_PROXY", items[6], line, character, prefixLength, brace);
-    assertVariable("no_proxy", items[7], line, character, prefixLength, brace);
+    assert.strictEqual(items.length, 10);
+    assertVariable("ALL_PROXY", items[0], line, character, prefixLength, brace);
+    assertVariable("all_proxy", items[1], line, character, prefixLength, brace);
+    assertVariable("FTP_PROXY", items[2], line, character, prefixLength, brace);
+    assertVariable("ftp_proxy", items[3], line, character, prefixLength, brace);
+    assertVariable("HTTP_PROXY", items[4], line, character, prefixLength, brace);
+    assertVariable("http_proxy", items[5], line, character, prefixLength, brace);
+    assertVariable("HTTPS_PROXY", items[6], line, character, prefixLength, brace);
+    assertVariable("https_proxy", items[7], line, character, prefixLength, brace);
+    assertVariable("NO_PROXY", items[8], line, character, prefixLength, brace);
+    assertVariable("no_proxy", items[9], line, character, prefixLength, brace);
 }
 
 function assertPath(item: CompletionItem, path: string, line: number, character: number, prefixLength: number): void { //variable: string, item: CompletionItem, line: number, character: number, prefixLength: number, brace: boolean, documentation?: string) {
@@ -2886,17 +2888,19 @@ describe('Docker Content Assist Tests', function () {
 
             it("ARG variable", function () {
                 let items = computePosition("FROM busybox\nARG foo=bar\nARG FOO=BAR\nRUN echo $", 3, 10);
-                assert.strictEqual(items.length, 10);
-                assertVariable("FOO", items[0], 3, 9, 1, true, "BAR");
-                assertVariable("foo", items[1], 3, 9, 1, true, "bar");
-                assertVariable("FTP_PROXY", items[2], 3, 9, 1, true);
-                assertVariable("ftp_proxy", items[3], 3, 9, 1, true);
-                assertVariable("HTTP_PROXY", items[4], 3, 9, 1, true);
-                assertVariable("http_proxy", items[5], 3, 9, 1, true);
-                assertVariable("HTTPS_PROXY", items[6], 3, 9, 1, true);
-                assertVariable("https_proxy", items[7], 3, 9, 1, true);
-                assertVariable("NO_PROXY", items[8], 3, 9, 1, true);
-                assertVariable("no_proxy", items[9], 3, 9, 1, true);
+                assert.strictEqual(items.length, 12);
+                assertVariable("ALL_PROXY", items[0], 3, 9, 1, true);
+                assertVariable("all_proxy", items[1], 3, 9, 1, true);
+                assertVariable("FOO", items[2], 3, 9, 1, true, "BAR");
+                assertVariable("foo", items[3], 3, 9, 1, true, "bar");
+                assertVariable("FTP_PROXY", items[4], 3, 9, 1, true);
+                assertVariable("ftp_proxy", items[5], 3, 9, 1, true);
+                assertVariable("HTTP_PROXY", items[6], 3, 9, 1, true);
+                assertVariable("http_proxy", items[7], 3, 9, 1, true);
+                assertVariable("HTTPS_PROXY", items[8], 3, 9, 1, true);
+                assertVariable("https_proxy", items[9], 3, 9, 1, true);
+                assertVariable("NO_PROXY", items[10], 3, 9, 1, true);
+                assertVariable("no_proxy", items[11], 3, 9, 1, true);
 
                 items = computePosition("FROM busybox\nARG foo=bar\nARG FOO=BAR\nRUN echo $F", 3, 11);
                 assert.strictEqual(items.length, 4);
@@ -2946,17 +2950,19 @@ describe('Docker Content Assist Tests', function () {
 
             it("ENV variable", function () {
                 let items = computePosition("FROM busybox\nENV foo=bar\nENV FOO=BAR\nRUN echo $", 3, 10);
-                assert.strictEqual(items.length, 10);
-                assertVariable("FOO", items[0], 3, 9, 1, true, "BAR");
-                assertVariable("foo", items[1], 3, 9, 1, true, "bar");
-                assertVariable("FTP_PROXY", items[2], 3, 9, 1, true);
-                assertVariable("ftp_proxy", items[3], 3, 9, 1, true);
-                assertVariable("HTTP_PROXY", items[4], 3, 9, 1, true);
-                assertVariable("http_proxy", items[5], 3, 9, 1, true);
-                assertVariable("HTTPS_PROXY", items[6], 3, 9, 1, true);
-                assertVariable("https_proxy", items[7], 3, 9, 1, true);
-                assertVariable("NO_PROXY", items[8], 3, 9, 1, true);
-                assertVariable("no_proxy", items[9], 3, 9, 1, true);
+                assert.strictEqual(items.length, 12);
+                assertVariable("ALL_PROXY", items[0], 3, 9, 1, true);
+                assertVariable("all_proxy", items[1], 3, 9, 1, true);
+                assertVariable("FOO", items[2], 3, 9, 1, true, "BAR");
+                assertVariable("foo", items[3], 3, 9, 1, true, "bar");
+                assertVariable("FTP_PROXY", items[4], 3, 9, 1, true);
+                assertVariable("ftp_proxy", items[5], 3, 9, 1, true);
+                assertVariable("HTTP_PROXY", items[6], 3, 9, 1, true);
+                assertVariable("http_proxy", items[7], 3, 9, 1, true);
+                assertVariable("HTTPS_PROXY", items[8], 3, 9, 1, true);
+                assertVariable("https_proxy", items[9], 3, 9, 1, true);
+                assertVariable("NO_PROXY", items[10], 3, 9, 1, true);
+                assertVariable("no_proxy", items[11], 3, 9, 1, true);
 
                 items = computePosition("FROM busybox\nENV foo=bar\nENV FOO=BAR\nRUN echo $F", 3, 11);
                 assert.strictEqual(items.length, 4);
@@ -3006,17 +3012,19 @@ describe('Docker Content Assist Tests', function () {
 
             it("ARG and ENV variable", function () {
                 let items = computePosition("FROM busybox\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV\nRUN echo $", 4, 10);
-                assert.strictEqual(items.length, 10);
-                assertVariable("FOO", items[0], 4, 9, 1, true, "ENV");
-                assertVariable("foo", items[1], 4, 9, 1, true, "env");
-                assertVariable("FTP_PROXY", items[2], 4, 9, 1, true);
-                assertVariable("ftp_proxy", items[3], 4, 9, 1, true);
-                assertVariable("HTTP_PROXY", items[4], 4, 9, 1, true);
-                assertVariable("http_proxy", items[5], 4, 9, 1, true);
-                assertVariable("HTTPS_PROXY", items[6], 4, 9, 1, true);
-                assertVariable("https_proxy", items[7], 4, 9, 1, true);
-                assertVariable("NO_PROXY", items[8], 4, 9, 1, true);
-                assertVariable("no_proxy", items[9], 4, 9, 1, true);
+                assert.strictEqual(items.length, 12);
+                assertVariable("ALL_PROXY", items[0], 4, 9, 1, true);
+                assertVariable("all_proxy", items[1], 4, 9, 1, true);
+                assertVariable("FOO", items[2], 4, 9, 1, true, "ENV");
+                assertVariable("foo", items[3], 4, 9, 1, true, "env");
+                assertVariable("FTP_PROXY", items[4], 4, 9, 1, true);
+                assertVariable("ftp_proxy", items[5], 4, 9, 1, true);
+                assertVariable("HTTP_PROXY", items[6], 4, 9, 1, true);
+                assertVariable("http_proxy", items[7], 4, 9, 1, true);
+                assertVariable("HTTPS_PROXY", items[8], 4, 9, 1, true);
+                assertVariable("https_proxy", items[9], 4, 9, 1, true);
+                assertVariable("NO_PROXY", items[10], 4, 9, 1, true);
+                assertVariable("no_proxy", items[11], 4, 9, 1, true);
 
                 items = computePosition("FROM busybox\nARG foo=arg\nARG FOO=ARG\nENV foo=env FOO=ENV\nRUN echo $F", 4, 11);
                 assert.strictEqual(items.length, 4);

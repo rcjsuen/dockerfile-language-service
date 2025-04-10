@@ -2404,6 +2404,12 @@ describe("Dockerfile Document Highlight tests", function () {
                     }
                 });
             });
+
+            it("<<<CRASH", function() {
+                const content = "RUN <<<CRASH\nCRASH\n";
+                const ranges = computeHighlightRanges(content, 0, 10);
+                assert.strictEqual(ranges.length, 0);
+            });
         });
     }
 

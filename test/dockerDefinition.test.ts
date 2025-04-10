@@ -1938,6 +1938,12 @@ describe("Dockerfile Document Definition tests", function () {
             const offset = instruction.length;
             createRegularHeredocTests(instruction, offset);
             createEmptyHeredocTests(instruction, offset);
+
+            it("<<<CRASH", function() {
+                const content = "RUN <<<CRASH\nCRASH\n";
+                const location = findDefinition(content, 0, 10);
+                assert.strictEqual(location, null);
+            });
         });
     }
 

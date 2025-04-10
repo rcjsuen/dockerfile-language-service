@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - stop resolving definitions to build stages after the selected line ([#130](https://github.com/rcjsuen/dockerfile-language-service/issues/130))
 - build stage references in FROM instructions will now be highlighted ([#128](https://github.com/rcjsuen/dockerfile-language-service/issues/128))
 - build stage references in FROM instructions will now be included in rename edits ([#127](https://github.com/rcjsuen/dockerfile-language-service/issues/127))
+- prevent TypeError from being thrown if an invalid heredoc is encountered ([#133](https://github.com/rcjsuen/dockerfile-language-service/issues/133))
 
 ## [0.14.0] - 2024-06-18
 ### Added

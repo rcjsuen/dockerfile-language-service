@@ -2947,6 +2947,20 @@ describe("Dockerfile Document Rename tests", function () {
                     });
                 });
             });
+
+            describe("<<<CRASH", function() {
+                it("prepareRename", function() {
+                    const content = "RUN <<<CRASH\nCRASH\n";
+                    const range = prepareRename(content, 0, 10);
+                    assert.strictEqual(range, null);
+                });
+
+                it("computeRename", function() {
+                    const content = "RUN <<<CRASH\nCRASH\n";
+                    const edits = rename(content, 0, 10, "");
+                    assert.strictEqual(edits.length, 0);
+                });
+            });
         });
     }
 
