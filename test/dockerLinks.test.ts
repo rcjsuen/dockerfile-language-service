@@ -98,6 +98,11 @@ describe("Dockerfile links", function () {
             links[0] = service.resolveLink(links[0]);
             assertLink(links[0], "https://github.com/super-linter/super-linter/pkgs/container/super-linter", undefined, 0, 5, 0, 38);
         });
+
+        it("FROM ghcr.io/super-linter", function() {
+            const links = service.computeLinks("FROM ghcr.io/super-linter");
+            assert.strictEqual(links.length, 0);
+        });
     });
 
     describe("mcr.microsoft.com", function() {
