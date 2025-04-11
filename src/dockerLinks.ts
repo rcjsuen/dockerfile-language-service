@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 'use strict';
 
-import { DocumentLink } from 'vscode-languageserver-types';
+import { DocumentLink, Range } from 'vscode-languageserver-types';
 import { DockerfileParser } from 'dockerfile-ast';
 
 export class DockerLinks {
@@ -21,6 +21,32 @@ export class DockerLinks {
         }, []);
         for (let from of dockerfile.getFROMs()) {
             let name = from.getImageName();
+            const registry = from.getRegistry();
+            if (registry === "ghcr.io") {
+                const idx = name.lastIndexOf("/");
+                if (idx === -1) {
+                    continue;
+                }
+                links.push({
+                    range: Range.create(from.getRegistryRange().start, from.getImageNameRange().end),
+                    target: `https://github.com/${name}/pkgs/container/${name.substring(idx+1)}`
+                })
+                continue;
+            }
+            if (registry === "mcr.microsoft.com") {
+                links.push({
+                    range: Range.create(from.getRegistryRange().start, from.getImageNameRange().end),
+                    target: "https://mcr.microsoft.com/artifact/mar/" + name
+                })
+                continue;
+            }
+            if (registry === "quay.io") {
+                links.push({
+                    range: Range.create(from.getRegistryRange().start, from.getImageNameRange().end),
+                    target: "https://quay.io/repository/" + name
+                })
+                continue;
+            }
             if (name !== null && stages.indexOf(name) === -1) {
                 if (name.indexOf('/') === -1) {
                     links.push({

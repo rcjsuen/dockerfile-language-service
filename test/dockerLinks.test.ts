@@ -19,7 +19,7 @@ function assertLink(documentLink: DocumentLink, target: string, data: string, st
 }
 
 describe("Dockerfile links", function () {
-    describe("standard", () => {
+    describe("Docker Hub", function() {
         it("FROM", function () {
             let links = service.computeLinks("FROM");
             assert.strictEqual(links.length, 0);
@@ -79,6 +79,76 @@ describe("Dockerfile links", function () {
             assertLink(links[0], undefined, "r/microsoft/dotnet/", 0, 5, 0, 21);
             links[0] = service.resolveLink(links[0]);
             assertLink(links[0], "https://hub.docker.com/r/microsoft/dotnet/", "r/microsoft/dotnet/", 0, 5, 0, 21);
+        });
+    });
+
+    describe("ghcr.io", function() {
+        it("FROM ghcr.io/super-linter/super-linter", function() {
+            const links = service.computeLinks("FROM ghcr.io/super-linter/super-linter");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://github.com/super-linter/super-linter/pkgs/container/super-linter", undefined, 0, 5, 0, 38);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://github.com/super-linter/super-linter/pkgs/container/super-linter", undefined, 0, 5, 0, 38);
+        });
+
+        it("FROM ghcr.io/super-linter/super-linter:latest-buildcache", function() {
+            const links = service.computeLinks("FROM ghcr.io/super-linter/super-linter:latest-buildcache");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://github.com/super-linter/super-linter/pkgs/container/super-linter", undefined, 0, 5, 0, 38);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://github.com/super-linter/super-linter/pkgs/container/super-linter", undefined, 0, 5, 0, 38);
+        });
+    });
+
+    describe("mcr.microsoft.com", function() {
+        it("FROM mcr.microsoft.com/powershell", function() {
+            const links = service.computeLinks("FROM mcr.microsoft.com/powershell");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/powershell", undefined, 0, 5, 0, 33);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/powershell", undefined, 0, 5, 0, 33);
+        });
+
+        it("FROM mcr.microsoft.com/powershell:3.17", function() {
+            const links = service.computeLinks("FROM mcr.microsoft.com/powershell:3.17");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/powershell", undefined, 0, 5, 0, 33);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/powershell", undefined, 0, 5, 0, 33);
+        });
+
+        it("FROM mcr.microsoft.com/windows/servercore", function() {
+            const links = service.computeLinks("FROM mcr.microsoft.com/windows/servercore");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/windows/servercore", undefined, 0, 5, 0, 41);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/windows/servercore", undefined, 0, 5, 0, 41);
+        });
+
+        it("FROM mcr.microsoft.com/windows/servercore:ltsc2025", function() {
+            const links = service.computeLinks("FROM mcr.microsoft.com/windows/servercore:ltsc2025");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/windows/servercore", undefined, 0, 5, 0, 41);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://mcr.microsoft.com/artifact/mar/windows/servercore", undefined, 0, 5, 0, 41);
+        });
+    });
+
+    describe("quay.io", function() {
+        it("FROM quay.io/prometheus/node-exporter", function() {
+            const links = service.computeLinks("FROM quay.io/prometheus/node-exporter");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://quay.io/repository/prometheus/node-exporter", undefined, 0, 5, 0, 37);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://quay.io/repository/prometheus/node-exporter", undefined, 0, 5, 0, 37);
+        });
+
+        it("FROM quay.io/prometheus/node-exporter:v1.9.1", function() {
+            const links = service.computeLinks("FROM quay.io/prometheus/node-exporter:v1.9.1");
+            assert.strictEqual(links.length, 1);
+            assertLink(links[0], "https://quay.io/repository/prometheus/node-exporter", undefined, 0, 5, 0, 37);
+            links[0] = service.resolveLink(links[0]);
+            assertLink(links[0], "https://quay.io/repository/prometheus/node-exporter", undefined, 0, 5, 0, 37);
         });
     });
 

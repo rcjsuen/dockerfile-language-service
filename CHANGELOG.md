@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - support preparing renames for here-documents ([#129](https://github.com/rcjsuen/dockerfile-language-service/issues/129))
 - support preparing renames for a build stage referenced in a FROM ([#126](https://github.com/rcjsuen/dockerfile-language-service/issues/126))
+- provide document links for GitHub Container Registry, Microsoft Artifact Registry, and Quay.io registries ([#134](https://github.com/rcjsuen/dockerfile-language-service/issues/134))
 
 ### Fixed
 - stop resolving definitions to build stages after the selected line ([#130](https://github.com/rcjsuen/dockerfile-language-service/issues/130))
