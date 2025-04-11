@@ -30,8 +30,3 @@ jobs:
       if: ${{ matrix.status == 'LTS' }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build Example
-      run: |
-        cd example
-        npm install
-        npm run build
