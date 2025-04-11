@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.15.0] - 2025-04-10
 ### Added
 - support preparing renames for here-documents ([#129](https://github.com/rcjsuen/dockerfile-language-service/issues/129))
 - support preparing renames for a build stage referenced in a FROM ([#126](https://github.com/rcjsuen/dockerfile-language-service/issues/126))
@@ -541,7 +541,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.14.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.15.0...HEAD
+[0.15.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.13.0...v0.14.0
 [0.13.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.11.0...v0.12.0
