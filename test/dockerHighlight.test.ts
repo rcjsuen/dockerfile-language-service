@@ -245,6 +245,12 @@ describe("Dockerfile Document Highlight tests", function () {
                 ranges = computeHighlightRanges(content, 1, 10);
                 assert.strictEqual(ranges.length, 0);
             });
+
+            it("outside document range", function () {
+                const content = "FROM scratch";
+                const ranges = computeHighlightRanges(content, 1, 0);
+                assert.strictEqual(ranges.length, 0);
+            });
         });
     });
 

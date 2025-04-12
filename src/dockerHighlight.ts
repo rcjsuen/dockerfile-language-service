@@ -55,21 +55,23 @@ export class DockerHighlight {
                 }
             }
 
-            for (let instruction of image.getInstructions()) {
-                for (let variable of instruction.getVariables()) {
-                    if (Util.isInsideRange(position, variable.getNameRange())) {
-                        let name = variable.getName();
-
-                        for (let instruction of image.getInstructions()) {
-                            if (!(instruction instanceof From)) {
-                                for (let variable of instruction.getVariables()) {
-                                    if (variable.getName() === name) {
-                                        highlights.push(DocumentHighlight.create(variable.getNameRange(), DocumentHighlightKind.Read));
+            if (image !== null) {
+                for (let instruction of image.getInstructions()) {
+                    for (let variable of instruction.getVariables()) {
+                        if (Util.isInsideRange(position, variable.getNameRange())) {
+                            let name = variable.getName();
+    
+                            for (let instruction of image.getInstructions()) {
+                                if (!(instruction instanceof From)) {
+                                    for (let variable of instruction.getVariables()) {
+                                        if (variable.getName() === name) {
+                                            highlights.push(DocumentHighlight.create(variable.getNameRange(), DocumentHighlightKind.Read));
+                                        }
                                     }
                                 }
                             }
+                            return highlights;
                         }
-                        return highlights;
                     }
                 }
             }

@@ -124,6 +124,9 @@ export class DockerDefinition {
             }
         }
         let image = dockerfile.getContainingImage(position);
+        if (image === null) {
+            return null;
+        }
         return DockerDefinition.computeVariableDefinition(image, position);
     }
 

@@ -121,6 +121,12 @@ describe("Dockerfile Document Definition tests", function () {
                 assert.strictEqual(location, null);
             });
 
+            it("outside document range", function () {
+                const content = "FROM scratch";
+                const location = computeDefinition(content, Position.create(1, 0));
+                assert.strictEqual(location, null);
+            });
+
             describe("stage name shadowing an image", () => {
                 it("referencing a later stage", () => {
                     const document = "FROM alpine\nFROM scratch AS alpine";

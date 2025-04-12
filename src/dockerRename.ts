@@ -41,6 +41,10 @@ export class DockerRename {
             }
         }
 
+        if (image === null) {
+            return null;
+        }
+
         for (let env of image.getENVs()) {
             for (let property of env.getProperties()) {
                 if (Util.isInsideRange(position, property.getNameRange())) {

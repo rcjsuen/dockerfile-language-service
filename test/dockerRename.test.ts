@@ -287,6 +287,14 @@ describe("Dockerfile Document Rename tests", function () {
                 let edits = rename(content, 1, 10, "renamed");
                 assert.strictEqual(edits.length, 0);
             });
+
+            it("outside document range", function () {
+                const content = "FROM scratch";
+                const range = prepareRename(content, 1, 0);
+                assert.strictEqual(range, null);
+                const edits = rename(content, 1, 10, "renamed");
+                assert.strictEqual(edits.length, 0);
+            });
         });
     });
 
