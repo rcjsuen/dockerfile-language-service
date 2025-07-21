@@ -2416,6 +2416,22 @@ describe("Dockerfile Document Highlight tests", function () {
                 const ranges = computeHighlightRanges(content, 0, 10);
                 assert.strictEqual(ranges.length, 0);
             });
+
+            it("tabbed and untabbed delimiter, on tabbed delimiter", function() {
+                const content = `${instruction} cat <<-EOT > 1.txt\n\thello\n\tEOT\n${instruction} cat <<EOT > 2.txt\nhello2\nEOT`;
+                let ranges = computeHighlightRanges(content, 0, instruction.length + 9);
+                assert.strictEqual(ranges.length, 2);
+                assertHighlightRange(ranges[0], DocumentHighlight.create(Range.create(0, instruction.length + 8, 0, instruction.length + 11), DocumentHighlightKind.Write));
+                assertHighlightRange(ranges[1], DocumentHighlight.create(Range.create(2, 1, 2, 4), DocumentHighlightKind.Read));
+            });
+
+            it("tabbed and untabbed delimiter, on untabbed delimiter", function() {
+                const content = `${instruction} cat <<-EOT > 1.txt\n\thello\n\tEOT\n${instruction} cat <<EOT > 2.txt\nhello2\nEOT`;
+                let ranges = computeHighlightRanges(content, 3, instruction.length + 9);
+                assert.strictEqual(ranges.length, 2);
+                assertHighlightRange(ranges[0], DocumentHighlight.create(Range.create(3, instruction.length + 7, 3, instruction.length + 10), DocumentHighlightKind.Write));
+                assertHighlightRange(ranges[1], DocumentHighlight.create(Range.create(5, 0, 5, 3), DocumentHighlightKind.Read));
+            });
         });
     }
 

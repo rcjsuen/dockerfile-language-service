@@ -2969,6 +2969,36 @@ describe("Dockerfile Document Rename tests", function () {
                     assert.strictEqual(edits.length, 0);
                 });
             });
+
+            describe("tabbed and untabbed delimiter, on tabbed delimiter", function() {
+                const content = `${instruction} cat <<-EOT > 1.txt\n\thello\n\tEOT\n${instruction} cat <<EOT > 2.txt\nhello2\nEOT`;
+
+                it("prepareRename", function() {
+                    const range = prepareRename(content, 2, 3);
+                    assertRange(range, 2, 1, 2, 4);
+                });
+
+                it("computeRename", function() {
+                    const edits = rename(content, 0, instruction.length + 10, "file2");
+                    assertEdit(edits[0], "file2", 0, instruction.length + 8, 0, instruction.length + 11);
+                    assertEdit(edits[1], "file2", 2, 1, 2, 4);
+                });
+            });
+
+            describe("tabbed and untabbed delimiter, on untabbed delimiter", function() {
+                const content = `${instruction} cat <<-EOT > 1.txt\n\thello\n\tEOT\n${instruction} cat <<EOT > 2.txt\nhello2\nEOT`;
+
+                it("prepareRename", function() {
+                    const range = prepareRename(content, 5, 2);
+                    assertRange(range, 5, 0, 5, 3);
+                });
+
+                it("computeRename", function() {
+                    const edits = rename(content, 3, instruction.length + 9, "file2");
+                    assertEdit(edits[0], "file2", 3, instruction.length + 7, 3, instruction.length + 10);
+                    assertEdit(edits[1], "file2", 5, 0, 5, 3);
+                });
+            });
         });
     }
 

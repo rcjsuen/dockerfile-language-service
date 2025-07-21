@@ -1950,6 +1950,18 @@ describe("Dockerfile Document Definition tests", function () {
                 const location = findDefinition(content, 0, 10);
                 assert.strictEqual(location, null);
             });
+
+            it("tabbed and untabbed delimiter, on tabbed delimiter", function() {
+                const content = `${instruction} cat <<-EOT > 1.txt\n\thello\n\tEOT\n${instruction} cat <<EOT > 2.txt\nhello2\nEOT`;
+                const location = findDefinition(content, 2, 3);
+                assertLocation(location, 0, instruction.length + 8, 0, instruction.length + 11);
+            });
+
+            it("tabbed and untabbed delimiter, on untabbed delimiter", function() {
+                const content = `${instruction} cat <<-EOT > 1.txt\n\thello\n\tEOT\n${instruction} cat <<EOT > 2.txt\nhello2\nEOT`;
+                const location = findDefinition(content, 5, 2);
+                assertLocation(location, 3, instruction.length + 7, 3, instruction.length + 10);
+            });
         });
     }
 
