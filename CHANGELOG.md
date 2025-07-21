@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - fix TypeError from being thrown if the position of definition, highlight range, or rename calculations are from outside the document ([#132](https://github.com/rcjsuen/dockerfile-language-service/issues/132))
 - fix TypeError from being thrown if the position of definition, highlight range, or rename calculations are for tabbed heredocs ([#135](https://github.com/rcjsuen/dockerfile-language-service/issues/135))
+- prevent tabbed delimiters in heredocs from crashing the linter and formatter ([rcjsuen/dockerfile-utils#129](https://github.com/rcjsuen/dockerfile-utils/issues/129))
 
 ## [0.15.0] - 2025-04-10
 ### Added
