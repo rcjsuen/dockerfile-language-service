@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.16.0] - 2025-10-09
+### Changed
+- module is now CJS instead of UMD ([#137](https://github.com/rcjsuen/dockerfile-language-service/issues/137))
+
 ## [0.15.1] - 2025-07-21
 ### Fixed
 - fix TypeError from being thrown if the position of definition, highlight range, or rename calculations are from outside the document ([#132](https://github.com/rcjsuen/dockerfile-language-service/issues/132))
@@ -547,7 +551,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.15.1...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.16.0...HEAD
+[0.16.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.14.0...v0.15.0
 [0.14.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.13.0...v0.14.0
