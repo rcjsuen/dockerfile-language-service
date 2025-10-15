@@ -10,7 +10,7 @@
     "copy-webpack-plugin": "^9.0.1",
     "typescript": "^3.7.5",
     "umd-compat-loader": "^2.1.1",
-    "webpack": "^5.51.1",
+    "webpack": "^5.102.1",
     "webpack-cli": "^4.8.0"
   },
   "scripts": {
