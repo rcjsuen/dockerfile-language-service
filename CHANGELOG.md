@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.16.1] - 2025-10-09
 ### Fixed
 - rename `prepublish` to `prepublishOnly` so that the right script is run before `npm publish` ([#140](https://github.com/rcjsuen/dockerfile-language-service/issues/140))
 
@@ -555,7 +555,8 @@ let workspaceEdit = {
     - textDocument/rename
     - textDocument/hover
 
-[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.16.0...HEAD
+[Unreleased]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.16.1...HEAD
+[0.16.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.16.0...v0.16.1
 [0.16.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.15.1...v0.16.0
 [0.15.1]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.15.0...v0.15.1
 [0.15.0]: https://github.com/rcjsuen/dockerfile-language-service/compare/v0.14.0...v0.15.0
