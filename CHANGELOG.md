@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- rename `prepublish` to `prepublishOnly` so that the right script is run before `npm publish` ([#140](https://github.com/rcjsuen/dockerfile-language-service/issues/140))
+
 ## [0.16.0] - 2025-10-09
 ### Changed
 - module is now CJS instead of UMD ([#137](https://github.com/rcjsuen/dockerfile-language-service/issues/137))
