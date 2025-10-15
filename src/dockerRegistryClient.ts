@@ -106,6 +106,7 @@ export class DockerRegistryClient {
                     // not a 200 OK, reject the promise with the error
                     const error: any = new Error(response.statusMessage);
                     error.statusCode = response.statusCode;
+                    response.resume();
                     reject(error);
                 } else {
                     let buffer = '';
